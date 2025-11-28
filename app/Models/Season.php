@@ -18,9 +18,9 @@ class Season extends Model
         'episode_count'
     ];
 
-    protected $casts = [
-        'air_date' => 'date',
-    ];
+    // protected $casts = [
+    //     'air_date' => 'date',
+    // ];
 
     // Relationships
     public function series()

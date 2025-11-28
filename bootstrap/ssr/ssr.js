@@ -4065,8 +4065,8 @@ const __vite_glob_0_16 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: VerifyEmail
 }, Symbol.toStringTag, { value: "Module" }));
-const PlayIcon$2 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
-const SectionTitle = ({ title, subtitle }) => /* @__PURE__ */ jsxs("div", { className: "mb-8 flex items-end justify-between border-b border-white/10 pb-4", children: [
+const PlayIcon$3 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
+const SectionTitle = ({ title, subtitle, href }) => /* @__PURE__ */ jsxs("div", { className: "mb-8 flex items-end justify-between border-b border-white/10 pb-4", children: [
   /* @__PURE__ */ jsxs("div", { children: [
     /* @__PURE__ */ jsx("h2", { className: "text-3xl md:text-4xl font-serif text-white", children: title }),
     subtitle && /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-sm mt-1 uppercase tracking-widest", children: subtitle })
@@ -4074,13 +4074,13 @@ const SectionTitle = ({ title, subtitle }) => /* @__PURE__ */ jsxs("div", { clas
   /* @__PURE__ */ jsx(
     Link,
     {
-      href: "#",
+      href,
       className: "text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors",
       children: "View All"
     }
   )
 ] });
-const MediaCard = ({ item, type }) => {
+const MediaCard$1 = ({ item, type }) => {
   const href = type === "movie" ? route("movies.show", item.slug) : route("series.show", item.slug);
   return /* @__PURE__ */ jsxs(Link, { href, className: "group block relative", children: [
     /* @__PURE__ */ jsxs("div", { className: "aspect-[2/3] overflow-hidden rounded-sm bg-gray-900 mb-3 relative", children: [
@@ -4093,7 +4093,7 @@ const MediaCard = ({ item, type }) => {
         }
       ),
       /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" }),
-      /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300", children: /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center", children: /* @__PURE__ */ jsx(PlayIcon$2, { className: "w-5 h-5 text-white" }) }) }),
+      /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300", children: /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center", children: /* @__PURE__ */ jsx(PlayIcon$3, { className: "w-5 h-5 text-white" }) }) }),
       item.rating_average > 0 && /* @__PURE__ */ jsx("div", { className: "absolute top-2 right-2 px-1.5 py-0.5 bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white", children: item.rating_average })
     ] }),
     /* @__PURE__ */ jsx("h3", { className: "text-white font-serif text-lg leading-tight group-hover:underline decoration-white/30 underline-offset-4 truncate", children: item.title }),
@@ -4105,53 +4105,79 @@ const MediaCard = ({ item, type }) => {
   ] });
 };
 function Home({ featured, latestMovies, latestSeries }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  useEffect(() => {
+    if (!featured || featured.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentIndex(
+        (prevIndex) => prevIndex === featured.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5e3);
+    return () => clearInterval(interval);
+  }, [featured]);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(Head, { title: "Home" }),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
-      featured && /* @__PURE__ */ jsxs("div", { className: "relative h-[85vh] w-full overflow-hidden", children: [
-        /* @__PURE__ */ jsxs("div", { className: "absolute inset-0", children: [
-          /* @__PURE__ */ jsx(
-            "img",
-            {
-              src: featured.poster_url,
-              alt: featured.title,
-              className: "block md:hidden w-full h-auto object-cover"
-            }
-          ),
-          /* @__PURE__ */ jsx(
-            "img",
-            {
-              src: featured.banner_url,
-              alt: featured.title,
-              className: "hidden md:block w-full h-auto object-cover"
-            }
-          ),
-          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent" }),
-          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-transparent" })
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center", children: /* @__PURE__ */ jsx("div", { className: "container mx-auto px-6 md:px-12", children: /* @__PURE__ */ jsxs("div", { className: "max-w-2xl", children: [
-          /* @__PURE__ */ jsxs("span", { className: "inline-block px-2 py-1 border border-white/30 text-[10px] font-bold uppercase tracking-[0.2em] text-white mb-6 backdrop-blur-sm", children: [
-            "Featured",
-            " ",
-            featured.seasons ? "Series" : "Film"
-          ] }),
-          /* @__PURE__ */ jsx("h1", { className: "text-5xl md:text-7xl lg:text-8xl font-serif text-white leading-[0.9] mb-6", children: featured.title }),
-          /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl", children: featured.description }),
-          /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4", children: /* @__PURE__ */ jsx(
-            Link,
-            {
-              href: featured.seasons ? route(
-                "series.show",
-                featured.slug
-              ) : route(
-                "movies.show",
-                featured.slug
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen mt-0 bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
+      featured && featured.length > 0 && /* @__PURE__ */ jsxs("div", { className: "relative h-[85vh] w-full overflow-hidden group", children: [
+        featured.map((item, index) => /* @__PURE__ */ jsxs(
+          "div",
+          {
+            className: `absolute inset-0 transition-opacity duration-1000 ${index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"}`,
+            children: [
+              /* @__PURE__ */ jsx(
+                "img",
+                {
+                  src: item.poster_url,
+                  alt: item.title,
+                  className: "block md:hidden w-full h-full object-cover"
+                }
               ),
-              className: "px-8 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
-              children: "Watch Now"
-            }
-          ) })
-        ] }) }) })
+              /* @__PURE__ */ jsx(
+                "img",
+                {
+                  src: item.banner_url,
+                  alt: item.title,
+                  className: "hidden md:block w-full h-full object-cover"
+                }
+              ),
+              /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent" }),
+              /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-transparent" }),
+              /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center", children: /* @__PURE__ */ jsx("div", { className: "container mx-auto px-6 md:px-12", children: /* @__PURE__ */ jsxs("div", { className: "max-w-2xl", children: [
+                /* @__PURE__ */ jsxs("span", { className: "inline-block px-2 py-1 border border-white/30 text-[10px] font-bold uppercase tracking-[0.2em] text-white mb-6 backdrop-blur-sm", children: [
+                  "Featured",
+                  " ",
+                  item.type === "series" ? "Series" : "Film"
+                ] }),
+                /* @__PURE__ */ jsx("h1", { className: "text-5xl md:text-7xl lg:text-8xl font-serif text-white leading-[0.9] mb-6", children: item.title }),
+                /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl", children: item.description }),
+                /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4", children: /* @__PURE__ */ jsx(
+                  Link,
+                  {
+                    href: item.type === "series" ? route(
+                      "series.show",
+                      item.slug
+                    ) : route(
+                      "movies.show",
+                      item.slug
+                    ),
+                    className: "px-8 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
+                    children: "Watch Now"
+                  }
+                ) })
+              ] }) }) })
+            ]
+          },
+          `${item.type}-${item.id}`
+        )),
+        /* @__PURE__ */ jsx("div", { className: "absolute bottom-10 left-0 right-0 z-20 flex justify-center gap-3", children: featured.map((_, index) => /* @__PURE__ */ jsx(
+          "button",
+          {
+            onClick: () => setCurrentIndex(index),
+            className: `w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex ? "bg-white scale-125" : "bg-white/30 hover:bg-white/50"}`,
+            "aria-label": `Go to slide ${index + 1}`
+          },
+          index
+        )) })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 py-20 space-y-24", children: [
         /* @__PURE__ */ jsxs("section", { children: [
@@ -4159,11 +4185,12 @@ function Home({ featured, latestMovies, latestSeries }) {
             SectionTitle,
             {
               title: "New Releases",
-              subtitle: "Fresh from the cinema"
+              subtitle: "Fresh from the cinema",
+              href: route("movies.index")
             }
           ),
           /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: latestMovies.map((movie) => /* @__PURE__ */ jsx(
-            MediaCard,
+            MediaCard$1,
             {
               item: movie,
               type: "movie"
@@ -4176,11 +4203,12 @@ function Home({ featured, latestMovies, latestSeries }) {
             SectionTitle,
             {
               title: "Latest Series",
-              subtitle: "Binge-worthy collections"
+              subtitle: "Binge-worthy collections",
+              href: route("series.index")
             }
           ),
           /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: latestSeries.map((series) => /* @__PURE__ */ jsx(
-            MediaCard,
+            MediaCard$1,
             {
               item: series,
               type: "series"
@@ -4222,14 +4250,20 @@ function RatingWidget({
   const renderStars = (rating, interactive = false) => {
     return [...Array(5)].map((_, index) => {
       const starValue = index + 1;
-      const isFilled = interactive ? starValue <= (hoveredStar || selectedRating) : starValue <= Math.round(rating);
+      let isFilled;
+      if (interactive) {
+        const currentDisplayRating = hoveredStar > 0 ? hoveredStar : selectedRating / 2;
+        isFilled = starValue <= Math.ceil(currentDisplayRating);
+      } else {
+        isFilled = starValue <= Math.round(rating / 2);
+      }
       return /* @__PURE__ */ jsx(
         "svg",
         {
           className: `star ${isFilled ? "filled" : ""}`,
           onMouseEnter: () => interactive && setHoveredStar(starValue),
           onMouseLeave: () => interactive && setHoveredStar(0),
-          onClick: () => interactive && handleStarClick(starValue),
+          onClick: () => interactive && handleStarClick(starValue * 2),
           fill: isFilled ? "currentColor" : "none",
           stroke: "currentColor",
           strokeWidth: "2",
@@ -4263,14 +4297,14 @@ function RatingWidget({
       /* @__PURE__ */ jsx("div", { className: "star-rating flex flex-row items-center justify-center w-full", children: renderStars(selectedRating, true) }),
       selectedRating > 0 && /* @__PURE__ */ jsxs("p", { className: "text-xs text-gray-400 mt-2 text-center w-full", children: [
         "You rated this ",
-        selectedRating,
+        selectedRating / 2,
         " ",
-        selectedRating === 1 ? "star" : "stars"
+        selectedRating / 2 === 1 ? "star" : "stars"
       ] })
     ] })
   ] });
 }
-const PlayIcon$1 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
+const PlayIcon$2 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
 const DownloadIcon$1 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" }) });
 const LinkItem$1 = ({ link, type, isVip }) => {
   const isLocked = link.is_vip_only && !isVip;
@@ -4353,7 +4387,7 @@ function MovieDetails({
             className: "group relative w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white hover:scale-110 transition-all duration-500",
             children: [
               /* @__PURE__ */ jsx("div", { className: "absolute inset-0 rounded-full border border-white/30 animate-ping-slow" }),
-              /* @__PURE__ */ jsx(PlayIcon$1, { className: "w-8 h-8 md:w-10 md:h-10 text-white group-hover:text-black ml-1 transition-colors" })
+              /* @__PURE__ */ jsx(PlayIcon$2, { className: "w-8 h-8 md:w-10 md:h-10 text-white group-hover:text-black ml-1 transition-colors" })
             ]
           }
         ) }),
@@ -4393,7 +4427,7 @@ function MovieDetails({
           auth.user ? /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
             /* @__PURE__ */ jsxs("div", { children: [
               /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mb-4 text-white", children: [
-                /* @__PURE__ */ jsx(PlayIcon$1, { className: "w-5 h-5" }),
+                /* @__PURE__ */ jsx(PlayIcon$2, { className: "w-5 h-5" }),
                 /* @__PURE__ */ jsx("span", { className: "font-serif text-xl italic", children: "Streaming Sources" })
               ] }),
               /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-white/10", children: watchLinksByQuality && Object.keys(watchLinksByQuality).length > 0 ? Object.values(watchLinksByQuality).flat().map((link) => /* @__PURE__ */ jsx(LinkItem$1, { link, type: "watch", isVip }, link.id)) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: "No streaming links available." }) })
@@ -4429,7 +4463,24 @@ function MovieDetails({
                 ratingAverage: movie.rating_average || 0,
                 ratingCount: movie.rating_count || 0,
                 userRating,
-                onRate: (rating) => console.log(rating)
+                onRate: (rating) => {
+                  if (userRating) {
+                    router.put(route("admin.ratings.update", userRating.id), {
+                      rating
+                    }, {
+                      preserveScroll: true,
+                      onSuccess: () => console.log("Rating updated")
+                    });
+                  } else {
+                    router.post(route("admin.ratings.store"), {
+                      movie_id: movie.id,
+                      rating
+                    }, {
+                      preserveScroll: true,
+                      onSuccess: () => console.log("Rating submitted")
+                    });
+                  }
+                }
               }
             ) : /* @__PURE__ */ jsxs("div", { className: "text-gray-500 text-sm italic", children: [
               /* @__PURE__ */ jsx("a", { href: route("login"), className: "text-white hover:underline", children: "Log in" }),
@@ -4452,6 +4503,69 @@ function MovieDetails({
 const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: MovieDetails
+}, Symbol.toStringTag, { value: "Module" }));
+const PlayIcon$1 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
+function MediaCard({ item, type }) {
+  const href = type === "movie" ? route("movies.show", item.slug) : route("series.show", item.slug);
+  return /* @__PURE__ */ jsxs(Link, { href, className: "group block relative", children: [
+    /* @__PURE__ */ jsxs("div", { className: "aspect-[2/3] overflow-hidden rounded-sm bg-gray-900 mb-3 relative", children: [
+      /* @__PURE__ */ jsx(
+        "img",
+        {
+          src: item.poster_url,
+          alt: item.title,
+          className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+        }
+      ),
+      /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" }),
+      /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300", children: /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center", children: /* @__PURE__ */ jsx(PlayIcon$1, { className: "w-5 h-5 text-white" }) }) }),
+      item.rating_average > 0 && /* @__PURE__ */ jsx("div", { className: "absolute top-2 right-2 px-1.5 py-0.5 bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white", children: item.rating_average })
+    ] }),
+    /* @__PURE__ */ jsx("h3", { className: "text-white font-serif text-lg leading-tight group-hover:underline decoration-white/30 underline-offset-4 truncate", children: item.title }),
+    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-xs text-gray-500 mt-1 font-mono", children: [
+      /* @__PURE__ */ jsx("span", { children: item.release_year || new Date(item.created_at).getFullYear() }),
+      /* @__PURE__ */ jsx("span", { children: "•" }),
+      /* @__PURE__ */ jsx("span", { children: type === "movie" ? "Movie" : "Series" })
+    ] })
+  ] });
+}
+const Pagination$1 = ({ links }) => {
+  console.log(links);
+  return /* @__PURE__ */ jsx("div", { className: "flex justify-center mt-12 gap-2", children: links.map((link, index) => /* @__PURE__ */ jsx(
+    Link,
+    {
+      href: link.url ? link.url : "#",
+      className: `px-4 py-2 text-sm font-medium rounded-md transition-colors ${link.active ? "bg-white text-black" : "bg-white/10 text-white hover:bg-white/20"} ${!link.url ? "opacity-50 cursor-not-allowed" : ""}`,
+      dangerouslySetInnerHTML: { __html: link.label },
+      disabled: !link.url
+    },
+    index
+  )) });
+};
+function Index$1({ movies }) {
+  console.log(movies);
+  return /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsx(Head, { title: "Movies" }),
+    /* @__PURE__ */ jsx("div", { className: "min-h-screen  bg-[#050505] text-white font-sans selection:bg-white selection:text-black pb-12", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12", children: [
+      /* @__PURE__ */ jsxs("div", { className: "mb-12 border-b border-white/10 pb-6", children: [
+        /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-white", children: "Movies" }),
+        /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-sm mt-2 uppercase tracking-widest", children: "Browse all available films" })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
+        MediaCard,
+        {
+          item: movie,
+          type: "movie"
+        },
+        movie.id
+      )) }),
+      movies.links && movies.links.length > 3 && /* @__PURE__ */ jsx(Pagination$1, { links: movies.links })
+    ] }) })
+  ] });
+}
+const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: Index$1
 }, Symbol.toStringTag, { value: "Module" }));
 function DangerButton({
   className = "",
@@ -4547,7 +4661,7 @@ function DeleteUserForm({ className = "" }) {
     ] }) })
   ] });
 }
-const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_21 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: DeleteUserForm
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4678,7 +4792,7 @@ function UpdatePasswordForm({ className = "" }) {
     ] })
   ] });
 }
-const __vite_glob_0_21 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_22 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: UpdatePasswordForm
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4767,7 +4881,7 @@ function UpdateProfileInformation({
     ] })
   ] });
 }
-const __vite_glob_0_22 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: UpdateProfileInformation
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4794,9 +4908,45 @@ function Edit({ mustVerifyEmail, status }) {
     }
   );
 }
-const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Edit
+}, Symbol.toStringTag, { value: "Module" }));
+const Pagination = ({ links }) => {
+  return /* @__PURE__ */ jsx("div", { className: "flex justify-center mt-12 gap-2", children: links.map((link, index) => /* @__PURE__ */ jsx(
+    Link,
+    {
+      href: link.url ? link.url : "#",
+      className: `px-4 py-2 text-sm font-medium rounded-md transition-colors ${link.active ? "bg-white text-black" : "bg-white/10 text-white hover:bg-white/20"} ${!link.url ? "opacity-50 cursor-not-allowed" : ""}`,
+      dangerouslySetInnerHTML: { __html: link.label },
+      disabled: !link.url
+    },
+    index
+  )) });
+};
+function Index({ series }) {
+  return /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsx(Head, { title: "Series" }),
+    /* @__PURE__ */ jsx("div", { className: "min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black pb-12", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12", children: [
+      /* @__PURE__ */ jsxs("div", { className: "mb-12 border-b border-white/10 pb-6", children: [
+        /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-white", children: "Series" }),
+        /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-sm mt-2 uppercase tracking-widest", children: "Browse all available series" })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
+        MediaCard,
+        {
+          item,
+          type: "series"
+        },
+        item.id
+      )) }),
+      series.links && series.links.length > 3 && /* @__PURE__ */ jsx(Pagination, { links: series.links })
+    ] }) })
+  ] });
+}
+const __vite_glob_0_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: Index
 }, Symbol.toStringTag, { value: "Module" }));
 const PlayIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
 const DownloadIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" }) });
@@ -5021,7 +5171,24 @@ function SeriesDetails({
                 ratingAverage: series.rating_average || 0,
                 ratingCount: series.rating_count || 0,
                 userRating,
-                onRate: (rating) => console.log(rating)
+                onRate: (rating) => {
+                  if (userRating) {
+                    router.put(route("admin.ratings.update", userRating.id), {
+                      rating
+                    }, {
+                      preserveScroll: true,
+                      onSuccess: () => console.log("Rating updated")
+                    });
+                  } else {
+                    router.post(route("admin.ratings.store"), {
+                      series_id: series.id,
+                      rating
+                    }, {
+                      preserveScroll: true,
+                      onSuccess: () => console.log("Rating submitted")
+                    });
+                  }
+                }
               }
             ) : /* @__PURE__ */ jsxs("div", { className: "text-gray-500 text-sm italic", children: [
               /* @__PURE__ */ jsx("a", { href: route("login"), className: "text-white hover:underline", children: "Log in" }),
@@ -5041,7 +5208,7 @@ function SeriesDetails({
     showTrailer && /* @__PURE__ */ jsx(TrailerModal, { url: series.trailer_url, onClose: () => setShowTrailer(false) })
   ] });
 }
-const __vite_glob_0_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_25 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: SeriesDetails
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5430,7 +5597,7 @@ function Welcome({ auth, laravelVersion, phpVersion }) {
     ] })
   ] });
 }
-const __vite_glob_0_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Welcome
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5459,12 +5626,14 @@ createServer(
         "./Pages/Auth/VerifyEmail.jsx": __vite_glob_0_16,
         "./Pages/Home.jsx": __vite_glob_0_17,
         "./Pages/MovieDetails.jsx": __vite_glob_0_18,
-        "./Pages/Profile/Edit.jsx": __vite_glob_0_19,
-        "./Pages/Profile/Partials/DeleteUserForm.jsx": __vite_glob_0_20,
-        "./Pages/Profile/Partials/UpdatePasswordForm.jsx": __vite_glob_0_21,
-        "./Pages/Profile/Partials/UpdateProfileInformationForm.jsx": __vite_glob_0_22,
-        "./Pages/SeriesDetails.jsx": __vite_glob_0_23,
-        "./Pages/Welcome.jsx": __vite_glob_0_24
+        "./Pages/Movies/Index.jsx": __vite_glob_0_19,
+        "./Pages/Profile/Edit.jsx": __vite_glob_0_20,
+        "./Pages/Profile/Partials/DeleteUserForm.jsx": __vite_glob_0_21,
+        "./Pages/Profile/Partials/UpdatePasswordForm.jsx": __vite_glob_0_22,
+        "./Pages/Profile/Partials/UpdateProfileInformationForm.jsx": __vite_glob_0_23,
+        "./Pages/Series/Index.jsx": __vite_glob_0_24,
+        "./Pages/SeriesDetails.jsx": __vite_glob_0_25,
+        "./Pages/Welcome.jsx": __vite_glob_0_26
       });
       return pages[`./Pages/${name}.jsx`];
     },

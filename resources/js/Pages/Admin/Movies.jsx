@@ -228,14 +228,22 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
 
                             {/* Pagination */}
                             <div className="mt-6 flex justify-center">
-                                <div className="flex gap-1">
+                                <div className="flex gap-1 flex-wrap">
                                     {movies.links.map((link, index) => (
-                                        <a
+                                        <button
                                             key={index}
-                                            href={link.url || "#"}
+                                            onClick={() => {
+                                                if (link.url) {
+                                                    router.visit(link.url, {
+                                                        preserveState: true,
+                                                        preserveScroll: true,
+                                                    });
+                                                }
+                                            }}
+                                            disabled={!link.url}
                                             className={`px-4 py-2 text-sm rounded-md ${link.active
-                                                ? "bg-indigo-600 text-white"
-                                                : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                                    ? "bg-indigo-600 text-white"
+                                                    : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
                                                 } ${!link.url &&
                                                 "opacity-50 cursor-not-allowed"
                                                 }`}

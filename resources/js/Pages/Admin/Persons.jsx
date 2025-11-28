@@ -62,8 +62,8 @@ export default function Persons({ persons }) {
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
                                                         <div className="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full overflow-hidden">
-                                                            {person.photo_url ? (
-                                                                <img className="h-10 w-10 object-cover" src={person.photo_url} alt="" />
+                                                            {person.avatar_url ? (
+                                                                <img className="h-10 w-10 object-cover" src={person.avatar_url} alt="" />
                                                             ) : (
                                                                 <div className="h-full w-full flex items-center justify-center text-gray-400 text-xs">N/A</div>
                                                             )}

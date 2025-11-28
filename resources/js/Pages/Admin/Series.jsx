@@ -164,6 +164,35 @@ export default function AdminSeries({ series, genres, persons, auth }) {
                                     </tbody>
                                 </table>
                             </div>
+
+                            {/* Pagination */}
+                            <div className="mt-6 flex justify-center">
+                                <div className="flex gap-1 flex-wrap">
+                                    {series.links.map((link, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => {
+                                                if (link.url) {
+                                                    router.visit(link.url, {
+                                                        preserveState: true,
+                                                        preserveScroll: true,
+                                                    });
+                                                }
+                                            }}
+                                            disabled={!link.url}
+                                            className={`px-4 py-2 text-sm rounded-md ${link.active
+                                                    ? "bg-indigo-600 text-white"
+                                                    : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                                } ${!link.url &&
+                                                "opacity-50 cursor-not-allowed"
+                                                }`}
+                                            dangerouslySetInnerHTML={{
+                                                __html: link.label,
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
