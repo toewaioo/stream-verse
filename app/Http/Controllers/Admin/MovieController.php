@@ -35,7 +35,7 @@ class MovieController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'slug'  => 'nullable|string|max:255',
+            'slug'  => 'required|string|max:255|unique:movies,slug',
             'original_title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'release_date' => 'nullable|date',
@@ -103,6 +103,7 @@ class MovieController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:movies,slug,' . $movie->id,
             'original_title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'release_date' => 'nullable|date',
@@ -224,5 +225,18 @@ class MovieController extends Controller
                 );
             }
         }
+    }
+
+    public function checkSlug(Request $request)
+    {
+        $slug = $request->input('slug');
+        $id = $request->input('id');
+
+        $query = Movie::where('slug', $slug);
+        if ($id) {
+            $query->where('id', '!=', $id);
+        }
+
+        return response()->json(['exists' => $query->exists()]);
     }
 }

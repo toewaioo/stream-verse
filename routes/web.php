@@ -31,6 +31,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         return Inertia::render('Admin/Dashboard', compact('stats'));
     })->name('admin.dashboard');
     Route::get('/movies', [AdminMovieController::class, 'index'])->name('admin.movies');
+
     Route::post('/movies', [AdminMovieController::class, 'store'])->name('admin.movies.store');
     Route::put('/movies/{movie}', [AdminMovieController::class, 'update'])->name('admin.movies.update');
     Route::delete('/movies/{movie}', [AdminMovieController::class, 'destroy'])->name('admin.movies.destroy');
@@ -38,6 +39,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/series', [AdminSeriesController::class, 'store'])->name('admin.series.store');
     Route::put('/series/{series}', [AdminSeriesController::class, 'update'])->name('admin.series.update');
     Route::delete('/series/{series}', [AdminSeriesController::class, 'destroy'])->name('admin.series.destroy');
+    Route::get('/movies/check-slug', [AdminMovieController::class, 'checkSlug'])->name('admin.movies.check-slug');
+    Route::get('/series/check-slug', [AdminSeriesController::class, 'checkSlug'])->name('admin.series.check-slug');
+
+    // Genres
     Route::get('/genres', [GenreController::class, 'index'])->name('admin.genres');
     Route::post('/genres', [GenreController::class, 'store'])->name('admin.genres.store');
     Route::put('/genres/{genre}', [GenreController::class, 'update'])->name('admin.genres.update');

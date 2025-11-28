@@ -46,6 +46,49 @@ export default function MovieForm({
         download_links: movie?.download_links || [],
     });
 
+    const [slugError, setSlugError] = useState("");
+
+    // Auto-generate slug from title
+    React.useEffect(() => {
+        if (data.title && !movie?.id) { // Only auto-generate on create or if explicitly wanted
+            const slug = data.title
+                .toLowerCase()
+                .replace(/ /g, "-")
+                .replace(/[^\w-]+/g, "");
+            setData("slug", slug);
+        }
+    }, [data.title]);
+
+    // Realtime slug check
+    React.useEffect(() => {
+        const checkSlug = async () => {
+            if (!data.slug) return;
+
+            try {
+                const response = await axios.get(route('admin.movies.check-slug'), {
+                    params: {
+                        slug: data.slug,
+                        id: movie?.id
+                    }
+                });
+
+                if (response.data.exists) {
+                    setSlugError("This slug is already taken.");
+                } else {
+                    setSlugError("");
+                }
+            } catch (error) {
+                console.error("Error checking slug:", error);
+            }
+        };
+
+        const timeoutId = setTimeout(() => {
+            checkSlug();
+        }, 500);
+
+        return () => clearTimeout(timeoutId);
+    }, [data.slug, movie?.id]);
+
     const handleGenreChange = (genreId) => {
         const currentGenres = data.genres;
         if (currentGenres.includes(genreId)) {
@@ -218,7 +261,7 @@ export default function MovieForm({
                             onChange={(e) => setData("slug", e.target.value)}
                             placeholder="e.g. inception"
                         />
-                        <InputError message={errors.slug} className="mt-2" />
+                        <InputError message={errors.slug || slugError} className="mt-2" />
                     </div>
                     <div>
                         <InputLabel htmlFor="imdb_id" value="IMDb ID" />

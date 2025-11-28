@@ -255,4 +255,16 @@ class SeriesController extends Controller
                 ->delete();
         }
     }
+    public function checkSlug(Request $request)
+    {
+        $slug = $request->input('slug');
+        $id = $request->input('id');
+
+        $query = Series::where('slug', $slug);
+        if ($id) {
+            $query->where('id', '!=', $id);
+        }
+
+        return response()->json(['exists' => $query->exists()]);
+    }
 }

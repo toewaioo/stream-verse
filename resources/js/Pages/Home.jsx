@@ -2,21 +2,37 @@ import React from "react";
 import { Head, Link } from "@inertiajs/react";
 
 const PlayIcon = ({ className = "w-6 h-6" }) => (
-    <svg className={className} fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+        <path d="M8 5v14l11-7z" />
+    </svg>
 );
 
 const SectionTitle = ({ title, subtitle }) => (
     <div className="mb-8 flex items-end justify-between border-b border-white/10 pb-4">
         <div>
-            <h2 className="text-3xl md:text-4xl font-serif text-white">{title}</h2>
-            {subtitle && <p className="text-gray-500 text-sm mt-1 uppercase tracking-widest">{subtitle}</p>}
+            <h2 className="text-3xl md:text-4xl font-serif text-white">
+                {title}
+            </h2>
+            {subtitle && (
+                <p className="text-gray-500 text-sm mt-1 uppercase tracking-widest">
+                    {subtitle}
+                </p>
+            )}
         </div>
-        <Link href="#" className="text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors">View All</Link>
+        <Link
+            href="#"
+            className="text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors"
+        >
+            View All
+        </Link>
     </div>
 );
 
 const MediaCard = ({ item, type }) => {
-    const href = type === 'movie' ? route('movies.show', item.slug) : route('series.show', item.slug);
+    const href =
+        type === "movie"
+            ? route("movies.show", item.slug)
+            : route("series.show", item.slug);
 
     return (
         <Link href={href} className="group block relative">
@@ -43,11 +59,16 @@ const MediaCard = ({ item, type }) => {
                 )}
             </div>
 
-            <h3 className="text-white font-serif text-lg leading-tight group-hover:underline decoration-white/30 underline-offset-4 truncate">{item.title}</h3>
+            <h3 className="text-white font-serif text-lg leading-tight group-hover:underline decoration-white/30 underline-offset-4 truncate">
+                {item.title}
+            </h3>
             <div className="flex items-center gap-2 text-xs text-gray-500 mt-1 font-mono">
-                <span>{item.release_year || new Date(item.created_at).getFullYear()}</span>
+                <span>
+                    {item.release_year ||
+                        new Date(item.created_at).getFullYear()}
+                </span>
                 <span>•</span>
-                <span>{type === 'movie' ? 'Movie' : 'Series'}</span>
+                <span>{type === "movie" ? "Movie" : "Series"}</span>
             </div>
         </Link>
     );
@@ -59,15 +80,19 @@ export default function Home({ featured, latestMovies, latestSeries }) {
             <Head title="Home" />
 
             <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black">
-
                 {/* --- HERO SECTION --- */}
                 {featured && (
                     <div className="relative h-[85vh] w-full overflow-hidden">
                         <div className="absolute inset-0">
                             <img
-                                src={featured.banner_url || featured.poster_url}
+                                src={featured.poster_url}
                                 alt={featured.title}
-                                className="w-full h-full object-cover"
+                                className="block md:hidden w-full h-auto object-cover"
+                            />
+                            <img
+                                src={featured.banner_url}
+                                alt={featured.title}
+                                className="hidden md:block w-full h-auto object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent"></div>
                             <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-transparent"></div>
@@ -77,7 +102,8 @@ export default function Home({ featured, latestMovies, latestSeries }) {
                             <div className="container mx-auto px-6 md:px-12">
                                 <div className="max-w-2xl">
                                     <span className="inline-block px-2 py-1 border border-white/30 text-[10px] font-bold uppercase tracking-[0.2em] text-white mb-6 backdrop-blur-sm">
-                                        Featured {featured.seasons ? 'Series' : 'Film'}
+                                        Featured{" "}
+                                        {featured.seasons ? "Series" : "Film"}
                                     </span>
                                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white leading-[0.9] mb-6">
                                         {featured.title}
@@ -88,14 +114,21 @@ export default function Home({ featured, latestMovies, latestSeries }) {
 
                                     <div className="flex items-center gap-4">
                                         <Link
-                                            href={featured.seasons ? route('series.show', featured.slug) : route('movies.show', featured.slug)}
+                                            href={
+                                                featured.seasons
+                                                    ? route(
+                                                          "series.show",
+                                                          featured.slug
+                                                      )
+                                                    : route(
+                                                          "movies.show",
+                                                          featured.slug
+                                                      )
+                                            }
                                             className="px-8 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors"
                                         >
                                             Watch Now
                                         </Link>
-                                        <button className="px-8 py-3 border border-white/20 text-white font-bold uppercase tracking-widest hover:bg-white/5 transition-colors backdrop-blur-sm">
-                                            + My List
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -105,27 +138,39 @@ export default function Home({ featured, latestMovies, latestSeries }) {
 
                 {/* --- CONTENT SECTIONS --- */}
                 <div className="container mx-auto px-6 md:px-12 py-20 space-y-24">
-
                     {/* Latest Movies */}
                     <section>
-                        <SectionTitle title="New Releases" subtitle="Fresh from the cinema" />
+                        <SectionTitle
+                            title="New Releases"
+                            subtitle="Fresh from the cinema"
+                        />
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8">
-                            {latestMovies.map(movie => (
-                                <MediaCard key={movie.id} item={movie} type="movie" />
+                            {latestMovies.map((movie) => (
+                                <MediaCard
+                                    key={movie.id}
+                                    item={movie}
+                                    type="movie"
+                                />
                             ))}
                         </div>
                     </section>
 
                     {/* Latest Series */}
                     <section>
-                        <SectionTitle title="Latest Series" subtitle="Binge-worthy collections" />
+                        <SectionTitle
+                            title="Latest Series"
+                            subtitle="Binge-worthy collections"
+                        />
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8">
-                            {latestSeries.map(series => (
-                                <MediaCard key={series.id} item={series} type="series" />
+                            {latestSeries.map((series) => (
+                                <MediaCard
+                                    key={series.id}
+                                    item={series}
+                                    type="series"
+                                />
                             ))}
                         </div>
                     </section>
-
                 </div>
 
                 {/* --- FOOTER --- */}
@@ -139,7 +184,6 @@ export default function Home({ featured, latestMovies, latestSeries }) {
                         </div>
                     </div>
                 </footer>
-
             </div>
         </>
     );

@@ -86,6 +86,49 @@ export default function SeriesForm({
         episode_links: getInitialEpisodeLinks(),
     });
 
+    const [slugError, setSlugError] = useState("");
+
+    // Auto-generate slug from title
+    useEffect(() => {
+        if (data.title && !series?.id) {
+            const slug = data.title
+                .toLowerCase()
+                .replace(/ /g, "-")
+                .replace(/[^\w-]+/g, "");
+            setData("slug", slug);
+        }
+    }, [data.title]);
+
+    // Realtime slug check
+    useEffect(() => {
+        const checkSlug = async () => {
+            if (!data.slug) return;
+
+            try {
+                const response = await axios.get(route('admin.series.check-slug'), {
+                    params: {
+                        slug: data.slug,
+                        id: series?.id
+                    }
+                });
+
+                if (response.data.exists) {
+                    setSlugError("This slug is already taken.");
+                } else {
+                    setSlugError("");
+                }
+            } catch (error) {
+                console.error("Error checking slug:", error);
+            }
+        };
+
+        const timeoutId = setTimeout(() => {
+            checkSlug();
+        }, 500);
+
+        return () => clearTimeout(timeoutId);
+    }, [data.slug, series?.id]);
+
     const handleGenreChange = (genreId) => {
         const currentGenres = data.genres;
         if (currentGenres.includes(genreId)) {
@@ -252,7 +295,7 @@ export default function SeriesForm({
                             onChange={(e) => setData("slug", e.target.value)}
                             placeholder="e.g. breaking-bad"
                         />
-                        <InputError message={errors.slug} className="mt-2" />
+                        <InputError message={errors.slug || slugError} className="mt-2" />
                     </div>
 
                     <div>

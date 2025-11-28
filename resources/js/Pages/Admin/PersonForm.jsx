@@ -13,7 +13,7 @@ export default function PersonForm({ person, onClose, onSuccess }) {
         birth_date: person?.birth_date || '',
         death_date: person?.death_date || '',
         place_of_birth: person?.place_of_birth || '',
-        photo_url: person?.photo_url || '',
+        avatar_url: person?.avatar_url || '',
     });
 
     const handleSubmit = (e) => {
@@ -65,15 +65,15 @@ export default function PersonForm({ person, onClose, onSuccess }) {
                     </div>
 
                     <div>
-                        <InputLabel htmlFor="photo_url" value="Photo URL" />
+                        <InputLabel htmlFor="avatar_url" value="Avatar URL" />
                         <TextInput
-                            id="photo_url"
+                            id="avatar_url"
                             type="url"
                             className="mt-1 block w-full"
-                            value={data.photo_url}
-                            onChange={(e) => setData('photo_url', e.target.value)}
+                            value={data.avatar_url}
+                            onChange={(e) => setData('avatar_url', e.target.value)}
                         />
-                        <InputError message={errors.photo_url} className="mt-2" />
+                        <InputError message={errors.avatar_url} className="mt-2" />
                     </div>
                 </div>
 

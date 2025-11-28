@@ -27,8 +27,12 @@ class PersonController extends Controller
             'country' => 'nullable|string',
             'imdb_id' => 'nullable|string',
             'place_of_birth' => 'nullable|string',
-            'photo_url' => 'nullable|string',
+            'avatar_url' => 'nullable|string',
         ]);
+        // if (isset($validated['photo_url'])) {
+        //     $validated['avatar_url'] = $validated['photo_url'];
+        //     unset($validated['photo_url']);
+        // }
         $person = Person::create($validated);
 
         if ($request->wantsJson()) {
@@ -50,8 +54,12 @@ class PersonController extends Controller
             'country' => 'nullable|string',
             'imdb_id' => 'nullable|string',
             'place_of_birth' => 'nullable|string',
-            'photo_url' => 'nullable|string',
+            'avatar_url' => 'nullable|string',
         ]);
+        // if (isset($validated['photo_url'])) {
+        //     $validated['avatar_url'] = $validated['photo_url'];
+        //     unset($validated['photo_url']);
+        // }
         $person->update($validated);
         return redirect()->back()->with('success', 'Person updated successfully.');
     }

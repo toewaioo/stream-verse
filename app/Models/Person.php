@@ -20,13 +20,14 @@ class Person extends Model
         'gender',
         'avatar_url',
         'country',
-        'imdb_id'
+        'imdb_id',
+        'place_of_birth'
     ];
 
-    protected $casts = [
-        'birth_date' => 'date',
-        'death_date' => 'date',
-    ];
+    // protected $casts = [
+    //     'birth_date' => 'date',
+    //     'death_date' => 'date',
+    // ];
 
     // Relationships
     public function roles()
