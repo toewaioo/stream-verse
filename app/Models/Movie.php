@@ -35,7 +35,7 @@ class Movie extends Model
     ];
 
     protected $casts = [
-        // 'release_date' => 'date',
+        'release_date' => 'date',
         'is_vip_only' => 'boolean',
         'budget' => 'integer',
         'revenue' => 'integer',
@@ -83,10 +83,10 @@ class Movie extends Model
         return $this->hasMany(Rating::class);
     }
 
-        // public function reviews()
-        // {
-        //     return $this->hasMany(Review::class);
-        // }
+    // public function reviews()
+    // {
+    //     return $this->hasMany(Review::class);
+    // }
 
     public function watchHistory()
     {
