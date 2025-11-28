@@ -3,7 +3,7 @@ import { Link, usePage, Head, useForm, router, createInertiaApp } from "@inertia
 import { Transition, Dialog, TransitionChild, DialogPanel, Combobox } from "@headlessui/react";
 import React, { createContext, useState, useContext, useEffect, forwardRef, useRef, useImperativeHandle, useMemo } from "react";
 import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
-import axios from "axios";
+import axios$1 from "axios";
 import createServer from "@inertiajs/react/server";
 import ReactDOMServer from "react-dom/server";
 function ApplicationLogo(props) {
@@ -827,7 +827,7 @@ function PersonSelector({ value, onChange, persons: initialPersons = [] }) {
     if (!query) return;
     setIsCreating(true);
     try {
-      const response = await axios.post(route("admin.persons.store"), {
+      const response = await axios$1.post(route("admin.persons.store"), {
         name: query
       }, {
         headers: {
@@ -928,6 +928,37 @@ function MovieForm({
     watch_links: movie?.watch_links || [],
     download_links: movie?.download_links || []
   });
+  const [slugError, setSlugError] = useState("");
+  React.useEffect(() => {
+    if (data.title && !movie?.id) {
+      const slug = data.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+      setData("slug", slug);
+    }
+  }, [data.title]);
+  React.useEffect(() => {
+    const checkSlug = async () => {
+      if (!data.slug) return;
+      try {
+        const response = await axios.get(route("admin.movies.check-slug"), {
+          params: {
+            slug: data.slug,
+            id: movie?.id
+          }
+        });
+        if (response.data.exists) {
+          setSlugError("This slug is already taken.");
+        } else {
+          setSlugError("");
+        }
+      } catch (error) {
+        console.error("Error checking slug:", error);
+      }
+    };
+    const timeoutId = setTimeout(() => {
+      checkSlug();
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [data.slug, movie?.id]);
   const handleGenreChange = (genreId) => {
     const currentGenres = data.genres;
     if (currentGenres.includes(genreId)) {
@@ -1100,7 +1131,7 @@ function MovieForm({
             placeholder: "e.g. inception"
           }
         ),
-        /* @__PURE__ */ jsx(InputError, { message: errors.slug, className: "mt-2" })
+        /* @__PURE__ */ jsx(InputError, { message: errors.slug || slugError, className: "mt-2" })
       ] }),
       /* @__PURE__ */ jsxs("div", { children: [
         /* @__PURE__ */ jsx(InputLabel, { htmlFor: "imdb_id", value: "IMDb ID" }),
@@ -2165,7 +2196,7 @@ function PersonForm({ person, onClose, onSuccess }) {
     birth_date: person?.birth_date || "",
     death_date: person?.death_date || "",
     place_of_birth: person?.place_of_birth || "",
-    photo_url: person?.photo_url || ""
+    avatar_url: person?.avatar_url || ""
   });
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -2218,18 +2249,18 @@ function PersonForm({ person, onClose, onSuccess }) {
           /* @__PURE__ */ jsx(InputError, { message: errors.biography, className: "mt-2" })
         ] }),
         /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "photo_url", value: "Photo URL" }),
+          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "avatar_url", value: "Avatar URL" }),
           /* @__PURE__ */ jsx(
             TextInput,
             {
-              id: "photo_url",
+              id: "avatar_url",
               type: "url",
               className: "mt-1 block w-full",
-              value: data.photo_url,
-              onChange: (e) => setData("photo_url", e.target.value)
+              value: data.avatar_url,
+              onChange: (e) => setData("avatar_url", e.target.value)
             }
           ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.photo_url, className: "mt-2" })
+          /* @__PURE__ */ jsx(InputError, { message: errors.avatar_url, className: "mt-2" })
         ] })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
@@ -2828,6 +2859,37 @@ function SeriesForm({
     })) || [],
     episode_links: getInitialEpisodeLinks()
   });
+  const [slugError, setSlugError] = useState("");
+  useEffect(() => {
+    if (data.title && !series?.id) {
+      const slug = data.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+      setData("slug", slug);
+    }
+  }, [data.title]);
+  useEffect(() => {
+    const checkSlug = async () => {
+      if (!data.slug) return;
+      try {
+        const response = await axios.get(route("admin.series.check-slug"), {
+          params: {
+            slug: data.slug,
+            id: series?.id
+          }
+        });
+        if (response.data.exists) {
+          setSlugError("This slug is already taken.");
+        } else {
+          setSlugError("");
+        }
+      } catch (error) {
+        console.error("Error checking slug:", error);
+      }
+    };
+    const timeoutId = setTimeout(() => {
+      checkSlug();
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [data.slug, series?.id]);
   const handleGenreChange = (genreId) => {
     const currentGenres = data.genres;
     if (currentGenres.includes(genreId)) {
@@ -2976,7 +3038,7 @@ function SeriesForm({
               placeholder: "e.g. breaking-bad"
             }
           ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.slug, className: "mt-2" })
+          /* @__PURE__ */ jsx(InputError, { message: errors.slug || slugError, className: "mt-2" })
         ] }),
         /* @__PURE__ */ jsxs("div", { children: [
           /* @__PURE__ */ jsx(InputLabel, { htmlFor: "imdb_id", value: "IMDb ID" }),
@@ -4009,7 +4071,14 @@ const SectionTitle = ({ title, subtitle }) => /* @__PURE__ */ jsxs("div", { clas
     /* @__PURE__ */ jsx("h2", { className: "text-3xl md:text-4xl font-serif text-white", children: title }),
     subtitle && /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-sm mt-1 uppercase tracking-widest", children: subtitle })
   ] }),
-  /* @__PURE__ */ jsx(Link, { href: "#", className: "text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors", children: "View All" })
+  /* @__PURE__ */ jsx(
+    Link,
+    {
+      href: "#",
+      className: "text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors",
+      children: "View All"
+    }
+  )
 ] });
 const MediaCard = ({ item, type }) => {
   const href = type === "movie" ? route("movies.show", item.slug) : route("series.show", item.slug);
@@ -4044,9 +4113,17 @@ function Home({ featured, latestMovies, latestSeries }) {
           /* @__PURE__ */ jsx(
             "img",
             {
-              src: featured.banner_url || featured.poster_url,
+              src: featured.poster_url,
               alt: featured.title,
-              className: "w-full h-full object-cover"
+              className: "block md:hidden w-full h-auto object-cover"
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            "img",
+            {
+              src: featured.banner_url,
+              alt: featured.title,
+              className: "hidden md:block w-full h-auto object-cover"
             }
           ),
           /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent" }),
@@ -4054,32 +4131,62 @@ function Home({ featured, latestMovies, latestSeries }) {
         ] }),
         /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center", children: /* @__PURE__ */ jsx("div", { className: "container mx-auto px-6 md:px-12", children: /* @__PURE__ */ jsxs("div", { className: "max-w-2xl", children: [
           /* @__PURE__ */ jsxs("span", { className: "inline-block px-2 py-1 border border-white/30 text-[10px] font-bold uppercase tracking-[0.2em] text-white mb-6 backdrop-blur-sm", children: [
-            "Featured ",
+            "Featured",
+            " ",
             featured.seasons ? "Series" : "Film"
           ] }),
           /* @__PURE__ */ jsx("h1", { className: "text-5xl md:text-7xl lg:text-8xl font-serif text-white leading-[0.9] mb-6", children: featured.title }),
           /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl", children: featured.description }),
-          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
-            /* @__PURE__ */ jsx(
-              Link,
-              {
-                href: featured.seasons ? route("series.show", featured.slug) : route("movies.show", featured.slug),
-                className: "px-8 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
-                children: "Watch Now"
-              }
-            ),
-            /* @__PURE__ */ jsx("button", { className: "px-8 py-3 border border-white/20 text-white font-bold uppercase tracking-widest hover:bg-white/5 transition-colors backdrop-blur-sm", children: "+ My List" })
-          ] })
+          /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4", children: /* @__PURE__ */ jsx(
+            Link,
+            {
+              href: featured.seasons ? route(
+                "series.show",
+                featured.slug
+              ) : route(
+                "movies.show",
+                featured.slug
+              ),
+              className: "px-8 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
+              children: "Watch Now"
+            }
+          ) })
         ] }) }) })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 py-20 space-y-24", children: [
         /* @__PURE__ */ jsxs("section", { children: [
-          /* @__PURE__ */ jsx(SectionTitle, { title: "New Releases", subtitle: "Fresh from the cinema" }),
-          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: latestMovies.map((movie) => /* @__PURE__ */ jsx(MediaCard, { item: movie, type: "movie" }, movie.id)) })
+          /* @__PURE__ */ jsx(
+            SectionTitle,
+            {
+              title: "New Releases",
+              subtitle: "Fresh from the cinema"
+            }
+          ),
+          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: latestMovies.map((movie) => /* @__PURE__ */ jsx(
+            MediaCard,
+            {
+              item: movie,
+              type: "movie"
+            },
+            movie.id
+          )) })
         ] }),
         /* @__PURE__ */ jsxs("section", { children: [
-          /* @__PURE__ */ jsx(SectionTitle, { title: "Latest Series", subtitle: "Binge-worthy collections" }),
-          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: latestSeries.map((series) => /* @__PURE__ */ jsx(MediaCard, { item: series, type: "series" }, series.id)) })
+          /* @__PURE__ */ jsx(
+            SectionTitle,
+            {
+              title: "Latest Series",
+              subtitle: "Binge-worthy collections"
+            }
+          ),
+          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: latestSeries.map((series) => /* @__PURE__ */ jsx(
+            MediaCard,
+            {
+              item: series,
+              type: "series"
+            },
+            series.id
+          )) })
         ] })
       ] }),
       /* @__PURE__ */ jsx("footer", { className: "border-t border-white/10 py-12 bg-black", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-6", children: [

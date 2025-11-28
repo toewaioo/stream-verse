@@ -89,11 +89,16 @@ class Series extends Model
         return $this->seasons->sum('episode_count');
     }
 
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
     public function updateRatingStats(): void
     {
         $this->update([
-            'rating_average' => $this->seasons->flatMap->episodes->avg('rating_average') ?? 0,
-            'rating_count' => $this->seasons->flatMap->episodes->sum('rating_count'),
+            'rating_average' => $this->ratings()->avg('rating') ?? 0,
+            'rating_count' => $this->ratings()->count(),
         ]);
     }
 

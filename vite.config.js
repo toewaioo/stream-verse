@@ -9,7 +9,6 @@ export default defineConfig({
             input: "resources/js/app.jsx",
             ssr: "resources/js/ssr.jsx",
             refresh: true,
-            
         }),
 
         react(),
@@ -26,6 +25,8 @@ export default defineConfig({
                 description: "Your Ultimate Movie & Series Destination",
                 theme_color: "#050505",
                 background_color: "#050505",
+                start_url :"/",
+                scope: "/",
                 display: "standalone",
                 icons: [
                     {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, usePage, router } from "@inertiajs/react";
 import RatingWidget from "@/Components/Movie/RatingWidget";
 
 // --- Components ---
@@ -323,7 +323,26 @@ export default function SeriesDetails({
                                             ratingAverage={series.rating_average || 0}
                                             ratingCount={series.rating_count || 0}
                                             userRating={userRating}
-                                            onRate={(rating) => console.log(rating)}
+                                            onRate={(rating) => {
+                                                if (userRating) {
+                                                    // Update
+                                                    router.put(route('admin.ratings.update', userRating.id), {
+                                                        rating: rating
+                                                    }, {
+                                                        preserveScroll: true,
+                                                        onSuccess: () => console.log('Rating updated')
+                                                    });
+                                                } else {
+                                                    // Create
+                                                    router.post(route('admin.ratings.store'), {
+                                                        series_id: series.id,
+                                                        rating: rating
+                                                    }, {
+                                                        preserveScroll: true,
+                                                        onSuccess: () => console.log('Rating submitted')
+                                                    });
+                                                }
+                                            }}
                                         />
                                     ) : (
                                         <div className="text-gray-500 text-sm italic">

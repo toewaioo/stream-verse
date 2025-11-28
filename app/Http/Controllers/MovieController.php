@@ -17,6 +17,23 @@ class MovieController extends Controller
             'status' => session('status'),
         ]);
     }
+
+    /**
+     * Display a listing of movies.
+     */
+    public function index(): Response
+    {
+        $movies = Movie::where('visibility_status', 'public')
+            ->where('status', 'released')
+            ->orderBy('release_date', 'desc')
+            ->paginate(9);
+      
+
+        return Inertia::render('Movies/Index', [
+            'movies' => $movies,
+        ]);
+    }
+
     /**
      * Display the movie details page
      */

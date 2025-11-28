@@ -12,19 +12,28 @@ class HomeController extends Controller
 {
     public function index(): Response
     {
-        // Fetch featured content (e.g., a random high-rated movie)
-        $featured = Movie::where('status', 'released')
+        // Fetch featured content (5 movies and 5 series)
+        $featuredMovies = Movie::where('status', 'released')
             ->whereNotNull('banner_url')
             ->inRandomOrder()
-            ->first();
+            ->limit(5)
+            ->get()
+            ->map(function ($movie) {
+                $movie->type = 'movie';
+                return $movie;
+            });
 
-        // Fallback if no movie found
-        if (!$featured) {
-            $featured = Series::where('status', '!=', 'upcoming')
-                ->whereNotNull('banner_url')
-                ->inRandomOrder()
-                ->first();
-        }
+        $featuredSeries = Series::where('status', '!=', 'upcoming')
+            ->whereNotNull('banner_url')
+            ->inRandomOrder()
+            ->limit(5)
+            ->get()
+            ->map(function ($series) {
+                $series->type = 'series';
+                return $series;
+            });
+
+        $featured = $featuredMovies->concat($featuredSeries)->shuffle()->values();
 
         // Fetch latest movies
         $latestMovies = Movie::where('status', 'released')

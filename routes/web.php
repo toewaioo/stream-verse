@@ -10,12 +10,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\SeriesController as AdminSeriesController;
 use App\Http\Controllers\Admin\GenreController;
 use App\Http\Controllers\Admin\PersonController;
+use App\Http\Controllers\RatingController;
 
 use Inertia\Inertia;
 
 // Public Routes
+// Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/movies', [MovieController::class, 'index'])->name('movies.index');
 Route::get('/movies/{slug}', [MovieController::class, 'show'])->name('movies.show');
+Route::get('/series', [SeriesController::class, 'index'])->name('series.index');
 Route::get('/series/{slug}', [SeriesController::class, 'show'])->name('series.show');
 
 
@@ -53,6 +57,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::put('/persons/{person}', [PersonController::class, 'update'])->name('admin.persons.update');
     Route::delete('/persons/{person}', [PersonController::class, 'destroy'])->name('admin.persons.destroy');
 
+    Route::get('/ratings', [RatingController::class, 'index'])->name('admin.ratings');
+    Route::get('/ratings/{rating}', [RatingController::class, 'show'])->name('admin.ratings.show');
+    Route::post('/ratings', [RatingController::class, 'store'])->name('admin.ratings.store');
+    Route::put('/ratings/{rating}', [RatingController::class, 'update'])->name('admin.ratings.update');
+
     Route::get('/download-links', function () {
         return Inertia::render('Admin/DownloadLinks', [
             'downloadLinks' => \App\Models\DownloadLink::all(),
@@ -82,6 +91,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Ratings
+    Route::post('/ratings', [\App\Http\Controllers\RatingController::class, 'store'])->name('ratings.store');
+    Route::put('/ratings/{rating}', [\App\Http\Controllers\RatingController::class, 'update'])->name('ratings.update');
+    Route::delete('/ratings/{rating}', [\App\Http\Controllers\RatingController::class, 'destroy'])->name('ratings.destroy');
 });
 
 require __DIR__ . '/auth.php';

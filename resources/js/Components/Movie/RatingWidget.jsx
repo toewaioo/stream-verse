@@ -21,9 +21,20 @@ export default function RatingWidget({
     const renderStars = (rating, interactive = false) => {
         return [...Array(5)].map((_, index) => {
             const starValue = index + 1;
-            const isFilled = interactive
-                ? starValue <= (hoveredStar || selectedRating)
-                : starValue <= Math.round(rating);
+            // Backend is 1-10, Frontend is 1-5 stars
+            // If rating is 7.5 (backend), that's 3.75 stars.
+            // For display (non-interactive), we want to fill stars up to rating/2.
+            // For interactive, we check against hoveredStar (1-5) or selectedRating/2.
+
+            let isFilled;
+            if (interactive) {
+                // hoveredStar is 1-5
+                // selectedRating is 1-10
+                const currentDisplayRating = hoveredStar > 0 ? hoveredStar : (selectedRating / 2);
+                isFilled = starValue <= Math.ceil(currentDisplayRating);
+            } else {
+                isFilled = starValue <= Math.round(rating / 2);
+            }
 
             return (
                 <svg
@@ -33,7 +44,7 @@ export default function RatingWidget({
                         interactive && setHoveredStar(starValue)
                     }
                     onMouseLeave={() => interactive && setHoveredStar(0)}
-                    onClick={() => interactive && handleStarClick(starValue)}
+                    onClick={() => interactive && handleStarClick(starValue * 2)}
                     fill={isFilled ? "currentColor" : "none"}
                     stroke="currentColor"
                     strokeWidth="2"
@@ -79,8 +90,8 @@ export default function RatingWidget({
                     </div>
                     {selectedRating > 0 && (
                         <p className="text-xs text-gray-400 mt-2 text-center w-full">
-                            You rated this {selectedRating}{" "}
-                            {selectedRating === 1 ? "star" : "stars"}
+                            You rated this {selectedRating / 2}{" "}
+                            {selectedRating / 2 === 1 ? "star" : "stars"}
                         </p>
                     )}
                 </div>

@@ -11,6 +11,21 @@ use Illuminate\Support\Facades\Auth;
 class SeriesController extends Controller
 {
     /**
+     * Display a listing of series.
+     */
+    public function index(): Response
+    {
+        $series = Series::where('visibility_status', 'public')
+            ->where('status', '!=', 'upcoming')
+            ->orderBy('release_year_start', 'desc')
+            ->paginate(10);
+
+        return Inertia::render('Series/Index', [
+            'series' => $series,
+        ]);
+    }
+
+    /**
      * Display the series details page
      */
     public function show(string $slug): Response

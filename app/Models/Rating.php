@@ -12,6 +12,7 @@ class Rating extends Model
     protected $fillable = [
         'user_id',
         'movie_id',
+        'series_id',
         'episode_id',
         'rating',
         'review_text',
@@ -32,6 +33,11 @@ class Rating extends Model
     public function movie()
     {
         return $this->belongsTo(Movie::class);
+    }
+
+    public function series()
+    {
+        return $this->belongsTo(Series::class);
     }
 
     public function episode()
