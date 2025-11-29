@@ -21,8 +21,8 @@ class HandleInertiaRequests extends Middleware
      */
     public function ssr(): ?string
     {
-        return env('SSR_ENABLED', false) 
-            ? 'http://127.0.0.1:13714/render' 
+        return env('SSR_ENABLED', false)
+            ? 'http://127.0.0.1:13714/render'
             : null;
     }
 
@@ -48,7 +48,9 @@ class HandleInertiaRequests extends Middleware
             ],
             'footerData' => \Illuminate\Support\Facades\Cache::remember('footer_data', 3600, function () {
                 return [
-                    'categories' => \App\Models\Genre::withCount(['movies', 'series'])
+                    'categories' => \App\Models\Genre::whereHas('movies')
+                        ->orWhereHas('series')
+                        ->withCount(['movies', 'series'])
                         ->orderByDesc('movies_count')
                         ->take(8)
                         ->get()

@@ -50,9 +50,9 @@ class HomeController extends Controller
             ->get();
 
         // Fetch genres with counts (movies + series)
-        $genres = Genre::withCount(['movies', 'series'])
-            ->having('movies_count', '>', 0)
-            ->orHaving('series_count', '>', 0)
+        $genres = Genre::whereHas('movies')
+            ->orWhereHas('series')
+            ->withCount(['movies', 'series'])
             ->orderBy('name')
             ->limit(12)
             ->get()
@@ -63,8 +63,8 @@ class HomeController extends Controller
 
         // Fetch popular actors (those with most appearances)
         $actors = Person::actors()
+            ->whereHas('roles')
             ->withCount('roles')
-            ->having('roles_count', '>', 0)
             ->orderBy('roles_count', 'desc')
             ->limit(12)
             ->get();
@@ -101,7 +101,7 @@ class HomeController extends Controller
         $query = $request->input('q');
 
         if (!$query) {
-             return Inertia::render('Search', [
+            return Inertia::render('Search', [
                 'results' => [],
                 'query' => '',
                 'seo' => [
@@ -128,8 +128,8 @@ class HomeController extends Controller
             });
 
         $results = $movies->concat($series)->values();
-        
-        return Inertia::render('Search',[
+
+        return Inertia::render('Search', [
             'results' => $results,
             'query' => $query,
             'seo' => [

@@ -16,9 +16,9 @@ class Genre extends Model
         'is_active'
     ];
 
-    // protected $casts = [
-    //     'is_active' => 'boolean',
-    // ];
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
 
     // Relationships
     public function movies()
@@ -29,5 +29,9 @@ class Genre extends Model
     public function series()
     {
         return $this->belongsToMany(Series::class, 'genre_series');
+    }
+    public function scopeHasContent($query)
+    {
+        return $query->whereHas('movies')->orWhereHas('series');
     }
 }
