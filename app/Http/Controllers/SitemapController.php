@@ -10,8 +10,9 @@ class SitemapController extends Controller
 {
     public function index()
     {
-        $baseUrl = config('app.url');
-        
+
+        $baseUrl = config('app.url', 'https://127.0.0.1');
+
         // Start XML
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
@@ -29,7 +30,7 @@ class SitemapController extends Controller
         $movies = Movie::where('visibility_status', 'public')
             ->where('status', 'released')
             ->get(['slug', 'updated_at']);
-        
+
         foreach ($movies as $movie) {
             $xml .= $this->addUrl(
                 $baseUrl . '/movies/' . $movie->slug,
@@ -43,7 +44,7 @@ class SitemapController extends Controller
         $series = Series::where('visibility_status', 'public')
             ->where('status', '!=', 'upcoming')
             ->get(['slug', 'updated_at']);
-        
+
         foreach ($series as $item) {
             $xml .= $this->addUrl(
                 $baseUrl . '/series/' . $item->slug,
@@ -68,15 +69,15 @@ class SitemapController extends Controller
     {
         $xml = '<url>';
         $xml .= '<loc>' . htmlspecialchars($loc) . '</loc>';
-        
+
         if ($lastmod) {
             $xml .= '<lastmod>' . $lastmod->format('Y-m-d') . '</lastmod>';
         }
-        
+
         $xml .= '<changefreq>' . $changefreq . '</changefreq>';
         $xml .= '<priority>' . $priority . '</priority>';
         $xml .= '</url>';
-        
+
         return $xml;
     }
 }

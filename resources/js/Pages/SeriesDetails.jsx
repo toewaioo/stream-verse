@@ -168,7 +168,7 @@ export default function SeriesDetails({
 }) {
     const { auth } = usePage().props;
     const [showTrailer, setShowTrailer] = useState(false);
-    const [activeSeason, setActiveSeason] = useState(series.seasons?.[0] || null);
+    const [activeSeason, setActiveSeason] = useState(series.seasons?.[series.seasons?.length-1] || null);
     const [expandedEpisodeId, setExpandedEpisodeId] = useState(null);
 
     // Auto-expand first episode of active season
@@ -324,7 +324,7 @@ export default function SeriesDetails({
                         <div className="mb-16">
                             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Cast & Crew</h3>
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4">
-                                {series.actors?.slice(0, 6).map(actor => (
+                                {series.actors?.slice(0, 9).map(actor => (
                                     <div key={actor.id} className="flex items-center gap-3">
                                         <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-800 grayscale hover:grayscale-0 transition-all">
                                             <img src={actor.person?.avatar_url || '/images/placeholder-avatar.jpg'} alt="" className="w-full h-full object-cover" />
