@@ -1,41 +1,24 @@
 import { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
-
+import { usePage } from "@inertiajs/react";
+import Loader from "@/Components/Loader";
 export default function LoadingLayout({ children }) {
-    const [loading, setLoading] = useState(false);
-
+    const [loading, setLoading] = useState(true);
+    const { props } = usePage();
     useEffect(() => {
-        const start = () => setLoading(true);
-        const finish = () => setLoading(false);
-
-        router.on("start", start);
-        router.on("finish", finish);
-
-        return () => {
-            router.off("start", start);
-            router.off("finish", finish);
-        };
+        const minSplashTime = 1000;
+        const timeout = setTimeout(() => {
+            setLoading(false);
+        }, minSplashTime);
+        return () => clearTimeout(timeout);
     }, []);
+    if (loading) {
+        return (
+            <>
+                <Loader />
+            </>
+        );
+    }
 
-    return (
-        <>
-            {loading && (
-                <div
-                    style={{
-                        position: "fixed",
-                        inset: 0,
-                        background: "rgba(255,255,255,0.8)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        zIndex: 9999,
-                        fontSize: "2rem",
-                    }}
-                >
-                    Loading...
-                </div>
-            )}
-            {children}
-        </>
-    );
+    return <>{children}</>;
 }
