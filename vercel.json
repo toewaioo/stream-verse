@@ -10,8 +10,8 @@
                 "extensions": ["pgsql", "pdo_pgsql", "curl"]
             }
         },
-        { "src": "/public/**", "use": "@vercel/static" },
-        { "src": "/public/build/**", "use": "@vercel/static" }
+        { "src": "public/**", "use": "@vercel/static" },
+        { "src": "public/build/**", "use": "@vercel/static" }
     ],
 
     "routes": [
@@ -33,7 +33,7 @@
             "dest": "/api/index.php"
         }
     ],
-    "outputDirectory": "public/build",
+    "outputDirectory": "/public/build",
     "env": {
         "APP_NAME": "LuGyi",
         "APP_ENV": "production",
