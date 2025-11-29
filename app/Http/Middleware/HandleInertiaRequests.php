@@ -19,12 +19,12 @@ class HandleInertiaRequests extends Middleware
      *
      * @return string|null
      */
-    public function ssr(): ?string
-    {
-        return env('SSR_ENABLED', false)
-            ? 'http://127.0.0.1:13714/render'
-            : null;
-    }
+    // public function ssr(): ?string
+    // {
+    //     return env('SSR_ENABLED', false)
+    //         ? 'http://127.0.0.1:13714/render'
+    //         : null;
+    // }
 
     /**
      * Determine the current asset version.
