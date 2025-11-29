@@ -110,6 +110,48 @@ class SeriesController extends Controller
             'relatedSeries' => $relatedSeries,
             'userRating' => $userRating,
             'isVip' => false, // Placeholder
+            'seo' => [
+                'title' => $series->title,
+                'description' => substr($series->description, 0, 160),
+                'keywords' => $series->genres->pluck('name')->join(', ') . ', ' . $series->title . ', TV Series',
+                'url' => route('series.show', $series->slug),
+                'image' => $series->poster_url,
+                'type' => 'video.tv_show',
+                'structuredData' => [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'TVSeries',
+                    'name' => $series->title,
+                    'alternativeHeadline' => $series->original_title,
+                    'description' => $series->description,
+                    'image' => $series->poster_url,
+                    'dateCreated' => $series->release_year_start,
+                    'genre' => $series->genres->pluck('name')->toArray(),
+                    'numberOfSeasons' => $series->seasons->count(),
+                    'numberOfEpisodes' => $series->seasons->sum('episode_count'),
+                    'director' => $directors->map(fn($d) => [
+                        '@type' => 'Person',
+                        'name' => $d->person?->name
+                    ])->filter(fn($d) => $d['name'])->values()->toArray(),
+                    'actor' => $actors->map(fn($a) => [
+                        '@type' => 'Person',
+                        'name' => $a->person?->name
+                    ])->filter(fn($a) => $a['name'])->values()->toArray(),
+                    'aggregateRating' => $series->rating_count > 0 ? [
+                        '@type' => 'AggregateRating',
+                        'ratingValue' => $series->rating_average,
+                        'reviewCount' => $series->rating_count,
+                        'bestRating' => 10,
+                        'worstRating' => 1
+                    ] : null,
+                    'inLanguage' => $series->language,
+                    'countryOfOrigin' => $series->country,
+                    'trailer' => $series->trailer_url ? [
+                        '@type' => 'VideoObject',
+                        'name' => $series->title . ' Trailer',
+                        'url' => $series->trailer_url
+                    ] : null
+                ]
+            ]
         ]);
     }
 }

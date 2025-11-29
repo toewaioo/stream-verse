@@ -22,6 +22,10 @@ Route::get('/movies/{slug}', [MovieController::class, 'show'])->name('movies.sho
 Route::get('/series', [SeriesController::class, 'index'])->name('series.index');
 Route::get('/series/{slug}', [SeriesController::class, 'show'])->name('series.show');
 
+// Sitemap
+Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+Route::get('/search', [HomeController::class, 'search'])->name('search');
+
 
 // Admin web routes (Inertia pages)
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {

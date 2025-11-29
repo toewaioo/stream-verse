@@ -1,2 +1,12 @@
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /login
+Disallow: /register
+Disallow: /password/
+Disallow: /profile/
+
+# Allow everything else
+Allow: /
+
+# Sitemap location
+Sitemap: https://yourdomain.com/sitemap.xml

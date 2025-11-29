@@ -1,6 +1,7 @@
 import React from "react";
 import { Head, Link } from "@inertiajs/react";
 import MediaCard from "@/Components/MediaCard";
+import Footer from "@/Components/Footer";
 
 const Pagination = ({ links }) => {
     console.log(links);
@@ -10,11 +11,10 @@ const Pagination = ({ links }) => {
                 <Link
                     key={index}
                     href={link.url ? link.url : "#"}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                        link.active
-                            ? "bg-white text-black"
-                            : "bg-white/10 text-white hover:bg-white/20"
-                    } ${!link.url ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${link.active
+                        ? "bg-white text-black"
+                        : "bg-white/10 text-white hover:bg-white/20"
+                        } ${!link.url ? "opacity-50 cursor-not-allowed" : ""}`}
                     dangerouslySetInnerHTML={{ __html: link.label }}
                     disabled={!link.url}
                 />
@@ -54,6 +54,7 @@ export default function Index({ movies }) {
                         <Pagination links={movies.links} />
                     )}
                 </div>
+                <Footer />
             </div>
         </>
     );

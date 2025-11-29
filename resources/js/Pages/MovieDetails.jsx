@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Head, usePage, router } from "@inertiajs/react";
+import { usePage, router } from "@inertiajs/react";
 import RatingWidget from "@/Components/Movie/RatingWidget";
+import SeoHead from "@/Components/SeoHead";
+import Footer from "@/Components/Footer";
 
 // --- Components ---
 
@@ -86,13 +88,22 @@ export default function MovieDetails({
     relatedMovies,
     userRating,
     isVip,
+    seo,
 }) {
     const { auth } = usePage().props;
     const [showTrailer, setShowTrailer] = useState(false);
 
     return (
         <>
-            <Head title={movie.title} />
+            <SeoHead
+                title={seo?.title}
+                description={seo?.description}
+                keywords={seo?.keywords}
+                url={seo?.url}
+                image={seo?.image}
+                type={seo?.type}
+                structuredData={seo?.structuredData}
+            />
 
             <div className="min-h-screen bg-[#080808] text-white font-sans selection:bg-white selection:text-black flex flex-col md:flex-row">
 
@@ -121,11 +132,25 @@ export default function MovieDetails({
 
                     {/* Mobile Title Overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:hidden">
-                        <h1 className="text-4xl font-serif font-bold text-white leading-none mb-2">{movie.title}</h1>
-                        <div className="flex items-center gap-3 text-sm text-gray-300">
+                        <h1 className="text-4xl font-serif font-bold text-white leading-none mb-3">{movie.title}</h1>
+                        <div className="flex items-center gap-3 text-sm text-gray-300 mb-3">
                             <span>{new Date(movie.release_date).getFullYear()}</span>
                             <span>•</span>
                             <span>{movie.formatted_runtime}</span>
+                            {movie.rating_average && (
+                                <>
+                                    <span>•</span>
+                                    <span className="text-yellow-400">★ {movie.rating_average.toFixed(1)}</span>
+                                </>
+                            )}
+                        </div>
+                        {/* Mobile Genres */}
+                        <div className="flex flex-wrap gap-2">
+                            {movie.genres?.slice(0, 3).map(genre => (
+                                <span key={genre.id} className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white uppercase tracking-wider">
+                                    {genre.name}
+                                </span>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -291,6 +316,7 @@ export default function MovieDetails({
                         </div>
 
                     </div>
+                    <Footer />
                 </div>
 
             </div>

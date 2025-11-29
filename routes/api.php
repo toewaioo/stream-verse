@@ -1,7 +1,6 @@
+<?php
 
-    <?php
-    // routes/api.php
-    use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AuthController;
     use App\Http\Controllers\Api\MovieController;
     use App\Http\Controllers\Api\SeriesController;
     use App\Http\Controllers\Api\StreamingController;

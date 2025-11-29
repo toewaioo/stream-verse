@@ -15,6 +15,18 @@ class HandleInertiaRequests extends Middleware
     protected $rootView = 'app';
 
     /**
+     * Determines the SSR URL for rendering on the server.
+     *
+     * @return string|null
+     */
+    public function ssr(): ?string
+    {
+        return env('SSR_ENABLED', false) 
+            ? 'http://127.0.0.1:13714/render' 
+            : null;
+    }
+
+    /**
      * Determine the current asset version.
      */
     public function version(Request $request): ?string
@@ -34,6 +46,34 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'footerData' => \Illuminate\Support\Facades\Cache::remember('footer_data', 3600, function () {
+                return [
+                    'categories' => \App\Models\Genre::withCount(['movies', 'series'])
+                        ->orderByDesc('movies_count')
+                        ->take(8)
+                        ->get()
+                        ->map(function ($genre) {
+                            return [
+                                'id' => $genre->id,
+                                'name' => $genre->name,
+                                'slug' => $genre->slug,
+                                'count' => $genre->movies_count + $genre->series_count,
+                            ];
+                        }),
+                    'actors' => \App\Models\Person::actors()
+                        ->withCount(['movies', 'series'])
+                        ->orderByDesc('movies_count')
+                        ->take(8)
+                        ->get()
+                        ->map(function ($actor) {
+                            return [
+                                'id' => $actor->id,
+                                'name' => $actor->name,
+                                'count' => $actor->movies_count + $actor->series_count,
+                            ];
+                        }),
+                ];
+            }),
         ];
     }
 }

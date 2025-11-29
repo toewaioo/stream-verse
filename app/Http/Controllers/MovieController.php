@@ -138,6 +138,47 @@ class MovieController extends Controller
             'ratingDistribution' => $ratingDistribution,
             'userRating' => $userRating,
             'isVip' => false,
+            'seo' => [
+                'title' => $movie->title,
+                'description' => substr($movie->description, 0, 160),
+                'keywords' => $movie->genres->pluck('name')->join(', ') . ', ' . $movie->title,
+                'url' => route('movies.show', $movie->slug),
+                'image' => $movie->poster_url,
+                'type' => 'video.movie',
+                'structuredData' => [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Movie',
+                    'name' => $movie->title,
+                    'alternativeHeadline' => $movie->original_title,
+                    'description' => $movie->description,
+                    'image' => $movie->poster_url,
+                    'datePublished' => $movie->release_date?->format('Y-m-d'),
+                    'genre' => $movie->genres->pluck('name')->toArray(),
+                    'director' => $directors->map(fn($d) => [
+                        '@type' => 'Person',
+                        'name' => $d->person?->name
+                    ])->filter(fn($d) => $d['name'])->values()->toArray(),
+                    'actor' => $actors->map(fn($a) => [
+                        '@type' => 'Person',
+                        'name' => $a->person?->name
+                    ])->filter(fn($a) => $a['name'])->values()->toArray(),
+                    'aggregateRating' => $movie->rating_count > 0 ? [
+                        '@type' => 'AggregateRating',
+                        'ratingValue' => $movie->rating_average,
+                        'reviewCount' => $movie->rating_count,
+                        'bestRating' => 10,
+                        'worstRating' => 1
+                    ] : null,
+                    'duration' => $movie->runtime ? 'PT' . $movie->runtime . 'M' : null,
+                    'inLanguage' => $movie->language,
+                    'countryOfOrigin' => $movie->country,
+                    'trailer' => $movie->trailer_url ? [
+                        '@type' => 'VideoObject',
+                        'name' => $movie->title . ' Trailer',
+                        'url' => $movie->trailer_url
+                    ] : null
+                ]
+            ]
         ]);
     }
 }

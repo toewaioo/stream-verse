@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Head, usePage, router } from "@inertiajs/react";
+import { usePage, router } from "@inertiajs/react";
+import SeoHead from "@/Components/SeoHead";
 import RatingWidget from "@/Components/Movie/RatingWidget";
+import Footer from "@/Components/Footer";
 
 // --- Components ---
 
@@ -162,6 +164,7 @@ export default function SeriesDetails({
     relatedSeries,
     userRating,
     isVip,
+    seo,
 }) {
     const { auth } = usePage().props;
     const [showTrailer, setShowTrailer] = useState(false);
@@ -171,13 +174,21 @@ export default function SeriesDetails({
     // Auto-expand first episode of active season
     useEffect(() => {
         if (activeSeason && activeSeason.episodes?.length > 0) {
-            setExpandedEpisodeId(activeSeason.episodes[0].id);
+            setExpandedEpisodeId(activeSeason.episodes[activeSeason.episodes.length - 1].id);
         }
     }, [activeSeason]);
 
     return (
         <>
-            <Head title={series.title} />
+            <SeoHead
+                title={seo?.title}
+                description={seo?.description}
+                keywords={seo?.keywords}
+                url={seo?.url}
+                image={seo?.image}
+                type={seo?.type}
+                structuredData={seo?.structuredData}
+            />
 
             <div className="min-h-screen bg-[#080808] text-white font-sans selection:bg-white selection:text-black flex flex-col md:flex-row">
 
@@ -206,11 +217,25 @@ export default function SeriesDetails({
 
                     {/* Mobile Title Overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:hidden">
-                        <h1 className="text-4xl font-serif font-bold text-white leading-none mb-2">{series.title}</h1>
-                        <div className="flex items-center gap-3 text-sm text-gray-300">
-                            <span>{series.release_year_start}</span>
+                        <h1 className="text-4xl font-serif font-bold text-white leading-none mb-3">{series.title}</h1>
+                        <div className="flex items-center gap-3 text-sm text-gray-300 mb-3">
+                            <span>{series.release_year_start} - {series.release_year_end || 'Present'}</span>
                             <span>•</span>
                             <span>{series.seasons?.length} Seasons</span>
+                            {series.rating_average && (
+                                <>
+                                    <span>•</span>
+                                    <span className="text-yellow-400">★ {series.rating_average.toFixed(1)}</span>
+                                </>
+                            )}
+                        </div>
+                        {/* Mobile Genres */}
+                        <div className="flex flex-wrap gap-2">
+                            {series.genres?.slice(0, 3).map(genre => (
+                                <span key={genre.id} className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white uppercase tracking-wider">
+                                    {genre.name}
+                                </span>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -259,7 +284,7 @@ export default function SeriesDetails({
                             {series.seasons && series.seasons.length > 0 ? (
                                 <>
                                     <div className="flex overflow-x-auto pb-4 mb-6 gap-4 border-b border-white/10 custom-scrollbar">
-                                        {series.seasons.map(season => (
+                                        {series.seasons.slice().reverse().map(season => (
                                             <button
                                                 key={season.id}
                                                 onClick={() => setActiveSeason(season)}
@@ -273,7 +298,7 @@ export default function SeriesDetails({
                                     {/* Episodes List */}
                                     <div className="border border-white/10 rounded-lg overflow-hidden bg-white/5">
                                         {activeSeason?.episodes && activeSeason.episodes.length > 0 ? (
-                                            activeSeason.episodes.map(episode => (
+                                            activeSeason.episodes.slice().reverse().map(episode => (
                                                 <EpisodeRow
                                                     key={episode.id}
                                                     episode={episode}
@@ -370,6 +395,7 @@ export default function SeriesDetails({
                         </div>
 
                     </div>
+                    <Footer />
                 </div>
 
             </div>
