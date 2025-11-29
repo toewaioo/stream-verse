@@ -11,8 +11,7 @@
             }
         },
         { "src": "public/**", "use": "@vercel/static" },
-        { "src": "public/build/**", "use": "@vercel/static" },
-        { "src": "bootstrap/ssr/ssr.js", "use": "@vercel/node" }
+        { "src": "public/build/**", "use": "@vercel/static" }
     ],
 
     "routes": [
@@ -30,12 +29,8 @@
             "dest": "public/$1/$2"
         },
         {
-            "src": "/api/(.*)",
-            "dest": "/api/index.php"
-        },
-        {
             "src": "/(.*)",
-            "dest": "bootstrap/ssr/ssr.js"
+            "dest": "/api/index.php"
         }
     ],
     "outputDirectory": "public/build",
