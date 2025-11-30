@@ -114,14 +114,23 @@ export default function TgAuth({ user }) {
                         "No initData available - cannot authenticate",
                         "warning"
                     );
-                    setStatus("No Telegram data available");
+                    setStatus("Loading ...");
+                    setTimeout(() => {
+                        addLog("Redirecting to home page...", "info");
+                        router.visit(route("home"));
+                    }, 3000);
                 } else if (loginAttempted.current) {
                     addLog("Login already attempted", "info");
+                    setStatus("Authenticate success");
+                    setTimeout(() => {
+                        addLog("Redirecting to home page...", "info");
+                        router.visit(route("home"));
+                    }, 3000);
                 }
             }
         } else {
             addLog("Not running in Telegram WebApp environment", "warning");
-            setStatus("Not a Telegram Mini App");
+            setStatus("Loading ....");
 
             // Redirect to regular home page if not in Telegram
             setTimeout(() => {
@@ -145,22 +154,18 @@ export default function TgAuth({ user }) {
     };
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center p-6">
-            <div className="w-full max-w-2xl">
-                {/* Status Card */}
-                <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg shadow-2xl p-8 mb-6 border border-gray-700">
-                    <div className="flex items-center justify-center mb-6">
-                        <Loader title={"Telegram Authentication"}status={status}/>
-                    </div>
-                    {user && (
-                        <div className="text-center text-sm text-green-400">
-                            ✓ Logged in as: {user.name || user.email}
-                        </div>
-                    )}
-                </div>
+        <>
+            {/* Status Card */}
+            <Loader title={"Authentication"} status={status} />
 
-                {/* Developer Logs */}
-                {/* <div className="bg-gray-900 rounded-lg shadow-xl p-6 border border-gray-700">
+            {user && (
+                <div className="text-center text-sm text-green-400">
+                    ✓ Logged in as: {user.name || user.email}
+                </div>
+            )}
+
+            {/* Developer Logs */}
+            {/* <div className="bg-gray-900 rounded-lg shadow-xl p-6 border border-gray-700">
                     <h2 className="text-xl font-bold mb-4 flex items-center">
                         <span className="mr-2">🔧</span>
                         Developer Logs
@@ -184,16 +189,15 @@ export default function TgAuth({ user }) {
                     </div>
                 </div> */}
 
-                {/* Manual Navigation */}
-                <div className="mt-6 text-center">
-                    <button
-                        onClick={() => router.visit(route("home"))}
-                        className="px-6 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors rounded"
-                    >
-                        Go to Home
-                    </button>
-                </div>
+            {/* Manual Navigation */}
+            <div className="mt-6 text-center">
+                <button
+                    onClick={() => router.visit(route("home"))}
+                    className="px-6 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors rounded"
+                >
+                    Go to Home
+                </button>
             </div>
-        </div>
+        </>
     );
 }

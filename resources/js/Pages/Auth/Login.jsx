@@ -26,13 +26,18 @@ export default function Login({ status, canResetPassword }) {
         <GuestLayout>
             <Head title="Log in" />
 
+            <div className="mb-8 text-center">
+                <h2 className="text-3xl font-bold text-white">Welcome Back</h2>
+                <p className="mt-2 text-sm text-gray-400">Please sign in to your account</p>
+            </div>
+
             {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
+                <div className="mb-4 rounded-lg bg-green-500/10 px-4 py-3 text-sm font-medium text-green-400 border border-green-500/20">
                     {status}
                 </div>
             )}
 
-            <form onSubmit={submit}>
+            <form onSubmit={submit} className="space-y-6">
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
@@ -44,13 +49,14 @@ export default function Login({ status, canResetPassword }) {
                         className="mt-1 block w-full"
                         autoComplete="username"
                         isFocused={true}
+                        placeholder="Enter your email"
                         onChange={(e) => setData('email', e.target.value)}
                     />
 
                     <InputError message={errors.email} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
+                <div>
                     <InputLabel htmlFor="password" value="Password" />
 
                     <TextInput
@@ -60,13 +66,14 @@ export default function Login({ status, canResetPassword }) {
                         value={data.password}
                         className="mt-1 block w-full"
                         autoComplete="current-password"
+                        placeholder="Enter your password"
                         onChange={(e) => setData('password', e.target.value)}
                     />
 
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="mt-4 block">
+                <div className="flex items-center justify-between">
                     <label className="flex items-center">
                         <Checkbox
                             name="remember"
@@ -74,39 +81,52 @@ export default function Login({ status, canResetPassword }) {
                             onChange={(e) =>
                                 setData('remember', e.target.checked)
                             }
+                            className="bg-gray-900 border-gray-700 text-blue-600 focus:ring-blue-500 rounded"
                         />
-                        <span className="ms-2 text-sm text-gray-600">
+                        <span className="ms-2 text-sm text-gray-400">
                             Remember me
                         </span>
                     </label>
-                </div>
 
-                <div className="mt-4 flex items-center justify-end">
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
                         >
-                            Forgot your password?
+                            Forgot password?
                         </Link>
                     )}
+                </div>
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
+                <div>
+                    <PrimaryButton disabled={processing}>
+                        Sign in
                     </PrimaryButton>
                 </div>
 
                 <div className="mt-6">
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-300" />
+                            <div className="w-full border-t border-gray-700" />
                         </div>
                         <div className="relative flex justify-center text-sm">
-                            <span className="bg-white px-2 text-gray-500">Or continue with</span>
+                            <span className="bg-[#151c27] px-2 text-gray-500">Or continue with</span>
                         </div>
                     </div>
 
-                    <TelegramLoginWidget botName={usePage().props.telegramBotUsername} />
+                    <div className="mt-6">
+                        <TelegramLoginWidget botName={usePage().props.telegramBotUsername} />
+                    </div>
+                </div>
+
+                <div className="mt-6 text-center text-sm text-gray-400">
+                    Don't have an account?{' '}
+                    <Link
+                        href={route('register')}
+                        className="font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                    >
+                        Sign up
+                    </Link>
                 </div>
             </form>
         </GuestLayout>

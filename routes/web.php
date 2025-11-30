@@ -20,7 +20,7 @@ use Inertia\Inertia;
 
 // Public Routes
 // Public Routes
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/movies', [MovieController::class, 'index'])->name('movies.index');
 Route::get('/movies/{slug}', [MovieController::class, 'show'])->name('movies.show');
 Route::get('/series', [SeriesController::class, 'index'])->name('series.index');
@@ -42,7 +42,7 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 Route::get('/search', [HomeController::class, 'search'])->name('search');
 
 // Telegram Authentication Page (for Mini App)
-Route::get('/tgauth', function () {
+Route::get('/', function () {
     return Inertia::render('Auth/TgAuth', [
         'auth' => [
             'user' => Auth::user(),

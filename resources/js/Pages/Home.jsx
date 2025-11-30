@@ -67,7 +67,7 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
                     {/* --- HERO SECTION --- */}
                     {/* --- HERO SECTION --- */}
                     {featured && featured.length > 0 && (
-                        <div className="relative h-[85vh] w-full overflow-hidden group">
+                        <div className="relative h-[100vh] w-full overflow-hidden group">
                             {featured.map((item, index) => (
                                 <div
                                     key={`${item.type}-${item.id}`}
@@ -150,7 +150,7 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
                     )}
 
                     {/* --- CONTENT SECTIONS --- */}
-                    <div className="container mx-auto px-6 md:px-12 py-20 space-y-24">
+                    <div className="container mx-auto px-2 md:px-12 py-20 space-y-10">
                         {/* Latest Movies */}
                         <section>
                             <SectionTitle
@@ -158,7 +158,7 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
                                 subtitle="Fresh from the cinema"
                                 href={route("movies.index")}
                             />
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8">
+                            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8">
                                 {latestMovies.map((movie) => (
                                     <MediaCard
                                         key={movie.id}
@@ -170,13 +170,13 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
                         </section>
 
                         {/* Latest Series */}
-                        <section>
+                        <section className="mt-0">
                             <SectionTitle
                                 title="Latest Series"
                                 subtitle="Binge-worthy collections"
                                 href={route("series.index")}
                             />
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8">
+                            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8">
                                 {latestSeries.map((series) => (
                                     <MediaCard
                                         key={series.id}
