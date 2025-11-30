@@ -4,6 +4,7 @@ import { Transition, Dialog, TransitionChild, DialogPanel, Combobox } from "@hea
 import React, { createContext, useState, useContext, useEffect, forwardRef, useRef, useImperativeHandle, useMemo } from "react";
 import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import axios$1 from "axios";
+import { debounce } from "lodash";
 import createServer from "@inertiajs/react/server";
 import ReactDOMServer from "react-dom/server";
 function ApplicationLogo(props) {
@@ -523,6 +524,28 @@ const __vite_glob_0_0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.def
   __proto__: null,
   default: AdminDashboard
 }, Symbol.toStringTag, { value: "Module" }));
+function useFormPersistence(key, data, setData) {
+  useEffect(() => {
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setData((prevData) => ({ ...prevData, ...parsed }));
+      } catch (error) {
+        console.error("Error parsing local storage data:", error);
+      }
+    }
+  }, [key]);
+  useEffect(() => {
+    if (data) {
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+  }, [data, key]);
+  const clearStorage = () => {
+    localStorage.removeItem(key);
+  };
+  return { clearStorage };
+}
 function InputLabel({
   value,
   className = "",
@@ -607,11 +630,14 @@ function GenreForm({ genre, onClose, onSuccess }) {
     name: genre?.name || "",
     slug: genre?.slug || ""
   });
+  const storageKey = genre?.id ? `genre_form_update_${genre.id}` : "genre_form_create";
+  const { clearStorage } = useFormPersistence(storageKey, data, setData);
   const handleSubmit = (e) => {
     e.preventDefault();
     if (genre) {
       put(route("admin.genres.update", genre.id), {
         onSuccess: () => {
+          clearStorage();
           onSuccess();
           onClose();
         }
@@ -619,6 +645,7 @@ function GenreForm({ genre, onClose, onSuccess }) {
     } else {
       post(route("admin.genres.store"), {
         onSuccess: () => {
+          clearStorage();
           onSuccess();
           onClose();
         }
@@ -928,6 +955,8 @@ function MovieForm({
     watch_links: movie?.watch_links || [],
     download_links: movie?.download_links || []
   });
+  const storageKey = movie?.id ? `movie_form_update_${movie.id}` : "movie_form_create";
+  const { clearStorage } = useFormPersistence(storageKey, data, setData);
   const [slugError, setSlugError] = useState("");
   React.useEffect(() => {
     if (data.title && !movie?.id) {
@@ -1037,6 +1066,7 @@ function MovieForm({
     if (movie && movie.id) {
       put(route("admin.movies.update", movie.id), {
         onSuccess: () => {
+          clearStorage();
           if (onSuccess) onSuccess();
           if (onClose) onClose();
         }
@@ -1044,6 +1074,7 @@ function MovieForm({
     } else {
       post(route("admin.movies.store"), {
         onSuccess: () => {
+          clearStorage();
           if (onSuccess) onSuccess();
           if (onClose) onClose();
         }
@@ -1188,7 +1219,7 @@ function MovieForm({
             id: "release_date",
             type: "date",
             className: "mt-1 block w-full",
-            value: data.release_date,
+            value: data.release_date.split("T")[0],
             onChange: (e) => setData("release_date", e.target.value)
           }
         ),
@@ -2003,6 +2034,7 @@ function AdminMovies({ movies, genres, persons, auth }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMovie, setEditingMovie] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const isFirst = useRef(true);
   console.log(movies);
   const openCreateModal = () => {
     setEditingMovie(null);
@@ -2016,15 +2048,19 @@ function AdminMovies({ movies, genres, persons, auth }) {
     setIsModalOpen(false);
     setEditingMovie(null);
   };
-  React.useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      router.get(
-        route("admin.movies"),
-        { search: searchQuery },
-        { preserveState: true, replace: true }
-      );
-    }, 300);
-    return () => clearTimeout(delayDebounceFn);
+  const debounceSearch = debounce((value) => {
+    router.get(
+      route("admin.series"),
+      { search: searchQuery },
+      { preserveState: true, replace: true }
+    );
+  });
+  useEffect(() => {
+    if (isFirst.current) {
+      isFirst.current = false;
+      return;
+    }
+    debounceSearch(searchQuery);
   }, [searchQuery]);
   const handleDelete = (movie) => {
     if (confirm("Are you sure you want to delete this movie?")) {
@@ -2206,11 +2242,14 @@ function PersonForm({ person, onClose, onSuccess }) {
     place_of_birth: person?.place_of_birth || "",
     avatar_url: person?.avatar_url || ""
   });
+  const storageKey = person?.id ? `person_form_update_${person.id}` : "person_form_create";
+  const { clearStorage } = useFormPersistence(storageKey, data, setData);
   const handleSubmit = (e) => {
     e.preventDefault();
     if (person) {
       put(route("admin.persons.update", person.id), {
         onSuccess: () => {
+          clearStorage();
           onSuccess();
           onClose();
         }
@@ -2218,6 +2257,7 @@ function PersonForm({ person, onClose, onSuccess }) {
     } else {
       post(route("admin.persons.store"), {
         onSuccess: () => {
+          clearStorage();
           onSuccess();
           onClose();
         }
@@ -2867,6 +2907,8 @@ function SeriesForm({
     })) || [],
     episode_links: getInitialEpisodeLinks()
   });
+  const storageKey = series?.id ? `series_form_update_${series.id}` : "series_form_create";
+  const { clearStorage } = useFormPersistence(storageKey, data, setData);
   const [slugError, setSlugError] = useState("");
   useEffect(() => {
     if (data.title && !series?.id) {
@@ -2983,6 +3025,7 @@ function SeriesForm({
     e.preventDefault();
     const options = {
       onSuccess: () => {
+        clearStorage();
         if (onSuccess) onSuccess();
         if (onClose) onClose();
       }
@@ -3559,23 +3602,33 @@ function AdminSeries({ series, genres, persons, auth }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSeries, setEditingSeries] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const isFirst = useRef(true);
+  const debounceSearch = debounce((value) => {
+    router.get(
+      route("admin.series"),
+      { search: searchQuery },
+      { preserveState: true, replace: true }
+    );
+  });
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      router.get(
-        route("admin.series"),
-        { search: searchQuery },
-        { preserveState: true, replace: true }
-      );
-    }, 300);
-    return () => clearTimeout(delayDebounceFn);
+    if (isFirst.current) {
+      isFirst.current = false;
+      return;
+    }
+    debounceSearch(searchQuery);
   }, [searchQuery]);
   const openCreateModal = () => {
     setEditingSeries(null);
     setIsModalOpen(true);
   };
-  const openEditModal = (series2) => {
-    setEditingSeries(series2);
-    setIsModalOpen(true);
+  const openEditModal = async (series2) => {
+    try {
+      const response = await axios.get(route("admin.series.show", series2.id));
+      setEditingSeries(response.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Failed to fetch series details", error);
+    }
   };
   const closeModal = () => {
     setIsModalOpen(false);
@@ -3632,7 +3685,7 @@ function AdminSeries({ series, genres, persons, auth }) {
                 ] })
               ] }) }),
               /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400", children: [
-                item.seasons.length || 0,
+                item.seasons_count || 0,
                 " ",
                 "Seasons"
               ] }),
@@ -4092,47 +4145,6 @@ const __vite_glob_0_16 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: VerifyEmail
 }, Symbol.toStringTag, { value: "Module" }));
-function SeoHead({
-  title,
-  description,
-  keywords,
-  image,
-  url,
-  type = "website",
-  structuredData = null,
-  author = null,
-  publishedTime = null,
-  modifiedTime = null
-}) {
-  const appName = "Cineverse";
-  const fullTitle = title ? `${title} - ${appName}` : appName;
-  const defaultDescription = "Your Ultimate Movie & Series Destination - Stream and download the latest movies and TV series";
-  const metaDescription = description || defaultDescription;
-  const canonicalUrl = url || (typeof window !== "undefined" ? window.location.href : "");
-  return /* @__PURE__ */ jsxs(Head, { children: [
-    /* @__PURE__ */ jsx("title", { children: fullTitle }),
-    /* @__PURE__ */ jsx("meta", { name: "description", content: metaDescription }),
-    keywords && /* @__PURE__ */ jsx("meta", { name: "keywords", content: keywords }),
-    author && /* @__PURE__ */ jsx("meta", { name: "author", content: author }),
-    canonicalUrl && /* @__PURE__ */ jsx("link", { rel: "canonical", href: canonicalUrl }),
-    /* @__PURE__ */ jsx("meta", { property: "og:title", content: fullTitle }),
-    /* @__PURE__ */ jsx("meta", { property: "og:description", content: metaDescription }),
-    /* @__PURE__ */ jsx("meta", { property: "og:type", content: type }),
-    canonicalUrl && /* @__PURE__ */ jsx("meta", { property: "og:url", content: canonicalUrl }),
-    image && /* @__PURE__ */ jsx("meta", { property: "og:image", content: image }),
-    image && /* @__PURE__ */ jsx("meta", { property: "og:image:alt", content: title || appName }),
-    /* @__PURE__ */ jsx("meta", { property: "og:site_name", content: appName }),
-    publishedTime && /* @__PURE__ */ jsx("meta", { property: "article:published_time", content: publishedTime }),
-    modifiedTime && /* @__PURE__ */ jsx("meta", { property: "article:modified_time", content: modifiedTime }),
-    /* @__PURE__ */ jsx("meta", { name: "twitter:card", content: image ? "summary_large_image" : "summary" }),
-    /* @__PURE__ */ jsx("meta", { name: "twitter:title", content: fullTitle }),
-    /* @__PURE__ */ jsx("meta", { name: "twitter:description", content: metaDescription }),
-    image && /* @__PURE__ */ jsx("meta", { name: "twitter:image", content: image }),
-    /* @__PURE__ */ jsx("meta", { name: "robots", content: "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" }),
-    /* @__PURE__ */ jsx("meta", { name: "googlebot", content: "index, follow" }),
-    structuredData && /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify(structuredData) })
-  ] });
-}
 function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -4327,48 +4339,18 @@ function Navbar() {
     )
   ] });
 }
-const PlayIcon$2 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
-function MediaCard({ item, type }) {
-  const href = type === "movie" ? route("movies.show", item.slug) : route("series.show", item.slug);
-  return /* @__PURE__ */ jsxs(Link, { href, className: "group block relative", children: [
-    /* @__PURE__ */ jsxs("div", { className: "aspect-[2/3] overflow-hidden rounded-sm bg-gray-900 mb-3 relative", children: [
-      /* @__PURE__ */ jsx(
-        "img",
-        {
-          src: item.poster_url,
-          alt: item.title,
-          className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-        }
-      ),
-      /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" }),
-      /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300", children: /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center", children: /* @__PURE__ */ jsx(PlayIcon$2, { className: "w-5 h-5 text-white" }) }) }),
-      item.rating_average > 0 && /* @__PURE__ */ jsx("div", { className: "absolute top-2 right-2 px-1.5 py-0.5 bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white", children: item.rating_average })
-    ] }),
-    /* @__PURE__ */ jsx("h3", { className: "text-white font-serif text-lg leading-tight group-hover:underline decoration-white/30 underline-offset-4 truncate", children: item.title }),
-    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-xs text-gray-500 mt-1 font-mono", children: [
-      /* @__PURE__ */ jsx("span", { children: item.release_year || new Date(item.created_at).getFullYear() }),
-      /* @__PURE__ */ jsx("span", { children: "•" }),
-      /* @__PURE__ */ jsx("span", { children: type === "movie" ? "Movie" : "Series" })
-    ] })
-  ] });
-}
 function Footer() {
   const { footerData } = usePage().props;
-  return /* @__PURE__ */ jsx("footer", { className: "border-t border-white/10 py-12 bg-black text-white", children: /* @__PURE__ */ jsx("div", { className: "container mx-auto px-6 md:px-12", children: /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-12 mb-12", children: [
-    /* @__PURE__ */ jsxs("div", { children: [
-      /* @__PURE__ */ jsxs("div", { className: "text-2xl font-serif font-bold tracking-tighter mb-4", children: [
-        "CINE",
-        /* @__PURE__ */ jsx("span", { className: "text-gray-600", children: "VERSE" })
-      ] }),
-      /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm mb-6", children: "Your ultimate destination for movies and series." }),
-      /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-600 uppercase tracking-widest", children: "© 2025 Cineverse. All rights reserved." })
-    ] }),
+  return /* @__PURE__ */ jsx("footer", { className: "border-t border-white/10 py-12 bg-black text-white", children: /* @__PURE__ */ jsx("div", { className: "container mx-auto px-6 md:px-12", children: /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-4 gap-12 mb-12", children: [
     /* @__PURE__ */ jsxs("div", { children: [
       /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold uppercase tracking-widest text-gray-500 mb-6", children: "Categories" }),
       /* @__PURE__ */ jsx("ul", { className: "space-y-2", children: footerData?.categories?.map((category) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(
         Link,
         {
-          href: route("movies.index", { genre: category.slug }),
+          href: route(
+            "genre.show",
+            category.slug
+          ),
           className: "text-gray-400 hover:text-white transition-colors flex justify-between text-sm group",
           children: [
             /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform", children: category.name }),
@@ -4382,7 +4364,7 @@ function Footer() {
       /* @__PURE__ */ jsx("ul", { className: "space-y-2", children: footerData?.actors?.map((actor) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(
         Link,
         {
-          href: route("movies.index", { actor: actor.id }),
+          href: route("person.show", actor.id),
           className: "text-gray-400 hover:text-white transition-colors flex justify-between text-sm group",
           children: [
             /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform", children: actor.name }),
@@ -4390,8 +4372,143 @@ function Footer() {
           ]
         }
       ) }, actor.id)) })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold uppercase tracking-widest text-gray-500 mb-6", children: "Quick Links" }),
+      /* @__PURE__ */ jsxs("ul", { className: "space-y-2", children: [
+        /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(
+          Link,
+          {
+            href: route("about"),
+            className: "text-gray-400 hover:text-white transition-colors text-sm group",
+            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: "About Us" })
+          }
+        ) }),
+        /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(
+          Link,
+          {
+            href: route("contact"),
+            className: "text-gray-400 hover:text-white transition-colors text-sm group",
+            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: "Contact" })
+          }
+        ) }),
+        /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(
+          Link,
+          {
+            href: route("faq"),
+            className: "text-gray-400 hover:text-white transition-colors text-sm group",
+            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: "FAQ" })
+          }
+        ) }),
+        /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(
+          Link,
+          {
+            href: route("privacy"),
+            className: "text-gray-400 hover:text-white transition-colors text-sm group",
+            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: "Privacy Policy" })
+          }
+        ) }),
+        /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(
+          Link,
+          {
+            href: route("terms"),
+            className: "text-gray-400 hover:text-white transition-colors text-sm group",
+            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: "Terms of Service" })
+          }
+        ) })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsxs("div", { className: "text-2xl font-serif font-bold tracking-tighter mb-4", children: [
+        "CINE",
+        /* @__PURE__ */ jsx("span", { className: "text-gray-600", children: "VERSE" })
+      ] }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm mb-6", children: "Your ultimate destination for movies and series." }),
+      /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-600 uppercase tracking-widest", children: "© 2025 Cineverse. All rights reserved." })
     ] })
   ] }) }) });
+}
+const PlayIcon$2 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
+const StarIcon = ({ className = "w-3 h-3" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" }) });
+function MediaCard({ item, type }) {
+  const href = type === "movie" ? route("movies.show", item.slug) : route("series.show", item.slug);
+  const year = item.release_year || item.release_year_start || (item.release_date ? new Date(item.release_date).getFullYear() : null) || (item.created_at ? new Date(item.created_at).getFullYear() : "N/A");
+  const duration = type === "movie" && item.runtime ? `${item.runtime} min` : null;
+  const seasons = type === "series" && item.seasons_count ? `${item.seasons_count} Seasons` : null;
+  return /* @__PURE__ */ jsxs(Link, { href, className: "group block relative w-full", children: [
+    /* @__PURE__ */ jsxs("div", { className: "aspect-[2/3] overflow-hidden rounded-lg bg-gray-900 mb-3 relative shadow-lg group-hover:shadow-2xl transition-all duration-500", children: [
+      /* @__PURE__ */ jsx(
+        "img",
+        {
+          src: item.poster_url,
+          alt: item.title,
+          loading: "lazy",
+          className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+        }
+      ),
+      /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" }),
+      item.is_vip_only && /* @__PURE__ */ jsx("div", { className: "absolute top-2 left-2 px-2 py-0.5 bg-yellow-500 text-black text-[10px] font-black uppercase tracking-wider rounded-sm shadow-md z-10", children: "VIP" }),
+      item.rating_average > 0 && /* @__PURE__ */ jsxs("div", { className: "absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 bg-black/60 backdrop-blur-md border border-white/10 rounded-md text-xs font-bold text-yellow-400 z-10", children: [
+        /* @__PURE__ */ jsx(StarIcon, {}),
+        /* @__PURE__ */ jsx("span", { children: Number(item.rating_average).toFixed(1) })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-50 group-hover:scale-100", children: /* @__PURE__ */ jsx("div", { className: "w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-xl group-hover:bg-indigo-600/90 group-hover:border-indigo-500 transition-colors", children: /* @__PURE__ */ jsx(PlayIcon$2, { className: "w-6 h-6 text-white ml-1" }) }) })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "space-y-1", children: [
+      /* @__PURE__ */ jsx("h3", { className: "text-white font-medium text-base leading-tight group-hover:text-indigo-400 transition-colors truncate", children: item.title }),
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-xs text-gray-400 font-medium", children: [
+        /* @__PURE__ */ jsx("span", { className: "text-gray-300", children: year }),
+        /* @__PURE__ */ jsx("span", { className: "w-1 h-1 rounded-full bg-gray-600" }),
+        /* @__PURE__ */ jsx("span", { className: "uppercase tracking-wide text-[10px] border border-gray-700 px-1 rounded text-gray-400", children: type === "movie" ? "Movie" : "Series" }),
+        (duration || seasons) && /* @__PURE__ */ jsxs(Fragment, { children: [
+          /* @__PURE__ */ jsx("span", { className: "w-1 h-1 rounded-full bg-gray-600" }),
+          /* @__PURE__ */ jsx("span", { children: duration || seasons })
+        ] })
+      ] }),
+      item.genres && item.genres.length > 0 && /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-500 truncate", children: item.genres.map((g) => g.name).join(", ") })
+    ] })
+  ] });
+}
+function SeoHead({
+  title,
+  description,
+  keywords,
+  image,
+  url,
+  type = "website",
+  structuredData = null,
+  author = null,
+  publishedTime = null,
+  modifiedTime = null
+}) {
+  const appName = "Cineverse";
+  const fullTitle = title ? `${title} - ${appName}` : appName;
+  const defaultDescription = "Your Ultimate Movie & Series Destination - Stream and download the latest movies and TV series";
+  const metaDescription = description || defaultDescription;
+  const canonicalUrl = url || (typeof window !== "undefined" ? window.location.href : "");
+  return /* @__PURE__ */ jsxs(Head, { children: [
+    /* @__PURE__ */ jsx("title", { children: fullTitle }),
+    /* @__PURE__ */ jsx("meta", { name: "description", content: metaDescription }),
+    keywords && /* @__PURE__ */ jsx("meta", { name: "keywords", content: keywords }),
+    author && /* @__PURE__ */ jsx("meta", { name: "author", content: author }),
+    canonicalUrl && /* @__PURE__ */ jsx("link", { rel: "canonical", href: canonicalUrl }),
+    /* @__PURE__ */ jsx("meta", { property: "og:title", content: fullTitle }),
+    /* @__PURE__ */ jsx("meta", { property: "og:description", content: metaDescription }),
+    /* @__PURE__ */ jsx("meta", { property: "og:type", content: type }),
+    canonicalUrl && /* @__PURE__ */ jsx("meta", { property: "og:url", content: canonicalUrl }),
+    image && /* @__PURE__ */ jsx("meta", { property: "og:image", content: image }),
+    image && /* @__PURE__ */ jsx("meta", { property: "og:image:alt", content: title || appName }),
+    /* @__PURE__ */ jsx("meta", { property: "og:site_name", content: appName }),
+    publishedTime && /* @__PURE__ */ jsx("meta", { property: "article:published_time", content: publishedTime }),
+    modifiedTime && /* @__PURE__ */ jsx("meta", { property: "article:modified_time", content: modifiedTime }),
+    /* @__PURE__ */ jsx("meta", { name: "twitter:card", content: image ? "summary_large_image" : "summary" }),
+    /* @__PURE__ */ jsx("meta", { name: "twitter:title", content: fullTitle }),
+    /* @__PURE__ */ jsx("meta", { name: "twitter:description", content: metaDescription }),
+    image && /* @__PURE__ */ jsx("meta", { name: "twitter:image", content: image }),
+    /* @__PURE__ */ jsx("meta", { name: "robots", content: "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" }),
+    /* @__PURE__ */ jsx("meta", { name: "googlebot", content: "index, follow" }),
+    structuredData && /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify(structuredData) })
+  ] });
 }
 const Loader = () => {
   return /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-center flex-col text-center w-full h-[100vh]", children: [
@@ -4415,6 +4532,119 @@ function LoadingLayout({ children }) {
   }
   return /* @__PURE__ */ jsx(Fragment, { children });
 }
+function GenreShow({ genre, movies, series, seo }) {
+  const [activeTab, setActiveTab] = useState("movies");
+  const handlePageChange = (url, type) => {
+    router.get(url, {}, { preserveState: true, preserveScroll: true });
+  };
+  const PaginationControls = ({ data, type }) => {
+    if (!data.links || data.links.length <= 3) return null;
+    return /* @__PURE__ */ jsx("div", { className: "flex justify-center items-center gap-2 mt-12", children: data.links.map((link, index) => {
+      if (!link.url) {
+        return /* @__PURE__ */ jsx(
+          "span",
+          {
+            className: "px-4 py-2 text-gray-600 cursor-not-allowed",
+            dangerouslySetInnerHTML: { __html: link.label }
+          },
+          index
+        );
+      }
+      return /* @__PURE__ */ jsx(
+        "button",
+        {
+          onClick: () => handlePageChange(link.url),
+          className: `px-4 py-2 transition-colors ${link.active ? "bg-white text-black font-bold" : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"}`,
+          dangerouslySetInnerHTML: { __html: link.label }
+        },
+        index
+      );
+    }) });
+  };
+  return /* @__PURE__ */ jsx(LoadingLayout, { children: /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsx(
+      SeoHead,
+      {
+        title: seo?.title,
+        description: seo?.description,
+        keywords: seo?.keywords,
+        type: "website"
+      }
+    ),
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
+      /* @__PURE__ */ jsx(Navbar, {}),
+      /* @__PURE__ */ jsxs("div", { className: "relative h-[30vh] md:h-[40vh] w-full overflow-hidden", children: [
+        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-purple-900/30 via-black to-blue-900/30", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-10", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]" }) }) }),
+        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 text-center", children: [
+          /* @__PURE__ */ jsx("div", { className: "inline-block px-3 py-1 border border-white/30 text-xs font-bold uppercase tracking-widest text-white mb-4 backdrop-blur-sm", children: "Genre" }),
+          /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-serif text-white leading-tight mb-4", children: genre.name }),
+          /* @__PURE__ */ jsxs("p", { className: "text-gray-400 text-sm md:text-base max-w-2xl mx-auto", children: [
+            "Explore ",
+            movies.total + series.total,
+            " movies and series in this genre"
+          ] })
+        ] }) })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 py-2", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex gap-4 mb-12 border-b border-white/10", children: [
+          /* @__PURE__ */ jsxs(
+            "button",
+            {
+              onClick: () => setActiveTab("movies"),
+              className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "movies" ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+              children: [
+                "Movies (",
+                movies.total,
+                ")",
+                activeTab === "movies" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-white" })
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxs(
+            "button",
+            {
+              onClick: () => setActiveTab("series"),
+              className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "series" ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+              children: [
+                "Series (",
+                series.total,
+                ")",
+                activeTab === "series" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-white" })
+              ]
+            }
+          )
+        ] }),
+        activeTab === "movies" && /* @__PURE__ */ jsx("div", { children: movies.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
+          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
+            MediaCard,
+            {
+              item: movie,
+              type: "movie"
+            },
+            movie.id
+          )) }),
+          /* @__PURE__ */ jsx(PaginationControls, { data: movies, type: "movies" })
+        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: "No movies found in this genre." }) }) }),
+        activeTab === "series" && /* @__PURE__ */ jsx("div", { children: series.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
+          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
+            MediaCard,
+            {
+              item,
+              type: "series"
+            },
+            item.id
+          )) }),
+          /* @__PURE__ */ jsx(PaginationControls, { data: series, type: "series" })
+        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: "No series found in this genre." }) }) })
+      ] }),
+      /* @__PURE__ */ jsx(Footer, {})
+    ] })
+  ] }) });
+}
+const __vite_glob_0_17 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: GenreShow
+}, Symbol.toStringTag, { value: "Module" }));
 const SectionTitle = ({ title, subtitle, href }) => /* @__PURE__ */ jsxs("div", { className: "mb-8 flex items-end justify-between border-b border-white/10 pb-4", children: [
   /* @__PURE__ */ jsxs("div", { children: [
     /* @__PURE__ */ jsx("h2", { className: "text-3xl md:text-4xl font-serif text-white", children: title }),
@@ -4558,7 +4788,7 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_17 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Home
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4854,7 +5084,7 @@ function MovieDetails({
     showTrailer && /* @__PURE__ */ jsx(TrailerModal$1, { url: movie.trailer_url, onClose: () => setShowTrailer(false) })
   ] });
 }
-const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: MovieDetails
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4895,9 +5125,695 @@ function Index$1({ movies }) {
     ] })
   ] });
 }
-const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Index$1
+}, Symbol.toStringTag, { value: "Module" }));
+function StaticPageLayout({ title, description, children }) {
+  return /* @__PURE__ */ jsx(LoadingLayout, { children: /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsx(
+      SeoHead,
+      {
+        title,
+        description,
+        type: "website"
+      }
+    ),
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
+      /* @__PURE__ */ jsx(Navbar, {}),
+      /* @__PURE__ */ jsxs("div", { className: "relative h-[30vh] md:h-[40vh] w-full overflow-hidden", children: [
+        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-10", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]" }) }) }),
+        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 text-center", children: [
+          /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-serif text-white leading-tight", children: title?.replace(" - Cineverse", "") }),
+          /* @__PURE__ */ jsx("div", { className: "mt-4 h-1 w-24 bg-white mx-auto" })
+        ] }) })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "container mx-auto px-6 md:px-12 py-16 md:py-24", children: /* @__PURE__ */ jsx("div", { className: "max-w-4xl mx-auto", children }) }),
+      /* @__PURE__ */ jsx(Footer, {})
+    ] })
+  ] }) });
+}
+function About({ title, description }) {
+  return /* @__PURE__ */ jsx(StaticPageLayout, { title, description, children: /* @__PURE__ */ jsxs("div", { className: "prose prose-invert prose-lg max-w-none", children: [
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Welcome to Cineverse" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-6", children: "Cineverse is your ultimate destination for discovering and enjoying the best movies and series from around the world. We are passionate about cinema and dedicated to bringing you a seamless streaming experience with a vast collection of content across all genres." }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: "Founded with the vision of making quality entertainment accessible to everyone, we continuously update our library with the latest releases, timeless classics, and hidden gems waiting to be discovered." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Our Mission" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-6", children: "Our mission is to provide a premium streaming platform that combines cutting-edge technology with an extensive content library. We believe that everyone deserves access to quality entertainment, and we're committed to delivering an exceptional viewing experience." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "What We Offer" }),
+      /* @__PURE__ */ jsxs("div", { className: "grid md:grid-cols-2 gap-6", children: [
+        /* @__PURE__ */ jsxs("div", { className: "bg-white/5 p-6 rounded-lg border border-white/10", children: [
+          /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-white mb-3", children: "Extensive Library" }),
+          /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm", children: "Thousands of movies and series across all genres, from action and drama to comedy and documentaries." })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "bg-white/5 p-6 rounded-lg border border-white/10", children: [
+          /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-white mb-3", children: "High Quality" }),
+          /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm", children: "Stream in HD and 4K quality for an immersive viewing experience on any device." })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "bg-white/5 p-6 rounded-lg border border-white/10", children: [
+          /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-white mb-3", children: "Regular Updates" }),
+          /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm", children: "New content added regularly, keeping you up to date with the latest releases and trending shows." })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "bg-white/5 p-6 rounded-lg border border-white/10", children: [
+          /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-white mb-3", children: "User-Friendly" }),
+          /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm", children: "Intuitive interface designed for easy navigation and discovery of your next favorite watch." })
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Join Our Community" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-6", children: "Become part of the Cineverse community and never miss out on the latest entertainment. Whether you're a casual viewer or a dedicated cinephile, we have something for everyone." }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm italic", children: "Thank you for choosing Cineverse. Happy watching!" })
+    ] })
+  ] }) });
+}
+const __vite_glob_0_21 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: About
+}, Symbol.toStringTag, { value: "Module" }));
+function Contact({ title, description }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: ""
+  });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted:", formData);
+    alert("Thank you for your message! We will get back to you soon.");
+    setFormData({ name: "", email: "", subject: "", message: "" });
+  };
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+  return /* @__PURE__ */ jsx(StaticPageLayout, { title, description, children: /* @__PURE__ */ jsxs("div", { className: "grid md:grid-cols-2 gap-12", children: [
+    /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Get in Touch" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-8", children: "Have questions, suggestions, or feedback? We'd love to hear from you. Fill out the form and our team will get back to you as soon as possible." }),
+      /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-4", children: [
+          /* @__PURE__ */ jsx("div", { className: "mt-1 text-white", children: /* @__PURE__ */ jsx("svg", { className: "w-6 h-6", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" }) }) }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("h3", { className: "text-white font-bold mb-1", children: "Email" }),
+            /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm", children: "support@cineverse.com" })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-4", children: [
+          /* @__PURE__ */ jsx("div", { className: "mt-1 text-white", children: /* @__PURE__ */ jsxs("svg", { className: "w-6 h-6", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
+            /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" }),
+            /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M15 11a3 3 0 11-6 0 3 3 0 016 0z" })
+          ] }) }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("h3", { className: "text-white font-bold mb-1", children: "Address" }),
+            /* @__PURE__ */ jsxs("p", { className: "text-gray-400 text-sm", children: [
+              "123 Cinema Street",
+              /* @__PURE__ */ jsx("br", {}),
+              "Entertainment City, EC 12345"
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-4", children: [
+          /* @__PURE__ */ jsx("div", { className: "mt-1 text-white", children: /* @__PURE__ */ jsx("svg", { className: "w-6 h-6", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" }) }) }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("h3", { className: "text-white font-bold mb-1", children: "Business Hours" }),
+            /* @__PURE__ */ jsxs("p", { className: "text-gray-400 text-sm", children: [
+              "Monday - Friday: 9:00 AM - 6:00 PM",
+              /* @__PURE__ */ jsx("br", {}),
+              "Saturday - Sunday: Closed"
+            ] })
+          ] })
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Send Us a Message" }),
+      /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, className: "space-y-6", children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("label", { htmlFor: "name", className: "block text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest", children: "Name" }),
+          /* @__PURE__ */ jsx(
+            "input",
+            {
+              type: "text",
+              id: "name",
+              name: "name",
+              value: formData.name,
+              onChange: handleChange,
+              required: true,
+              className: "w-full px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-white/30 transition-colors",
+              placeholder: "Your name"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("label", { htmlFor: "email", className: "block text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest", children: "Email" }),
+          /* @__PURE__ */ jsx(
+            "input",
+            {
+              type: "email",
+              id: "email",
+              name: "email",
+              value: formData.email,
+              onChange: handleChange,
+              required: true,
+              className: "w-full px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-white/30 transition-colors",
+              placeholder: "your.email@example.com"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("label", { htmlFor: "subject", className: "block text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest", children: "Subject" }),
+          /* @__PURE__ */ jsx(
+            "input",
+            {
+              type: "text",
+              id: "subject",
+              name: "subject",
+              value: formData.subject,
+              onChange: handleChange,
+              required: true,
+              className: "w-full px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-white/30 transition-colors",
+              placeholder: "How can we help?"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("label", { htmlFor: "message", className: "block text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest", children: "Message" }),
+          /* @__PURE__ */ jsx(
+            "textarea",
+            {
+              id: "message",
+              name: "message",
+              value: formData.message,
+              onChange: handleChange,
+              required: true,
+              rows: "6",
+              className: "w-full px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-white/30 transition-colors resize-none",
+              placeholder: "Your message here..."
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsx(
+          "button",
+          {
+            type: "submit",
+            className: "w-full px-8 py-4 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
+            children: "Send Message"
+          }
+        )
+      ] })
+    ] })
+  ] }) });
+}
+const __vite_glob_0_22 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: Contact
+}, Symbol.toStringTag, { value: "Module" }));
+const FAQItem = ({ question, answer, isOpen, onClick }) => {
+  return /* @__PURE__ */ jsxs("div", { className: "border-b border-white/10", children: [
+    /* @__PURE__ */ jsxs(
+      "button",
+      {
+        onClick,
+        className: "w-full py-6 flex items-center justify-between text-left hover:bg-white/5 transition-colors px-4",
+        children: [
+          /* @__PURE__ */ jsx("h3", { className: "text-lg font-bold text-white pr-8", children: question }),
+          /* @__PURE__ */ jsx(
+            "svg",
+            {
+              className: `w-6 h-6 text-white transition-transform flex-shrink-0 ${isOpen ? "rotate-180" : ""}`,
+              fill: "none",
+              stroke: "currentColor",
+              viewBox: "0 0 24 24",
+              children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M19 9l-7 7-7-7" })
+            }
+          )
+        ]
+      }
+    ),
+    isOpen && /* @__PURE__ */ jsx("div", { className: "px-4 pb-6 text-gray-300 leading-relaxed", children: answer })
+  ] });
+};
+function FAQ({ title, description }) {
+  const [openIndex, setOpenIndex] = useState(null);
+  const faqs = [
+    {
+      question: "What is Cineverse?",
+      answer: "Cineverse is a comprehensive streaming platform that offers a vast collection of movies and series across all genres. We provide high-quality content with a user-friendly interface designed to enhance your viewing experience."
+    },
+    {
+      question: "How do I watch content on Cineverse?",
+      answer: "Simply browse our extensive library, select the movie or series you want to watch, and click the 'Watch Now' button. You can stream content directly in your browser without any additional downloads or plugins required."
+    },
+    {
+      question: "Is there a subscription fee?",
+      answer: "Please check our pricing page for current subscription options and plans. We offer various packages to suit different viewing needs and budgets."
+    },
+    {
+      question: "What devices can I use to watch?",
+      answer: "Cineverse is accessible on multiple devices including desktop computers, laptops, tablets, and smartphones. Our responsive design ensures a seamless experience across all screen sizes."
+    },
+    {
+      question: "How often is new content added?",
+      answer: "We regularly update our library with new movies and series. New content is added weekly, ensuring you always have fresh entertainment options to explore."
+    },
+    {
+      question: "Can I download content for offline viewing?",
+      answer: "Download availability depends on your subscription plan and content licensing agreements. Please check the specific title or your account settings for download options."
+    },
+    {
+      question: "What video quality is available?",
+      answer: "We offer multiple streaming qualities including SD, HD, and 4K where available. The quality can be adjusted based on your internet connection speed and device capabilities."
+    },
+    {
+      question: "How do I report a technical issue?",
+      answer: "If you encounter any technical issues, please visit our Contact page and fill out the support form with details about the problem. Our technical team will assist you as soon as possible."
+    },
+    {
+      question: "Can I request specific titles?",
+      answer: "Yes! We value user feedback and content requests. Please contact us through our Contact page with your suggestions, and we'll do our best to add requested titles to our library."
+    },
+    {
+      question: "Is my personal information secure?",
+      answer: "Absolutely. We take privacy and security seriously. All personal information is encrypted and stored securely. Please review our Privacy Policy for detailed information about how we protect your data."
+    }
+  ];
+  const toggleFAQ = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+  return /* @__PURE__ */ jsx(StaticPageLayout, { title, description, children: /* @__PURE__ */ jsxs("div", { children: [
+    /* @__PURE__ */ jsxs("div", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-4 border-b border-white/10 pb-4", children: "Frequently Asked Questions" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: "Find answers to common questions about Cineverse. If you don't see your question here, feel free to contact us directly." })
+    ] }),
+    /* @__PURE__ */ jsx("div", { className: "bg-white/5 border border-white/10", children: faqs.map((faq, index) => /* @__PURE__ */ jsx(
+      FAQItem,
+      {
+        question: faq.question,
+        answer: faq.answer,
+        isOpen: openIndex === index,
+        onClick: () => toggleFAQ(index)
+      },
+      index
+    )) }),
+    /* @__PURE__ */ jsxs("div", { className: "mt-12 p-6 bg-white/5 border border-white/10", children: [
+      /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-white mb-3", children: "Still have questions?" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-400 mb-4", children: "If you couldn't find the answer you were looking for, our support team is here to help." }),
+      /* @__PURE__ */ jsx(
+        "a",
+        {
+          href: "/contact",
+          className: "inline-block px-6 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors text-sm",
+          children: "Contact Support"
+        }
+      )
+    ] })
+  ] }) });
+}
+const __vite_glob_0_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: FAQ
+}, Symbol.toStringTag, { value: "Module" }));
+function Privacy({ title, description }) {
+  return /* @__PURE__ */ jsx(StaticPageLayout, { title, description, children: /* @__PURE__ */ jsxs("div", { className: "prose prose-invert prose-lg max-w-none", children: [
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsxs("p", { className: "text-gray-400 text-sm mb-8", children: [
+        /* @__PURE__ */ jsx("strong", { children: "Last Updated:" }),
+        " November 30, 2025"
+      ] }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-6", children: "At Cineverse, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your data when you use our platform." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Information We Collect" }),
+      /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-white mb-4 mt-8", children: "Personal Information" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-4", children: "We collect information that you provide directly to us, including:" }),
+      /* @__PURE__ */ jsxs("ul", { className: "list-disc list-inside text-gray-300 space-y-2 ml-4 mb-6", children: [
+        /* @__PURE__ */ jsx("li", { children: "Name and email address when you create an account" }),
+        /* @__PURE__ */ jsx("li", { children: "Payment information for subscription services" }),
+        /* @__PURE__ */ jsx("li", { children: "Communication preferences and feedback" }),
+        /* @__PURE__ */ jsx("li", { children: "Profile information and viewing preferences" })
+      ] }),
+      /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-white mb-4 mt-8", children: "Usage Information" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-4", children: "We automatically collect certain information about your device and how you interact with our platform:" }),
+      /* @__PURE__ */ jsxs("ul", { className: "list-disc list-inside text-gray-300 space-y-2 ml-4", children: [
+        /* @__PURE__ */ jsx("li", { children: "Viewing history and watch time" }),
+        /* @__PURE__ */ jsx("li", { children: "Search queries and content interactions" }),
+        /* @__PURE__ */ jsx("li", { children: "Device information and IP address" }),
+        /* @__PURE__ */ jsx("li", { children: "Browser type and operating system" })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "How We Use Your Information" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-4", children: "We use the collected information for various purposes:" }),
+      /* @__PURE__ */ jsxs("ul", { className: "list-disc list-inside text-gray-300 space-y-2 ml-4", children: [
+        /* @__PURE__ */ jsx("li", { children: "To provide and maintain our streaming service" }),
+        /* @__PURE__ */ jsx("li", { children: "To personalize your viewing experience and recommend content" }),
+        /* @__PURE__ */ jsx("li", { children: "To process your transactions and manage subscriptions" }),
+        /* @__PURE__ */ jsx("li", { children: "To communicate with you about updates, promotions, and support" }),
+        /* @__PURE__ */ jsx("li", { children: "To improve our platform and develop new features" }),
+        /* @__PURE__ */ jsx("li", { children: "To detect, prevent, and address technical issues and security threats" })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Information Sharing and Disclosure" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-4", children: "We do not sell your personal information. We may share your information in the following circumstances:" }),
+      /* @__PURE__ */ jsxs("ul", { className: "list-disc list-inside text-gray-300 space-y-2 ml-4", children: [
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "Service Providers:" }),
+          " With trusted third parties who assist in operating our platform"
+        ] }),
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "Legal Requirements:" }),
+          " When required by law or to protect our rights"
+        ] }),
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "Business Transfers:" }),
+          " In connection with mergers, acquisitions, or asset sales"
+        ] }),
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "With Your Consent:" }),
+          " When you explicitly agree to share your information"
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Data Security" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-4", children: "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. This includes:" }),
+      /* @__PURE__ */ jsxs("ul", { className: "list-disc list-inside text-gray-300 space-y-2 ml-4", children: [
+        /* @__PURE__ */ jsx("li", { children: "Encryption of data in transit and at rest" }),
+        /* @__PURE__ */ jsx("li", { children: "Regular security assessments and updates" }),
+        /* @__PURE__ */ jsx("li", { children: "Restricted access to personal information" }),
+        /* @__PURE__ */ jsx("li", { children: "Secure payment processing systems" })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Your Rights and Choices" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-4", children: "You have certain rights regarding your personal information:" }),
+      /* @__PURE__ */ jsxs("ul", { className: "list-disc list-inside text-gray-300 space-y-2 ml-4", children: [
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "Access:" }),
+          " Request access to your personal data"
+        ] }),
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "Correction:" }),
+          " Update or correct inaccurate information"
+        ] }),
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "Deletion:" }),
+          " Request deletion of your personal data"
+        ] }),
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "Opt-out:" }),
+          " Unsubscribe from marketing communications"
+        ] }),
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "Data Portability:" }),
+          " Request a copy of your data in a portable format"
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Cookies and Tracking Technologies" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: "We use cookies and similar tracking technologies to enhance your experience, analyze usage patterns, and deliver personalized content. You can control cookie settings through your browser preferences." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Children's Privacy" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: "Our service is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If you believe we have collected such information, please contact us immediately." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Changes to This Privacy Policy" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: 'We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.' })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Contact Us" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-4", children: "If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at:" }),
+      /* @__PURE__ */ jsxs("div", { className: "bg-white/5 p-6 border border-white/10", children: [
+        /* @__PURE__ */ jsx("p", { className: "text-white", children: "Email: privacy@cineverse.com" }),
+        /* @__PURE__ */ jsx("p", { className: "text-white", children: "Address: 123 Cinema Street, Entertainment City, EC 12345" })
+      ] })
+    ] })
+  ] }) });
+}
+const __vite_glob_0_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: Privacy
+}, Symbol.toStringTag, { value: "Module" }));
+function Terms({ title, description }) {
+  return /* @__PURE__ */ jsx(StaticPageLayout, { title, description, children: /* @__PURE__ */ jsxs("div", { className: "prose prose-invert prose-lg max-w-none", children: [
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsxs("p", { className: "text-gray-400 text-sm mb-8", children: [
+        /* @__PURE__ */ jsx("strong", { children: "Last Updated:" }),
+        " November 30, 2025"
+      ] }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-6", children: "Welcome to Cineverse. By accessing or using our platform, you agree to be bound by these Terms of Service. Please read them carefully before using our services." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "1. Acceptance of Terms" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: "By creating an account or using Cineverse, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree to these terms, please do not use our services." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "2. User Accounts" }),
+      /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-white mb-4 mt-8", children: "Account Creation" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-4", children: "To access certain features, you must create an account. You agree to:" }),
+      /* @__PURE__ */ jsxs("ul", { className: "list-disc list-inside text-gray-300 space-y-2 ml-4 mb-6", children: [
+        /* @__PURE__ */ jsx("li", { children: "Provide accurate and complete information" }),
+        /* @__PURE__ */ jsx("li", { children: "Maintain the security of your account credentials" }),
+        /* @__PURE__ */ jsx("li", { children: "Notify us immediately of any unauthorized use" }),
+        /* @__PURE__ */ jsx("li", { children: "Be responsible for all activities under your account" })
+      ] }),
+      /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-white mb-4 mt-8", children: "Age Restrictions" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: "You must be at least 13 years old to use Cineverse. Users under 18 must have parental or guardian consent." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "3. Subscription and Payment" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-4", children: "Subscription terms include:" }),
+      /* @__PURE__ */ jsxs("ul", { className: "list-disc list-inside text-gray-300 space-y-2 ml-4", children: [
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "Billing:" }),
+          " Subscriptions are billed on a recurring basis"
+        ] }),
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "Cancellation:" }),
+          " You may cancel your subscription at any time"
+        ] }),
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "Refunds:" }),
+          " No refunds for partial subscription periods"
+        ] }),
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "Price Changes:" }),
+          " We reserve the right to modify pricing with advance notice"
+        ] }),
+        /* @__PURE__ */ jsxs("li", { children: [
+          /* @__PURE__ */ jsx("strong", { children: "Payment Methods:" }),
+          " You must provide a valid payment method"
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "4. Content and Usage" }),
+      /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-white mb-4 mt-8", children: "License to Use" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-6", children: "We grant you a limited, non-exclusive, non-transferable license to access and view content on Cineverse for personal, non-commercial use only." }),
+      /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-white mb-4 mt-8", children: "Prohibited Activities" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-4", children: "You agree not to:" }),
+      /* @__PURE__ */ jsxs("ul", { className: "list-disc list-inside text-gray-300 space-y-2 ml-4", children: [
+        /* @__PURE__ */ jsx("li", { children: "Download, copy, or redistribute content without authorization" }),
+        /* @__PURE__ */ jsx("li", { children: "Use automated systems or bots to access the service" }),
+        /* @__PURE__ */ jsx("li", { children: "Circumvent any security or access control measures" }),
+        /* @__PURE__ */ jsx("li", { children: "Share account credentials with others" }),
+        /* @__PURE__ */ jsx("li", { children: "Use the service for any illegal or unauthorized purpose" }),
+        /* @__PURE__ */ jsx("li", { children: "Attempt to interfere with the proper functioning of the platform" })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "5. Intellectual Property" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-4", children: "All content on Cineverse, including but not limited to:" }),
+      /* @__PURE__ */ jsxs("ul", { className: "list-disc list-inside text-gray-300 space-y-2 ml-4 mb-6", children: [
+        /* @__PURE__ */ jsx("li", { children: "Movies, series, and video content" }),
+        /* @__PURE__ */ jsx("li", { children: "Graphics, logos, and design elements" }),
+        /* @__PURE__ */ jsx("li", { children: "Text, software, and code" }),
+        /* @__PURE__ */ jsx("li", { children: "Trademarks and service marks" })
+      ] }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: "are owned by or licensed to Cineverse and are protected by copyright, trademark, and other intellectual property laws." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "6. User Conduct" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-4", children: "You agree to use Cineverse in a manner that:" }),
+      /* @__PURE__ */ jsxs("ul", { className: "list-disc list-inside text-gray-300 space-y-2 ml-4", children: [
+        /* @__PURE__ */ jsx("li", { children: "Complies with all applicable laws and regulations" }),
+        /* @__PURE__ */ jsx("li", { children: "Respects the rights of other users and content creators" }),
+        /* @__PURE__ */ jsx("li", { children: "Does not involve harassment, abuse, or hate speech" }),
+        /* @__PURE__ */ jsx("li", { children: "Does not transmit viruses or malicious code" })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "7. Termination" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: "We reserve the right to suspend or terminate your account at any time, with or without notice, for conduct that violates these Terms of Service or is harmful to other users, us, or third parties, or for any other reason at our sole discretion." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "8. Disclaimers and Limitation of Liability" }),
+      /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-white mb-4 mt-8", children: "Service Availability" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-6", children: 'We provide the service "as is" and make no warranties regarding availability, reliability, or quality. We do not guarantee uninterrupted or error-free service.' }),
+      /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-white mb-4 mt-8", children: "Limitation of Liability" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: "To the fullest extent permitted by law, Cineverse shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the service." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "9. Content Accuracy" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: "While we strive to provide accurate content information, we do not guarantee the accuracy, completeness, or reliability of any content descriptions, metadata, or related information." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "10. Modifications to Terms" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: "We reserve the right to modify these Terms of Service at any time. We will notify you of any material changes by posting the updated terms on this page. Your continued use of the service after such changes constitutes acceptance of the new terms." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "11. Governing Law" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: "These Terms of Service shall be governed by and construed in accordance with the laws of the jurisdiction in which Cineverse operates, without regard to its conflict of law provisions." })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "12. Contact Information" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-4", children: "For questions about these Terms of Service, please contact us:" }),
+      /* @__PURE__ */ jsxs("div", { className: "bg-white/5 p-6 border border-white/10", children: [
+        /* @__PURE__ */ jsx("p", { className: "text-white", children: "Email: legal@cineverse.com" }),
+        /* @__PURE__ */ jsx("p", { className: "text-white", children: "Address: 123 Cinema Street, Entertainment City, EC 12345" })
+      ] })
+    ] })
+  ] }) });
+}
+const __vite_glob_0_25 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: Terms
+}, Symbol.toStringTag, { value: "Module" }));
+function PersonShow({ person, movies, series, seo }) {
+  const [activeTab, setActiveTab] = useState("movies");
+  const handlePageChange = (url, type) => {
+    router.get(url, {}, { preserveState: true, preserveScroll: true });
+  };
+  const PaginationControls = ({ data, type }) => {
+    if (!data.links || data.links.length <= 3) return null;
+    return /* @__PURE__ */ jsx("div", { className: "flex justify-center items-center gap-2 mt-12", children: data.links.map((link, index) => {
+      if (!link.url) {
+        return /* @__PURE__ */ jsx(
+          "span",
+          {
+            className: "px-4 py-2 text-gray-600 cursor-not-allowed",
+            dangerouslySetInnerHTML: { __html: link.label }
+          },
+          index
+        );
+      }
+      return /* @__PURE__ */ jsx(
+        "button",
+        {
+          onClick: () => handlePageChange(link.url),
+          className: `px-4 py-2 transition-colors ${link.active ? "bg-white text-black font-bold" : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"}`,
+          dangerouslySetInnerHTML: { __html: link.label }
+        },
+        index
+      );
+    }) });
+  };
+  return /* @__PURE__ */ jsx(LoadingLayout, { children: /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsx(
+      SeoHead,
+      {
+        title: seo?.title,
+        description: seo?.description,
+        keywords: seo?.keywords,
+        type: "profile"
+      }
+    ),
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
+      /* @__PURE__ */ jsx(Navbar, {}),
+      /* @__PURE__ */ jsxs("div", { className: "relative h-[30vh] md:h-[40vh] w-full overflow-hidden", children: [
+        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-orange-900/30 via-black to-red-900/30", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-10", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]" }) }) }),
+        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 text-center", children: [
+          person.profile_image_url && /* @__PURE__ */ jsx("div", { className: "mb-6 flex justify-center", children: /* @__PURE__ */ jsx(
+            "img",
+            {
+              src: person.profile_image_url,
+              alt: person.name,
+              className: "w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white/20"
+            }
+          ) }),
+          /* @__PURE__ */ jsx("div", { className: "inline-block px-3 py-1 border border-white/30 text-xs font-bold uppercase tracking-widest text-white mb-4 backdrop-blur-sm", children: "Filmography" }),
+          /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-serif text-white leading-tight mb-4", children: person.name }),
+          /* @__PURE__ */ jsxs("p", { className: "text-gray-400 text-sm md:text-base max-w-2xl mx-auto", children: [
+            movies.total + series.total,
+            " titles featuring this talent"
+          ] })
+        ] }) })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 py-16", children: [
+        person.biography && /* @__PURE__ */ jsx("div", { className: "mb-12 max-w-4xl mx-auto", children: /* @__PURE__ */ jsxs("div", { className: "bg-white/5 border border-white/10 p-6 md:p-8", children: [
+          /* @__PURE__ */ jsx("h2", { className: "text-2xl font-serif text-white mb-4 border-b border-white/10 pb-3", children: "Biography" }),
+          /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: person.biography })
+        ] }) }),
+        /* @__PURE__ */ jsxs("div", { className: "flex gap-4 mb-12 border-b border-white/10", children: [
+          /* @__PURE__ */ jsxs(
+            "button",
+            {
+              onClick: () => setActiveTab("movies"),
+              className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "movies" ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+              children: [
+                "Movies (",
+                movies.total,
+                ")",
+                activeTab === "movies" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-white" })
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxs(
+            "button",
+            {
+              onClick: () => setActiveTab("series"),
+              className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "series" ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+              children: [
+                "Series (",
+                series.total,
+                ")",
+                activeTab === "series" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-white" })
+              ]
+            }
+          )
+        ] }),
+        activeTab === "movies" && /* @__PURE__ */ jsx("div", { children: movies.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
+          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
+            MediaCard,
+            {
+              item: movie,
+              type: "movie"
+            },
+            movie.id
+          )) }),
+          /* @__PURE__ */ jsx(PaginationControls, { data: movies, type: "movies" })
+        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: "No movies found featuring this person." }) }) }),
+        activeTab === "series" && /* @__PURE__ */ jsx("div", { children: series.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
+          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
+            MediaCard,
+            {
+              item,
+              type: "series"
+            },
+            item.id
+          )) }),
+          /* @__PURE__ */ jsx(PaginationControls, { data: series, type: "series" })
+        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: "No series found featuring this person." }) }) })
+      ] }),
+      /* @__PURE__ */ jsx(Footer, {})
+    ] })
+  ] }) });
+}
+const __vite_glob_0_26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: PersonShow
 }, Symbol.toStringTag, { value: "Module" }));
 function DangerButton({
   className = "",
@@ -4993,7 +5909,7 @@ function DeleteUserForm({ className = "" }) {
     ] }) })
   ] });
 }
-const __vite_glob_0_21 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_28 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: DeleteUserForm
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5124,7 +6040,7 @@ function UpdatePasswordForm({ className = "" }) {
     ] })
   ] });
 }
-const __vite_glob_0_22 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_29 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: UpdatePasswordForm
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5213,7 +6129,7 @@ function UpdateProfileInformation({
     ] })
   ] });
 }
-const __vite_glob_0_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_30 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: UpdateProfileInformation
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5240,7 +6156,7 @@ function Edit({ mustVerifyEmail, status }) {
     }
   );
 }
-const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_27 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Edit
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5284,7 +6200,7 @@ function Search({ results, query, seo }) {
     ] })
   ] });
 }
-const __vite_glob_0_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_31 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Search
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5323,7 +6239,7 @@ function Index({ series }) {
     ] })
   ] });
 }
-const __vite_glob_0_25 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_32 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Index
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5614,7 +6530,7 @@ function SeriesDetails({
     showTrailer && /* @__PURE__ */ jsx(TrailerModal, { url: series.trailer_url, onClose: () => setShowTrailer(false) })
   ] });
 }
-const __vite_glob_0_26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_33 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: SeriesDetails
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6003,7 +6919,7 @@ function Welcome({ auth, laravelVersion, phpVersion }) {
     ] })
   ] });
 }
-const __vite_glob_0_27 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_34 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Welcome
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6030,17 +6946,24 @@ createServer(
         "./Pages/Auth/Register.jsx": __vite_glob_0_14,
         "./Pages/Auth/ResetPassword.jsx": __vite_glob_0_15,
         "./Pages/Auth/VerifyEmail.jsx": __vite_glob_0_16,
-        "./Pages/Home.jsx": __vite_glob_0_17,
-        "./Pages/MovieDetails.jsx": __vite_glob_0_18,
-        "./Pages/Movies/Index.jsx": __vite_glob_0_19,
-        "./Pages/Profile/Edit.jsx": __vite_glob_0_20,
-        "./Pages/Profile/Partials/DeleteUserForm.jsx": __vite_glob_0_21,
-        "./Pages/Profile/Partials/UpdatePasswordForm.jsx": __vite_glob_0_22,
-        "./Pages/Profile/Partials/UpdateProfileInformationForm.jsx": __vite_glob_0_23,
-        "./Pages/Search.jsx": __vite_glob_0_24,
-        "./Pages/Series/Index.jsx": __vite_glob_0_25,
-        "./Pages/SeriesDetails.jsx": __vite_glob_0_26,
-        "./Pages/Welcome.jsx": __vite_glob_0_27
+        "./Pages/Genre/Show.jsx": __vite_glob_0_17,
+        "./Pages/Home.jsx": __vite_glob_0_18,
+        "./Pages/MovieDetails.jsx": __vite_glob_0_19,
+        "./Pages/Movies/Index.jsx": __vite_glob_0_20,
+        "./Pages/Pages/About.jsx": __vite_glob_0_21,
+        "./Pages/Pages/Contact.jsx": __vite_glob_0_22,
+        "./Pages/Pages/FAQ.jsx": __vite_glob_0_23,
+        "./Pages/Pages/Privacy.jsx": __vite_glob_0_24,
+        "./Pages/Pages/Terms.jsx": __vite_glob_0_25,
+        "./Pages/Person/Show.jsx": __vite_glob_0_26,
+        "./Pages/Profile/Edit.jsx": __vite_glob_0_27,
+        "./Pages/Profile/Partials/DeleteUserForm.jsx": __vite_glob_0_28,
+        "./Pages/Profile/Partials/UpdatePasswordForm.jsx": __vite_glob_0_29,
+        "./Pages/Profile/Partials/UpdateProfileInformationForm.jsx": __vite_glob_0_30,
+        "./Pages/Search.jsx": __vite_glob_0_31,
+        "./Pages/Series/Index.jsx": __vite_glob_0_32,
+        "./Pages/SeriesDetails.jsx": __vite_glob_0_33,
+        "./Pages/Welcome.jsx": __vite_glob_0_34
       });
       return pages[`./Pages/${name}.jsx`];
     },
