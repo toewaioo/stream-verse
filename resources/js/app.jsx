@@ -29,7 +29,7 @@ createInertiaApp({
         const root = createRoot(el);
 
         root.render(
-            <TelegramAuthProvider>
+            <TelegramAuthProvider user={props.initialPage.props.auth.user}>
                 <App {...props} />
             </TelegramAuthProvider>
         );
