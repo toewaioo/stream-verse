@@ -5,11 +5,14 @@ use App\Http\Controllers\SeriesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\GenreController;
+use App\Http\Controllers\PersonController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\SeriesController as AdminSeriesController;
-use App\Http\Controllers\Admin\GenreController;
-use App\Http\Controllers\Admin\PersonController;
+use App\Http\Controllers\Admin\GenreController as AdminGenreController;
+use App\Http\Controllers\Admin\PersonController as AdminPersonController;
 use App\Http\Controllers\RatingController;
 
 use Inertia\Inertia;
@@ -22,9 +25,21 @@ Route::get('/movies/{slug}', [MovieController::class, 'show'])->name('movies.sho
 Route::get('/series', [SeriesController::class, 'index'])->name('series.index');
 Route::get('/series/{slug}', [SeriesController::class, 'show'])->name('series.show');
 
+// Genre and Person Pages
+Route::get('/genre/{slug}', [GenreController::class, 'show'])->name('genre.show');
+Route::get('/person/{id}', [PersonController::class, 'show'])->name('person.show');
+
+// Static Pages
+Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+Route::get('/faq', [PageController::class, 'faq'])->name('faq');
+Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
+Route::get('/terms', [PageController::class, 'terms'])->name('terms');
+
 // Sitemap
 Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 Route::get('/search', [HomeController::class, 'search'])->name('search');
+
 
 
 // Admin web routes (Inertia pages)
@@ -49,17 +64,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::delete('/series/{series}', [AdminSeriesController::class, 'destroy'])->name('admin.series.destroy');
     Route::get('/movies/check-slug', [AdminMovieController::class, 'checkSlug'])->name('admin.movies.check-slug');
     Route::get('/series/check-slug', [AdminSeriesController::class, 'checkSlug'])->name('admin.series.check-slug');
+    Route::get('/series/{series}', [AdminSeriesController::class, 'show'])->name('admin.series.show');
 
     // Genres
-    Route::get('/genres', [GenreController::class, 'index'])->name('admin.genres');
-    Route::post('/genres', [GenreController::class, 'store'])->name('admin.genres.store');
-    Route::put('/genres/{genre}', [GenreController::class, 'update'])->name('admin.genres.update');
-    Route::delete('/genres/{genre}', [GenreController::class, 'destroy'])->name('admin.genres.destroy');
+    Route::get('/genres', [AdminGenreController::class, 'index'])->name('admin.genres');
+    Route::post('/genres', [AdminGenreController::class, 'store'])->name('admin.genres.store');
+    Route::put('/genres/{genre}', [AdminGenreController::class, 'update'])->name('admin.genres.update');
+    Route::delete('/genres/{genre}', [AdminGenreController::class, 'destroy'])->name('admin.genres.destroy');
 
-    Route::get('/persons', [PersonController::class, 'index'])->name('admin.persons');
-    Route::post('/persons', [PersonController::class, 'store'])->name('admin.persons.store');
-    Route::put('/persons/{person}', [PersonController::class, 'update'])->name('admin.persons.update');
-    Route::delete('/persons/{person}', [PersonController::class, 'destroy'])->name('admin.persons.destroy');
+    Route::get('/persons', [AdminPersonController::class, 'index'])->name('admin.persons');
+    Route::post('/persons', [AdminPersonController::class, 'store'])->name('admin.persons.store');
+    Route::put('/persons/{person}', [AdminPersonController::class, 'update'])->name('admin.persons.update');
+    Route::delete('/persons/{person}', [AdminPersonController::class, 'destroy'])->name('admin.persons.destroy');
 
     Route::get('/ratings', [RatingController::class, 'index'])->name('admin.ratings');
     Route::get('/ratings/{rating}', [RatingController::class, 'show'])->name('admin.ratings.show');

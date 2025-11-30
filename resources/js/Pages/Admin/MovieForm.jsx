@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "@inertiajs/react";
+import useFormPersistence from "@/Hooks/useFormPersistence";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
@@ -45,6 +46,11 @@ export default function MovieForm({
         watch_links: movie?.watch_links || [],
         download_links: movie?.download_links || [],
     });
+
+    const storageKey = movie?.id ? `movie_form_update_${movie.id}` : "movie_form_create";
+    const { clearStorage } = useFormPersistence(storageKey, data, setData);
+
+
 
     const [slugError, setSlugError] = useState("");
 
@@ -180,6 +186,7 @@ export default function MovieForm({
             // Edit mode: use PUT
             put(route("admin.movies.update", movie.id), {
                 onSuccess: () => {
+                    clearStorage();
                     if (onSuccess) onSuccess();
                     if (onClose) onClose();
                 },
@@ -188,6 +195,7 @@ export default function MovieForm({
             // Create mode: use POST
             post(route("admin.movies.store"), {
                 onSuccess: () => {
+                    clearStorage();
                     if (onSuccess) onSuccess();
                     if (onClose) onClose();
                 },
@@ -312,7 +320,7 @@ export default function MovieForm({
                             id="release_date"
                             type="date"
                             className="mt-1 block w-full"
-                            value={data.release_date}
+                            value={data.release_date.split("T")[0]}
                             onChange={(e) =>
                                 setData("release_date", e.target.value)
                             }

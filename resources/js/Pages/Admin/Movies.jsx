@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Head, router } from "@inertiajs/react";
 import Modal from "@/Components/Modal";
@@ -6,11 +6,14 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import TextInput from "@/Components/TextInput";
 import MovieForm from "./MovieForm";
+import { debounce } from "lodash";
+
 
 export default function AdminMovies({ movies, genres, persons, auth }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingMovie, setEditingMovie] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const isFirst = useRef(true);
     console.log(movies);
     const openCreateModal = () => {
         setEditingMovie(null);
@@ -27,17 +30,23 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
         setEditingMovie(null);
     };
 
-    // Debounced search effect
-    React.useEffect(() => {
-        const delayDebounceFn = setTimeout(() => {
-            router.get(
-                route("admin.movies"),
-                { search: searchQuery },
-                { preserveState: true, replace: true }
-            );
-        }, 300);
 
-        return () => clearTimeout(delayDebounceFn);
+
+    // Debounced search effect
+    const debounceSearch = debounce((value) => {
+        router.get(
+            route("admin.series"),
+            { search: searchQuery },
+            { preserveState: true, replace: true }
+        );
+    });
+    useEffect(() => {
+        if (isFirst.current) {
+            isFirst.current = false;
+            return;
+        }
+        debounceSearch(searchQuery);
+
     }, [searchQuery]);
 
     const handleDelete = (movie) => {
@@ -242,8 +251,8 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                                             }}
                                             disabled={!link.url}
                                             className={`px-4 py-2 text-sm rounded-md ${link.active
-                                                    ? "bg-indigo-600 text-white"
-                                                    : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                                ? "bg-indigo-600 text-white"
+                                                : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
                                                 } ${!link.url &&
                                                 "opacity-50 cursor-not-allowed"
                                                 }`}

@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useForm } from "@inertiajs/react";
+import useFormPersistence from "@/Hooks/useFormPersistence";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
@@ -85,6 +86,9 @@ export default function SeriesForm({
             })) || [],
         episode_links: getInitialEpisodeLinks(),
     });
+
+    const storageKey = series?.id ? `series_form_update_${series.id}` : "series_form_create";
+    const { clearStorage } = useFormPersistence(storageKey, data, setData);
 
     const [slugError, setSlugError] = useState("");
 
@@ -233,6 +237,7 @@ export default function SeriesForm({
         e.preventDefault();
         const options = {
             onSuccess: () => {
+                clearStorage();
                 if (onSuccess) onSuccess();
                 if (onClose) onClose();
             },

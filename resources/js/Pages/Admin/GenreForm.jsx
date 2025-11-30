@@ -1,5 +1,6 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
+import useFormPersistence from "@/Hooks/useFormPersistence";
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
@@ -12,11 +13,15 @@ export default function GenreForm({ genre, onClose, onSuccess }) {
         slug: genre?.slug || '',
     });
 
+    const storageKey = genre?.id ? `genre_form_update_${genre.id}` : "genre_form_create";
+    const { clearStorage } = useFormPersistence(storageKey, data, setData);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (genre) {
             put(route('admin.genres.update', genre.id), {
                 onSuccess: () => {
+                    clearStorage();
                     onSuccess();
                     onClose();
                 },
@@ -24,6 +29,7 @@ export default function GenreForm({ genre, onClose, onSuccess }) {
         } else {
             post(route('admin.genres.store'), {
                 onSuccess: () => {
+                    clearStorage();
                     onSuccess();
                     onClose();
                 },

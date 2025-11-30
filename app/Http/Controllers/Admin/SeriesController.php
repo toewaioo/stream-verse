@@ -22,12 +22,18 @@ class SeriesController extends Controller
             $query->where('title', 'like', '%' . $request->search . '%');
         }
 
-        $series = $query->with(['persons', 'genres', 'seasons.episodes.downloadLinks', 'seasons.episodes.watchLinks'])->latest()->paginate(10)->withQueryString();
+        $series = $query->with(['persons', 'genres'])->withCount('seasons')->latest()->paginate(10)->withQueryString();
         return Inertia::render('Admin/Series', [
             'series' => $series,
             'genres' => Genre::all(),
             'persons' => Person::all(),
         ]);
+    }
+
+    public function show(Series $series)
+    {
+        $series->load(['persons', 'genres', 'seasons.episodes.downloadLinks', 'seasons.episodes.watchLinks']);
+        return response()->json($series);
     }
 
     public function store(Request $request)
@@ -169,81 +175,100 @@ class SeriesController extends Controller
 
     private function syncEpisodeLinks(Series $series, array $links)
     {
-        // 1. Collect IDs of submitted links to handle deletions
+        // 1. Pre-fetch existing structure to minimize queries
+        $series->load('seasons.episodes');
+        $existingSeasons = $series->seasons;
+        
+        // 2. Collect IDs for cleanup
         $submittedWatchIds = [];
         $submittedDownloadIds = [];
 
-        foreach ($links as $linkData) {
-            // Find or Create Season
-            $season = $series->seasons()->firstOrCreate(
-                ['season_number' => $linkData['season_number']],
-                ['title' => 'Season ' . $linkData['season_number']]
-            );
+        // Group links by season and episode to process efficiently
+        $groupedLinks = [];
+        foreach ($links as $link) {
+            $s = $link['season_number'];
+            $e = $link['episode_number'];
+            $groupedLinks[$s][$e][] = $link;
+        }
 
-            // Find or Create Episode
-            $episode = $season->episodes()->firstOrCreate(
-                ['episode_number' => $linkData['episode_number']],
-                ['title' => 'Episode ' . $linkData['episode_number']]
-            );
+        foreach ($groupedLinks as $seasonNum => $episodes) {
+            // Find or Create Season (In-memory check first)
+            $season = $existingSeasons->firstWhere('season_number', $seasonNum);
+            if (!$season) {
+                $season = $series->seasons()->create([
+                    'season_number' => $seasonNum,
+                    'title' => 'Season ' . $seasonNum
+                ]);
+                $existingSeasons->push($season);
+            }
 
-            // Handle Link
-            if ($linkData['link_category'] === 'watch') {
-                if (empty($linkData['url']) && !empty($linkData['embed_code'])) {
-                    $linkData['url'] = 'embed';
-                }
-                if (empty($linkData['url'])) continue;
-
-                $data = [
-                    'server_name' => $linkData['server_name'],
-                    'url' => $linkData['url'],
-                    'embed_code' => $linkData['embed_code'] ?? null,
-                    'quality' => $linkData['quality'],
-                    'is_vip_only' => $linkData['is_vip_only'] ?? false,
-                    'type' => !empty($linkData['embed_code']) ? 'embed' : 'url',
-                ];
-
-                if (isset($linkData['id']) && $linkData['id']) {
-                    $watchLink = WatchLink::find($linkData['id']);
-                    if ($watchLink) {
-                        $watchLink->update($data);
-                        $submittedWatchIds[] = $watchLink->id;
-                    }
-                } else {
-                    $newLink = $episode->watchLinks()->create($data);
-                    $submittedWatchIds[] = $newLink->id;
+            foreach ($episodes as $episodeNum => $episodeLinks) {
+                // Find or Create Episode
+                $episode = $season->episodes->firstWhere('episode_number', $episodeNum);
+                if (!$episode) {
+                    $episode = $season->episodes()->create([
+                        'episode_number' => $episodeNum,
+                        'title' => 'Episode ' . $episodeNum
+                    ]);
+                    $season->episodes->push($episode); // Update in-memory relation
                 }
 
-            } else {
-                if (empty($linkData['url'])) continue;
+                foreach ($episodeLinks as $linkData) {
+                    // Handle Watch Links
+                    if ($linkData['link_category'] === 'watch') {
+                        if (empty($linkData['url']) && !empty($linkData['embed_code'])) {
+                            $linkData['url'] = 'embed';
+                        }
+                        if (empty($linkData['url'])) continue;
 
-                $data = [
-                    'server_name' => $linkData['server_name'],
-                    'url' => $linkData['url'],
-                    'quality' => $linkData['quality'],
-                    'file_size' => $linkData['file_size'] ?? null,
-                    'file_format' => $linkData['file_format'] ?? null,
-                    'is_vip_only' => $linkData['is_vip_only'] ?? false,
-                ];
+                        $data = [
+                            'server_name' => $linkData['server_name'],
+                            'url' => $linkData['url'],
+                            'embed_code' => $linkData['embed_code'] ?? null,
+                            'quality' => $linkData['quality'],
+                            'is_vip_only' => $linkData['is_vip_only'] ?? false,
+                            'source_type' => !empty($linkData['embed_code']) ? 'embed' : 'url',
+                        ];
 
-                if (isset($linkData['id']) && $linkData['id']) {
-                    $downloadLink = DownloadLink::find($linkData['id']);
-                    if ($downloadLink) {
-                        $downloadLink->update($data);
-                        $submittedDownloadIds[] = $downloadLink->id;
+                        if (isset($linkData['id']) && $linkData['id']) {
+                            // Direct update query is fine here as we have the ID
+                            WatchLink::where('id', $linkData['id'])->update($data);
+                            $submittedWatchIds[] = $linkData['id'];
+                        } else {
+                            $newLink = $episode->watchLinks()->create($data);
+                            $submittedWatchIds[] = $newLink->id;
+                        }
+                    } 
+                    // Handle Download Links
+                    else {
+                        if (empty($linkData['url'])) continue;
+
+                        $data = [
+                            'server_name' => $linkData['server_name'],
+                            'url' => $linkData['url'],
+                            'quality' => $linkData['quality'],
+                            'file_size' => $linkData['file_size'] ?? null,
+                            'file_format' => $linkData['file_format'] ?? null,
+                            'is_vip_only' => $linkData['is_vip_only'] ?? false,
+                        ];
+
+                        if (isset($linkData['id']) && $linkData['id']) {
+                            DownloadLink::where('id', $linkData['id'])->update($data);
+                            $submittedDownloadIds[] = $linkData['id'];
+                        } else {
+                            $newLink = $episode->downloadLinks()->create($data);
+                            $submittedDownloadIds[] = $newLink->id;
+                        }
                     }
-                } else {
-                    $newLink = $episode->downloadLinks()->create($data);
-                    $submittedDownloadIds[] = $newLink->id;
                 }
             }
         }
 
-        // 2. Delete links that are NOT in the submitted list
-        // We need to get all episode IDs for this series to scope the deletion correctly
-        // Note: This relies on the fact that we are sending ALL links for the series.
-        // If pagination were used for links, this would be dangerous.
-        // But the SeriesForm loads all links.
-        $episodeIds = $series->seasons->flatMap(fn($s) => $s->episodes->pluck('id'));
+        // 3. Cleanup (Delete removed links)
+        // We only delete links that belong to the current series' episodes
+        // Re-fetch episode IDs to ensure we have all of them (including newly created ones)
+        // Actually, we can just use the IDs from the loaded/created models
+        $episodeIds = $existingSeasons->flatMap(fn($s) => $s->episodes->pluck('id'));
 
         if ($episodeIds->isNotEmpty()) {
             WatchLink::whereIn('episode_id', $episodeIds)

@@ -198,7 +198,7 @@ class MovieController extends Controller
                         'embed_code' => $linkData['embed_code'] ?? null,
                         'quality' => $linkData['quality'],
                         'is_vip_only' => $linkData['is_vip_only'] ?? false,
-                        'type' => !empty($linkData['embed_code']) ? 'embed' : 'url', // Optional, if you have a type column
+                        'source_type' => !empty($linkData['embed_code']) ? 'embed' : 'url',
                     ]
                 );
             }

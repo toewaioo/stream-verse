@@ -15,7 +15,9 @@ class HomeController extends Controller
     public function index(): Response
     {
         // Fetch featured content (5 movies and 5 series)
-        $featuredMovies = Movie::where('status', 'released')
+        // Select only necessary columns to reduce data transfer
+        $featuredMovies = Movie::select(['id', 'title', 'slug', 'description', 'poster_url', 'banner_url', 'status'])
+            ->where('status', 'released')
             ->whereNotNull('banner_url')
             ->inRandomOrder()
             ->limit(5)
@@ -25,7 +27,8 @@ class HomeController extends Controller
                 return $movie;
             });
 
-        $featuredSeries = Series::where('status', '!=', 'upcoming')
+        $featuredSeries = Series::select(['id', 'title', 'slug', 'description', 'poster_url', 'banner_url', 'status'])
+            ->where('status', '!=', 'upcoming')
             ->whereNotNull('banner_url')
             ->inRandomOrder()
             ->limit(5)
@@ -37,21 +40,28 @@ class HomeController extends Controller
 
         $featured = $featuredMovies->concat($featuredSeries)->shuffle()->values();
 
-        // Fetch latest movies
-        $latestMovies = Movie::where('status', 'released')
+        // Fetch latest movies with genres eager loaded
+        $latestMovies = Movie::select(['id', 'title', 'slug', 'poster_url', 'release_date', 'created_at', 'status'])
+            ->where('status', 'released')
+            ->with(['genres:id,name,slug'])
             ->orderBy('created_at', 'desc')
             ->take(12)
             ->get();
 
-        // Fetch latest series
-        $latestSeries = Series::where('status', '!=', 'upcoming')
+        // Fetch latest series with genres eager loaded
+        $latestSeries = Series::select(['id', 'title', 'slug', 'poster_url', 'release_year_start', 'created_at', 'status'])
+            ->where('status', '!=', 'upcoming')
+            ->with(['genres:id,name,slug'])
             ->orderBy('created_at', 'desc')
             ->take(12)
             ->get();
 
-        // Fetch genres with counts (movies + series)
-        $genres = Genre::whereHas('movies')
-            ->orWhereHas('series')
+        // Fetch genres with counts - optimized with select
+        $genres = Genre::select(['id', 'name', 'slug'])
+            ->where(function ($query) {
+                $query->whereHas('movies')
+                    ->orWhereHas('series');
+            })
             ->withCount(['movies', 'series'])
             ->orderBy('name')
             ->limit(12)
@@ -61,8 +71,9 @@ class HomeController extends Controller
                 return $genre;
             });
 
-        // Fetch popular actors (those with most appearances)
-        $actors = Person::actors()
+        // Fetch popular actors - optimized with select
+        $actors = Person::select(['id', 'name', 'avatar_url'])
+            ->actors()
             ->whereHas('roles')
             ->withCount('roles')
             ->orderBy('roles_count', 'desc')
@@ -111,16 +122,24 @@ class HomeController extends Controller
             ]);
         }
 
-        $movies = Movie::where('title', 'like', "%{$query}%")
+        // Limit search results and select only necessary columns
+        // Use LIKE with index-friendly pattern when possible
+        $movies = Movie::select(['id', 'title', 'slug', 'poster_url', 'release_date', 'status'])
+            ->where('title', 'like', "%{$query}%")
             ->where('status', 'released')
+            ->with(['genres:id,name,slug'])
+            ->limit(20)
             ->get()
             ->map(function ($movie) {
                 $movie->type = 'movie';
                 return $movie;
             });
 
-        $series = Series::where('title', 'like', "%{$query}%")
+        $series = Series::select(['id', 'title', 'slug', 'poster_url', 'release_year_start', 'status'])
+            ->where('title', 'like', "%{$query}%")
             ->where('status', '!=', 'upcoming')
+            ->with(['genres:id,name,slug'])
+            ->limit(20)
             ->get()
             ->map(function ($series) {
                 $series->type = 'series';

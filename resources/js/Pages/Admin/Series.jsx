@@ -1,26 +1,31 @@
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Head, router } from "@inertiajs/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SeriesForm from "./SeriesForm";
-
+import { debounce } from "lodash";
 export default function AdminSeries({ series, genres, persons, auth }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingSeries, setEditingSeries] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const isFirst = useRef(true);
 
     // Debounced search effect
+    const debounceSearch = debounce((value) => {
+        router.get(
+            route("admin.series"),
+            { search: searchQuery },
+            { preserveState: true, replace: true }
+        );
+    });
     useEffect(() => {
-        const delayDebounceFn = setTimeout(() => {
-            router.get(
-                route("admin.series"),
-                { search: searchQuery },
-                { preserveState: true, replace: true }
-            );
-        }, 300);
+        if (isFirst.current) {
+            isFirst.current = false;
+            return;
+        }
+        debounceSearch(searchQuery);
 
-        return () => clearTimeout(delayDebounceFn);
     }, [searchQuery]);
 
     const openCreateModal = () => {
@@ -28,9 +33,14 @@ export default function AdminSeries({ series, genres, persons, auth }) {
         setIsModalOpen(true);
     };
 
-    const openEditModal = (series) => {
-        setEditingSeries(series);
-        setIsModalOpen(true);
+    const openEditModal = async (series) => {
+        try {
+            const response = await axios.get(route('admin.series.show', series.id));
+            setEditingSeries(response.data);
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error("Failed to fetch series details", error);
+        }
     };
 
     const closeModal = () => {
@@ -122,7 +132,7 @@ export default function AdminSeries({ series, genres, persons, auth }) {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                                    {item.seasons.length || 0}{" "}
+                                                    {item.seasons_count || 0}{" "}
                                                     Seasons
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -181,8 +191,8 @@ export default function AdminSeries({ series, genres, persons, auth }) {
                                             }}
                                             disabled={!link.url}
                                             className={`px-4 py-2 text-sm rounded-md ${link.active
-                                                    ? "bg-indigo-600 text-white"
-                                                    : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                                ? "bg-indigo-600 text-white"
+                                                : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
                                                 } ${!link.url &&
                                                 "opacity-50 cursor-not-allowed"
                                                 }`}

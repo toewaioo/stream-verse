@@ -1,5 +1,6 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
+import useFormPersistence from "@/Hooks/useFormPersistence";
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
@@ -16,11 +17,15 @@ export default function PersonForm({ person, onClose, onSuccess }) {
         avatar_url: person?.avatar_url || '',
     });
 
+    const storageKey = person?.id ? `person_form_update_${person.id}` : "person_form_create";
+    const { clearStorage } = useFormPersistence(storageKey, data, setData);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (person) {
             put(route('admin.persons.update', person.id), {
                 onSuccess: () => {
+                    clearStorage();
                     onSuccess();
                     onClose();
                 },
@@ -28,6 +33,7 @@ export default function PersonForm({ person, onClose, onSuccess }) {
         } else {
             post(route('admin.persons.store'), {
                 onSuccess: () => {
+                    clearStorage();
                     onSuccess();
                     onClose();
                 },
