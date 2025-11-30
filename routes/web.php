@@ -40,6 +40,15 @@ Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/search', [HomeController::class, 'search'])->name('search');
 
+// Telegram Authentication Page (for Mini App)
+Route::get('/tgauth', function () {
+    return Inertia::render('Auth/TgAuth', [
+        'auth' => [
+            'user' => auth()->user(),
+        ],
+    ]);
+})->name('tgauth');
+
 
 
 // Admin web routes (Inertia pages)

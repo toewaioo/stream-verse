@@ -4142,6 +4142,150 @@ const __vite_glob_0_15 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: ResetPassword
 }, Symbol.toStringTag, { value: "Module" }));
+const Loader = () => {
+  return /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-center flex-col text-center w-full h-[100vh]", children: [
+    /* @__PURE__ */ jsx("div", { className: "flex w-16 h-16 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto" }),
+    /* @__PURE__ */ jsx("h2", { className: "text-white dark:text-white mt-4", children: "Loading..." }),
+    /* @__PURE__ */ jsx("p", { className: "text-zinc-600 dark:text-zinc-400", children: "Your adventure is about to begin" })
+  ] });
+};
+function TgAuth({ user }) {
+  const loginAttempted = useRef(false);
+  const [logs, setLogs] = useState([]);
+  const [status, setStatus] = useState("Initializing...");
+  const addLog = (message, type = "info") => {
+    const timestamp = (/* @__PURE__ */ new Date()).toLocaleTimeString();
+    setLogs((prev) => [...prev, { timestamp, message, type }]);
+    console.log(`[${timestamp}] ${message}`);
+  };
+  useEffect(() => {
+    addLog("TgAuth page mounted", "info");
+    addLog(`User authenticated: ${!!user}`, "info");
+    if (window.Telegram && window.Telegram.WebApp) {
+      const tg = window.Telegram.WebApp;
+      addLog("Telegram WebApp detected", "success");
+      addLog(`initData present: ${!!tg.initData}`, "info");
+      if (tg.initData) {
+        addLog(`initData: ${tg.initData.substring(0, 50)}...`, "info");
+      }
+      tg.ready();
+      addLog("Telegram WebApp ready", "success");
+      if (user) {
+        addLog(
+          "User already authenticated, redirecting to home...",
+          "success"
+        );
+        setStatus("Already logged in! Redirecting...");
+        setTimeout(() => {
+          router.visit(route("home"));
+        }, 1500);
+        return;
+      }
+      if (!user && tg.initData && !loginAttempted.current) {
+        loginAttempted.current = true;
+        setStatus("Authenticating with Telegram...");
+        addLog("Attempting to login via Mini App...", "info");
+        axios$1.post(route("auth.telegram.mini-app"), {
+          initData: tg.initData
+        }).then((response) => {
+          addLog("Login successful!", "success");
+          addLog(
+            `Response: ${JSON.stringify(response.data)}`,
+            "info"
+          );
+          setStatus("Login successful! Redirecting to home...");
+          setTimeout(() => {
+            router.visit(route("home"));
+          }, 1500);
+        }).catch((error) => {
+          addLog("Login failed!", "error");
+          setStatus("Authentication failed");
+          if (error.response) {
+            addLog(
+              `Error status: ${error.response.status}`,
+              "error"
+            );
+            addLog(
+              `Error data: ${JSON.stringify(
+                error.response.data
+              )}`,
+              "error"
+            );
+          } else if (error.request) {
+            addLog("No response received from server", "error");
+          } else {
+            addLog(`Error: ${error.message}`, "error");
+          }
+          loginAttempted.current = false;
+        });
+      } else {
+        if (!tg.initData) {
+          addLog(
+            "No initData available - cannot authenticate",
+            "warning"
+          );
+          setStatus("No Telegram data available");
+        } else if (loginAttempted.current) {
+          addLog("Login already attempted", "info");
+        }
+      }
+    } else {
+      addLog("Not running in Telegram WebApp environment", "warning");
+      setStatus("Not a Telegram Mini App");
+      setTimeout(() => {
+        addLog("Redirecting to home page...", "info");
+        router.visit(route("home"));
+      }, 3e3);
+    }
+  }, [user]);
+  const getLogColor = (type) => {
+    switch (type) {
+      case "success":
+        return "text-green-400";
+      case "error":
+        return "text-red-400";
+      case "warning":
+        return "text-yellow-400";
+      default:
+        return "text-gray-300";
+    }
+  };
+  return /* @__PURE__ */ jsx("div", { className: "min-h-screen bg-[#050505] text-white flex items-center justify-center p-6", children: /* @__PURE__ */ jsxs("div", { className: "w-full max-w-2xl", children: [
+    /* @__PURE__ */ jsxs("div", { className: "bg-gray-900 rounded-lg shadow-xl p-6 border border-gray-700", children: [
+      /* @__PURE__ */ jsxs("h2", { className: "text-xl font-bold mb-4 flex items-center", children: [
+        /* @__PURE__ */ jsx("span", { className: "mr-2", children: "🔧" }),
+        "Developer Logs"
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "bg-black rounded-md p-4 max-h-96 overflow-y-auto font-mono text-sm", children: logs.length === 0 ? /* @__PURE__ */ jsx("p", { className: "text-gray-500", children: "No logs yet..." }) : logs.map((log, index) => /* @__PURE__ */ jsxs(
+        "div",
+        {
+          className: `mb-2 ${getLogColor(log.type)}`,
+          children: [
+            /* @__PURE__ */ jsxs("span", { className: "text-gray-500 mr-2", children: [
+              "[",
+              log.timestamp,
+              "]"
+            ] }),
+            /* @__PURE__ */ jsx("span", { children: log.message })
+          ]
+        },
+        index
+      )) })
+    ] }),
+    /* @__PURE__ */ jsx("div", { className: "mt-6 text-center", children: /* @__PURE__ */ jsx(
+      "button",
+      {
+        onClick: () => router.visit(route("home")),
+        className: "px-6 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors rounded",
+        children: "Go to Home"
+      }
+    ) })
+  ] }) });
+}
+const __vite_glob_0_16 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: TgAuth
+}, Symbol.toStringTag, { value: "Module" }));
 function VerifyEmail({ status }) {
   const { post, processing } = useForm({});
   const submit = (e) => {
@@ -4167,7 +4311,7 @@ function VerifyEmail({ status }) {
     ] }) })
   ] });
 }
-const __vite_glob_0_16 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_17 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: VerifyEmail
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4536,13 +4680,6 @@ function SeoHead({
     structuredData && /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify(structuredData) })
   ] });
 }
-const Loader = () => {
-  return /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-center flex-col text-center w-full h-[100vh]", children: [
-    /* @__PURE__ */ jsx("div", { className: "flex w-16 h-16 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto" }),
-    /* @__PURE__ */ jsx("h2", { className: "text-white dark:text-white mt-4", children: "Loading..." }),
-    /* @__PURE__ */ jsx("p", { className: "text-zinc-600 dark:text-zinc-400", children: "Your adventure is about to begin" })
-  ] });
-};
 function LoadingLayout({ children }) {
   const [loading, setLoading] = useState(true);
   const { props } = usePage();
@@ -4667,7 +4804,7 @@ function GenreShow({ genre, movies, series, seo }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_17 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: GenreShow
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4814,7 +4951,7 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Home
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5110,7 +5247,7 @@ function MovieDetails({
     showTrailer && /* @__PURE__ */ jsx(TrailerModal$1, { url: movie.trailer_url, onClose: () => setShowTrailer(false) })
   ] });
 }
-const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: MovieDetails
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5151,7 +5288,7 @@ function Index$1({ movies }) {
     ] })
   ] });
 }
-const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_21 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Index$1
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5218,7 +5355,7 @@ function About({ title, description }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_21 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_22 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: About
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5359,7 +5496,7 @@ function Contact({ title, description }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_22 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Contact
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5464,7 +5601,7 @@ function FAQ({ title, description }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: FAQ
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5588,7 +5725,7 @@ function Privacy({ title, description }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_25 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Privacy
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5713,7 +5850,7 @@ function Terms({ title, description }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_25 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Terms
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5837,7 +5974,7 @@ function PersonShow({ person, movies, series, seo }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_27 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: PersonShow
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5935,7 +6072,7 @@ function DeleteUserForm({ className = "" }) {
     ] }) })
   ] });
 }
-const __vite_glob_0_28 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_29 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: DeleteUserForm
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6066,7 +6203,7 @@ function UpdatePasswordForm({ className = "" }) {
     ] })
   ] });
 }
-const __vite_glob_0_29 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_30 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: UpdatePasswordForm
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6155,7 +6292,7 @@ function UpdateProfileInformation({
     ] })
   ] });
 }
-const __vite_glob_0_30 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_31 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: UpdateProfileInformation
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6182,7 +6319,7 @@ function Edit({ mustVerifyEmail, status }) {
     }
   );
 }
-const __vite_glob_0_27 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_28 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Edit
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6226,7 +6363,7 @@ function Search({ results, query, seo }) {
     ] })
   ] });
 }
-const __vite_glob_0_31 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_32 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Search
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6265,7 +6402,7 @@ function Index({ series }) {
     ] })
   ] });
 }
-const __vite_glob_0_32 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_33 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Index
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6556,7 +6693,7 @@ function SeriesDetails({
     showTrailer && /* @__PURE__ */ jsx(TrailerModal, { url: series.trailer_url, onClose: () => setShowTrailer(false) })
   ] });
 }
-const __vite_glob_0_33 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_34 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: SeriesDetails
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6945,7 +7082,7 @@ function Welcome({ auth, laravelVersion, phpVersion }) {
     ] })
   ] });
 }
-const __vite_glob_0_34 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_35 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Welcome
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6971,25 +7108,26 @@ createServer(
         "./Pages/Auth/Login.jsx": __vite_glob_0_13,
         "./Pages/Auth/Register.jsx": __vite_glob_0_14,
         "./Pages/Auth/ResetPassword.jsx": __vite_glob_0_15,
-        "./Pages/Auth/VerifyEmail.jsx": __vite_glob_0_16,
-        "./Pages/Genre/Show.jsx": __vite_glob_0_17,
-        "./Pages/Home.jsx": __vite_glob_0_18,
-        "./Pages/MovieDetails.jsx": __vite_glob_0_19,
-        "./Pages/Movies/Index.jsx": __vite_glob_0_20,
-        "./Pages/Pages/About.jsx": __vite_glob_0_21,
-        "./Pages/Pages/Contact.jsx": __vite_glob_0_22,
-        "./Pages/Pages/FAQ.jsx": __vite_glob_0_23,
-        "./Pages/Pages/Privacy.jsx": __vite_glob_0_24,
-        "./Pages/Pages/Terms.jsx": __vite_glob_0_25,
-        "./Pages/Person/Show.jsx": __vite_glob_0_26,
-        "./Pages/Profile/Edit.jsx": __vite_glob_0_27,
-        "./Pages/Profile/Partials/DeleteUserForm.jsx": __vite_glob_0_28,
-        "./Pages/Profile/Partials/UpdatePasswordForm.jsx": __vite_glob_0_29,
-        "./Pages/Profile/Partials/UpdateProfileInformationForm.jsx": __vite_glob_0_30,
-        "./Pages/Search.jsx": __vite_glob_0_31,
-        "./Pages/Series/Index.jsx": __vite_glob_0_32,
-        "./Pages/SeriesDetails.jsx": __vite_glob_0_33,
-        "./Pages/Welcome.jsx": __vite_glob_0_34
+        "./Pages/Auth/TgAuth.jsx": __vite_glob_0_16,
+        "./Pages/Auth/VerifyEmail.jsx": __vite_glob_0_17,
+        "./Pages/Genre/Show.jsx": __vite_glob_0_18,
+        "./Pages/Home.jsx": __vite_glob_0_19,
+        "./Pages/MovieDetails.jsx": __vite_glob_0_20,
+        "./Pages/Movies/Index.jsx": __vite_glob_0_21,
+        "./Pages/Pages/About.jsx": __vite_glob_0_22,
+        "./Pages/Pages/Contact.jsx": __vite_glob_0_23,
+        "./Pages/Pages/FAQ.jsx": __vite_glob_0_24,
+        "./Pages/Pages/Privacy.jsx": __vite_glob_0_25,
+        "./Pages/Pages/Terms.jsx": __vite_glob_0_26,
+        "./Pages/Person/Show.jsx": __vite_glob_0_27,
+        "./Pages/Profile/Edit.jsx": __vite_glob_0_28,
+        "./Pages/Profile/Partials/DeleteUserForm.jsx": __vite_glob_0_29,
+        "./Pages/Profile/Partials/UpdatePasswordForm.jsx": __vite_glob_0_30,
+        "./Pages/Profile/Partials/UpdateProfileInformationForm.jsx": __vite_glob_0_31,
+        "./Pages/Search.jsx": __vite_glob_0_32,
+        "./Pages/Series/Index.jsx": __vite_glob_0_33,
+        "./Pages/SeriesDetails.jsx": __vite_glob_0_34,
+        "./Pages/Welcome.jsx": __vite_glob_0_35
       });
       return pages[`./Pages/${name}.jsx`];
     },

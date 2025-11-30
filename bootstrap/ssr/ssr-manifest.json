@@ -42,6 +42,7 @@
   "resources/js/Pages/Auth/Login.jsx": [],
   "resources/js/Pages/Auth/Register.jsx": [],
   "resources/js/Pages/Auth/ResetPassword.jsx": [],
+  "resources/js/Pages/Auth/TgAuth.jsx": [],
   "resources/js/Pages/Auth/VerifyEmail.jsx": [],
   "resources/js/Pages/Genre/Show.jsx": [],
   "resources/js/Pages/Home.jsx": [],
