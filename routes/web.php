@@ -1,20 +1,20 @@
 <?php
 
 use App\Http\Controllers\Admin\MovieController as AdminMovieController;
-use App\Http\Controllers\SeriesController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\MovieController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PageController;
-use App\Http\Controllers\GenreController;
-use App\Http\Controllers\PersonController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\SeriesController as AdminSeriesController;
 use App\Http\Controllers\Admin\GenreController as AdminGenreController;
 use App\Http\Controllers\Admin\PersonController as AdminPersonController;
-use App\Http\Controllers\RatingController;
 
+use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\MovieController;
+use App\Http\Controllers\Web\SeriesController;
+use App\Http\Controllers\Web\GenreController;
+use App\Http\Controllers\Web\PersonController;
+use App\Http\Controllers\Web\SitemapController;
+use App\Http\Controllers\Web\PageController;
+use App\Http\Controllers\Web\RatingController;
+use App\Http\Controllers\Web\ProfileController;
 use Inertia\Inertia;
 
 // Public Routes
@@ -37,7 +37,7 @@ Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 
 // Sitemap
-Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/search', [HomeController::class, 'search'])->name('search');
 
 
@@ -113,9 +113,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Ratings
-    Route::post('/ratings', [\App\Http\Controllers\RatingController::class, 'store'])->name('ratings.store');
-    Route::put('/ratings/{rating}', [\App\Http\Controllers\RatingController::class, 'update'])->name('ratings.update');
-    Route::delete('/ratings/{rating}', [\App\Http\Controllers\RatingController::class, 'destroy'])->name('ratings.destroy');
+    Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
+    Route::put('/ratings/{rating}', [RatingController::class, 'update'])->name('ratings.update');
+    Route::delete('/ratings/{rating}', [RatingController::class, 'destroy'])->name('ratings.destroy');
 });
 
 require __DIR__ . '/auth.php';

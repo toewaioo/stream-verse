@@ -9,7 +9,11 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\TelegramAuthController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/auth/telegram/callback', [TelegramAuthController::class, 'handleCallback'])->name('auth.telegram.callback');
+Route::post('/auth/telegram/mini-app', [TelegramAuthController::class, 'loginViaMiniApp'])->name('auth.telegram.mini-app');
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])

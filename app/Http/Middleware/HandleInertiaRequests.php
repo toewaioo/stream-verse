@@ -76,6 +76,7 @@ class HandleInertiaRequests extends Middleware
                         }),
                 ];
             }),
+            'telegramBotUsername' => config('services.telegram.bot_username') ?? env('TELEGRAM_BOT_USERNAME'),
         ];
     }
 }

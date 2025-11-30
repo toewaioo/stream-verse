@@ -10,6 +10,7 @@ import { createInertiaApp } from "@inertiajs/react";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { createRoot } from "react-dom/client";
 import Loader from "./Components/Loader";
+import TelegramAuthProvider from "./Components/TelegramAuthProvider";
 
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 // Render a loading screen before the app is ready
@@ -27,7 +28,11 @@ createInertiaApp({
 
         const root = createRoot(el);
 
-        root.render(<App {...props} />);
+        root.render(
+            <TelegramAuthProvider>
+                <App {...props} />
+            </TelegramAuthProvider>
+        );
     },
     progress: {
         color: "#4B5563",

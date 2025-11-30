@@ -44,7 +44,7 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
             setCurrentIndex((prevIndex) =>
                 prevIndex === featured.length - 1 ? 0 : prevIndex + 1
             );
-        }, 5000); // Auto-scroll every 5 seconds
+        }, 6000); // Auto-scroll every 5 seconds
 
         return () => clearInterval(interval);
     }, [featured]);

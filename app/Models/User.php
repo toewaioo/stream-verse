@@ -21,6 +21,7 @@ class User extends Authenticatable
         'password',
         'role',
         'avatar_url',
+        'telegram_id',
         'email_verified_at'
     ];
 

@@ -92,7 +92,7 @@ export default function Navbar() {
                                     value={data.q}
                                     onChange={(e) => setData("q", e.target.value)}
                                     placeholder="Search titles..."
-                                    className={`w-full bg-transparent border-b border-white/30 text-white placeholder-gray-400 focus:outline-none focus:border-white py-1 pl-8 pr-2 transition-all duration-300 ${isSearchOpen ? "opacity-100 visible" : "opacity-0 invisible w-0"
+                                    className={`w-full p-5 bg-transparent border-b border-white/30 text-white placeholder-gray-400 focus:outline-none focus:border-white py-1 pl-8 pr-2 transition-all duration-300 ${isSearchOpen ? "opacity-100 visible" : "opacity-0 invisible w-0"
                                         }`}
                                     onBlur={() => !data.q && setIsSearchOpen(false)}
                                 />
@@ -104,9 +104,9 @@ export default function Navbar() {
                                         setTimeout(() => document.querySelector('input[name="q"]')?.focus(), 100);
                                     }
                                 }}
-                                className="absolute left-0 text-white hover:text-gray-300 transition-colors"
+                                className="absolute left-0 p-2 text-white hover:text-gray-300 transition-colors"
                             >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-6 h-6 " fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path
                                         strokeLinecap="round"
                                         strokeLinejoin="round"

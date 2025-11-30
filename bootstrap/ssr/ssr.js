@@ -3839,6 +3839,25 @@ const __vite_glob_0_12 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: ForgotPassword
 }, Symbol.toStringTag, { value: "Module" }));
+function TelegramLoginWidget({ botName, buttonSize = "large", cornerRadius = 20, requestAccess = "write" }) {
+  const containerRef = useRef(null);
+  useEffect(() => {
+    if (!botName) return;
+    const script = document.createElement("script");
+    script.src = "https://telegram.org/js/telegram-widget.js?22";
+    script.setAttribute("data-telegram-login", botName);
+    script.setAttribute("data-size", buttonSize);
+    script.setAttribute("data-radius", cornerRadius);
+    script.setAttribute("data-request-access", requestAccess);
+    script.setAttribute("data-auth-url", route("auth.telegram.callback"));
+    script.async = true;
+    if (containerRef.current) {
+      containerRef.current.innerHTML = "";
+      containerRef.current.appendChild(script);
+    }
+  }, [botName, buttonSize, cornerRadius, requestAccess]);
+  return /* @__PURE__ */ jsx("div", { ref: containerRef, className: "flex justify-center mt-4" });
+}
 function Login({ status, canResetPassword }) {
   const { data, setData, post, processing, errors, reset } = useForm({
     email: "",
@@ -3909,6 +3928,13 @@ function Login({ status, canResetPassword }) {
           }
         ),
         /* @__PURE__ */ jsx(PrimaryButton, { className: "ms-4", disabled: processing, children: "Log in" })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "mt-6", children: [
+        /* @__PURE__ */ jsxs("div", { className: "relative", children: [
+          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center", children: /* @__PURE__ */ jsx("div", { className: "w-full border-t border-gray-300" }) }),
+          /* @__PURE__ */ jsx("div", { className: "relative flex justify-center text-sm", children: /* @__PURE__ */ jsx("span", { className: "bg-white px-2 text-gray-500", children: "Or continue with" }) })
+        ] }),
+        /* @__PURE__ */ jsx(TelegramLoginWidget, { botName: usePage().props.telegramBotUsername })
       ] })
     ] })
   ] });
@@ -4230,7 +4256,7 @@ function Navbar() {
                   value: data.q,
                   onChange: (e) => setData("q", e.target.value),
                   placeholder: "Search titles...",
-                  className: `w-full bg-transparent border-b border-white/30 text-white placeholder-gray-400 focus:outline-none focus:border-white py-1 pl-8 pr-2 transition-all duration-300 ${isSearchOpen ? "opacity-100 visible" : "opacity-0 invisible w-0"}`,
+                  className: `w-full p-5 bg-transparent border-b border-white/30 text-white placeholder-gray-400 focus:outline-none focus:border-white py-1 pl-8 pr-2 transition-all duration-300 ${isSearchOpen ? "opacity-100 visible" : "opacity-0 invisible w-0"}`,
                   onBlur: () => !data.q && setIsSearchOpen(false)
                 }
               ) }),
@@ -4243,8 +4269,8 @@ function Navbar() {
                       setTimeout(() => document.querySelector('input[name="q"]')?.focus(), 100);
                     }
                   },
-                  className: "absolute left-0 text-white hover:text-gray-300 transition-colors",
-                  children: /* @__PURE__ */ jsx("svg", { className: "w-6 h-6", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx(
+                  className: "absolute left-0 p-2 text-white hover:text-gray-300 transition-colors",
+                  children: /* @__PURE__ */ jsx("svg", { className: "w-6 h-6 ", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx(
                     "path",
                     {
                       strokeLinecap: "round",
@@ -4521,7 +4547,7 @@ function LoadingLayout({ children }) {
   const [loading, setLoading] = useState(true);
   const { props } = usePage();
   useEffect(() => {
-    const minSplashTime = 1e3;
+    const minSplashTime = 500;
     const timeout = setTimeout(() => {
       setLoading(false);
     }, minSplashTime);
@@ -4667,7 +4693,7 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
       setCurrentIndex(
         (prevIndex) => prevIndex === featured.length - 1 ? 0 : prevIndex + 1
       );
-    }, 5e3);
+    }, 6e3);
     return () => clearInterval(interval);
   }, [featured]);
   return /* @__PURE__ */ jsx(LoadingLayout, { children: /* @__PURE__ */ jsxs(Fragment, { children: [

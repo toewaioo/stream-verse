@@ -6,7 +6,7 @@ export default function LoadingLayout({ children }) {
     const [loading, setLoading] = useState(true);
     const { props } = usePage();
     useEffect(() => {
-        const minSplashTime = 1000;
+        const minSplashTime = 500;
         const timeout = setTimeout(() => {
             setLoading(false);
         }, minSplashTime);
