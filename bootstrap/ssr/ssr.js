@@ -6381,7 +6381,24 @@ const __vite_glob_0_33 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Index
 }, Symbol.toStringTag, { value: "Module" }));
 const PlayIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
-const DownloadIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" }) });
+const DownloadIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx(
+  "svg",
+  {
+    className,
+    fill: "none",
+    stroke: "currentColor",
+    viewBox: "0 0 24 24",
+    children: /* @__PURE__ */ jsx(
+      "path",
+      {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeWidth: 2,
+        d: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+      }
+    )
+  }
+);
 const LinkItem = ({ link, type, isVip }) => {
   const isLocked = link.is_vip_only && !isVip;
   const [copied, setCopied] = useState(false);
@@ -6390,32 +6407,59 @@ const LinkItem = ({ link, type, isVip }) => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2e3);
   };
-  return /* @__PURE__ */ jsxs("div", { className: `group flex items-center justify-between py-3 border-b border-white/5 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""}`, children: [
-    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 min-w-0", children: [
-      /* @__PURE__ */ jsx("div", { className: `w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download" ? "border-blue-500 text-blue-500" : "border-red-500 text-red-500"}`, children: link.quality?.replace("p", "") || "HD" }),
-      /* @__PURE__ */ jsx("div", { className: "flex flex-col min-w-0", children: /* @__PURE__ */ jsx("span", { className: "text-gray-300 font-serif text-sm leading-none truncate", children: link.server_name }) })
-    ] }),
-    /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-[10px] font-bold text-yellow-500 border border-yellow-500 px-1 uppercase", children: "VIP" }) : /* @__PURE__ */ jsxs(Fragment, { children: [
-      /* @__PURE__ */ jsx(
-        "button",
-        {
-          onClick: handleCopy,
-          className: "text-gray-600 hover:text-white text-[10px] uppercase tracking-widest transition-colors",
-          children: copied ? "Copied" : "Copy"
-        }
-      ),
-      /* @__PURE__ */ jsx(
-        "a",
-        {
-          href: link.url,
-          target: "_blank",
-          rel: "noopener noreferrer",
-          className: `w-8 h-8 rounded-full flex items-center justify-center transition-all ${type === "download" ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-red-600 hover:bg-red-500 text-white"}`,
-          children: /* @__PURE__ */ jsx("svg", { className: "w-3 h-3", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z", clipRule: "evenodd" }) })
-        }
-      )
-    ] }) })
-  ] });
+  return /* @__PURE__ */ jsxs(
+    "div",
+    {
+      className: `group flex items-center justify-between py-3 border-b border-white/5 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""}`,
+      children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 min-w-0", children: [
+          /* @__PURE__ */ jsx(
+            "div",
+            {
+              className: `w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download" ? "border-blue-500 text-blue-500" : "border-red-500 text-red-500"}`,
+              children: link.quality?.replace("p", "") || "HD"
+            }
+          ),
+          /* @__PURE__ */ jsx("div", { className: "flex flex-col min-w-0", children: /* @__PURE__ */ jsx("span", { className: "text-gray-300 font-serif text-sm leading-none truncate", children: link.server_name }) })
+        ] }),
+        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-[10px] font-bold text-yellow-500 border border-yellow-500 px-1 uppercase", children: "VIP" }) : /* @__PURE__ */ jsxs(Fragment, { children: [
+          /* @__PURE__ */ jsx(
+            "button",
+            {
+              onClick: handleCopy,
+              className: "text-gray-600 hover:text-white text-[10px] uppercase tracking-widest transition-colors",
+              children: copied ? "Copied" : "Copy"
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            "a",
+            {
+              href: link.url,
+              target: "_blank",
+              rel: "noopener noreferrer",
+              className: `w-8 h-8 rounded-full flex items-center justify-center transition-all ${type === "download" ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-red-600 hover:bg-red-500 text-white"}`,
+              children: /* @__PURE__ */ jsx(
+                "svg",
+                {
+                  className: "w-3 h-3",
+                  fill: "currentColor",
+                  viewBox: "0 0 20 20",
+                  children: /* @__PURE__ */ jsx(
+                    "path",
+                    {
+                      fillRule: "evenodd",
+                      d: "M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z",
+                      clipRule: "evenodd"
+                    }
+                  )
+                }
+              )
+            }
+          )
+        ] }) })
+      ]
+    }
+  );
 };
 const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
   return /* @__PURE__ */ jsxs("div", { className: "border-b border-white/10 last:border-0", children: [
@@ -6428,17 +6472,55 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
           /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
             /* @__PURE__ */ jsx("span", { className: "text-gray-500 font-mono text-sm w-6", children: episode.episode_number.toString().padStart(2, "0") }),
             /* @__PURE__ */ jsxs("div", { children: [
-              /* @__PURE__ */ jsx("h4", { className: `font-serif text-lg leading-none ${isActive ? "text-white" : "text-gray-300"}`, children: episode.title }),
-              /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-600 mt-1 block", children: episode.air_date ? new Date(episode.air_date).toLocaleDateString() : "Unknown Date" })
+              /* @__PURE__ */ jsx(
+                "h4",
+                {
+                  className: `font-serif text-lg leading-none ${isActive ? "text-white" : "text-gray-300"}`,
+                  children: episode.title
+                }
+              ),
+              /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-600 mt-1 block", children: episode.air_date ? new Date(
+                episode.air_date
+              ).toLocaleDateString() : "Unknown Date" })
             ] })
           ] }),
-          /* @__PURE__ */ jsx("div", { className: `transform transition-transform ${isActive ? "rotate-180" : ""}`, children: /* @__PURE__ */ jsx("svg", { className: "w-5 h-5 text-gray-500", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 9l-7 7-7-7" }) }) })
+          /* @__PURE__ */ jsx(
+            "div",
+            {
+              className: `transform transition-transform ${isActive ? "rotate-180" : ""}`,
+              children: /* @__PURE__ */ jsx(
+                "svg",
+                {
+                  className: "w-5 h-5 text-gray-500",
+                  fill: "none",
+                  stroke: "currentColor",
+                  viewBox: "0 0 24 24",
+                  children: /* @__PURE__ */ jsx(
+                    "path",
+                    {
+                      strokeLinecap: "round",
+                      strokeLinejoin: "round",
+                      strokeWidth: 2,
+                      d: "M19 9l-7 7-7-7"
+                    }
+                  )
+                }
+              )
+            }
+          )
         ]
       }
     ),
     isActive && /* @__PURE__ */ jsxs("div", { className: "p-4 bg-black/20 animate-fade-in", children: [
       /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row gap-4 mb-6", children: [
-        episode.poster_url && /* @__PURE__ */ jsx("div", { className: "w-full md:w-32 aspect-video rounded overflow-hidden flex-shrink-0", children: /* @__PURE__ */ jsx("img", { src: episode.poster_url, alt: "", className: "w-full h-full object-cover" }) }),
+        episode.poster_url && /* @__PURE__ */ jsx("div", { className: "w-full md:w-32 aspect-video rounded overflow-hidden flex-shrink-0", children: /* @__PURE__ */ jsx(
+          "img",
+          {
+            src: episode.poster_url,
+            alt: "",
+            className: "w-full h-full object-cover"
+          }
+        ) }),
         /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-400 leading-relaxed font-serif", children: episode.description || "No synopsis available for this episode." })
       ] }),
       isAuthenticated ? /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-8", children: [
@@ -6447,31 +6529,96 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
             /* @__PURE__ */ jsx(PlayIcon, { className: "w-3 h-3" }),
             " Stream"
           ] }),
-          /* @__PURE__ */ jsx("div", { className: "space-y-1", children: episode.watch_links && episode.watch_links.length > 0 ? episode.watch_links.map((link) => /* @__PURE__ */ jsx(LinkItem, { link, type: "watch", isVip }, link.id)) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 text-xs italic", children: "No sources." }) })
+          /* @__PURE__ */ jsx("div", { className: "space-y-1", children: episode.watch_links && episode.watch_links.length > 0 ? episode.watch_links.map((link) => /* @__PURE__ */ jsx(
+            LinkItem,
+            {
+              link,
+              type: "watch",
+              isVip
+            },
+            link.id
+          )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 text-xs italic", children: "No sources." }) })
         ] }),
         /* @__PURE__ */ jsxs("div", { children: [
           /* @__PURE__ */ jsxs("h5", { className: "text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2", children: [
             /* @__PURE__ */ jsx(DownloadIcon, { className: "w-3 h-3" }),
-            " Download"
+            " ",
+            "Download"
           ] }),
-          /* @__PURE__ */ jsx("div", { className: "space-y-1", children: episode.download_links && episode.download_links.length > 0 ? episode.download_links.map((link) => /* @__PURE__ */ jsx(LinkItem, { link, type: "download", isVip }, link.id)) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 text-xs italic", children: "No sources." }) })
+          /* @__PURE__ */ jsx("div", { className: "space-y-1", children: episode.download_links && episode.download_links.length > 0 ? episode.download_links.map((link) => /* @__PURE__ */ jsx(
+            LinkItem,
+            {
+              link,
+              type: "download",
+              isVip
+            },
+            link.id
+          )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 text-xs italic", children: "No sources." }) })
         ] })
       ] }) : /* @__PURE__ */ jsxs("div", { className: "p-4 border border-white/10 rounded bg-white/5 text-center", children: [
         /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm mb-2", children: "Please log in to access episode links." }),
-        /* @__PURE__ */ jsx("a", { href: route("login"), className: "inline-block px-4 py-1.5 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors", children: "Log In" })
+        /* @__PURE__ */ jsx(
+          "a",
+          {
+            href: route("login"),
+            className: "inline-block px-4 py-1.5 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
+            children: "Log In"
+          }
+        )
       ] })
     ] })
   ] });
 };
 const TrailerModal = ({ url, onClose }) => {
   if (!url) return null;
-  const videoId = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)?.[1];
+  const videoId = url.match(
+    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
+  )?.[1];
   const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : null;
   if (!embedUrl) return null;
-  return /* @__PURE__ */ jsxs("div", { className: "fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 md:p-12 animate-fade-in", onClick: onClose, children: [
-    /* @__PURE__ */ jsx("button", { onClick: onClose, className: "absolute top-6 right-6 text-white/50 hover:text-white transition-colors", children: /* @__PURE__ */ jsx("svg", { className: "w-10 h-10", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 1, d: "M6 18L18 6M6 6l12 12" }) }) }),
-    /* @__PURE__ */ jsx("div", { className: "w-full max-w-6xl aspect-video bg-black shadow-2xl", children: /* @__PURE__ */ jsx("iframe", { src: embedUrl, className: "w-full h-full", allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture", allowFullScreen: true }) })
-  ] });
+  return /* @__PURE__ */ jsxs(
+    "div",
+    {
+      className: "fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 md:p-12 animate-fade-in",
+      onClick: onClose,
+      children: [
+        /* @__PURE__ */ jsx(
+          "button",
+          {
+            onClick: onClose,
+            className: "absolute top-6 right-6 text-white/50 hover:text-white transition-colors",
+            children: /* @__PURE__ */ jsx(
+              "svg",
+              {
+                className: "w-10 h-10",
+                fill: "none",
+                stroke: "currentColor",
+                viewBox: "0 0 24 24",
+                children: /* @__PURE__ */ jsx(
+                  "path",
+                  {
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round",
+                    strokeWidth: 1,
+                    d: "M6 18L18 6M6 6l12 12"
+                  }
+                )
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ jsx("div", { className: "w-full max-w-6xl aspect-video bg-black shadow-2xl", children: /* @__PURE__ */ jsx(
+          "iframe",
+          {
+            src: embedUrl,
+            className: "w-full h-full",
+            allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+            allowFullScreen: true
+          }
+        ) })
+      ]
+    }
+  );
 };
 function SeriesDetails({
   series,
@@ -6482,11 +6629,24 @@ function SeriesDetails({
 }) {
   const { auth } = usePage().props;
   const [showTrailer, setShowTrailer] = useState(false);
-  const [activeSeason, setActiveSeason] = useState(series.seasons?.[series.seasons?.length - 1] || null);
+  const [activeSeason, setActiveSeason] = useState(
+    series.seasons?.[series.seasons?.length - 1] || null
+  );
   const [expandedEpisodeId, setExpandedEpisodeId] = useState(null);
   useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      const prevRoute = sessionStorage.getItem("tgPrevRoute") || "home";
+      router.visit(prevRoute);
+    });
+  }, []);
+  useEffect(() => {
     if (activeSeason && activeSeason.episodes?.length > 0) {
-      setExpandedEpisodeId(activeSeason.episodes[activeSeason.episodes.length - 1].id);
+      setExpandedEpisodeId(
+        activeSeason.episodes[activeSeason.episodes.length - 1].id
+      );
     }
   }, [activeSeason]);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
@@ -6532,7 +6692,8 @@ function SeriesDetails({
           /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 text-sm text-gray-300 mb-3", children: [
             /* @__PURE__ */ jsxs("span", { children: [
               series.release_year_start,
-              " - ",
+              " -",
+              " ",
               series.release_year_end || "Present"
             ] }),
             /* @__PURE__ */ jsx("span", { children: "•" }),
@@ -6548,7 +6709,14 @@ function SeriesDetails({
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: series.genres?.slice(0, 3).map((genre) => /* @__PURE__ */ jsx("span", { className: "px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white uppercase tracking-wider", children: genre.name }, genre.id)) })
+          /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: series.genres?.slice(0, 3).map((genre) => /* @__PURE__ */ jsx(
+            "span",
+            {
+              className: "px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white uppercase tracking-wider",
+              children: genre.name
+            },
+            genre.id
+          )) })
         ] })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/2 lg:w-[55%] min-h-screen bg-[#080808] relative z-10", children: [
@@ -6557,7 +6725,8 @@ function SeriesDetails({
             /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 text-sm font-bold tracking-widest text-gray-500 uppercase mb-4", children: [
               /* @__PURE__ */ jsxs("span", { children: [
                 series.release_year_start,
-                " - ",
+                " -",
+                " ",
                 series.release_year_end || "Present"
               ] }),
               /* @__PURE__ */ jsx("span", { className: "w-1 h-1 bg-gray-500 rounded-full" }),
@@ -6572,7 +6741,14 @@ function SeriesDetails({
               ] })
             ] }),
             /* @__PURE__ */ jsx("h1", { className: "text-5xl lg:text-7xl font-serif font-medium text-white leading-[0.9] mb-6", children: series.title }),
-            /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: series.genres?.map((genre) => /* @__PURE__ */ jsx("span", { className: "px-3 py-1 border border-white/20 rounded-full text-xs text-gray-300 uppercase tracking-wider hover:border-white transition-colors cursor-default", children: genre.name }, genre.id)) })
+            /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: series.genres?.map((genre) => /* @__PURE__ */ jsx(
+              "span",
+              {
+                className: "px-3 py-1 border border-white/20 rounded-full text-xs text-gray-300 uppercase tracking-wider hover:border-white transition-colors cursor-default",
+                children: genre.name
+              },
+              genre.id
+            )) })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
             /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-4", children: "Synopsis" }),
@@ -6590,7 +6766,8 @@ function SeriesDetails({
                   onClick: () => setActiveSeason(season),
                   className: `whitespace-nowrap px-4 py-2 font-serif text-lg transition-colors ${activeSeason?.id === season.id ? "text-white border-b-2 border-white" : "text-gray-500 hover:text-gray-300"}`,
                   children: [
-                    "Season ",
+                    "Season",
+                    " ",
                     season.season_number
                   ]
                 },
@@ -6601,7 +6778,9 @@ function SeriesDetails({
                 {
                   episode,
                   isActive: expandedEpisodeId === episode.id,
-                  onClick: () => setExpandedEpisodeId(expandedEpisodeId === episode.id ? null : episode.id),
+                  onClick: () => setExpandedEpisodeId(
+                    expandedEpisodeId === episode.id ? null : episode.id
+                  ),
                   isVip,
                   isAuthenticated: !!auth.user
                 },
@@ -6611,13 +6790,27 @@ function SeriesDetails({
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
             /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: "Cast & Crew" }),
-            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4", children: series.actors?.slice(0, 9).map((actor) => /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
-              /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-800 grayscale hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx("img", { src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg", alt: "", className: "w-full h-full object-cover" }) }),
-              /* @__PURE__ */ jsxs("div", { className: "flex flex-col", children: [
-                /* @__PURE__ */ jsx("span", { className: "text-white font-serif leading-none mb-1", children: actor.person?.name }),
-                /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-500 uppercase tracking-wider", children: actor.character_name })
-              ] })
-            ] }, actor.id)) })
+            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4", children: series.actors?.slice(0, 9).map((actor) => /* @__PURE__ */ jsxs(
+              "div",
+              {
+                className: "flex items-center gap-3",
+                children: [
+                  /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-800 grayscale hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx(
+                    "img",
+                    {
+                      src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg",
+                      alt: "",
+                      className: "w-full h-full object-cover"
+                    }
+                  ) }),
+                  /* @__PURE__ */ jsxs("div", { className: "flex flex-col", children: [
+                    /* @__PURE__ */ jsx("span", { className: "text-white font-serif leading-none mb-1", children: actor.person?.name }),
+                    /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-500 uppercase tracking-wider", children: actor.character_name })
+                  ] })
+                ]
+              },
+              actor.id
+            )) })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "pt-12 border-t border-white/10", children: [
             /* @__PURE__ */ jsx("div", { className: "flex items-center justify-between mb-12", children: /* @__PURE__ */ jsxs("div", { children: [
@@ -6630,41 +6823,90 @@ function SeriesDetails({
                   userRating,
                   onRate: (rating) => {
                     if (userRating) {
-                      router.put(route("admin.ratings.update", userRating.id), {
-                        rating
-                      }, {
-                        preserveScroll: true,
-                        onSuccess: () => console.log("Rating updated")
-                      });
+                      router.put(
+                        route(
+                          "admin.ratings.update",
+                          userRating.id
+                        ),
+                        {
+                          rating
+                        },
+                        {
+                          preserveScroll: true,
+                          onSuccess: () => console.log(
+                            "Rating updated"
+                          )
+                        }
+                      );
                     } else {
-                      router.post(route("admin.ratings.store"), {
-                        series_id: series.id,
-                        rating
-                      }, {
-                        preserveScroll: true,
-                        onSuccess: () => console.log("Rating submitted")
-                      });
+                      router.post(
+                        route(
+                          "admin.ratings.store"
+                        ),
+                        {
+                          series_id: series.id,
+                          rating
+                        },
+                        {
+                          preserveScroll: true,
+                          onSuccess: () => console.log(
+                            "Rating submitted"
+                          )
+                        }
+                      );
                     }
                   }
                 }
               ) : /* @__PURE__ */ jsxs("div", { className: "text-gray-500 text-sm italic", children: [
-                /* @__PURE__ */ jsx("a", { href: route("login"), className: "text-white hover:underline", children: "Log in" }),
-                " to rate this series."
+                /* @__PURE__ */ jsx(
+                  "a",
+                  {
+                    href: route("login"),
+                    className: "text-white hover:underline",
+                    children: "Log in"
+                  }
+                ),
+                " ",
+                "to rate this series."
               ] })
             ] }) }),
             relatedSeries && relatedSeries.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
               /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: "Related Series" }),
-              /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-4", children: relatedSeries.slice(0, 3).map((rel) => /* @__PURE__ */ jsxs("a", { href: route("series.show", rel.slug), className: "group block", children: [
-                /* @__PURE__ */ jsx("div", { className: "aspect-[3/2] overflow-hidden mb-2", children: /* @__PURE__ */ jsx("img", { src: rel.poster_url, alt: "", className: "w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" }) }),
-                /* @__PURE__ */ jsx("h4", { className: "text-white font-serif text-sm truncate group-hover:underline", children: rel.title })
-              ] }, rel.id)) })
+              /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-4", children: relatedSeries.slice(0, 3).map((rel) => /* @__PURE__ */ jsxs(
+                "a",
+                {
+                  href: route(
+                    "series.show",
+                    rel.slug
+                  ),
+                  className: "group block",
+                  children: [
+                    /* @__PURE__ */ jsx("div", { className: "aspect-[3/2] overflow-hidden mb-2", children: /* @__PURE__ */ jsx(
+                      "img",
+                      {
+                        src: rel.poster_url,
+                        alt: "",
+                        className: "w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                      }
+                    ) }),
+                    /* @__PURE__ */ jsx("h4", { className: "text-white font-serif text-sm truncate group-hover:underline", children: rel.title })
+                  ]
+                },
+                rel.id
+              )) })
             ] })
           ] })
         ] }),
         /* @__PURE__ */ jsx(Footer, {})
       ] })
     ] }),
-    showTrailer && /* @__PURE__ */ jsx(TrailerModal, { url: series.trailer_url, onClose: () => setShowTrailer(false) })
+    showTrailer && /* @__PURE__ */ jsx(
+      TrailerModal,
+      {
+        url: series.trailer_url,
+        onClose: () => setShowTrailer(false)
+      }
+    )
   ] });
 }
 const __vite_glob_0_34 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({

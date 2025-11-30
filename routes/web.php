@@ -15,6 +15,7 @@ use App\Http\Controllers\Web\SitemapController;
 use App\Http\Controllers\Web\PageController;
 use App\Http\Controllers\Web\RatingController;
 use App\Http\Controllers\Web\ProfileController;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 // Public Routes
@@ -44,7 +45,7 @@ Route::get('/search', [HomeController::class, 'search'])->name('search');
 Route::get('/tgauth', function () {
     return Inertia::render('Auth/TgAuth', [
         'auth' => [
-            'user' => auth()->user(),
+            'user' => Auth::user(),
         ],
     ]);
 })->name('tgauth');
