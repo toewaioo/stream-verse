@@ -33,10 +33,10 @@ class TelegramAuthController extends Controller
             // Create a new user
             // Since Telegram doesn't provide email, we generate a placeholder
             $email = "telegram_{$telegramId}@telegram.placeholder";
-            
+
             // Check if a user with this placeholder email already exists (unlikely but safe)
             if (User::where('email', $email)->exists()) {
-                 $email = "telegram_{$telegramId}_" . Str::random(5) . "@telegram.placeholder";
+                $email = "telegram_{$telegramId}_" . Str::random(5) . "@telegram.placeholder";
             }
 
             $user = User::create([
@@ -67,7 +67,7 @@ class TelegramAuthController extends Controller
 
         $check_hash = $auth_data['hash'];
         unset($auth_data['hash']);
-        
+
         $data_check_arr = [];
         foreach ($auth_data as $key => $value) {
             $data_check_arr[] = $key . '=' . $value;
@@ -111,32 +111,31 @@ class TelegramAuthController extends Controller
         $user = User::where('telegram_id', $telegramId)->first();
 
         if (!$user) {
-             // Create a new user
-             // Since Telegram doesn't provide email, we generate a placeholder
-             $email = "telegram_{$telegramId}@telegram.placeholder";
-             
-             // Check if a user with this placeholder email already exists (unlikely but safe)
-             if (User::where('email', $email)->exists()) {
-                  $email = "telegram_{$telegramId}_" . Str::random(5) . "@telegram.placeholder";
-             }
- 
-             $user = User::create([
-                 'name' => $name,
-                 'email' => $email,
-                 'telegram_id' => $telegramId,
-                 'password' => Hash::make(Str::random(16)), // Random password
-                 'avatar_url' => $photoUrl,
-                 'email_verified_at' => now(),
-             ]);
+            // Create a new user
+            // Since Telegram doesn't provide email, we generate a placeholder
+            $email = "telegram_{$telegramId}@telegram.placeholder";
+
+            // Check if a user with this placeholder email already exists (unlikely but safe)
+            if (User::where('email', $email)->exists()) {
+                $email = "telegram_{$telegramId}_" . Str::random(5) . "@telegram.placeholder";
+            }
+
+            $user = User::create([
+                'name' => $name,
+                'email' => $email,
+                'telegram_id' => $telegramId,
+                'password' => Hash::make(Str::random(16)), // Random password
+                'avatar_url' => $photoUrl,
+                'email_verified_at' => now(),
+            ]);
         } else {
-             // Update user info if needed
-             if ($photoUrl && $user->avatar_url !== $photoUrl) {
-                 $user->update(['avatar_url' => $photoUrl]);
-             }
+            // Update user info if needed
+            if ($photoUrl && $user->avatar_url !== $photoUrl) {
+                $user->update(['avatar_url' => $photoUrl]);
+            }
         }
 
         Auth::login($user);
-        $request->authenticate();
         $request->session()->regenerate();
         return response()->json(['message' => 'Logged in successfully']);
     }
@@ -144,7 +143,7 @@ class TelegramAuthController extends Controller
     private function validateMiniAppInitData($initData, $botToken)
     {
         parse_str($initData, $data);
-        
+
         if (!isset($data['hash'])) {
             return false;
         }
@@ -158,14 +157,14 @@ class TelegramAuthController extends Controller
         }
         sort($data_check_arr);
         $data_check_string = implode("\n", $data_check_arr);
-        
+
         $secret_key = hash_hmac('sha256', $botToken, "WebAppData", true);
         $hash = hash_hmac('sha256', $data_check_string, $secret_key);
 
         if (strcmp($hash, $check_hash) !== 0) {
             return false;
         }
-        
+
         if (isset($data['auth_date']) && (time() - $data['auth_date']) > 86400) {
             return false;
         }
