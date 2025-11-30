@@ -4142,11 +4142,11 @@ const __vite_glob_0_15 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: ResetPassword
 }, Symbol.toStringTag, { value: "Module" }));
-const Loader = () => {
+const Loader = ({ title, status }) => {
   return /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-center flex-col text-center w-full h-[100vh]", children: [
     /* @__PURE__ */ jsx("div", { className: "flex w-16 h-16 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto" }),
-    /* @__PURE__ */ jsx("h2", { className: "text-white dark:text-white mt-4", children: "Loading..." }),
-    /* @__PURE__ */ jsx("p", { className: "text-zinc-600 dark:text-zinc-400", children: "Your adventure is about to begin" })
+    /* @__PURE__ */ jsx("h1", { className: "text-3xl font-bold text-center mb-4", children: title }),
+    /* @__PURE__ */ jsx("p", { children: status })
   ] });
 };
 function TgAuth({ user }) {
@@ -4238,39 +4238,13 @@ function TgAuth({ user }) {
       }, 3e3);
     }
   }, [user]);
-  const getLogColor = (type) => {
-    switch (type) {
-      case "success":
-        return "text-green-400";
-      case "error":
-        return "text-red-400";
-      case "warning":
-        return "text-yellow-400";
-      default:
-        return "text-gray-300";
-    }
-  };
   return /* @__PURE__ */ jsx("div", { className: "min-h-screen bg-[#050505] text-white flex items-center justify-center p-6", children: /* @__PURE__ */ jsxs("div", { className: "w-full max-w-2xl", children: [
-    /* @__PURE__ */ jsxs("div", { className: "bg-gray-900 rounded-lg shadow-xl p-6 border border-gray-700", children: [
-      /* @__PURE__ */ jsxs("h2", { className: "text-xl font-bold mb-4 flex items-center", children: [
-        /* @__PURE__ */ jsx("span", { className: "mr-2", children: "🔧" }),
-        "Developer Logs"
-      ] }),
-      /* @__PURE__ */ jsx("div", { className: "bg-black rounded-md p-4 max-h-96 overflow-y-auto font-mono text-sm", children: logs.length === 0 ? /* @__PURE__ */ jsx("p", { className: "text-gray-500", children: "No logs yet..." }) : logs.map((log, index) => /* @__PURE__ */ jsxs(
-        "div",
-        {
-          className: `mb-2 ${getLogColor(log.type)}`,
-          children: [
-            /* @__PURE__ */ jsxs("span", { className: "text-gray-500 mr-2", children: [
-              "[",
-              log.timestamp,
-              "]"
-            ] }),
-            /* @__PURE__ */ jsx("span", { children: log.message })
-          ]
-        },
-        index
-      )) })
+    /* @__PURE__ */ jsxs("div", { className: "bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg shadow-2xl p-8 mb-6 border border-gray-700", children: [
+      /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center mb-6", children: /* @__PURE__ */ jsx(Loader, { title: "Telegram Authentication", status }) }),
+      user && /* @__PURE__ */ jsxs("div", { className: "text-center text-sm text-green-400", children: [
+        "✓ Logged in as: ",
+        user.name || user.email
+      ] })
     ] }),
     /* @__PURE__ */ jsx("div", { className: "mt-6 text-center", children: /* @__PURE__ */ jsx(
       "button",
@@ -4833,7 +4807,7 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
     }, 6e3);
     return () => clearInterval(interval);
   }, [featured]);
-  return /* @__PURE__ */ jsx(LoadingLayout, { children: /* @__PURE__ */ jsxs(Fragment, { children: [
+  return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(
       SeoHead,
       {
@@ -4949,7 +4923,7 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
       ] }),
       /* @__PURE__ */ jsx(Footer, {})
     ] })
-  ] }) });
+  ] });
 }
 const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,

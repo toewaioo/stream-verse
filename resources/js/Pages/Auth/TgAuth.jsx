@@ -148,25 +148,19 @@ export default function TgAuth({ user }) {
         <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center p-6">
             <div className="w-full max-w-2xl">
                 {/* Status Card */}
-                {/* <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg shadow-2xl p-8 mb-6 border border-gray-700">
+                <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg shadow-2xl p-8 mb-6 border border-gray-700">
                     <div className="flex items-center justify-center mb-6">
-                        <Loader />
+                        <Loader title={"Telegram Authentication"}status={status}/>
                     </div>
-                    <h1 className="text-3xl font-bold text-center mb-4">
-                        Telegram Authentication
-                    </h1>
-                    <p className="text-center text-lg text-gray-300 mb-4">
-                        {status}
-                    </p>
                     {user && (
                         <div className="text-center text-sm text-green-400">
                             ✓ Logged in as: {user.name || user.email}
                         </div>
                     )}
-                </div> */}
+                </div>
 
                 {/* Developer Logs */}
-                <div className="bg-gray-900 rounded-lg shadow-xl p-6 border border-gray-700">
+                {/* <div className="bg-gray-900 rounded-lg shadow-xl p-6 border border-gray-700">
                     <h2 className="text-xl font-bold mb-4 flex items-center">
                         <span className="mr-2">🔧</span>
                         Developer Logs
@@ -188,7 +182,7 @@ export default function TgAuth({ user }) {
                             ))
                         )}
                     </div>
-                </div>
+                </div> */}
 
                 {/* Manual Navigation */}
                 <div className="mt-6 text-center">

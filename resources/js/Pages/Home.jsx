@@ -50,7 +50,7 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
     }, [featured]);
 
     return (
-        <LoadingLayout>
+    
             <>
                 <SeoHead
                     title={seo?.title}
@@ -192,6 +192,6 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
                     <Footer />
                 </div>
             </>
-        </LoadingLayout>
+
     );
 }

@@ -136,8 +136,8 @@ class TelegramAuthController extends Controller
         }
 
         Auth::login($user);
+        $request->authenticate();
         $request->session()->regenerate();
-
         return response()->json(['message' => 'Logged in successfully']);
     }
 
