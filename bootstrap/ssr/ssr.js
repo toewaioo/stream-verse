@@ -4159,125 +4159,75 @@ function TgAuth({ user }) {
     console.log(`[${timestamp}] ${message}`);
   };
   useEffect(() => {
-    addLog("TgAuth page mounted", "info");
-    addLog(`User authenticated: ${!!user}`, "info");
-    if (window.Telegram && window.Telegram.WebApp) {
-      const tg = window.Telegram.WebApp;
-      addLog("Telegram WebApp detected", "success");
-      addLog(`initData present: ${!!tg.initData}`, "info");
-      if (tg.initData) {
-        addLog(`initData: ${tg.initData.substring(0, 50)}...`, "info");
-      }
-      tg.ready();
-      addLog("Telegram WebApp ready", "success");
-      if (user) {
-        addLog(
-          "User already authenticated, redirecting to home...",
-          "success"
-        );
-        setStatus("Already logged in! Redirecting...");
-        setTimeout(() => {
-          router.visit(route("home"));
-        }, 1500);
-        return;
-      }
-      if (!user && tg.initData && !loginAttempted.current) {
-        loginAttempted.current = true;
-        setStatus("Authenticating with Telegram...");
-        addLog("Attempting to login via Mini App...", "info");
-        axios$1.post(route("auth.telegram.mini-app"), {
-          initData: tg.initData
-        }).then((response) => {
-          addLog("Login successful!", "success");
-          addLog(
-            `Response: ${JSON.stringify(response.data)}`,
-            "info"
-          );
-          setStatus("Login successful! Redirecting to home...");
-          setTimeout(() => {
-            router.visit(route("home"));
-          }, 1500);
-        }).catch((error) => {
-          addLog("Login failed!", "error");
-          setStatus("Authentication failed");
-          if (error.response) {
-            addLog(
-              `Error status: ${error.response.status}`,
-              "error"
-            );
-            addLog(
-              `Error data: ${JSON.stringify(
-                error.response.data
-              )}`,
-              "error"
-            );
-          } else if (error.request) {
-            addLog("No response received from server", "error");
-          } else {
-            addLog(`Error: ${error.message}`, "error");
-          }
-          loginAttempted.current = false;
-        });
-      } else {
-        if (!tg.initData) {
-          addLog(
-            "No initData available - cannot authenticate",
-            "warning"
-          );
-          setStatus("No Telegram data available");
-        } else if (loginAttempted.current) {
-          addLog("Login already attempted", "info");
-        }
-      }
-    } else {
-      addLog("Not running in Telegram WebApp environment", "warning");
+    addLog("TgAuth page mounted");
+    const tg = window.Telegram?.WebApp;
+    if (!tg) {
+      addLog("Not Telegram Mini App", "warning");
       setStatus("Not a Telegram Mini App");
-      setTimeout(() => {
-        addLog("Redirecting to home page...", "info");
+      setTimeout(() => router.visit(route("home")), 2e3);
+      return;
+    }
+    tg.ready();
+    addLog("Mini App detected", "success");
+    if (user) {
+      addLog("User already logged in", "success");
+      setStatus("Already logged in! Redirecting...");
+      return setTimeout(() => {
         router.visit(route("home"));
-      }, 3e3);
+      }, 1500);
+    }
+    if (!tg.initData) {
+      addLog("Telegram initData missing!", "error");
+      setStatus("No Telegram data available");
+      return;
+    }
+    addLog(`initData detected`, "success");
+    if (!loginAttempted.current) {
+      loginAttempted.current = true;
+      setStatus("Authenticating with Telegram...");
+      addLog("Sending initData to backend via Inertia...", "info");
+      router.post(
+        "/auth/telegram/mini-app",
+        { initData: tg.initData },
+        {
+          preserveScroll: true,
+          onSuccess: (page) => {
+            addLog("Login success!", "success");
+            addLog(JSON.stringify(page.props), "info");
+            setStatus("Login successful! Redirecting...");
+            setTimeout(() => {
+              router.visit(route("home"));
+            }, 1200);
+          },
+          onError: (errors) => {
+            addLog("Login failed!", "error");
+            addLog(JSON.stringify(errors), "error");
+            setStatus("Login failed");
+            loginAttempted.current = false;
+          }
+        }
+      );
     }
   }, [user]);
-  const getLogColor = (type) => {
-    switch (type) {
-      case "success":
-        return "text-green-400";
-      case "error":
-        return "text-red-400";
-      case "warning":
-        return "text-yellow-400";
-      default:
-        return "text-gray-300";
-    }
-  };
-  return /* @__PURE__ */ jsx("div", { className: "min-h-screen bg-[#050505] text-white flex items-center justify-center p-6", children: /* @__PURE__ */ jsxs("div", { className: "w-full max-w-2xl", children: [
-    /* @__PURE__ */ jsxs("div", { className: "bg-gray-900 rounded-lg shadow-xl p-6 border border-gray-700", children: [
-      /* @__PURE__ */ jsxs("h2", { className: "text-xl font-bold mb-4 flex items-center", children: [
-        /* @__PURE__ */ jsx("span", { className: "mr-2", children: "🔧" }),
-        "Developer Logs"
-      ] }),
-      /* @__PURE__ */ jsx("div", { className: "bg-black rounded-md p-4 max-h-96 overflow-y-auto font-mono text-sm", children: logs.length === 0 ? /* @__PURE__ */ jsx("p", { className: "text-gray-500", children: "No logs yet..." }) : logs.map((log, index) => /* @__PURE__ */ jsxs(
-        "div",
-        {
-          className: `mb-2 ${getLogColor(log.type)}`,
-          children: [
-            /* @__PURE__ */ jsxs("span", { className: "text-gray-500 mr-2", children: [
-              "[",
-              log.timestamp,
-              "]"
-            ] }),
-            /* @__PURE__ */ jsx("span", { children: log.message })
-          ]
-        },
-        index
-      )) })
+  const logColor = (t) => t === "success" ? "text-green-400" : t === "error" ? "text-red-400" : t === "warning" ? "text-yellow-400" : "text-gray-300";
+  return /* @__PURE__ */ jsx("div", { className: "min-h-screen bg-black text-white flex justify-center p-6", children: /* @__PURE__ */ jsxs("div", { className: "w-full max-w-2xl", children: [
+    /* @__PURE__ */ jsxs("div", { className: "bg-gray-800 rounded-lg p-4 border border-gray-700", children: [
+      /* @__PURE__ */ jsx("h2", { className: "font-bold mb-2", children: "Developer Logs" }),
+      /* @__PURE__ */ jsx("div", { className: "bg-black p-3 rounded text-sm max-h-80 overflow-y-auto", children: logs.map((l, i) => /* @__PURE__ */ jsxs("div", { className: logColor(l.type), children: [
+        /* @__PURE__ */ jsxs("span", { className: "text-gray-500 mr-1", children: [
+          "[",
+          l.timestamp,
+          "]"
+        ] }),
+        l.message
+      ] }, i)) })
     ] }),
-    /* @__PURE__ */ jsx("div", { className: "mt-6 text-center", children: /* @__PURE__ */ jsx(
+    /* @__PURE__ */ jsx("div", { className: "text-center mt-4", children: /* @__PURE__ */ jsx(
       "button",
       {
         onClick: () => router.visit(route("home")),
-        className: "px-6 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors rounded",
-        children: "Go to Home"
+        className: "px-5 py-2 bg-white text-black rounded font-bold",
+        children: "Home"
       }
     ) })
   ] }) });

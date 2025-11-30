@@ -14,8 +14,9 @@
         <meta name="theme-color" content="#050505">
         <link rel="apple-touch-icon" href="/images/icons/icon-192x192.png">
         <link rel="manifest" href="/build/manifest.webmanifest">
-
         <!-- Scripts -->
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
         @routes
         @viteReactRefresh
         @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
