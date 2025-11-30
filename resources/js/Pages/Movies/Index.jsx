@@ -1,20 +1,32 @@
-import React from "react";
-import { Head, Link } from "@inertiajs/react";
+import React, { useEffect } from "react";
+import { Head, Link, router } from "@inertiajs/react";
 import MediaCard from "@/Components/MediaCard";
 import Footer from "@/Components/Footer";
 
 const Pagination = ({ links }) => {
-    console.log(links);
+    useEffect(() => {
+        const tg = window.Telegram?.WebApp;
+        if (!tg) return;
+
+        tg.BackButton.show();
+
+        tg.onEvent("backButtonClicked", () => {
+            const prevRoute =
+                sessionStorage.getItem("tgPrevRoute") || route("home");
+            router.visit(prevRoute);
+        });
+    }, []);
     return (
         <div className="flex justify-center mt-12 gap-2">
             {links.map((link, index) => (
                 <Link
                     key={index}
                     href={link.url ? link.url : "#"}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${link.active
-                        ? "bg-white text-black"
-                        : "bg-white/10 text-white hover:bg-white/20"
-                        } ${!link.url ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                        link.active
+                            ? "bg-white text-black"
+                            : "bg-white/10 text-white hover:bg-white/20"
+                    } ${!link.url ? "opacity-50 cursor-not-allowed" : ""}`}
                     dangerouslySetInnerHTML={{ __html: link.label }}
                     disabled={!link.url}
                 />

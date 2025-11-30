@@ -308,7 +308,7 @@ export default function SeriesDetails({
         tg.BackButton.show();
 
         tg.onEvent("backButtonClicked", () => {
-            const prevRoute = sessionStorage.getItem("tgPrevRoute") || "home";
+            const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
             router.visit(prevRoute);
         });
     }, []);

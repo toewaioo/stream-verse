@@ -1,10 +1,22 @@
-import React from "react";
-import { Link, Head } from "@inertiajs/react";
+import React, { useEffect } from "react";
+import { Link, Head, router } from "@inertiajs/react";
 import Navbar from "@/Components/Navbar";
 import SeoHead from "@/Components/SeoHead";
 import MediaCard from "@/Components/MediaCard";
 
+
 export default function Search({ results, query, seo }) {
+    useEffect(() => {
+            const tg = window.Telegram?.WebApp;
+            if (!tg) return;
+    
+            tg.BackButton.show();
+    
+            tg.onEvent("backButtonClicked", () => {
+                const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
+                router.visit(prevRoute);
+            });
+        }, []);
     return (
         <>
             <SeoHead

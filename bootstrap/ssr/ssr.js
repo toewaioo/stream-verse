@@ -1,7 +1,7 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import { Link, usePage, Head, useForm, router, createInertiaApp } from "@inertiajs/react";
 import { Transition, Dialog, TransitionChild, DialogPanel, Combobox } from "@headlessui/react";
-import React, { createContext, useState, useContext, useEffect, forwardRef, useRef, useImperativeHandle, useMemo } from "react";
+import React, { createContext, useState, useContext, useEffect as useEffect$1, forwardRef, useRef, useImperativeHandle, useMemo } from "react";
 import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import axios$1 from "axios";
 import { debounce } from "lodash";
@@ -348,7 +348,7 @@ function AuthenticatedLayout({ header, children }) {
 }
 function DarkModeToggle() {
   const [isDark, setIsDark] = useState(false);
-  useEffect(() => {
+  useEffect$1(() => {
     const savedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if (savedTheme === "dark" || !savedTheme && prefersDark) {
@@ -525,7 +525,7 @@ const __vite_glob_0_0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.def
   default: AdminDashboard
 }, Symbol.toStringTag, { value: "Module" }));
 function useFormPersistence(key, data, setData) {
-  useEffect(() => {
+  useEffect$1(() => {
     const saved = localStorage.getItem(key);
     if (saved) {
       try {
@@ -536,7 +536,7 @@ function useFormPersistence(key, data, setData) {
       }
     }
   }, [key]);
-  useEffect(() => {
+  useEffect$1(() => {
     if (data) {
       localStorage.setItem(key, JSON.stringify(data));
     }
@@ -566,7 +566,7 @@ const TextInput = forwardRef(function TextInput2({ type = "text", className = ""
   useImperativeHandle(ref, () => ({
     focus: () => localRef.current?.focus()
   }));
-  useEffect(() => {
+  useEffect$1(() => {
     if (isFocused) {
       localRef.current?.focus();
     }
@@ -839,7 +839,7 @@ function PersonSelector({ value, onChange, persons: initialPersons = [] }) {
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [persons, setPersons] = useState(initialPersons);
   const [isCreating, setIsCreating] = useState(false);
-  useEffect(() => {
+  useEffect$1(() => {
     if (value) {
       const found = persons.find((p) => p.id === parseInt(value));
       setSelectedPerson(found || null);
@@ -2055,7 +2055,7 @@ function AdminMovies({ movies, genres, persons, auth }) {
       { preserveState: true, replace: true }
     );
   });
-  useEffect(() => {
+  useEffect$1(() => {
     if (isFirst.current) {
       isFirst.current = false;
       return;
@@ -2910,13 +2910,13 @@ function SeriesForm({
   const storageKey = series?.id ? `series_form_update_${series.id}` : "series_form_create";
   const { clearStorage } = useFormPersistence(storageKey, data, setData);
   const [slugError, setSlugError] = useState("");
-  useEffect(() => {
+  useEffect$1(() => {
     if (data.title && !series?.id) {
       const slug = data.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
       setData("slug", slug);
     }
   }, [data.title]);
-  useEffect(() => {
+  useEffect$1(() => {
     const checkSlug = async () => {
       if (!data.slug) return;
       try {
@@ -3610,7 +3610,7 @@ function AdminSeries({ series, genres, persons, auth }) {
       { preserveState: true, replace: true }
     );
   });
-  useEffect(() => {
+  useEffect$1(() => {
     if (isFirst.current) {
       isFirst.current = false;
       return;
@@ -3841,7 +3841,7 @@ const __vite_glob_0_12 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
 }, Symbol.toStringTag, { value: "Module" }));
 function TelegramLoginWidget({ botName, buttonSize = "large", cornerRadius = 20, requestAccess = "write" }) {
   const containerRef = useRef(null);
-  useEffect(() => {
+  useEffect$1(() => {
     if (!botName) return;
     const script = document.createElement("script");
     script.src = "https://telegram.org/js/telegram-widget.js?22";
@@ -4158,7 +4158,7 @@ function TgAuth({ user }) {
     setLogs((prev) => [...prev, { timestamp, message, type }]);
     console.log(`[${timestamp}] ${message}`);
   };
-  useEffect(() => {
+  useEffect$1(() => {
     addLog("TgAuth page mounted", "info");
     addLog(`User authenticated: ${!!user}`, "info");
     if (window.Telegram?.WebApp) {
@@ -4296,7 +4296,7 @@ function Navbar() {
   const { data, setData } = useForm({
     q: ""
   });
-  useEffect(() => {
+  useEffect$1(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setIsScrolled(true);
@@ -4307,7 +4307,7 @@ function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  useEffect(() => {
+  useEffect$1(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -4657,7 +4657,7 @@ function SeoHead({
 function LoadingLayout({ children }) {
   const [loading, setLoading] = useState(true);
   const { props } = usePage();
-  useEffect(() => {
+  useEffect$1(() => {
     const minSplashTime = 500;
     const timeout = setTimeout(() => {
       setLoading(false);
@@ -4674,6 +4674,15 @@ function GenreShow({ genre, movies, series, seo }) {
   const handlePageChange = (url, type) => {
     router.get(url, {}, { preserveState: true, preserveScroll: true });
   };
+  useEffect$1(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
+      router.visit(prevRoute);
+    });
+  }, []);
   const PaginationControls = ({ data, type }) => {
     if (!data.links || data.links.length <= 3) return null;
     return /* @__PURE__ */ jsx("div", { className: "flex justify-center items-center gap-2 mt-12", children: data.links.map((link, index) => {
@@ -4760,7 +4769,13 @@ function GenreShow({ genre, movies, series, seo }) {
             },
             movie.id
           )) }),
-          /* @__PURE__ */ jsx(PaginationControls, { data: movies, type: "movies" })
+          /* @__PURE__ */ jsx(
+            PaginationControls,
+            {
+              data: movies,
+              type: "movies"
+            }
+          )
         ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: "No movies found in this genre." }) }) }),
         activeTab === "series" && /* @__PURE__ */ jsx("div", { children: series.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
           /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
@@ -4771,7 +4786,13 @@ function GenreShow({ genre, movies, series, seo }) {
             },
             item.id
           )) }),
-          /* @__PURE__ */ jsx(PaginationControls, { data: series, type: "series" })
+          /* @__PURE__ */ jsx(
+            PaginationControls,
+            {
+              data: series,
+              type: "series"
+            }
+          )
         ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: "No series found in this genre." }) }) })
       ] }),
       /* @__PURE__ */ jsx(Footer, {})
@@ -4798,7 +4819,7 @@ const SectionTitle = ({ title, subtitle, href }) => /* @__PURE__ */ jsxs("div", 
 ] });
 function Home({ featured, latestMovies, latestSeries, seo }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  useEffect(() => {
+  useEffect$1(() => {
     if (!featured || featured.length === 0) return;
     const interval = setInterval(() => {
       setCurrentIndex(
@@ -5003,7 +5024,24 @@ function RatingWidget({
   ] });
 }
 const PlayIcon$1 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
-const DownloadIcon$1 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" }) });
+const DownloadIcon$1 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx(
+  "svg",
+  {
+    className,
+    fill: "none",
+    stroke: "currentColor",
+    viewBox: "0 0 24 24",
+    children: /* @__PURE__ */ jsx(
+      "path",
+      {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeWidth: 2,
+        d: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+      }
+    )
+  }
+);
 const LinkItem$1 = ({ link, type, isVip }) => {
   const isLocked = link.is_vip_only && !isVip;
   const [copied, setCopied] = useState(false);
@@ -5012,45 +5050,113 @@ const LinkItem$1 = ({ link, type, isVip }) => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2e3);
   };
-  return /* @__PURE__ */ jsxs("div", { className: `group flex items-center justify-between py-4 border-b border-white/10 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""}`, children: [
-    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
-      /* @__PURE__ */ jsx("div", { className: `w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download" ? "border-blue-500 text-blue-500" : "border-red-500 text-red-500"}`, children: link.quality?.replace("p", "") || "HD" }),
-      /* @__PURE__ */ jsxs("div", { className: "flex flex-col", children: [
-        /* @__PURE__ */ jsx("span", { className: "text-white font-serif text-lg leading-none", children: link.server_name }),
-        /* @__PURE__ */ jsx("span", { className: "text-gray-500 text-xs font-mono mt-1", children: link.url })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsx("div", { className: "flex items-center gap-3", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-1 uppercase tracking-widest", children: "VIP" }) : /* @__PURE__ */ jsxs(Fragment, { children: [
-      /* @__PURE__ */ jsx(
-        "button",
-        {
-          onClick: handleCopy,
-          className: "text-gray-500 hover:text-white text-xs uppercase tracking-widest transition-colors",
-          children: copied ? "Copied" : "Copy"
-        }
-      ),
-      /* @__PURE__ */ jsx(
-        "a",
-        {
-          href: link.url,
-          target: "_blank",
-          rel: "noopener noreferrer",
-          className: `w-10 h-10 rounded-full flex items-center justify-center transition-all ${type === "download" ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-red-600 hover:bg-red-500 text-white"}`,
-          children: /* @__PURE__ */ jsx("svg", { className: "w-4 h-4", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z", clipRule: "evenodd" }) })
-        }
-      )
-    ] }) })
-  ] });
+  return /* @__PURE__ */ jsxs(
+    "div",
+    {
+      className: `group flex items-center justify-between py-4 border-b border-white/10 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""}`,
+      children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
+          /* @__PURE__ */ jsx(
+            "div",
+            {
+              className: `w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download" ? "border-blue-500 text-blue-500" : "border-red-500 text-red-500"}`,
+              children: link.quality?.replace("p", "") || "HD"
+            }
+          ),
+          /* @__PURE__ */ jsxs("div", { className: "flex flex-col", children: [
+            /* @__PURE__ */ jsx("span", { className: "text-white font-serif text-lg leading-none", children: link.server_name }),
+            /* @__PURE__ */ jsx("span", { className: "text-gray-500 text-xs font-mono mt-1", children: link.url })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-3", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-1 uppercase tracking-widest", children: "VIP" }) : /* @__PURE__ */ jsxs(Fragment, { children: [
+          /* @__PURE__ */ jsx(
+            "button",
+            {
+              onClick: handleCopy,
+              className: "text-gray-500 hover:text-white text-xs uppercase tracking-widest transition-colors",
+              children: copied ? "Copied" : "Copy"
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            "a",
+            {
+              href: link.url,
+              target: "_blank",
+              rel: "noopener noreferrer",
+              className: `w-10 h-10 rounded-full flex items-center justify-center transition-all ${type === "download" ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-red-600 hover:bg-red-500 text-white"}`,
+              children: /* @__PURE__ */ jsx(
+                "svg",
+                {
+                  className: "w-4 h-4",
+                  fill: "currentColor",
+                  viewBox: "0 0 20 20",
+                  children: /* @__PURE__ */ jsx(
+                    "path",
+                    {
+                      fillRule: "evenodd",
+                      d: "M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z",
+                      clipRule: "evenodd"
+                    }
+                  )
+                }
+              )
+            }
+          )
+        ] }) })
+      ]
+    }
+  );
 };
 const TrailerModal$1 = ({ url, onClose }) => {
   if (!url) return null;
-  const videoId = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)?.[1];
+  const videoId = url.match(
+    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
+  )?.[1];
   const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : null;
   if (!embedUrl) return null;
-  return /* @__PURE__ */ jsxs("div", { className: "fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 md:p-12 animate-fade-in", onClick: onClose, children: [
-    /* @__PURE__ */ jsx("button", { onClick: onClose, className: "absolute top-6 right-6 text-white/50 hover:text-white transition-colors", children: /* @__PURE__ */ jsx("svg", { className: "w-10 h-10", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 1, d: "M6 18L18 6M6 6l12 12" }) }) }),
-    /* @__PURE__ */ jsx("div", { className: "w-full max-w-6xl aspect-video bg-black shadow-2xl", children: /* @__PURE__ */ jsx("iframe", { src: embedUrl, className: "w-full h-full", allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture", allowFullScreen: true }) })
-  ] });
+  return /* @__PURE__ */ jsxs(
+    "div",
+    {
+      className: "fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 md:p-12 animate-fade-in",
+      onClick: onClose,
+      children: [
+        /* @__PURE__ */ jsx(
+          "button",
+          {
+            onClick: onClose,
+            className: "absolute top-6 right-6 text-white/50 hover:text-white transition-colors",
+            children: /* @__PURE__ */ jsx(
+              "svg",
+              {
+                className: "w-10 h-10",
+                fill: "none",
+                stroke: "currentColor",
+                viewBox: "0 0 24 24",
+                children: /* @__PURE__ */ jsx(
+                  "path",
+                  {
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round",
+                    strokeWidth: 1,
+                    d: "M6 18L18 6M6 6l12 12"
+                  }
+                )
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ jsx("div", { className: "w-full max-w-6xl aspect-video bg-black shadow-2xl", children: /* @__PURE__ */ jsx(
+          "iframe",
+          {
+            src: embedUrl,
+            className: "w-full h-full",
+            allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+            allowFullScreen: true
+          }
+        ) })
+      ]
+    }
+  );
 };
 function MovieDetails({
   movie,
@@ -5063,6 +5169,15 @@ function MovieDetails({
 }) {
   const { auth } = usePage().props;
   const [showTrailer, setShowTrailer] = useState(false);
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
+      router.visit(prevRoute);
+    });
+  }, []);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(
       SeoHead,
@@ -5115,7 +5230,14 @@ function MovieDetails({
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: movie.genres?.slice(0, 3).map((genre) => /* @__PURE__ */ jsx("span", { className: "px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white uppercase tracking-wider", children: genre.name }, genre.id)) })
+          /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: movie.genres?.slice(0, 3).map((genre) => /* @__PURE__ */ jsx(
+            "span",
+            {
+              className: "px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white uppercase tracking-wider",
+              children: genre.name
+            },
+            genre.id
+          )) })
         ] })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/2 lg:w-[55%] min-h-screen bg-[#080808] relative z-10", children: [
@@ -5132,7 +5254,14 @@ function MovieDetails({
               ] })
             ] }),
             /* @__PURE__ */ jsx("h1", { className: "text-5xl lg:text-7xl font-serif font-medium text-white leading-[0.9] mb-6", children: movie.title }),
-            /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: movie.genres?.map((genre) => /* @__PURE__ */ jsx("span", { className: "px-3 py-1 border border-white/20 rounded-full text-xs text-gray-300 uppercase tracking-wider hover:border-white transition-colors cursor-default", children: genre.name }, genre.id)) })
+            /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: movie.genres?.map((genre) => /* @__PURE__ */ jsx(
+              "span",
+              {
+                className: "px-3 py-1 border border-white/20 rounded-full text-xs text-gray-300 uppercase tracking-wider hover:border-white transition-colors cursor-default",
+                children: genre.name
+              },
+              genre.id
+            )) })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
             /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-4", children: "Synopsis" }),
@@ -5149,29 +5278,70 @@ function MovieDetails({
                   /* @__PURE__ */ jsx(PlayIcon$1, { className: "w-5 h-5" }),
                   /* @__PURE__ */ jsx("span", { className: "font-serif text-xl italic", children: "Streaming Sources" })
                 ] }),
-                /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-white/10", children: watchLinksByQuality && Object.keys(watchLinksByQuality).length > 0 ? Object.values(watchLinksByQuality).flat().map((link) => /* @__PURE__ */ jsx(LinkItem$1, { link, type: "watch", isVip }, link.id)) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: "No streaming links available." }) })
+                /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-white/10", children: watchLinksByQuality && Object.keys(watchLinksByQuality).length > 0 ? Object.values(
+                  watchLinksByQuality
+                ).flat().map((link) => /* @__PURE__ */ jsx(
+                  LinkItem$1,
+                  {
+                    link,
+                    type: "watch",
+                    isVip
+                  },
+                  link.id
+                )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: "No streaming links available." }) })
               ] }),
               /* @__PURE__ */ jsxs("div", { children: [
                 /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mb-4 text-white", children: [
                   /* @__PURE__ */ jsx(DownloadIcon$1, { className: "w-5 h-5" }),
                   /* @__PURE__ */ jsx("span", { className: "font-serif text-xl italic", children: "Download Files" })
                 ] }),
-                /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-white/10", children: downloadLinksByQuality && Object.keys(downloadLinksByQuality).length > 0 ? Object.values(downloadLinksByQuality).flat().map((link) => /* @__PURE__ */ jsx(LinkItem$1, { link, type: "download", isVip }, link.id)) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: "No download links available." }) })
+                /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-white/10", children: downloadLinksByQuality && Object.keys(downloadLinksByQuality).length > 0 ? Object.values(
+                  downloadLinksByQuality
+                ).flat().map((link) => /* @__PURE__ */ jsx(
+                  LinkItem$1,
+                  {
+                    link,
+                    type: "download",
+                    isVip
+                  },
+                  link.id
+                )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: "No download links available." }) })
               ] })
             ] }) : /* @__PURE__ */ jsxs("div", { className: "p-8 border border-white/10 rounded-lg bg-white/5 text-center", children: [
               /* @__PURE__ */ jsx("p", { className: "text-gray-400 font-serif text-lg mb-4", children: "Please log in to access streaming and download links." }),
-              /* @__PURE__ */ jsx("a", { href: route("login"), className: "inline-block px-6 py-2 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors", children: "Log In" })
+              /* @__PURE__ */ jsx(
+                "a",
+                {
+                  href: route("login"),
+                  className: "inline-block px-6 py-2 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
+                  children: "Log In"
+                }
+              )
             ] })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
             /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: "Cast & Crew" }),
-            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4", children: movie.actors?.slice(0, 6).map((actor) => /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
-              /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-800 grayscale hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx("img", { src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg", alt: "", className: "w-full h-full object-cover" }) }),
-              /* @__PURE__ */ jsxs("div", { className: "flex flex-col", children: [
-                /* @__PURE__ */ jsx("span", { className: "text-white font-serif leading-none mb-1", children: actor.person?.name }),
-                /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-500 uppercase tracking-wider", children: actor.character_name })
-              ] })
-            ] }, actor.id)) })
+            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4", children: movie.actors?.slice(0, 6).map((actor) => /* @__PURE__ */ jsxs(
+              "div",
+              {
+                className: "flex items-center gap-3",
+                children: [
+                  /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-800 grayscale hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx(
+                    "img",
+                    {
+                      src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg",
+                      alt: "",
+                      className: "w-full h-full object-cover"
+                    }
+                  ) }),
+                  /* @__PURE__ */ jsxs("div", { className: "flex flex-col", children: [
+                    /* @__PURE__ */ jsx("span", { className: "text-white font-serif leading-none mb-1", children: actor.person?.name }),
+                    /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-500 uppercase tracking-wider", children: actor.character_name })
+                  ] })
+                ]
+              },
+              actor.id
+            )) })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "pt-12 border-t border-white/10", children: [
             /* @__PURE__ */ jsx("div", { className: "flex items-center justify-between mb-12", children: /* @__PURE__ */ jsxs("div", { children: [
@@ -5184,41 +5354,90 @@ function MovieDetails({
                   userRating,
                   onRate: (rating) => {
                     if (userRating) {
-                      router.put(route("admin.ratings.update", userRating.id), {
-                        rating
-                      }, {
-                        preserveScroll: true,
-                        onSuccess: () => console.log("Rating updated")
-                      });
+                      router.put(
+                        route(
+                          "admin.ratings.update",
+                          userRating.id
+                        ),
+                        {
+                          rating
+                        },
+                        {
+                          preserveScroll: true,
+                          onSuccess: () => console.log(
+                            "Rating updated"
+                          )
+                        }
+                      );
                     } else {
-                      router.post(route("admin.ratings.store"), {
-                        movie_id: movie.id,
-                        rating
-                      }, {
-                        preserveScroll: true,
-                        onSuccess: () => console.log("Rating submitted")
-                      });
+                      router.post(
+                        route(
+                          "admin.ratings.store"
+                        ),
+                        {
+                          movie_id: movie.id,
+                          rating
+                        },
+                        {
+                          preserveScroll: true,
+                          onSuccess: () => console.log(
+                            "Rating submitted"
+                          )
+                        }
+                      );
                     }
                   }
                 }
               ) : /* @__PURE__ */ jsxs("div", { className: "text-gray-500 text-sm italic", children: [
-                /* @__PURE__ */ jsx("a", { href: route("login"), className: "text-white hover:underline", children: "Log in" }),
-                " to rate this movie."
+                /* @__PURE__ */ jsx(
+                  "a",
+                  {
+                    href: route("login"),
+                    className: "text-white hover:underline",
+                    children: "Log in"
+                  }
+                ),
+                " ",
+                "to rate this movie."
               ] })
             ] }) }),
             relatedMovies && relatedMovies.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
               /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: "Related Films" }),
-              /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-4", children: relatedMovies.slice(0, 3).map((rel) => /* @__PURE__ */ jsxs("a", { href: route("movies.show", rel.slug), className: "group block", children: [
-                /* @__PURE__ */ jsx("div", { className: "aspect-[3/2] overflow-hidden mb-2", children: /* @__PURE__ */ jsx("img", { src: rel.poster_url, alt: "", className: "w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" }) }),
-                /* @__PURE__ */ jsx("h4", { className: "text-white font-serif text-sm truncate group-hover:underline", children: rel.title })
-              ] }, rel.id)) })
+              /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-4", children: relatedMovies.slice(0, 3).map((rel) => /* @__PURE__ */ jsxs(
+                "a",
+                {
+                  href: route(
+                    "movies.show",
+                    rel.slug
+                  ),
+                  className: "group block",
+                  children: [
+                    /* @__PURE__ */ jsx("div", { className: "aspect-[3/2] overflow-hidden mb-2", children: /* @__PURE__ */ jsx(
+                      "img",
+                      {
+                        src: rel.poster_url,
+                        alt: "",
+                        className: "w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                      }
+                    ) }),
+                    /* @__PURE__ */ jsx("h4", { className: "text-white font-serif text-sm truncate group-hover:underline", children: rel.title })
+                  ]
+                },
+                rel.id
+              )) })
             ] })
           ] })
         ] }),
         /* @__PURE__ */ jsx(Footer, {})
       ] })
     ] }),
-    showTrailer && /* @__PURE__ */ jsx(TrailerModal$1, { url: movie.trailer_url, onClose: () => setShowTrailer(false) })
+    showTrailer && /* @__PURE__ */ jsx(
+      TrailerModal$1,
+      {
+        url: movie.trailer_url,
+        onClose: () => setShowTrailer(false)
+      }
+    )
   ] });
 }
 const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -5226,7 +5445,15 @@ const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: MovieDetails
 }, Symbol.toStringTag, { value: "Module" }));
 const Pagination$1 = ({ links }) => {
-  console.log(links);
+  useEffect$1(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
+      router.visit(prevRoute);
+    });
+  }, []);
   return /* @__PURE__ */ jsx("div", { className: "flex justify-center mt-12 gap-2", children: links.map((link, index) => /* @__PURE__ */ jsx(
     Link,
     {
@@ -5291,6 +5518,15 @@ function StaticPageLayout({ title, description, children }) {
   ] }) });
 }
 function About({ title, description }) {
+  useEffect$1(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
+      router.visit(prevRoute);
+    });
+  }, []);
   return /* @__PURE__ */ jsx(StaticPageLayout, { title, description, children: /* @__PURE__ */ jsxs("div", { className: "prose prose-invert prose-lg max-w-none", children: [
     /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
       /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Welcome to Cineverse" }),
@@ -5340,6 +5576,15 @@ function Contact({ title, description }) {
     subject: "",
     message: ""
   });
+  useEffect$1(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
+      router.visit(prevRoute);
+    });
+  }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
@@ -5358,17 +5603,59 @@ function Contact({ title, description }) {
       /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed mb-8", children: "Have questions, suggestions, or feedback? We'd love to hear from you. Fill out the form and our team will get back to you as soon as possible." }),
       /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
         /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-4", children: [
-          /* @__PURE__ */ jsx("div", { className: "mt-1 text-white", children: /* @__PURE__ */ jsx("svg", { className: "w-6 h-6", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" }) }) }),
+          /* @__PURE__ */ jsx("div", { className: "mt-1 text-white", children: /* @__PURE__ */ jsx(
+            "svg",
+            {
+              className: "w-6 h-6",
+              fill: "none",
+              stroke: "currentColor",
+              viewBox: "0 0 24 24",
+              children: /* @__PURE__ */ jsx(
+                "path",
+                {
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  strokeWidth: "2",
+                  d: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                }
+              )
+            }
+          ) }),
           /* @__PURE__ */ jsxs("div", { children: [
             /* @__PURE__ */ jsx("h3", { className: "text-white font-bold mb-1", children: "Email" }),
             /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm", children: "support@cineverse.com" })
           ] })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-4", children: [
-          /* @__PURE__ */ jsx("div", { className: "mt-1 text-white", children: /* @__PURE__ */ jsxs("svg", { className: "w-6 h-6", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
-            /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" }),
-            /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M15 11a3 3 0 11-6 0 3 3 0 016 0z" })
-          ] }) }),
+          /* @__PURE__ */ jsx("div", { className: "mt-1 text-white", children: /* @__PURE__ */ jsxs(
+            "svg",
+            {
+              className: "w-6 h-6",
+              fill: "none",
+              stroke: "currentColor",
+              viewBox: "0 0 24 24",
+              children: [
+                /* @__PURE__ */ jsx(
+                  "path",
+                  {
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round",
+                    strokeWidth: "2",
+                    d: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  }
+                ),
+                /* @__PURE__ */ jsx(
+                  "path",
+                  {
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round",
+                    strokeWidth: "2",
+                    d: "M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  }
+                )
+              ]
+            }
+          ) }),
           /* @__PURE__ */ jsxs("div", { children: [
             /* @__PURE__ */ jsx("h3", { className: "text-white font-bold mb-1", children: "Address" }),
             /* @__PURE__ */ jsxs("p", { className: "text-gray-400 text-sm", children: [
@@ -5379,7 +5666,24 @@ function Contact({ title, description }) {
           ] })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-4", children: [
-          /* @__PURE__ */ jsx("div", { className: "mt-1 text-white", children: /* @__PURE__ */ jsx("svg", { className: "w-6 h-6", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" }) }) }),
+          /* @__PURE__ */ jsx("div", { className: "mt-1 text-white", children: /* @__PURE__ */ jsx(
+            "svg",
+            {
+              className: "w-6 h-6",
+              fill: "none",
+              stroke: "currentColor",
+              viewBox: "0 0 24 24",
+              children: /* @__PURE__ */ jsx(
+                "path",
+                {
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  strokeWidth: "2",
+                  d: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                }
+              )
+            }
+          ) }),
           /* @__PURE__ */ jsxs("div", { children: [
             /* @__PURE__ */ jsx("h3", { className: "text-white font-bold mb-1", children: "Business Hours" }),
             /* @__PURE__ */ jsxs("p", { className: "text-gray-400 text-sm", children: [
@@ -5395,7 +5699,14 @@ function Contact({ title, description }) {
       /* @__PURE__ */ jsx("h2", { className: "text-3xl font-serif text-white mb-6 border-b border-white/10 pb-4", children: "Send Us a Message" }),
       /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, className: "space-y-6", children: [
         /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("label", { htmlFor: "name", className: "block text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest", children: "Name" }),
+          /* @__PURE__ */ jsx(
+            "label",
+            {
+              htmlFor: "name",
+              className: "block text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest",
+              children: "Name"
+            }
+          ),
           /* @__PURE__ */ jsx(
             "input",
             {
@@ -5411,7 +5722,14 @@ function Contact({ title, description }) {
           )
         ] }),
         /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("label", { htmlFor: "email", className: "block text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest", children: "Email" }),
+          /* @__PURE__ */ jsx(
+            "label",
+            {
+              htmlFor: "email",
+              className: "block text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest",
+              children: "Email"
+            }
+          ),
           /* @__PURE__ */ jsx(
             "input",
             {
@@ -5427,7 +5745,14 @@ function Contact({ title, description }) {
           )
         ] }),
         /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("label", { htmlFor: "subject", className: "block text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest", children: "Subject" }),
+          /* @__PURE__ */ jsx(
+            "label",
+            {
+              htmlFor: "subject",
+              className: "block text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest",
+              children: "Subject"
+            }
+          ),
           /* @__PURE__ */ jsx(
             "input",
             {
@@ -5443,7 +5768,14 @@ function Contact({ title, description }) {
           )
         ] }),
         /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("label", { htmlFor: "message", className: "block text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest", children: "Message" }),
+          /* @__PURE__ */ jsx(
+            "label",
+            {
+              htmlFor: "message",
+              className: "block text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest",
+              children: "Message"
+            }
+          ),
           /* @__PURE__ */ jsx(
             "textarea",
             {
@@ -5475,6 +5807,15 @@ const __vite_glob_0_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Contact
 }, Symbol.toStringTag, { value: "Module" }));
 const FAQItem = ({ question, answer, isOpen, onClick }) => {
+  useEffect$1(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
+      router.visit(prevRoute);
+    });
+  }, []);
   return /* @__PURE__ */ jsxs("div", { className: "border-b border-white/10", children: [
     /* @__PURE__ */ jsxs(
       "button",
@@ -5490,7 +5831,15 @@ const FAQItem = ({ question, answer, isOpen, onClick }) => {
               fill: "none",
               stroke: "currentColor",
               viewBox: "0 0 24 24",
-              children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M19 9l-7 7-7-7" })
+              children: /* @__PURE__ */ jsx(
+                "path",
+                {
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  strokeWidth: "2",
+                  d: "M19 9l-7 7-7-7"
+                }
+              )
             }
           )
         ]
@@ -5580,6 +5929,15 @@ const __vite_glob_0_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: FAQ
 }, Symbol.toStringTag, { value: "Module" }));
 function Privacy({ title, description }) {
+  useEffect$1(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
+      router.visit(prevRoute);
+    });
+  }, []);
   return /* @__PURE__ */ jsx(StaticPageLayout, { title, description, children: /* @__PURE__ */ jsxs("div", { className: "prose prose-invert prose-lg max-w-none", children: [
     /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
       /* @__PURE__ */ jsxs("p", { className: "text-gray-400 text-sm mb-8", children: [
@@ -5704,6 +6062,15 @@ const __vite_glob_0_25 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Privacy
 }, Symbol.toStringTag, { value: "Module" }));
 function Terms({ title, description }) {
+  useEffect$1(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
+      router.visit(prevRoute);
+    });
+  }, []);
   return /* @__PURE__ */ jsx(StaticPageLayout, { title, description, children: /* @__PURE__ */ jsxs("div", { className: "prose prose-invert prose-lg max-w-none", children: [
     /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
       /* @__PURE__ */ jsxs("p", { className: "text-gray-400 text-sm mb-8", children: [
@@ -5835,6 +6202,15 @@ function PersonShow({ person, movies, series, seo }) {
   };
   const PaginationControls = ({ data, type }) => {
     if (!data.links || data.links.length <= 3) return null;
+    useEffect$1(() => {
+      const tg = window.Telegram?.WebApp;
+      if (!tg) return;
+      tg.BackButton.show();
+      tg.onEvent("backButtonClicked", () => {
+        const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
+        router.visit(prevRoute);
+      });
+    }, []);
     return /* @__PURE__ */ jsx("div", { className: "flex justify-center items-center gap-2 mt-12", children: data.links.map((link, index) => {
       if (!link.url) {
         return /* @__PURE__ */ jsx(
@@ -5930,7 +6306,13 @@ function PersonShow({ person, movies, series, seo }) {
             },
             movie.id
           )) }),
-          /* @__PURE__ */ jsx(PaginationControls, { data: movies, type: "movies" })
+          /* @__PURE__ */ jsx(
+            PaginationControls,
+            {
+              data: movies,
+              type: "movies"
+            }
+          )
         ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: "No movies found featuring this person." }) }) }),
         activeTab === "series" && /* @__PURE__ */ jsx("div", { children: series.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
           /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
@@ -5941,7 +6323,13 @@ function PersonShow({ person, movies, series, seo }) {
             },
             item.id
           )) }),
-          /* @__PURE__ */ jsx(PaginationControls, { data: series, type: "series" })
+          /* @__PURE__ */ jsx(
+            PaginationControls,
+            {
+              data: series,
+              type: "series"
+            }
+          )
         ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: "No series found featuring this person." }) }) })
       ] }),
       /* @__PURE__ */ jsx(Footer, {})
@@ -6298,6 +6686,15 @@ const __vite_glob_0_28 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Edit
 }, Symbol.toStringTag, { value: "Module" }));
 function Search({ results, query, seo }) {
+  useEffect$1(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
+      router.visit(prevRoute);
+    });
+  }, []);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(
       SeoHead,
@@ -6342,6 +6739,15 @@ const __vite_glob_0_32 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Search
 }, Symbol.toStringTag, { value: "Module" }));
 const Pagination = ({ links }) => {
+  useEffect$1(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
+      router.visit(prevRoute);
+    });
+  }, []);
   return /* @__PURE__ */ jsx("div", { className: "flex justify-center mt-12 gap-2", children: links.map((link, index) => /* @__PURE__ */ jsx(
     Link,
     {
@@ -6633,16 +7039,16 @@ function SeriesDetails({
     series.seasons?.[series.seasons?.length - 1] || null
   );
   const [expandedEpisodeId, setExpandedEpisodeId] = useState(null);
-  useEffect(() => {
+  useEffect$1(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", () => {
-      const prevRoute = sessionStorage.getItem("tgPrevRoute") || "home";
+      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
       router.visit(prevRoute);
     });
   }, []);
-  useEffect(() => {
+  useEffect$1(() => {
     if (activeSeason && activeSeason.episodes?.length > 0) {
       setExpandedEpisodeId(
         activeSeason.episodes[activeSeason.episodes.length - 1].id

@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
-import { Link, router } from '@inertiajs/react';
-import Navbar from '@/Components/Navbar';
-import Footer from '@/Components/Footer';
-import MediaCard from '@/Components/MediaCard';
-import SeoHead from '@/Components/SeoHead';
-import LoadingLayout from '@/Layouts/LoadingLayout';
+import React, { useEffect, useState } from "react";
+import { Link, router } from "@inertiajs/react";
+import Navbar from "@/Components/Navbar";
+import Footer from "@/Components/Footer";
+import MediaCard from "@/Components/MediaCard";
+import SeoHead from "@/Components/SeoHead";
+import LoadingLayout from "@/Layouts/LoadingLayout";
 
 export default function GenreShow({ genre, movies, series, seo }) {
-    const [activeTab, setActiveTab] = useState('movies');
+    const [activeTab, setActiveTab] = useState("movies");
 
     const handlePageChange = (url, type) => {
         router.get(url, {}, { preserveState: true, preserveScroll: true });
     };
+    useEffect(() => {
+        const tg = window.Telegram?.WebApp;
+        if (!tg) return;
+
+        tg.BackButton.show();
+
+        tg.onEvent("backButtonClicked", () => {
+            const prevRoute =
+                sessionStorage.getItem("tgPrevRoute") || route("home");
+            router.visit(prevRoute);
+        });
+    }, []);
 
     const PaginationControls = ({ data, type }) => {
         if (!data.links || data.links.length <= 3) return null;
@@ -33,10 +45,11 @@ export default function GenreShow({ genre, movies, series, seo }) {
                         <button
                             key={index}
                             onClick={() => handlePageChange(link.url, type)}
-                            className={`px-4 py-2 transition-colors ${link.active
-                                    ? 'bg-white text-black font-bold'
-                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
-                                }`}
+                            className={`px-4 py-2 transition-colors ${
+                                link.active
+                                    ? "bg-white text-black font-bold"
+                                    : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+                            }`}
                             dangerouslySetInnerHTML={{ __html: link.label }}
                         />
                     );
@@ -74,7 +87,8 @@ export default function GenreShow({ genre, movies, series, seo }) {
                                     {genre.name}
                                 </h1>
                                 <p className="text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
-                                    Explore {movies.total + series.total} movies and series in this genre
+                                    Explore {movies.total + series.total} movies
+                                    and series in this genre
                                 </p>
                             </div>
                         </div>
@@ -85,33 +99,35 @@ export default function GenreShow({ genre, movies, series, seo }) {
                         {/* Tabs */}
                         <div className="flex gap-4 mb-12 border-b border-white/10">
                             <button
-                                onClick={() => setActiveTab('movies')}
-                                className={`px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === 'movies'
-                                        ? 'text-white'
-                                        : 'text-gray-500 hover:text-gray-300'
-                                    }`}
+                                onClick={() => setActiveTab("movies")}
+                                className={`px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${
+                                    activeTab === "movies"
+                                        ? "text-white"
+                                        : "text-gray-500 hover:text-gray-300"
+                                }`}
                             >
                                 Movies ({movies.total})
-                                {activeTab === 'movies' && (
+                                {activeTab === "movies" && (
                                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white"></div>
                                 )}
                             </button>
                             <button
-                                onClick={() => setActiveTab('series')}
-                                className={`px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === 'series'
-                                        ? 'text-white'
-                                        : 'text-gray-500 hover:text-gray-300'
-                                    }`}
+                                onClick={() => setActiveTab("series")}
+                                className={`px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${
+                                    activeTab === "series"
+                                        ? "text-white"
+                                        : "text-gray-500 hover:text-gray-300"
+                                }`}
                             >
                                 Series ({series.total})
-                                {activeTab === 'series' && (
+                                {activeTab === "series" && (
                                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white"></div>
                                 )}
                             </button>
                         </div>
 
                         {/* Movies Tab */}
-                        {activeTab === 'movies' && (
+                        {activeTab === "movies" && (
                             <div>
                                 {movies.data.length > 0 ? (
                                     <>
@@ -124,18 +140,23 @@ export default function GenreShow({ genre, movies, series, seo }) {
                                                 />
                                             ))}
                                         </div>
-                                        <PaginationControls data={movies} type="movies" />
+                                        <PaginationControls
+                                            data={movies}
+                                            type="movies"
+                                        />
                                     </>
                                 ) : (
                                     <div className="text-center py-20">
-                                        <p className="text-gray-500 text-lg">No movies found in this genre.</p>
+                                        <p className="text-gray-500 text-lg">
+                                            No movies found in this genre.
+                                        </p>
                                     </div>
                                 )}
                             </div>
                         )}
 
                         {/* Series Tab */}
-                        {activeTab === 'series' && (
+                        {activeTab === "series" && (
                             <div>
                                 {series.data.length > 0 ? (
                                     <>
@@ -148,11 +169,16 @@ export default function GenreShow({ genre, movies, series, seo }) {
                                                 />
                                             ))}
                                         </div>
-                                        <PaginationControls data={series} type="series" />
+                                        <PaginationControls
+                                            data={series}
+                                            type="series"
+                                        />
                                     </>
                                 ) : (
                                     <div className="text-center py-20">
-                                        <p className="text-gray-500 text-lg">No series found in this genre.</p>
+                                        <p className="text-gray-500 text-lg">
+                                            No series found in this genre.
+                                        </p>
                                     </div>
                                 )}
                             </div>
