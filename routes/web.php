@@ -86,10 +86,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::put('/persons/{person}', [AdminPersonController::class, 'update'])->name('admin.persons.update');
     Route::delete('/persons/{person}', [AdminPersonController::class, 'destroy'])->name('admin.persons.destroy');
 
-    Route::get('/ratings', [RatingController::class, 'index'])->name('admin.ratings');
-    Route::get('/ratings/{rating}', [RatingController::class, 'show'])->name('admin.ratings.show');
-    Route::post('/ratings', [RatingController::class, 'store'])->name('admin.ratings.store');
-    Route::put('/ratings/{rating}', [RatingController::class, 'update'])->name('admin.ratings.update');
 
     Route::get('/download-links', function () {
         return Inertia::render('Admin/DownloadLinks', [
@@ -122,9 +118,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Ratings
-    Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
-    Route::put('/ratings/{rating}', [RatingController::class, 'update'])->name('ratings.update');
-    Route::delete('/ratings/{rating}', [RatingController::class, 'destroy'])->name('ratings.destroy');
+    Route::get('/ratings', [RatingController::class, 'index'])->name('admin.ratings');
+    Route::get('/ratings/{rating}', [RatingController::class, 'show'])->name('admin.ratings.show');
+    Route::post('/ratings', [RatingController::class, 'store'])->name('admin.ratings.store');
+    Route::put('/ratings/{rating}', [RatingController::class, 'update'])->name('admin.ratings.update');
 });
 
 require __DIR__ . '/auth.php';
