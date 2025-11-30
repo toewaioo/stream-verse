@@ -29,6 +29,7 @@ class HomeController extends Controller
 
         $featuredSeries = Series::select(['id', 'title', 'slug', 'description', 'poster_url', 'banner_url', 'status'])
             ->where('status', '!=', 'upcoming')
+
             ->whereNotNull('banner_url')
             ->inRandomOrder()
             ->limit(5)
@@ -41,7 +42,7 @@ class HomeController extends Controller
         $featured = $featuredMovies->concat($featuredSeries)->shuffle()->values();
 
         // Fetch latest movies with genres eager loaded
-        $latestMovies = Movie::select(['id', 'title', 'slug', 'poster_url', 'release_date', 'created_at', 'status'])
+        $latestMovies = Movie::select(['id', 'title', 'slug', 'poster_url', 'release_date', 'created_at', 'status', 'rating_average'])
             ->where('status', 'released')
             ->with(['genres:id,name,slug'])
             ->orderBy('created_at', 'desc')
@@ -49,7 +50,7 @@ class HomeController extends Controller
             ->get();
 
         // Fetch latest series with genres eager loaded
-        $latestSeries = Series::select(['id', 'title', 'slug', 'poster_url', 'release_year_start', 'created_at', 'status'])
+        $latestSeries = Series::select(['id', 'title', 'slug', 'poster_url', 'release_year_start', 'created_at', 'status','rating_average'])
             ->where('status', '!=', 'upcoming')
             ->with(['genres:id,name,slug'])
             ->orderBy('created_at', 'desc')
