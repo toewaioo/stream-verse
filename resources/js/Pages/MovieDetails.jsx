@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePage, router } from "@inertiajs/react";
 import RatingWidget from "@/Components/Movie/RatingWidget";
 import SeoHead from "@/Components/SeoHead";

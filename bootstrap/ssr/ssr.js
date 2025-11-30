@@ -1,7 +1,7 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import { Link, usePage, Head, useForm, router, createInertiaApp } from "@inertiajs/react";
 import { Transition, Dialog, TransitionChild, DialogPanel, Combobox } from "@headlessui/react";
-import React, { createContext, useState, useContext, useEffect as useEffect$1, forwardRef, useRef, useImperativeHandle, useMemo } from "react";
+import React, { createContext, useState, useContext, useEffect, forwardRef, useRef, useImperativeHandle, useMemo } from "react";
 import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import axios$1 from "axios";
 import { debounce } from "lodash";
@@ -348,7 +348,7 @@ function AuthenticatedLayout({ header, children }) {
 }
 function DarkModeToggle() {
   const [isDark, setIsDark] = useState(false);
-  useEffect$1(() => {
+  useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if (savedTheme === "dark" || !savedTheme && prefersDark) {
@@ -525,7 +525,7 @@ const __vite_glob_0_0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.def
   default: AdminDashboard
 }, Symbol.toStringTag, { value: "Module" }));
 function useFormPersistence(key, data, setData) {
-  useEffect$1(() => {
+  useEffect(() => {
     const saved = localStorage.getItem(key);
     if (saved) {
       try {
@@ -536,7 +536,7 @@ function useFormPersistence(key, data, setData) {
       }
     }
   }, [key]);
-  useEffect$1(() => {
+  useEffect(() => {
     if (data) {
       localStorage.setItem(key, JSON.stringify(data));
     }
@@ -566,7 +566,7 @@ const TextInput = forwardRef(function TextInput2({ type = "text", className = ""
   useImperativeHandle(ref, () => ({
     focus: () => localRef.current?.focus()
   }));
-  useEffect$1(() => {
+  useEffect(() => {
     if (isFocused) {
       localRef.current?.focus();
     }
@@ -839,7 +839,7 @@ function PersonSelector({ value, onChange, persons: initialPersons = [] }) {
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [persons, setPersons] = useState(initialPersons);
   const [isCreating, setIsCreating] = useState(false);
-  useEffect$1(() => {
+  useEffect(() => {
     if (value) {
       const found = persons.find((p) => p.id === parseInt(value));
       setSelectedPerson(found || null);
@@ -2055,7 +2055,7 @@ function AdminMovies({ movies, genres, persons, auth }) {
       { preserveState: true, replace: true }
     );
   });
-  useEffect$1(() => {
+  useEffect(() => {
     if (isFirst.current) {
       isFirst.current = false;
       return;
@@ -2910,13 +2910,13 @@ function SeriesForm({
   const storageKey = series?.id ? `series_form_update_${series.id}` : "series_form_create";
   const { clearStorage } = useFormPersistence(storageKey, data, setData);
   const [slugError, setSlugError] = useState("");
-  useEffect$1(() => {
+  useEffect(() => {
     if (data.title && !series?.id) {
       const slug = data.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
       setData("slug", slug);
     }
   }, [data.title]);
-  useEffect$1(() => {
+  useEffect(() => {
     const checkSlug = async () => {
       if (!data.slug) return;
       try {
@@ -3610,7 +3610,7 @@ function AdminSeries({ series, genres, persons, auth }) {
       { preserveState: true, replace: true }
     );
   });
-  useEffect$1(() => {
+  useEffect(() => {
     if (isFirst.current) {
       isFirst.current = false;
       return;
@@ -3841,7 +3841,7 @@ const __vite_glob_0_12 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
 }, Symbol.toStringTag, { value: "Module" }));
 function TelegramLoginWidget({ botName, buttonSize = "large", cornerRadius = 20, requestAccess = "write" }) {
   const containerRef = useRef(null);
-  useEffect$1(() => {
+  useEffect(() => {
     if (!botName) return;
     const script = document.createElement("script");
     script.src = "https://telegram.org/js/telegram-widget.js?22";
@@ -4158,7 +4158,7 @@ function TgAuth({ user }) {
     setLogs((prev) => [...prev, { timestamp, message, type }]);
     console.log(`[${timestamp}] ${message}`);
   };
-  useEffect$1(() => {
+  useEffect(() => {
     addLog("TgAuth page mounted", "info");
     addLog(`User authenticated: ${!!user}`, "info");
     if (window.Telegram?.WebApp) {
@@ -4296,7 +4296,7 @@ function Navbar() {
   const { data, setData } = useForm({
     q: ""
   });
-  useEffect$1(() => {
+  useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setIsScrolled(true);
@@ -4307,7 +4307,7 @@ function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  useEffect$1(() => {
+  useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -4657,7 +4657,7 @@ function SeoHead({
 function LoadingLayout({ children }) {
   const [loading, setLoading] = useState(true);
   const { props } = usePage();
-  useEffect$1(() => {
+  useEffect(() => {
     const minSplashTime = 500;
     const timeout = setTimeout(() => {
       setLoading(false);
@@ -4674,7 +4674,7 @@ function GenreShow({ genre, movies, series, seo }) {
   const handlePageChange = (url, type) => {
     router.get(url, {}, { preserveState: true, preserveScroll: true });
   };
-  useEffect$1(() => {
+  useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
     tg.BackButton.show();
@@ -4819,7 +4819,7 @@ const SectionTitle = ({ title, subtitle, href }) => /* @__PURE__ */ jsxs("div", 
 ] });
 function Home({ featured, latestMovies, latestSeries, seo }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  useEffect$1(() => {
+  useEffect(() => {
     if (!featured || featured.length === 0) return;
     const interval = setInterval(() => {
       setCurrentIndex(
@@ -5445,7 +5445,7 @@ const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: MovieDetails
 }, Symbol.toStringTag, { value: "Module" }));
 const Pagination$1 = ({ links }) => {
-  useEffect$1(() => {
+  useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
     tg.BackButton.show();
@@ -5518,7 +5518,7 @@ function StaticPageLayout({ title, description, children }) {
   ] }) });
 }
 function About({ title, description }) {
-  useEffect$1(() => {
+  useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
     tg.BackButton.show();
@@ -5576,7 +5576,7 @@ function Contact({ title, description }) {
     subject: "",
     message: ""
   });
-  useEffect$1(() => {
+  useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
     tg.BackButton.show();
@@ -5807,7 +5807,7 @@ const __vite_glob_0_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Contact
 }, Symbol.toStringTag, { value: "Module" }));
 const FAQItem = ({ question, answer, isOpen, onClick }) => {
-  useEffect$1(() => {
+  useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
     tg.BackButton.show();
@@ -5929,7 +5929,7 @@ const __vite_glob_0_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: FAQ
 }, Symbol.toStringTag, { value: "Module" }));
 function Privacy({ title, description }) {
-  useEffect$1(() => {
+  useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
     tg.BackButton.show();
@@ -6062,7 +6062,7 @@ const __vite_glob_0_25 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Privacy
 }, Symbol.toStringTag, { value: "Module" }));
 function Terms({ title, description }) {
-  useEffect$1(() => {
+  useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
     tg.BackButton.show();
@@ -6202,7 +6202,7 @@ function PersonShow({ person, movies, series, seo }) {
   };
   const PaginationControls = ({ data, type }) => {
     if (!data.links || data.links.length <= 3) return null;
-    useEffect$1(() => {
+    useEffect(() => {
       const tg = window.Telegram?.WebApp;
       if (!tg) return;
       tg.BackButton.show();
@@ -6686,7 +6686,7 @@ const __vite_glob_0_28 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Edit
 }, Symbol.toStringTag, { value: "Module" }));
 function Search({ results, query, seo }) {
-  useEffect$1(() => {
+  useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
     tg.BackButton.show();
@@ -6739,7 +6739,7 @@ const __vite_glob_0_32 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Search
 }, Symbol.toStringTag, { value: "Module" }));
 const Pagination = ({ links }) => {
-  useEffect$1(() => {
+  useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
     tg.BackButton.show();
@@ -7039,7 +7039,7 @@ function SeriesDetails({
     series.seasons?.[series.seasons?.length - 1] || null
   );
   const [expandedEpisodeId, setExpandedEpisodeId] = useState(null);
-  useEffect$1(() => {
+  useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
     tg.BackButton.show();
@@ -7048,7 +7048,7 @@ function SeriesDetails({
       router.visit(prevRoute);
     });
   }, []);
-  useEffect$1(() => {
+  useEffect(() => {
     if (activeSeason && activeSeason.episodes?.length > 0) {
       setExpandedEpisodeId(
         activeSeason.episodes[activeSeason.episodes.length - 1].id
