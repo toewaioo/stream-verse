@@ -44,14 +44,14 @@ export default function MediaCard({ item, type }) {
 
                 {/* VIP Badge */}
                 {item.is_vip_only && (
-                    <div className="absolute top-2 left-2 px-2 py-0.5 bg-yellow-500 text-black text-[10px] font-black uppercase tracking-wider rounded-sm shadow-md z-10">
+                    <div className="absolute top-1 left-1 px-1 md:top-3 md:left-3 md:px-3 py-0.5 bg-yellow-500 text-black text-[10px]  md:text-sm font-black uppercase tracking-wider rounded-sm shadow-md z-10">
                         VIP
                     </div>
                 )}
 
                 {/* Rating Badge */}
                 {item.rating_average > 0 && (
-                    <div className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 bg-black/60 backdrop-blur-md border border-white/10 rounded-md text-xs font-bold text-yellow-400 z-10">
+                    <div className="absolute top-1 right-1 md:top-3 md:right-3 flex items-center gap-1 px-1.5 py-0.5 bg-black/60 backdrop-blur-md border border-white/10 rounded-md text-xs md:text-sm  font-bold text-yellow-400 z-10">
                         <StarIcon />
                         <span>{Number(item.rating_average).toFixed(1)}</span>
                     </div>
@@ -71,7 +71,7 @@ export default function MediaCard({ item, type }) {
                     {item.title}
                 </h3>
 
-                <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
+                <div className="flex items-center gap-2 text-xs text-gray-400 font-medium flex-wrap">
                     <span className="text-gray-300">{year}</span>
                     <span className="w-1 h-1 rounded-full bg-gray-600"></span>
                     <span className="uppercase tracking-wide text-[10px] border border-gray-700 px-1 rounded text-gray-400">
