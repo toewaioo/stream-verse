@@ -1,0 +1,1 @@
+import{j as m}from"./app-CrR_p_xd.js";function o({value:t,className:e="",children:r,...s}){return m.jsx("label",{...s,className:"block text-sm font-medium text-gray-300 "+e,children:t||r})}export{o as I};

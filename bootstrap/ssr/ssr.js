@@ -96,256 +96,6 @@ const DropdownLink = ({ className = "", children, ...props }) => {
 Dropdown.Trigger = Trigger;
 Dropdown.Content = Content;
 Dropdown.Link = DropdownLink;
-function NavLink({
-  active = false,
-  className = "",
-  children,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx(
-    Link,
-    {
-      ...props,
-      className: "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none " + (active ? "border-indigo-400 text-gray-900 focus:border-indigo-700" : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:border-gray-300 focus:text-gray-700") + className,
-      children
-    }
-  );
-}
-function ResponsiveNavLink({
-  active = false,
-  className = "",
-  children,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx(
-    Link,
-    {
-      ...props,
-      className: `flex w-full items-start border-l-4 py-2 pe-4 ps-3 ${active ? "border-indigo-400 bg-indigo-50 text-indigo-700 focus:border-indigo-700 focus:bg-indigo-100 focus:text-indigo-800" : "border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800"} text-base font-medium transition duration-150 ease-in-out focus:outline-none ${className}`,
-      children
-    }
-  );
-}
-function AuthenticatedLayout({ header, children }) {
-  const user = usePage().props.auth.user;
-  const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-  return /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100", children: [
-    /* @__PURE__ */ jsxs("nav", { className: "border-b border-gray-100 bg-white", children: [
-      /* @__PURE__ */ jsx("div", { className: "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8", children: /* @__PURE__ */ jsxs("div", { className: "flex h-16 justify-between", children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex", children: [
-          /* @__PURE__ */ jsx("div", { className: "flex shrink-0 items-center", children: /* @__PURE__ */ jsx(Link, { href: "/", children: /* @__PURE__ */ jsx(ApplicationLogo, { className: "block h-9 w-auto fill-current text-gray-800" }) }) }),
-          /* @__PURE__ */ jsxs("div", { className: "hidden space-x-8 sm:-my-px sm:ms-10 sm:flex", children: [
-            /* @__PURE__ */ jsx(
-              NavLink,
-              {
-                href: route("dashboard"),
-                active: route().current("dashboard"),
-                children: "Dashboard"
-              }
-            ),
-            /* @__PURE__ */ jsx(
-              NavLink,
-              {
-                href: route("admin.dashboard"),
-                active: route().current("admin.dashboard"),
-                children: "Admin"
-              }
-            ),
-            /* @__PURE__ */ jsx(
-              NavLink,
-              {
-                href: route("admin.movies"),
-                active: route().current("admin.movies"),
-                children: "Movies"
-              }
-            ),
-            /* @__PURE__ */ jsx(
-              NavLink,
-              {
-                href: route("admin.series"),
-                active: route().current("admin.series"),
-                children: "Series"
-              }
-            ),
-            /* @__PURE__ */ jsx(
-              NavLink,
-              {
-                href: route("admin.genres"),
-                active: route().current("admin.genres"),
-                children: "Genres"
-              }
-            ),
-            /* @__PURE__ */ jsx(
-              NavLink,
-              {
-                href: route("admin.persons"),
-                active: route().current("admin.persons"),
-                children: "Persons"
-              }
-            ),
-            /* @__PURE__ */ jsx(
-              NavLink,
-              {
-                href: route("admin.downloadLinks"),
-                active: route().current(
-                  "admin.downloadLinks"
-                ),
-                children: "Download Links"
-              }
-            ),
-            /* @__PURE__ */ jsx(
-              NavLink,
-              {
-                href: route("admin.watchLinks"),
-                active: route().current("admin.watchLinks"),
-                children: "Watch Links"
-              }
-            ),
-            /* @__PURE__ */ jsx(
-              NavLink,
-              {
-                href: route("admin.seasons"),
-                active: route().current("admin.seasons"),
-                children: "Seasons"
-              }
-            ),
-            /* @__PURE__ */ jsx(
-              NavLink,
-              {
-                href: route("admin.episodes"),
-                active: route().current("admin.episodes"),
-                children: "Episodes"
-              }
-            )
-          ] })
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "hidden sm:ms-6 sm:flex sm:items-center", children: /* @__PURE__ */ jsx("div", { className: "relative ms-3", children: /* @__PURE__ */ jsxs(Dropdown, { children: [
-          /* @__PURE__ */ jsx(Dropdown.Trigger, { children: /* @__PURE__ */ jsx("span", { className: "inline-flex rounded-md", children: /* @__PURE__ */ jsxs(
-            "button",
-            {
-              type: "button",
-              className: "inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none",
-              children: [
-                user.name,
-                /* @__PURE__ */ jsx(
-                  "svg",
-                  {
-                    className: "-me-0.5 ms-2 h-4 w-4",
-                    xmlns: "http://www.w3.org/2000/svg",
-                    viewBox: "0 0 20 20",
-                    fill: "currentColor",
-                    children: /* @__PURE__ */ jsx(
-                      "path",
-                      {
-                        fillRule: "evenodd",
-                        d: "M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z",
-                        clipRule: "evenodd"
-                      }
-                    )
-                  }
-                )
-              ]
-            }
-          ) }) }),
-          /* @__PURE__ */ jsxs(Dropdown.Content, { children: [
-            /* @__PURE__ */ jsx(
-              Dropdown.Link,
-              {
-                href: route("profile.edit"),
-                children: "Profile"
-              }
-            ),
-            /* @__PURE__ */ jsx(
-              Dropdown.Link,
-              {
-                href: route("logout"),
-                method: "post",
-                as: "button",
-                children: "Log Out"
-              }
-            )
-          ] })
-        ] }) }) }),
-        /* @__PURE__ */ jsx("div", { className: "-me-2 flex items-center sm:hidden", children: /* @__PURE__ */ jsx(
-          "button",
-          {
-            onClick: () => setShowingNavigationDropdown(
-              (previousState) => !previousState
-            ),
-            className: "inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none",
-            children: /* @__PURE__ */ jsxs(
-              "svg",
-              {
-                className: "h-6 w-6",
-                stroke: "currentColor",
-                fill: "none",
-                viewBox: "0 0 24 24",
-                children: [
-                  /* @__PURE__ */ jsx(
-                    "path",
-                    {
-                      className: !showingNavigationDropdown ? "inline-flex" : "hidden",
-                      strokeLinecap: "round",
-                      strokeLinejoin: "round",
-                      strokeWidth: "2",
-                      d: "M4 6h16M4 12h16M4 18h16"
-                    }
-                  ),
-                  /* @__PURE__ */ jsx(
-                    "path",
-                    {
-                      className: showingNavigationDropdown ? "inline-flex" : "hidden",
-                      strokeLinecap: "round",
-                      strokeLinejoin: "round",
-                      strokeWidth: "2",
-                      d: "M6 18L18 6M6 6l12 12"
-                    }
-                  )
-                ]
-              }
-            )
-          }
-        ) })
-      ] }) }),
-      /* @__PURE__ */ jsxs(
-        "div",
-        {
-          className: (showingNavigationDropdown ? "block" : "hidden") + " sm:hidden",
-          children: [
-            /* @__PURE__ */ jsx("div", { className: "space-y-1 pb-3 pt-2", children: /* @__PURE__ */ jsx(
-              ResponsiveNavLink,
-              {
-                href: route("dashboard"),
-                active: route().current("dashboard"),
-                children: "Dashboard"
-              }
-            ) }),
-            /* @__PURE__ */ jsxs("div", { className: "border-t border-gray-200 pb-1 pt-4", children: [
-              /* @__PURE__ */ jsxs("div", { className: "px-4", children: [
-                /* @__PURE__ */ jsx("div", { className: "text-base font-medium text-gray-800", children: user.name }),
-                /* @__PURE__ */ jsx("div", { className: "text-sm font-medium text-gray-500", children: user.email })
-              ] }),
-              /* @__PURE__ */ jsxs("div", { className: "mt-3 space-y-1", children: [
-                /* @__PURE__ */ jsx(ResponsiveNavLink, { href: route("profile.edit"), children: "Profile" }),
-                /* @__PURE__ */ jsx(
-                  ResponsiveNavLink,
-                  {
-                    method: "post",
-                    href: route("logout"),
-                    as: "button",
-                    children: "Log Out"
-                  }
-                )
-              ] })
-            ] })
-          ]
-        }
-      )
-    ] }),
-    header && /* @__PURE__ */ jsx("header", { className: "bg-white shadow", children: /* @__PURE__ */ jsx("div", { className: "mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8", children: header }) }),
-    /* @__PURE__ */ jsx("main", { children })
-  ] });
-}
 function DarkModeToggle() {
   const [isDark, setIsDark] = useState(false);
   useEffect(() => {
@@ -750,7 +500,7 @@ function Modal({
             children: /* @__PURE__ */ jsx(
               DialogPanel,
               {
-                className: `mb-6 transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 shadow-xl transition-all sm:mx-auto w-full lg:w-auto ${maxWidthClass} max-h-[90vh] overflow-y-auto`,
+                className: `mb-6 transform overflow-hidden rounded-lg bg-white dark:bg-[#1a1a1a] shadow-xl transition-all sm:mx-auto w-full lg:w-auto ${maxWidthClass} max-h-[90vh] overflow-y-auto`,
                 children
               }
             )
@@ -4418,8 +4168,8 @@ function Navbar() {
     /* @__PURE__ */ jsx(
       "nav",
       {
-        className: `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-black/90 backdrop-blur-md py-4 shadow-lg" : "bg-transparent py-6"}`,
-        children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 flex items-center justify-between", children: [
+        className: `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "hidden bg-black/90 backdrop-blur-md py-2 shadow-lg" : "bg-transparent py-2 md:py-6"}`,
+        children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12 flex items-center justify-between", children: [
           /* @__PURE__ */ jsxs(
             Link,
             {
@@ -4525,7 +4275,7 @@ function Navbar() {
                       value: data.q,
                       onChange: (e) => setData("q", e.target.value),
                       placeholder: "Search titles...",
-                      className: `w-full p-5 bg-transparent border-b border-white/30 text-white placeholder-gray-400 focus:outline-none focus:border-white py-1 pl-8 pr-2 transition-all duration-300 ${isSearchOpen ? "opacity-100 visible" : "opacity-0 invisible w-0"}`,
+                      className: `w-full p-5 bg-transparent border-b border-white/30 text-white placeholder-gray-400 focus:outline-none focus:border-white py-1 pr-2 transition-all duration-300 ${isSearchOpen ? "opacity-100 visible" : "opacity-0 invisible w-0"}`,
                       onBlur: () => !data.q && setIsSearchOpen(false)
                     }
                   )
@@ -4689,7 +4439,121 @@ function Navbar() {
           ] }) })
         ] })
       }
-    )
+    ),
+    /* @__PURE__ */ jsx("div", { className: "fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-lg border-t border-white/10 md:hidden pb-safe", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-around p-4", children: [
+      /* @__PURE__ */ jsxs(
+        Link,
+        {
+          href: route("home"),
+          className: `flex flex-col items-center gap-1 ${route().current("home") ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+          children: [
+            /* @__PURE__ */ jsx(
+              "svg",
+              {
+                className: "w-6 h-6",
+                fill: "none",
+                stroke: "currentColor",
+                viewBox: "0 0 24 24",
+                children: /* @__PURE__ */ jsx(
+                  "path",
+                  {
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round",
+                    strokeWidth: 2,
+                    d: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                  }
+                )
+              }
+            ),
+            /* @__PURE__ */ jsx("span", { className: "text-[10px] uppercase tracking-wider font-medium", children: "Home" })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxs(
+        Link,
+        {
+          href: route("movies.index"),
+          className: `flex flex-col items-center gap-1 ${route().current("movies.*") ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+          children: [
+            /* @__PURE__ */ jsx(
+              "svg",
+              {
+                className: "w-6 h-6",
+                fill: "none",
+                stroke: "currentColor",
+                viewBox: "0 0 24 24",
+                children: /* @__PURE__ */ jsx(
+                  "path",
+                  {
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round",
+                    strokeWidth: 2,
+                    d: "M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"
+                  }
+                )
+              }
+            ),
+            /* @__PURE__ */ jsx("span", { className: "text-[10px] uppercase tracking-wider font-medium", children: "Movies" })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxs(
+        Link,
+        {
+          href: route("series.index"),
+          className: `flex flex-col items-center gap-1 ${route().current("series.*") ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+          children: [
+            /* @__PURE__ */ jsx(
+              "svg",
+              {
+                className: "w-6 h-6",
+                fill: "none",
+                stroke: "currentColor",
+                viewBox: "0 0 24 24",
+                children: /* @__PURE__ */ jsx(
+                  "path",
+                  {
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round",
+                    strokeWidth: 2,
+                    d: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  }
+                )
+              }
+            ),
+            /* @__PURE__ */ jsx("span", { className: "text-[10px] uppercase tracking-wider font-medium", children: "Series" })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxs(
+        Link,
+        {
+          href: usePage().props.auth.user ? route("profile.edit") : route("login"),
+          className: `flex flex-col items-center gap-1 ${route().current("profile.*") || route().current("login") ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+          children: [
+            /* @__PURE__ */ jsx(
+              "svg",
+              {
+                className: "w-6 h-6",
+                fill: "none",
+                stroke: "currentColor",
+                viewBox: "0 0 24 24",
+                children: /* @__PURE__ */ jsx(
+                  "path",
+                  {
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round",
+                    strokeWidth: 2,
+                    d: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  }
+                )
+              }
+            ),
+            /* @__PURE__ */ jsx("span", { className: "text-[10px] uppercase tracking-wider font-medium", children: "Profile" })
+          ]
+        }
+      )
+    ] }) })
   ] });
 }
 function Footer() {
@@ -4800,8 +4664,8 @@ function MediaCard({ item, type }) {
         }
       ),
       /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" }),
-      item.is_vip_only && /* @__PURE__ */ jsx("div", { className: "absolute top-2 left-2 px-2 py-0.5 bg-yellow-500 text-black text-[10px] font-black uppercase tracking-wider rounded-sm shadow-md z-10", children: "VIP" }),
-      item.rating_average > 0 && /* @__PURE__ */ jsxs("div", { className: "absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 bg-black/60 backdrop-blur-md border border-white/10 rounded-md text-xs font-bold text-yellow-400 z-10", children: [
+      item.is_vip_only && /* @__PURE__ */ jsx("div", { className: "absolute top-1 left-1 px-1 md:top-3 md:left-3 md:px-3 py-0.5 bg-yellow-500 text-black text-[10px]  md:text-sm font-black uppercase tracking-wider rounded-sm shadow-md z-10", children: "VIP" }),
+      item.rating_average > 0 && /* @__PURE__ */ jsxs("div", { className: "absolute top-1 right-1 md:top-3 md:right-3 flex items-center gap-1 px-1.5 py-0.5 bg-black/60 backdrop-blur-md border border-white/10 rounded-md text-xs md:text-sm  font-bold text-yellow-400 z-10", children: [
         /* @__PURE__ */ jsx(StarIcon, {}),
         /* @__PURE__ */ jsx("span", { children: Number(item.rating_average).toFixed(1) })
       ] }),
@@ -4809,7 +4673,7 @@ function MediaCard({ item, type }) {
     ] }),
     /* @__PURE__ */ jsxs("div", { className: "space-y-1", children: [
       /* @__PURE__ */ jsx("h3", { className: "text-white font-medium text-base leading-tight group-hover:text-indigo-400 transition-colors truncate", children: item.title }),
-      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-xs text-gray-400 font-medium", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-xs text-gray-400 font-medium flex-wrap", children: [
         /* @__PURE__ */ jsx("span", { className: "text-gray-300", children: year }),
         /* @__PURE__ */ jsx("span", { className: "w-1 h-1 rounded-full bg-gray-600" }),
         /* @__PURE__ */ jsx("span", { className: "uppercase tracking-wide text-[10px] border border-gray-700 px-1 rounded text-gray-400", children: type === "movie" ? "Movie" : "Series" }),
@@ -5028,6 +4892,8 @@ const SectionTitle = ({ title, subtitle, href }) => /* @__PURE__ */ jsxs("div", 
 ] });
 function Home({ featured, latestMovies, latestSeries, seo }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
   useEffect(() => {
     if (!featured || featured.length === 0) return;
     const interval = setInterval(() => {
@@ -5052,67 +4918,95 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
     ),
     /* @__PURE__ */ jsxs("div", { className: "min-h-screen mt-0 bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
       /* @__PURE__ */ jsx(Navbar, {}),
-      featured && featured.length > 0 && /* @__PURE__ */ jsxs("div", { className: "relative h-[100vh] w-full overflow-hidden group", children: [
-        featured.map((item, index) => /* @__PURE__ */ jsxs(
-          "div",
-          {
-            className: `absolute inset-0 transition-opacity duration-1000 ${index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"}`,
-            children: [
-              /* @__PURE__ */ jsx(
-                "img",
-                {
-                  src: item.poster_url,
-                  alt: item.title,
-                  className: "block md:hidden w-full h-full object-cover"
-                }
-              ),
-              /* @__PURE__ */ jsx(
-                "img",
-                {
-                  src: item.banner_url,
-                  alt: item.title,
-                  className: "hidden md:block w-full h-full object-cover"
-                }
-              ),
-              /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent" }),
-              /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-transparent" }),
-              /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center", children: /* @__PURE__ */ jsx("div", { className: "container mx-auto px-6 md:px-12", children: /* @__PURE__ */ jsxs("div", { className: "max-w-2xl", children: [
-                /* @__PURE__ */ jsxs("span", { className: "inline-block px-2 py-1 border border-white/30 text-[10px] font-bold uppercase tracking-[0.2em] text-white mb-6 backdrop-blur-sm", children: [
-                  "Featured",
-                  " ",
-                  item.type === "series" ? "Series" : "Film"
-                ] }),
-                /* @__PURE__ */ jsx("h1", { className: "text-5xl line-clamp-1 md:text-7xl lg:text-8xl font-serif text-white leading-[0.9] mb-6", children: item.title }),
-                /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl", children: item.description }),
-                /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4", children: /* @__PURE__ */ jsx(
-                  Link,
-                  {
-                    href: item.type === "series" ? route(
-                      "series.show",
-                      item.slug
-                    ) : route(
-                      "movies.show",
-                      item.slug
-                    ),
-                    className: "px-8 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
-                    children: "Watch Now"
-                  }
-                ) })
-              ] }) }) })
-            ]
+      featured && featured.length > 0 && /* @__PURE__ */ jsxs(
+        "div",
+        {
+          className: "relative h-[85vh] w-full overflow-hidden group",
+          onTouchStart: (e) => {
+            const touch = e.touches[0];
+            setTouchStart(touch.clientX);
           },
-          `${item.type}-${item.id}`
-        )),
-        /* @__PURE__ */ jsx("div", { className: "absolute bottom-10 left-0 right-0 z-20 flex justify-center gap-3", children: featured.map((_, index) => /* @__PURE__ */ jsx(
-          "button",
-          {
-            onClick: () => setCurrentIndex(index),
-            className: `w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex ? "bg-white scale-125" : "bg-white/30 hover:bg-white/50"}`,
-            "aria-label": `Go to slide ${index + 1}`
+          onTouchMove: (e) => {
+            const touch = e.touches[0];
+            setTouchEnd(touch.clientX);
           },
-          index
-        )) })
-      ] }),
+          onTouchEnd: () => {
+            if (!touchStart || !touchEnd) return;
+            const distance = touchStart - touchEnd;
+            const isLeftSwipe = distance > 50;
+            const isRightSwipe = distance < -50;
+            if (isLeftSwipe) {
+              setCurrentIndex((prev) => prev === featured.length - 1 ? 0 : prev + 1);
+            }
+            if (isRightSwipe) {
+              setCurrentIndex((prev) => prev === 0 ? featured.length - 1 : prev - 1);
+            }
+            setTouchStart(null);
+            setTouchEnd(null);
+          },
+          children: [
+            featured.map((item, index) => /* @__PURE__ */ jsxs(
+              "div",
+              {
+                className: `absolute inset-0 transition-opacity duration-1000 ${index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"}`,
+                children: [
+                  /* @__PURE__ */ jsx(
+                    "img",
+                    {
+                      src: item.poster_url,
+                      alt: item.title,
+                      className: "block md:hidden w-full h-full object-cover"
+                    }
+                  ),
+                  /* @__PURE__ */ jsx(
+                    "img",
+                    {
+                      src: item.banner_url,
+                      alt: item.title,
+                      className: "hidden md:block w-full h-full object-cover"
+                    }
+                  ),
+                  /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent" }),
+                  /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-transparent" }),
+                  /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center", children: /* @__PURE__ */ jsx("div", { className: "container mx-auto px-6 md:px-12", children: /* @__PURE__ */ jsxs("div", { className: "max-w-2xl", children: [
+                    /* @__PURE__ */ jsxs("span", { className: "inline-block px-2 py-1 border border-white/30 text-[10px] font-bold uppercase tracking-[0.2em] text-white mb-6 backdrop-blur-sm", children: [
+                      "Featured",
+                      " ",
+                      item.type === "series" ? "Series" : "Film"
+                    ] }),
+                    /* @__PURE__ */ jsx("h1", { className: "text-5xl line-clamp-1 md:text-7xl lg:text-8xl font-serif text-white leading-[0.9] mb-6", children: item.title }),
+                    /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl", children: item.description }),
+                    /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4", children: /* @__PURE__ */ jsx(
+                      Link,
+                      {
+                        href: item.type === "series" ? route(
+                          "series.show",
+                          item.slug
+                        ) : route(
+                          "movies.show",
+                          item.slug
+                        ),
+                        className: "px-8 text- py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
+                        children: "Watch Now"
+                      }
+                    ) })
+                  ] }) }) })
+                ]
+              },
+              `${item.type}-${item.id}`
+            )),
+            /* @__PURE__ */ jsx("div", { className: "absolute bottom-10 left-0 right-0 z-20 flex justify-center gap-3", children: featured.map((_, index) => /* @__PURE__ */ jsx(
+              "button",
+              {
+                onClick: () => setCurrentIndex(index),
+                className: `w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex ? "bg-white scale-125" : "bg-white/30 hover:bg-white/50"}`,
+                "aria-label": `Go to slide ${index + 1}`
+              },
+              index
+            )) })
+          ]
+        }
+      ),
       /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12 py-20 space-y-10", children: [
         /* @__PURE__ */ jsxs("section", { children: [
           /* @__PURE__ */ jsx(
@@ -5663,7 +5557,7 @@ const Pagination$1 = ({ links }) => {
       router.visit(prevRoute);
     });
   }, []);
-  return /* @__PURE__ */ jsx("div", { className: "flex justify-center mt-12 gap-2", children: links.map((link, index) => /* @__PURE__ */ jsx(
+  return /* @__PURE__ */ jsx("div", { className: "flex justify-center mt-8 mb-5 gap-2", children: links.map((link, index) => /* @__PURE__ */ jsx(
     Link,
     {
       href: link.url ? link.url : "#",
@@ -5678,13 +5572,11 @@ function Index$1({ movies }) {
   console.log(movies);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(Head, { title: "Movies" }),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen  bg-[#050505] text-white font-sans selection:bg-white selection:text-black pb-12", children: [
-      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12", children: [
-        /* @__PURE__ */ jsxs("div", { className: "mb-12 border-b border-white/10 pb-6", children: [
-          /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-white", children: "Movies" }),
-          /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-sm mt-2 uppercase tracking-widest", children: "Browse all available films" })
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
+    /* @__PURE__ */ jsx(Navbar, {}),
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen py-16  bg-[#050505] text-white font-sans selection:bg-white selection:text-black pb-12", children: [
+      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12", children: [
+        /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-white", children: "Movies" }) }),
+        /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
           MediaCard,
           {
             item: movie,
@@ -6598,13 +6490,13 @@ function DeleteUserForm({ className = "" }) {
   };
   return /* @__PURE__ */ jsxs("section", { className: `space-y-6 ${className}`, children: [
     /* @__PURE__ */ jsxs("header", { children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900", children: "Delete Account" }),
-      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-600", children: "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain." })
+      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-red-500", children: "Delete Account" }),
+      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-400", children: "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain." })
     ] }),
     /* @__PURE__ */ jsx(DangerButton, { onClick: confirmUserDeletion, children: "Delete Account" }),
-    /* @__PURE__ */ jsx(Modal, { show: confirmingUserDeletion, onClose: closeModal, children: /* @__PURE__ */ jsxs("form", { onSubmit: deleteUser, className: "p-6", children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900", children: "Are you sure you want to delete your account?" }),
-      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-600", children: "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account." }),
+    /* @__PURE__ */ jsx(Modal, { show: confirmingUserDeletion, onClose: closeModal, children: /* @__PURE__ */ jsxs("form", { onSubmit: deleteUser, className: "p-6 bg-[#1a1a1a] text-white", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-white", children: "Are you sure you want to delete your account?" }),
+      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-400", children: "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account." }),
       /* @__PURE__ */ jsxs("div", { className: "mt-6", children: [
         /* @__PURE__ */ jsx(
           InputLabel,
@@ -6682,8 +6574,8 @@ function UpdatePasswordForm({ className = "" }) {
   };
   return /* @__PURE__ */ jsxs("section", { className, children: [
     /* @__PURE__ */ jsxs("header", { children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900", children: "Update Password" }),
-      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-600", children: "Ensure your account is using a long, random password to stay secure." })
+      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-white", children: "Update Password" }),
+      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-400", children: "Ensure your account is using a long, random password to stay secure." })
     ] }),
     /* @__PURE__ */ jsxs("form", { onSubmit: updatePassword, className: "mt-6 space-y-6", children: [
       /* @__PURE__ */ jsxs("div", { children: [
@@ -6767,7 +6659,7 @@ function UpdatePasswordForm({ className = "" }) {
             enterFrom: "opacity-0",
             leave: "transition ease-in-out",
             leaveTo: "opacity-0",
-            children: /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-600", children: "Saved." })
+            children: /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-400", children: "Saved." })
           }
         )
       ] })
@@ -6794,8 +6686,8 @@ function UpdateProfileInformation({
   };
   return /* @__PURE__ */ jsxs("section", { className, children: [
     /* @__PURE__ */ jsxs("header", { children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900", children: "Profile Information" }),
-      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-600", children: "Update your account's profile information and email address." })
+      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-white", children: "Profile Information" }),
+      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-400", children: "Update your account's profile information and email address." })
     ] }),
     /* @__PURE__ */ jsxs("form", { onSubmit: submit, className: "mt-6 space-y-6", children: [
       /* @__PURE__ */ jsxs("div", { children: [
@@ -6831,7 +6723,7 @@ function UpdateProfileInformation({
         /* @__PURE__ */ jsx(InputError, { className: "mt-2", message: errors.email })
       ] }),
       mustVerifyEmail && user.email_verified_at === null && /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsxs("p", { className: "mt-2 text-sm text-gray-800", children: [
+        /* @__PURE__ */ jsxs("p", { className: "mt-2 text-sm text-gray-200", children: [
           "Your email address is unverified.",
           /* @__PURE__ */ jsx(
             Link,
@@ -6839,12 +6731,12 @@ function UpdateProfileInformation({
               href: route("verification.send"),
               method: "post",
               as: "button",
-              className: "rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
+              className: "rounded-md text-sm text-gray-400 underline hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
               children: "Click here to re-send the verification email."
             }
           )
         ] }),
-        status === "verification-link-sent" && /* @__PURE__ */ jsx("div", { className: "mt-2 text-sm font-medium text-green-600", children: "A new verification link has been sent to your email address." })
+        status === "verification-link-sent" && /* @__PURE__ */ jsx("div", { className: "mt-2 text-sm font-medium text-green-400", children: "A new verification link has been sent to your email address." })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
         /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: "Save" }),
@@ -6856,7 +6748,7 @@ function UpdateProfileInformation({
             enterFrom: "opacity-0",
             leave: "transition ease-in-out",
             leaveTo: "opacity-0",
-            children: /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-600", children: "Saved." })
+            children: /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-400", children: "Saved." })
           }
         )
       ] })
@@ -6868,27 +6760,78 @@ const __vite_glob_0_31 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: UpdateProfileInformation
 }, Symbol.toStringTag, { value: "Module" }));
 function Edit({ mustVerifyEmail, status }) {
-  return /* @__PURE__ */ jsxs(
-    AuthenticatedLayout,
-    {
-      header: /* @__PURE__ */ jsx("h2", { className: "text-xl font-semibold leading-tight text-gray-800", children: "Profile" }),
-      children: [
-        /* @__PURE__ */ jsx(Head, { title: "Profile" }),
-        /* @__PURE__ */ jsx("div", { className: "py-12", children: /* @__PURE__ */ jsxs("div", { className: "mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8", children: [
-          /* @__PURE__ */ jsx("div", { className: "bg-white p-4 shadow sm:rounded-lg sm:p-8", children: /* @__PURE__ */ jsx(
-            UpdateProfileInformation,
-            {
-              mustVerifyEmail,
-              status,
-              className: "max-w-xl"
-            }
-          ) }),
-          /* @__PURE__ */ jsx("div", { className: "bg-white p-4 shadow sm:rounded-lg sm:p-8", children: /* @__PURE__ */ jsx(UpdatePasswordForm, { className: "max-w-xl" }) }),
-          /* @__PURE__ */ jsx("div", { className: "bg-white p-4 shadow sm:rounded-lg sm:p-8", children: /* @__PURE__ */ jsx(DeleteUserForm, { className: "max-w-xl" }) })
-        ] }) })
-      ]
-    }
-  );
+  const user = usePage().props.auth.user;
+  const getInitials = (name) => {
+    return name.split(" ").map((word) => word[0]).join("").toUpperCase().slice(0, 2);
+  };
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+  };
+  return /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsx(Head, { title: "Profile" }),
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
+      /* @__PURE__ */ jsx(Navbar, {}),
+      /* @__PURE__ */ jsx("div", { className: "pt-24 pb-12 md:pt-32 md:pb-16", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12", children: [
+        /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900/40 via-purple-900/40 to-black border border-white/10 p-8 md:p-12 backdrop-blur-sm", children: [
+          /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl" }),
+          /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 -mb-16 -ml-16 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl" }),
+          /* @__PURE__ */ jsxs("div", { className: "relative flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8", children: [
+            /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-black/50", children: /* @__PURE__ */ jsx("span", { className: "text-3xl md:text-4xl font-bold text-white tracking-wider", children: getInitials(user.name) }) }) }),
+            /* @__PURE__ */ jsxs("div", { className: "flex-1 text-center md:text-left space-y-2", children: [
+              /* @__PURE__ */ jsx("h1", { className: "text-3xl md:text-4xl font-bold text-white tracking-tight", children: user.name }),
+              /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row items-center md:items-center gap-2 md:gap-4 text-gray-400", children: [
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+                  /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "currentColor", className: "w-4 h-4", children: [
+                    /* @__PURE__ */ jsx("path", { d: "M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" }),
+                    /* @__PURE__ */ jsx("path", { d: "M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" })
+                  ] }),
+                  /* @__PURE__ */ jsx("span", { children: user.email })
+                ] }),
+                /* @__PURE__ */ jsx("span", { className: "hidden md:inline text-gray-600", children: "•" }),
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+                  /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "currentColor", className: "w-4 h-4", children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z", clipRule: "evenodd" }) }),
+                  /* @__PURE__ */ jsxs("span", { children: [
+                    "Member since ",
+                    user.created_at ? formatDate(user.created_at) : "Recently"
+                  ] })
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxs("div", { className: "pt-4 flex flex-wrap justify-center md:justify-start gap-3", children: [
+                /* @__PURE__ */ jsx("span", { className: "px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-indigo-300", children: "Free Plan" }),
+                user.email_verified_at ? /* @__PURE__ */ jsxs("span", { className: "px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-xs font-medium text-green-400 flex items-center gap-1", children: [
+                  /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", className: "w-3 h-3", children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z", clipRule: "evenodd" }) }),
+                  "Verified"
+                ] }) : /* @__PURE__ */ jsx("span", { className: "px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-xs font-medium text-yellow-400", children: "Unverified" })
+              ] })
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "mt-12 border-b border-white/10 pb-6", children: [
+          /* @__PURE__ */ jsx("h2", { className: "text-2xl font-serif text-white", children: "Account Settings" }),
+          /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-sm mt-1", children: "Manage your profile details and security" })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8", children: [
+          /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
+            /* @__PURE__ */ jsx("div", { className: "bg-white/5 border border-white/10 p-6 md:p-8 rounded-2xl backdrop-blur-sm", children: /* @__PURE__ */ jsx(
+              UpdateProfileInformation,
+              {
+                mustVerifyEmail,
+                status,
+                className: "max-w-xl"
+              }
+            ) }),
+            /* @__PURE__ */ jsx("div", { className: "bg-white/5 border border-white/10 p-6 md:p-8 rounded-2xl backdrop-blur-sm", children: /* @__PURE__ */ jsx(UpdatePasswordForm, { className: "max-w-xl" }) })
+          ] }),
+          /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("div", { className: "bg-red-500/5 border border-red-500/20 p-6 md:p-8 rounded-2xl backdrop-blur-sm", children: /* @__PURE__ */ jsx(DeleteUserForm, { className: "max-w-xl" }) }) })
+        ] })
+      ] }) }),
+      /* @__PURE__ */ jsx(Footer, {})
+    ] })
+  ] });
 }
 const __vite_glob_0_28 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
@@ -6957,7 +6900,7 @@ const Pagination = ({ links }) => {
       router.visit(prevRoute);
     });
   }, []);
-  return /* @__PURE__ */ jsx("div", { className: "flex justify-center mt-12 gap-2", children: links.map((link, index) => /* @__PURE__ */ jsx(
+  return /* @__PURE__ */ jsx("div", { className: "flex justify-center mt-10 mb-8 gap-2", children: links.map((link, index) => /* @__PURE__ */ jsx(
     Link,
     {
       href: link.url ? link.url : "#",
@@ -6971,13 +6914,11 @@ const Pagination = ({ links }) => {
 function Index({ series }) {
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(Head, { title: "Series" }),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black pb-12", children: [
-      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12", children: [
-        /* @__PURE__ */ jsxs("div", { className: "mb-12 border-b border-white/10 pb-6", children: [
-          /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-white", children: "Series" }),
-          /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-sm mt-2 uppercase tracking-widest", children: "Browse all available series" })
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
+    /* @__PURE__ */ jsx(Navbar, {}),
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen py-16 bg-[#050505] text-white font-sans selection:bg-white selection:text-black pb-12", children: [
+      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12", children: [
+        /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-white", children: "Series" }) }),
+        /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
           MediaCard,
           {
             item,
