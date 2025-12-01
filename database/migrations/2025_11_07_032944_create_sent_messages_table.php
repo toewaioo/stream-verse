@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('sent_messages', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('video_mapping_id')->constrained()->onDelete('cascade');
+            $table->bigInteger('user_id');
+            $table->bigInteger('chat_id');
+            $table->bigInteger('message_id');
+            $table->string('deep_link');
+            $table->timestamp('sent_at');
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->index(['user_id', 'sent_at']);
+            $table->index('video_mapping_id');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('sent_messages');
+    }
+};
