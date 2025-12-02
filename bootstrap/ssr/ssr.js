@@ -2093,6 +2093,50 @@ function PersonForm({ person, onClose, onSuccess }) {
   });
   const storageKey = person?.id ? `person_form_update_${person.id}` : "person_form_create";
   const { clearStorage } = useFormPersistence(storageKey, data, setData);
+  const [showTmdbModal, setShowTmdbModal] = useState(false);
+  const [tmdbQuery, setTmdbQuery] = useState("");
+  const [tmdbResults, setTmdbResults] = useState([]);
+  const [tmdbLoading, setTmdbLoading] = useState(false);
+  const searchTmdb = async (e) => {
+    e.preventDefault();
+    if (!tmdbQuery) return;
+    setTmdbLoading(true);
+    try {
+      const response = await axios$1.post(route("admin.tmdb.search"), {
+        query: tmdbQuery,
+        type: "person"
+      });
+      setTmdbResults(response.data.results || []);
+    } catch (error) {
+      console.error("TMDB Search Error:", error);
+    } finally {
+      setTmdbLoading(false);
+    }
+  };
+  const fetchTmdbDetails = async (tmdbId) => {
+    setTmdbLoading(true);
+    try {
+      const response = await axios$1.post(route("admin.tmdb.details"), {
+        tmdb_id: tmdbId,
+        type: "person"
+      });
+      const details = response.data;
+      setData((prev) => ({
+        ...prev,
+        name: details.name,
+        biography: details.biography,
+        birth_date: details.birth_date || "",
+        death_date: details.death_date || "",
+        place_of_birth: details.place_of_birth || "",
+        avatar_url: details.avatar_url || ""
+      }));
+      setShowTmdbModal(false);
+    } catch (error) {
+      console.error("TMDB Details Error:", error);
+    } finally {
+      setTmdbLoading(false);
+    }
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     if (person) {
@@ -2113,102 +2157,157 @@ function PersonForm({ person, onClose, onSuccess }) {
       });
     }
   };
-  return /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, className: "space-y-6", children: [
-    /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
-      /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "name", value: "Name" }),
-          /* @__PURE__ */ jsx(
-            TextInput,
-            {
-              id: "name",
-              type: "text",
-              className: "mt-1 block w-full",
-              value: data.name,
-              onChange: (e) => setData("name", e.target.value),
-              required: true
-            }
-          ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.name, className: "mt-2" })
+  return /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, className: "space-y-6", children: [
+      /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
+        /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-2", children: [
+              /* @__PURE__ */ jsx(InputLabel, { htmlFor: "name", value: "Name" }),
+              /* @__PURE__ */ jsx(SecondaryButton, { size: "sm", onClick: () => setShowTmdbModal(true), type: "button", children: "Fetch from TMDB" })
+            ] }),
+            /* @__PURE__ */ jsx(
+              TextInput,
+              {
+                id: "name",
+                type: "text",
+                className: "mt-1 block w-full",
+                value: data.name,
+                onChange: (e) => setData("name", e.target.value),
+                required: true
+              }
+            ),
+            /* @__PURE__ */ jsx(InputError, { message: errors.name, className: "mt-2" })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx(InputLabel, { htmlFor: "biography", value: "Biography" }),
+            /* @__PURE__ */ jsx(
+              "textarea",
+              {
+                id: "biography",
+                className: "mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm",
+                rows: "4",
+                value: data.biography,
+                onChange: (e) => setData("biography", e.target.value)
+              }
+            ),
+            /* @__PURE__ */ jsx(InputError, { message: errors.biography, className: "mt-2" })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx(InputLabel, { htmlFor: "avatar_url", value: "Avatar URL" }),
+            /* @__PURE__ */ jsx(
+              TextInput,
+              {
+                id: "avatar_url",
+                type: "url",
+                className: "mt-1 block w-full",
+                value: data.avatar_url,
+                onChange: (e) => setData("avatar_url", e.target.value)
+              }
+            ),
+            /* @__PURE__ */ jsx(InputError, { message: errors.avatar_url, className: "mt-2" })
+          ] })
         ] }),
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "biography", value: "Biography" }),
-          /* @__PURE__ */ jsx(
-            "textarea",
-            {
-              id: "biography",
-              className: "mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm",
-              rows: "4",
-              value: data.biography,
-              onChange: (e) => setData("biography", e.target.value)
-            }
-          ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.biography, className: "mt-2" })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "avatar_url", value: "Avatar URL" }),
-          /* @__PURE__ */ jsx(
-            TextInput,
-            {
-              id: "avatar_url",
-              type: "url",
-              className: "mt-1 block w-full",
-              value: data.avatar_url,
-              onChange: (e) => setData("avatar_url", e.target.value)
-            }
-          ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.avatar_url, className: "mt-2" })
+        /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx(InputLabel, { htmlFor: "place_of_birth", value: "Place of Birth" }),
+            /* @__PURE__ */ jsx(
+              TextInput,
+              {
+                id: "place_of_birth",
+                type: "text",
+                className: "mt-1 block w-full",
+                value: data.place_of_birth,
+                onChange: (e) => setData("place_of_birth", e.target.value)
+              }
+            ),
+            /* @__PURE__ */ jsx(InputError, { message: errors.place_of_birth, className: "mt-2" })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx(InputLabel, { htmlFor: "birth_date", value: "Birth Date" }),
+            /* @__PURE__ */ jsx(
+              TextInput,
+              {
+                id: "birth_date",
+                type: "date",
+                className: "mt-1 block w-full",
+                value: data.birth_date,
+                onChange: (e) => setData("birth_date", e.target.value)
+              }
+            ),
+            /* @__PURE__ */ jsx(InputError, { message: errors.birth_date, className: "mt-2" })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx(InputLabel, { htmlFor: "death_date", value: "Death Date" }),
+            /* @__PURE__ */ jsx(
+              TextInput,
+              {
+                id: "death_date",
+                type: "date",
+                className: "mt-1 block w-full",
+                value: data.death_date,
+                onChange: (e) => setData("death_date", e.target.value)
+              }
+            ),
+            /* @__PURE__ */ jsx(InputError, { message: errors.death_date, className: "mt-2" })
+          ] })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "place_of_birth", value: "Place of Birth" }),
-          /* @__PURE__ */ jsx(
-            TextInput,
-            {
-              id: "place_of_birth",
-              type: "text",
-              className: "mt-1 block w-full",
-              value: data.place_of_birth,
-              onChange: (e) => setData("place_of_birth", e.target.value)
-            }
-          ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.place_of_birth, className: "mt-2" })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "birth_date", value: "Birth Date" }),
-          /* @__PURE__ */ jsx(
-            TextInput,
-            {
-              id: "birth_date",
-              type: "date",
-              className: "mt-1 block w-full",
-              value: data.birth_date,
-              onChange: (e) => setData("birth_date", e.target.value)
-            }
-          ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.birth_date, className: "mt-2" })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "death_date", value: "Death Date" }),
-          /* @__PURE__ */ jsx(
-            TextInput,
-            {
-              id: "death_date",
-              type: "date",
-              className: "mt-1 block w-full",
-              value: data.death_date,
-              onChange: (e) => setData("death_date", e.target.value)
-            }
-          ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.death_date, className: "mt-2" })
-        ] })
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-end gap-4 border-t pt-4", children: [
+        /* @__PURE__ */ jsx(SecondaryButton, { onClick: onClose, disabled: processing, type: "button", children: "Cancel" }),
+        /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, type: "submit", children: person ? "Update Person" : "Create Person" })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-end gap-4 border-t pt-4", children: [
-      /* @__PURE__ */ jsx(SecondaryButton, { onClick: onClose, disabled: processing, children: "Cancel" }),
-      /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: person ? "Update Person" : "Create Person" })
-    ] })
+    /* @__PURE__ */ jsx(Modal, { show: showTmdbModal, onClose: () => setShowTmdbModal(false), maxWidth: "2xl", children: /* @__PURE__ */ jsxs("div", { className: "p-6", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-gray-100 mb-4", children: "Search TMDB for People" }),
+      /* @__PURE__ */ jsxs("form", { onSubmit: searchTmdb, className: "flex gap-2 mb-4", children: [
+        /* @__PURE__ */ jsx(
+          TextInput,
+          {
+            type: "text",
+            className: "w-full",
+            placeholder: "Search for an actor, director, or crew member...",
+            value: tmdbQuery,
+            onChange: (e) => setTmdbQuery(e.target.value)
+          }
+        ),
+        /* @__PURE__ */ jsx(PrimaryButton, { type: "submit", disabled: tmdbLoading, children: tmdbLoading ? "Searching..." : "Search" })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "space-y-2 max-h-96 overflow-y-auto", children: [
+        tmdbResults.map((result) => /* @__PURE__ */ jsxs(
+          "button",
+          {
+            type: "button",
+            className: "w-full flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer border border-gray-200 dark:border-gray-600 transition-colors text-left",
+            onClick: (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              fetchTmdbDetails(result.id);
+            },
+            children: [
+              result.profile_path ? /* @__PURE__ */ jsx(
+                "img",
+                {
+                  src: `https://image.tmdb.org/t/p/w92${result.profile_path}`,
+                  alt: result.name,
+                  className: "w-16 h-16 object-cover rounded-full"
+                }
+              ) : /* @__PURE__ */ jsx("div", { className: "w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center", children: /* @__PURE__ */ jsx("svg", { className: "w-8 h-8 text-gray-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z", clipRule: "evenodd" }) }) }),
+              /* @__PURE__ */ jsxs("div", { children: [
+                /* @__PURE__ */ jsx("h3", { className: "font-semibold text-gray-900 dark:text-white", children: result.name }),
+                /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: result.known_for_department || "Actor" }),
+                result.known_for && result.known_for.length > 0 && /* @__PURE__ */ jsxs("p", { className: "text-xs text-gray-400 dark:text-gray-500 mt-1", children: [
+                  "Known for: ",
+                  result.known_for.slice(0, 2).map((item) => item.title || item.name).join(", ")
+                ] })
+              ] })
+            ]
+          },
+          result.id
+        )),
+        tmdbResults.length === 0 && !tmdbLoading && /* @__PURE__ */ jsx("p", { className: "text-center text-gray-500 py-8", children: "No results found. Try searching for an actor or director." })
+      ] })
+    ] }) })
   ] });
 }
 const __vite_glob_0_5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({

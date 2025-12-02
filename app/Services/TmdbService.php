@@ -25,6 +25,11 @@ class TmdbService
         return $this->get('/search/tv', ['query' => $query]);
     }
 
+    public function searchPerson($query)
+    {
+        return $this->get('/search/person', ['query' => $query]);
+    }
+
     public function getMovieDetails($tmdbId)
     {
         $data = $this->get("/movie/{$tmdbId}", [
@@ -45,6 +50,17 @@ class TmdbService
         if (!$data) return null;
 
         return $this->mapSeriesData($data);
+    }
+
+    public function getPersonDetails($tmdbId)
+    {
+        $data = $this->get("/person/{$tmdbId}", [
+            'append_to_response' => 'images'
+        ]);
+
+        if (!$data) return null;
+
+        return $this->mapPersonData($data);
     }
 
     protected function get($endpoint, $params = [])
@@ -138,6 +154,18 @@ class TmdbService
                 'character' => $c['character'],
                 'profile_path' => $c['profile_path'] ? "https://image.tmdb.org/t/p/w185{$c['profile_path']}" : null,
             ])->toArray(),
+        ];
+    }
+
+    protected function mapPersonData($data)
+    {
+        return [
+            'name' => $data['name'],
+            'biography' => $data['biography'],
+            'birth_date' => $data['birthday'],
+            'death_date' => $data['deathday'],
+            'place_of_birth' => $data['place_of_birth'],
+            'avatar_url' => $data['profile_path'] ? "https://image.tmdb.org/t/p/w500{$data['profile_path']}" : null,
         ];
     }
 }
