@@ -3,6 +3,7 @@ import { usePage, router, Link } from "@inertiajs/react";
 import SeoHead from "@/Components/SeoHead";
 import RatingWidget from "@/Components/Movie/RatingWidget";
 import Footer from "@/Components/Footer";
+import { useTranslation } from "react-i18next";
 
 // --- Components ---
 
@@ -29,6 +30,7 @@ const DownloadIcon = ({ className = "w-6 h-6" }) => (
 );
 
 const LinkItem = ({ link, type, isVip }) => {
+    const { t } = useTranslation();
     const isLocked = link.is_vip_only && !isVip;
     const [copied, setCopied] = useState(false);
 
@@ -64,7 +66,7 @@ const LinkItem = ({ link, type, isVip }) => {
             <div className="flex items-center gap-2">
                 {isLocked ? (
                     <span className="text-[10px] font-bold text-yellow-500 border border-yellow-500 px-1 uppercase">
-                        VIP
+                        {t('VIP')}
                     </span>
                 ) : (
                     <>
@@ -72,7 +74,7 @@ const LinkItem = ({ link, type, isVip }) => {
                             onClick={handleCopy}
                             className="text-gray-600 hover:text-white text-[10px] uppercase tracking-widest transition-colors"
                         >
-                            {copied ? "Copied" : "Copy"}
+                            {copied ? t("Copied") : t("Copy")}
                         </button> */}
                         <a
                             href={link.url}
@@ -104,6 +106,7 @@ const LinkItem = ({ link, type, isVip }) => {
 };
 
 const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
+    const { t } = useTranslation();
     return (
         <div className="border-b border-white/10 last:border-0">
             <button
@@ -129,7 +132,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                                 ? new Date(
                                       episode.air_date
                                   ).toLocaleDateString()
-                                : "Unknown Date"}
+                                : t("Unknown Date")}
                         </span>
                     </div>
                 </div>
@@ -169,7 +172,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                         )}
                         <p className="text-sm text-gray-400 leading-relaxed font-serif">
                             {episode.description ||
-                                "No synopsis available for this episode."}
+                                t("No synopsis available for this episode.")}
                         </p>
                     </div>
 
@@ -178,7 +181,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <h5 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                    <PlayIcon className="w-3 h-3" /> Stream
+                                    <PlayIcon className="w-3 h-3" /> {t('Stream')}
                                 </h5>
                                 <div className="space-y-1">
                                     {episode.watch_links &&
@@ -193,7 +196,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                                         ))
                                     ) : (
                                         <div className="text-gray-600 text-xs italic">
-                                            No sources.
+                                            {t('No sources.')}
                                         </div>
                                     )}
                                 </div>
@@ -208,7 +211,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                             >
                                 <h5 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                                     <DownloadIcon className="w-3 h-3" />{" "}
-                                    Download
+                                    {t('Download')}
                                 </h5>
                                 <div className="space-y-1">
                                     {episode.download_links &&
@@ -223,7 +226,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                                         ))
                                     ) : (
                                         <div className="text-gray-600 text-xs italic">
-                                            No sources.
+                                            {t('No sources.')}
                                         </div>
                                     )}
                                 </div>
@@ -232,13 +235,13 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                     ) : (
                         <div className="p-4 border border-white/10 rounded bg-white/5 text-center">
                             <p className="text-gray-400 text-sm mb-2">
-                                Please log in to access episode links.
+                                {t('Please log in to access episode links.')}
                             </p>
                             <a
                                 href={route("login")}
                                 className="inline-block px-4 py-1.5 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors"
                             >
-                                Log In
+                                {t('Log In')}
                             </a>
                         </div>
                     )}
@@ -301,6 +304,7 @@ export default function SeriesDetails({
     isVip,
     seo,
 }) {
+    const { t } = useTranslation();
     const { auth } = usePage().props;
     const [showTrailer, setShowTrailer] = useState(false);
     const [activeSeason, setActiveSeason] = useState(
@@ -341,7 +345,7 @@ export default function SeriesDetails({
                 structuredData={seo?.structuredData}
             />
 
-            <div className="min-h-screen bg-[#080808] text-white font-sans selection:bg-white selection:text-black flex flex-col md:flex-row">
+            <div className="min-h-screen bg-gray-100 dark:bg-[#080808] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black flex flex-col md:flex-row">
                 {/* --- LEFT PANE: VISUAL (Fixed on Desktop) --- */}
                 <div className="w-full md:w-1/2 lg:w-[45%] h-[60vh] md:h-screen relative md:sticky md:top-0 overflow-hidden">
                     <div className="absolute inset-0">
@@ -351,7 +355,7 @@ export default function SeriesDetails({
                             className="w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-black/30"></div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-transparent to-transparent md:hidden"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-gray-100 dark:from-[#080808] via-transparent to-transparent md:hidden"></div>
                     </div>
 
                     {/* Play Button (Centered) */}
@@ -367,16 +371,16 @@ export default function SeriesDetails({
 
                     {/* Mobile Title Overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:hidden">
-                        <h1 className="text-4xl font-serif font-bold text-white leading-none mb-3">
+                        <h1 className="text-4xl font-serif font-bold dark:text-white leading-none mb-3">
                             {series.title}
                         </h1>
-                        <div className="flex items-center gap-3 text-sm text-gray-300 mb-3">
+                        <div className="flex items-center gap-3 text-sm dark:text-gray-300 mb-3">
                             <span>
                                 {series.release_year_start} -{" "}
-                                {series.release_year_end || "Present"}
+                                {series.release_year_end || t("Present")}
                             </span>
                             <span>•</span>
-                            <span>{series.seasons?.length} Seasons</span>
+                            <span>{series.seasons?.length} {t('Seasons')}</span>
                             {series.rating_average && (
                                 <>
                                     <span>•</span>
@@ -391,7 +395,7 @@ export default function SeriesDetails({
                             {series.genres?.slice(0, 3).map((genre) => (
                                 <span
                                     key={genre.id}
-                                    className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white uppercase tracking-wider"
+                                    className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs dark:text-white uppercase tracking-wider"
                                 >
                                     {genre.name}
                                 </span>
@@ -401,30 +405,30 @@ export default function SeriesDetails({
                 </div>
 
                 {/* --- RIGHT PANE: CONTENT (Scrollable) --- */}
-                <div className="w-full md:w-1/2 lg:w-[55%] min-h-screen bg-[#080808] relative z-10">
+                <div className="w-full md:w-1/2 lg:w-[55%] min-h-screen bg-gray-100 dark:bg-[#080808] relative z-10">
                     <div className="p-6 md:p-12 lg:p-20 max-w-3xl mx-auto">
                         {/* Desktop Title */}
                         <div className="hidden md:block mb-12">
                             <div className="flex items-center gap-4 text-sm font-bold tracking-widest text-gray-500 uppercase mb-4">
                                 <span>
                                     {series.release_year_start} -{" "}
-                                    {series.release_year_end || "Present"}
+                                    {series.release_year_end || t("Present")}
                                 </span>
                                 <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
-                                <span>{series.seasons?.length} Seasons</span>
+                                <span>{series.seasons?.length} {t('Seasons')}</span>
                                 <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
-                                <span className="text-white">
-                                    {series.rating_average?.toFixed(1)} Rating
+                                <span className="text-gray-800 dark:text-white">
+                                    {series.rating_average?.toFixed(1)} {t('Rating')}
                                 </span>
                             </div>
-                            <h1 className="text-5xl lg:text-7xl font-serif font-medium text-white leading-[0.9] mb-6">
+                            <h1 className="text-5xl lg:text-7xl font-serif font-medium text-gray-800 dark:text-white leading-[0.9] mb-6">
                                 {series.title}
                             </h1>
                             <div className="flex flex-wrap gap-2">
                                 {series.genres?.map((genre) => (
                                     <span
                                         key={genre.id}
-                                        className="px-3 py-1 border border-white/20 rounded-full text-xs text-gray-300 uppercase tracking-wider hover:border-white transition-colors cursor-default"
+                                        className="px-3 py-1 border border-gray-800/20 dark:border-white/20 rounded-full text-xs text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:border-gray-800 dark:hover:border-white transition-colors cursor-default"
                                     >
                                         {genre.name}
                                     </span>
@@ -435,9 +439,9 @@ export default function SeriesDetails({
                         {/* Synopsis */}
                         <div className="mb-16">
                             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">
-                                Synopsis
+                                {t('Synopsis')}
                             </h3>
-                            <p className="text-lg md:text-xl text-gray-300 font-serif leading-relaxed">
+                            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed">
                                 {series.description}
                             </p>
                         </div>
@@ -446,11 +450,11 @@ export default function SeriesDetails({
                         <div className="mb-16">
                             <div className="flex items-center justify-between mb-8">
                                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                                    Episode Guide
+                                    {t('Episode Guide')}
                                 </h3>
                                 {series.is_vip_only && (
                                     <span className="text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-0.5 rounded">
-                                        VIP ACCESS
+                                        {t('VIP ACCESS')}
                                     </span>
                                 )}
                             </div>
@@ -458,7 +462,7 @@ export default function SeriesDetails({
                             {/* Season Selector */}
                             {series.seasons && series.seasons.length > 0 ? (
                                 <>
-                                    <div className="flex overflow-x-auto pb-4 mb-6 gap-4 border-b border-white/10 custom-scrollbar">
+                                    <div className="flex overflow-x-auto pb-4 mb-6 gap-4 border-b border-gray-800/10 dark:border-white/10 custom-scrollbar">
                                         {series.seasons
                                             .slice()
                                             .reverse()
@@ -471,18 +475,17 @@ export default function SeriesDetails({
                                                     className={`whitespace-nowrap px-4 py-2 font-serif text-lg transition-colors ${
                                                         activeSeason?.id ===
                                                         season.id
-                                                            ? "text-white border-b-2 border-white"
-                                                            : "text-gray-500 hover:text-gray-300"
+                                                            ? "text-gray-800 dark:text-white border-b-2 border-gray-800 dark:border-white"
+                                                            : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                                                     }`}
                                                 >
-                                                    Season{" "}
-                                                    {season.season_number}
+                                                    {t('Season {season_number}', { season_number: season.season_number })}
                                                 </button>
                                             ))}
                                     </div>
 
                                     {/* Episodes List */}
-                                    <div className="border border-white/10 rounded-lg overflow-hidden bg-white/5">
+                                    <div className="border border-gray-800/10 dark:border-white/10 rounded-lg overflow-hidden bg-gray-800/5 dark:bg-white/5">
                                         {activeSeason?.episodes &&
                                         activeSeason.episodes.length > 0 ? (
                                             activeSeason.episodes
@@ -512,15 +515,14 @@ export default function SeriesDetails({
                                                 ))
                                         ) : (
                                             <div className="p-8 text-center text-gray-500 italic">
-                                                No episodes available for this
-                                                season.
+                                                {t('No episodes available for this season.')}
                                             </div>
                                         )}
                                     </div>
                                 </>
                             ) : (
                                 <div className="text-gray-500 italic">
-                                    No seasons available.
+                                    {t('No seasons available.')}
                                 </div>
                             )}
                         </div>
@@ -529,7 +531,7 @@ export default function SeriesDetails({
                             <div className="mt-8 w-full rounded overflow-hidden">
                                 <img
                                     src={series?.banner_url}
-                                    alt="Backdrop"
+                                    alt={t('Backdrop')}
                                     className="w-full h-48 object-cover object-center"
                                 />
                             </div>
@@ -538,7 +540,7 @@ export default function SeriesDetails({
                         {/* Cast */}
                         <div className="mb-16 mt-10">
                             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">
-                                Cast & Crew
+                                {t('Cast & Crew')}
                             </h3>
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4">
                                 {series.actors?.slice(0, 9).map((actor) => (
@@ -546,7 +548,7 @@ export default function SeriesDetails({
                                         key={actor.id}
                                         className="flex items-center gap-3"
                                     >
-                                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-800  hover:grayscale-0 transition-all">
+                                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-800  hover:grayscale-0 transition-all">
                                             <img
                                                 src={
                                                     actor.person?.avatar_url ||
@@ -562,7 +564,7 @@ export default function SeriesDetails({
                                                     "person.show",
                                                     actor.person?.id
                                                 )}
-                                                className="text-gray-400 hover:text-white transition-colors flex justify-between text-sm group"
+                                                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors flex justify-between text-sm group"
                                             >
                                                 <span className="font-bold">
                                                     {actor.person?.name}
@@ -579,11 +581,11 @@ export default function SeriesDetails({
                         </div>
 
                         {/* Rating & Related */}
-                        <div className="pt-12 border-t border-white/10">
+                        <div className="pt-12 border-t border-gray-800/10 dark:border-white/10">
                             <div className="flex items-center justify-center mb-12">
                                 <div>
                                     <h3 className="text-xs text-center font-bold text-gray-500 uppercase tracking-widest mb-2">
-                                        Your Rating
+                                        {t('Your Rating')}
                                     </h3>
                                     {auth.user ? (
                                         <RatingWidget
@@ -639,11 +641,11 @@ export default function SeriesDetails({
                                         <div className="text-gray-500 text-sm italic">
                                             <a
                                                 href={route("login")}
-                                                className="text-white hover:underline"
+                                                className="text-gray-800 dark:text-white hover:underline"
                                             >
-                                                Log in
+                                                {t('Log in')}
                                             </a>{" "}
-                                            to rate this series.
+                                            {t('to rate this series.')}
                                         </div>
                                     )}
                                 </div>
@@ -652,7 +654,7 @@ export default function SeriesDetails({
                             {relatedSeries && relatedSeries.length > 0 && (
                                 <div>
                                     <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">
-                                        Related Series
+                                        {t('Related Series')}
                                     </h3>
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                                         {relatedSeries
@@ -673,7 +675,7 @@ export default function SeriesDetails({
                                                             className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
                                                         />
                                                     </div>
-                                                    <h4 className="text-white font-serif text-sm truncate group-hover:underline">
+                                                    <h4 className="text-gray-800 dark:text-white font-serif text-sm truncate group-hover:underline">
                                                         {rel.title}
                                                     </h4>
                                                 </a>
@@ -686,6 +688,7 @@ export default function SeriesDetails({
                     <Footer />
                 </div>
             </div>
+
 
             {/* Trailer Modal */}
             {showTrailer && (

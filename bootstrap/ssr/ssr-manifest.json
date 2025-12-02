@@ -8,6 +8,7 @@
   "resources/js/Components/Footer.jsx": [],
   "resources/js/Components/InputError.jsx": [],
   "resources/js/Components/InputLabel.jsx": [],
+  "resources/js/Components/LanguageSwitcher.jsx": [],
   "resources/js/Components/Loader.jsx": [],
   "resources/js/Components/MediaCard.jsx": [],
   "resources/js/Components/Modal.jsx": [],
@@ -18,6 +19,7 @@
   "resources/js/Components/SeoHead.jsx": [],
   "resources/js/Components/TelegramLoginWidget.jsx": [],
   "resources/js/Components/TextInput.jsx": [],
+  "resources/js/Components/ThemeSwitcher.jsx": [],
   "resources/js/Hooks/useFormPersistence.js": [],
   "resources/js/Layouts/AdminLayout.jsx": [],
   "resources/js/Layouts/GuestLayout.jsx": [],
@@ -59,5 +61,6 @@
   "resources/js/Pages/Series/Index.jsx": [],
   "resources/js/Pages/SeriesDetails.jsx": [],
   "resources/js/Pages/Welcome.jsx": [],
+  "resources/js/contexts/ThemeContext.jsx": [],
   "resources/js/ssr.jsx": []
 }

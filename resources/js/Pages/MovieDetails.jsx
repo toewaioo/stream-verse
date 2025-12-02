@@ -3,6 +3,7 @@ import { usePage, router, Link } from "@inertiajs/react";
 import RatingWidget from "@/Components/Movie/RatingWidget";
 import SeoHead from "@/Components/SeoHead";
 import Footer from "@/Components/Footer";
+import { useTranslation } from "react-i18next";
 
 // --- Components ---
 
@@ -29,6 +30,7 @@ const DownloadIcon = ({ className = "w-6 h-6" }) => (
 );
 
 const LinkItem = ({ link, type, isVip }) => {
+    const { t } = useTranslation();
     const isLocked = link.is_vip_only && !isVip;
     const [copied, setCopied] = useState(false);
 
@@ -46,7 +48,7 @@ const LinkItem = ({ link, type, isVip }) => {
         >
             <div className="flex items-center gap-4">
                 <div className="flex flex-col">
-                    <span className="text-white font-serif text-lg leading-none">
+                    <span className="dark:text-white font-serif text-lg leading-none">
                         {link.server_name}
                     </span>
                     {/* <span className="text-gray-500 text-xs font-mono mt-1">
@@ -67,7 +69,7 @@ const LinkItem = ({ link, type, isVip }) => {
             <div className="flex items-center gap-3">
                 {isLocked ? (
                     <span className="text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-1 uppercase tracking-widest">
-                        VIP
+                        {t('VIP')}
                     </span>
                 ) : (
                     <>
@@ -75,7 +77,7 @@ const LinkItem = ({ link, type, isVip }) => {
                             onClick={handleCopy}
                             className="text-gray-500 hover:text-white text-xs uppercase tracking-widest transition-colors"
                         >
-                            {copied ? "Copied" : "Copy"}
+                            {copied ? t("Copied") : t("Copy")}
                         </button> */}
                         <a
                             href={link.url}
@@ -161,6 +163,7 @@ export default function MovieDetails({
     isVip,
     seo,
 }) {
+    const { t } = useTranslation();
     const { auth } = usePage().props;
     const [showTrailer, setShowTrailer] = useState(false);
     useEffect(() => {
@@ -188,7 +191,7 @@ export default function MovieDetails({
                 structuredData={seo?.structuredData}
             />
 
-            <div className="min-h-screen bg-[#080808] text-white font-sans selection:bg-white selection:text-black flex flex-col md:flex-row">
+            <div className="min-h-screen bg-gray-100 dark:bg-[#080808] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black flex flex-col md:flex-row">
                 {/* --- LEFT PANE: VISUAL (Fixed on Desktop) --- */}
                 <div className="w-full md:w-1/2 lg:w-[45%] h-[60vh] md:h-screen relative md:sticky md:top-0 overflow-hidden">
                     <div className="absolute inset-0">
@@ -198,7 +201,7 @@ export default function MovieDetails({
                             className="w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-black/30"></div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-transparent to-transparent md:hidden"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-gray-100 dark:from-[#080808] via-transparent to-transparent md:hidden"></div>
                     </div>
 
                     {/* Play Button (Centered) */}
@@ -214,10 +217,10 @@ export default function MovieDetails({
 
                     {/* Mobile Title Overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:hidden">
-                        <h1 className="text-4xl font-serif font-bold text-white leading-none mb-3">
+                        <h1 className="text-4xl font-serif font-bold dark:text-white leading-none mb-3">
                             {movie.title}
                         </h1>
-                        <div className="flex items-center gap-3 text-sm text-gray-300 mb-3">
+                        <div className="flex items-center gap-3 text-sm dark:text-gray-300 mb-3">
                             <span>
                                 {new Date(movie.release_date).getFullYear()}
                             </span>
@@ -226,7 +229,7 @@ export default function MovieDetails({
                             {movie.rating_average && (
                                 <>
                                     <span>•</span>
-                                    <span className="text-yellow-400">
+                                    <span className="text-yellow-700">
                                         ★ {movie.rating_average.toFixed(1)}
                                     </span>
                                 </>
@@ -237,7 +240,7 @@ export default function MovieDetails({
                             {movie.genres?.slice(0, 3).map((genre) => (
                                 <span
                                     key={genre.id}
-                                    className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white uppercase tracking-wider"
+                                    className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs dark:text-white uppercase tracking-wider"
                                 >
                                     {genre.name}
                                 </span>
@@ -247,7 +250,7 @@ export default function MovieDetails({
                 </div>
 
                 {/* --- RIGHT PANE: CONTENT (Scrollable) --- */}
-                <div className="w-full md:w-1/2 lg:w-[55%] min-h-screen bg-[#080808] relative z-10">
+                <div className="w-full md:w-1/2 lg:w-[55%] min-h-screen bg-gray-100 dark:bg-[#080808] relative z-10">
                     <div className="p-6 md:p-12 lg:p-20 max-w-3xl mx-auto">
                         {/* Desktop Title */}
                         <div className="hidden md:block mb-12">
@@ -258,18 +261,18 @@ export default function MovieDetails({
                                 <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
                                 <span>{movie.formatted_runtime}</span>
                                 <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
-                                <span className="text-white">
-                                    {movie.rating_average?.toFixed(1)} Rating
+                                <span className="text-gray-800 dark:text-white">
+                                    {movie.rating_average?.toFixed(1)} {t('Rating')}
                                 </span>
                             </div>
-                            <h1 className="text-5xl lg:text-7xl font-serif font-medium text-white leading-[0.9] mb-6">
+                            <h1 className="text-5xl lg:text-7xl font-serif font-medium text-gray-800 dark:text-white leading-[0.9] mb-6">
                                 {movie.title}
                             </h1>
                             <div className="flex flex-wrap gap-2">
                                 {movie.genres?.map((genre) => (
                                     <span
                                         key={genre.id}
-                                        className="px-3 py-1 border border-white/20 rounded-full text-xs text-gray-300 uppercase tracking-wider hover:border-white transition-colors cursor-default"
+                                        className="px-3 py-1 border border-gray-800/20 dark:border-white/20 rounded-full text-xs text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:border-gray-800 dark:hover:border-white transition-colors cursor-default"
                                     >
                                         {genre.name}
                                     </span>
@@ -280,9 +283,9 @@ export default function MovieDetails({
                         {/* Synopsis */}
                         <div className="mb-16">
                             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">
-                                Synopsis
+                                {t('Synopsis')}
                             </h3>
-                            <p className="text-lg md:text-xl text-gray-300 font-serif leading-relaxed">
+                            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed">
                                 {movie.description}
                             </p>
                         </div>
@@ -291,11 +294,11 @@ export default function MovieDetails({
                         <div className="mb-16">
                             <div className="flex items-center justify-between mb-8">
                                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                                    Watch & Download
+                                    {t('Watch & Download')}
                                 </h3>
                                 {movie.is_vip_only && (
                                     <span className="text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-0.5 rounded">
-                                        VIP ACCESS
+                                        {t('VIP ACCESS')}
                                     </span>
                                 )}
                             </div>
@@ -312,13 +315,13 @@ export default function MovieDetails({
                                                 : "hidden"
                                         }`}
                                     >
-                                        <div className="flex items-center gap-2 mb-4 text-white">
+                                        <div className="flex items-center gap-2 mb-4 text-gray-800 dark:text-white">
                                             <PlayIcon className="w-5 h-5" />
                                             <span className="font-serif text-xl italic">
-                                                Streaming Sources
+                                                {t('Streaming Sources')}
                                             </span>
                                         </div>
-                                        <div className="pl-4 border-l border-white/10">
+                                        <div className="pl-4 border-l border-gray-800/10 dark:border-white/10">
                                             {watchLinksByQuality &&
                                             Object.keys(watchLinksByQuality)
                                                 .length > 0 ? (
@@ -336,8 +339,7 @@ export default function MovieDetails({
                                                     ))
                                             ) : (
                                                 <div className="text-gray-600 italic px-2">
-                                                    No streaming links
-                                                    available.
+                                                    {t('No streaming links available.')}
                                                 </div>
                                             )}
                                         </div>
@@ -353,13 +355,13 @@ export default function MovieDetails({
                                                 : "hidden"
                                         }`}
                                     >
-                                        <div className="flex items-center gap-2 mb-4 text-white">
+                                        <div className="flex items-center gap-2 mb-4 text-gray-800 dark:text-white">
                                             <DownloadIcon className="w-5 h-5" />
                                             <span className="font-serif text-xl italic">
-                                                Download Files
+                                                {t('Download Files')}
                                             </span>
                                         </div>
-                                        <div className="pl-4 border-l border-white/10">
+                                        <div className="pl-4 border-l border-gray-800/10 dark:border-white/10">
                                             {downloadLinksByQuality &&
                                             Object.keys(downloadLinksByQuality)
                                                 .length > 0 ? (
@@ -377,23 +379,22 @@ export default function MovieDetails({
                                                     ))
                                             ) : (
                                                 <div className="text-gray-600 italic px-2">
-                                                    No download links available.
+                                                    {t('No download links available.')}
                                                 </div>
                                             )}
                                         </div>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="p-8 border border-white/10 rounded-lg bg-white/5 text-center">
-                                    <p className="text-gray-400 font-serif text-lg mb-4">
-                                        Please log in to access streaming and
-                                        download links.
+                                <div className="p-8 border border-gray-800/10 dark:border-white/10 rounded-lg bg-gray-800/5 dark:bg-white/5 text-center">
+                                    <p className="text-gray-600 dark:text-gray-400 font-serif text-lg mb-4">
+                                        {t('Please log in to access streaming and download links.')}
                                     </p>
                                     <a
                                         href={route("login")}
-                                        className="inline-block px-6 py-2 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors"
+                                        className="inline-block px-6 py-2 bg-gray-800 dark:bg-white text-white dark:text-black font-bold uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors"
                                     >
-                                        Log In
+                                        {t('Log In')}
                                     </a>
                                 </div>
                             )}
@@ -403,7 +404,7 @@ export default function MovieDetails({
                             <div className="mt-8 w-full rounded overflow-hidden">
                                 <img
                                     src={movie?.banner_url}
-                                    alt="Backdrop"
+                                    alt={t('Backdrop')}
                                     className="w-full h-48 object-cover object-center"
                                 />
                             </div>
@@ -412,7 +413,7 @@ export default function MovieDetails({
                         {/* Cast */}
                         <div className="mb-16 mt-10">
                             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">
-                                Cast & Crew
+                                {t('Cast & Crew')}
                             </h3>
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4">
                                 {movie.actors?.slice(0, 6).map((actor) => (
@@ -420,7 +421,7 @@ export default function MovieDetails({
                                         key={actor.id}
                                         className="flex items-center gap-3"
                                     >
-                                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-800  hover:grayscale-0 transition-all">
+                                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-800  hover:grayscale-0 transition-all">
                                             <img
                                                 src={
                                                     actor.person?.avatar_url ||
@@ -436,7 +437,7 @@ export default function MovieDetails({
                                                     "person.show",
                                                     actor.person?.id
                                                 )}
-                                                className="text-gray-400 hover:text-white transition-colors flex justify-between text-sm group"
+                                                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors flex justify-between text-sm group"
                                             >
                                                 <span className="font-bold">
                                                     {actor.person?.name}
@@ -452,11 +453,11 @@ export default function MovieDetails({
                         </div>
 
                         {/* Rating & Related */}
-                        <div className="pt-12 border-t border-white/10">
+                        <div className="pt-12 border-t border-gray-800/10 dark:border-white/10">
                             <div className="flex items-center justify-center mb-12">
                                 <div>
                                     <h3 className="text-xs text-center font-bold text-gray-500 uppercase tracking-widest mb-2">
-                                        Your Rating
+                                        {t('Your Rating')}
                                     </h3>
                                     {auth.user ? (
                                         <RatingWidget
@@ -511,11 +512,11 @@ export default function MovieDetails({
                                         <div className="text-gray-500 text-sm italic">
                                             <a
                                                 href={route("login")}
-                                                className="text-white hover:underline"
+                                                className="text-gray-800 dark:text-white hover:underline"
                                             >
-                                                Log in
+                                                {t('Log in')}
                                             </a>{" "}
-                                            to rate this movie.
+                                            {t('to rate this movie.')}
                                         </div>
                                     )}
                                 </div>
@@ -524,7 +525,7 @@ export default function MovieDetails({
                             {relatedMovies && relatedMovies.length > 0 && (
                                 <div>
                                     <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">
-                                        Related Films
+                                        {t('Related Films')}
                                     </h3>
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                                         {relatedMovies
@@ -545,7 +546,7 @@ export default function MovieDetails({
                                                             className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
                                                         />
                                                     </div>
-                                                    <h4 className="text-white font-serif text-sm truncate group-hover:underline">
+                                                    <h4 className="text-gray-800 dark:text-white font-serif text-sm truncate group-hover:underline">
                                                         {rel.title}
                                                     </h4>
                                                 </a>
@@ -558,6 +559,7 @@ export default function MovieDetails({
                     <Footer />
                 </div>
             </div>
+
 
             {/* Trailer Modal */}
             {showTrailer && (

@@ -4,8 +4,10 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 export default function Register() {
+    const { t } = useTranslation();
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -23,16 +25,16 @@ export default function Register() {
 
     return (
         <GuestLayout>
-            <Head title="Register" />
+            <Head title={t('Register')} />
 
             <div className="mb-8 text-center">
-                <h2 className="text-3xl font-bold text-white">Create Account</h2>
-                <p className="mt-2 text-sm text-gray-400">Join us and start your journey</p>
+                <h2 className="text-3xl font-bold text-gray-800 dark:text-white">{t('Create Account')}</h2>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{t('Join us and start your journey')}</p>
             </div>
 
             <form onSubmit={submit} className="space-y-6">
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <InputLabel htmlFor="name" value={t('Name')} />
 
                     <TextInput
                         id="name"
@@ -41,7 +43,7 @@ export default function Register() {
                         className="mt-1 block w-full"
                         autoComplete="name"
                         isFocused={true}
-                        placeholder="Enter your full name"
+                        placeholder={t('Enter your full name')}
                         onChange={(e) => setData('name', e.target.value)}
                         required
                     />
@@ -50,7 +52,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value={t('Email')} />
 
                     <TextInput
                         id="email"
@@ -59,7 +61,7 @@ export default function Register() {
                         value={data.email}
                         className="mt-1 block w-full"
                         autoComplete="username"
-                        placeholder="Enter your email"
+                        placeholder={t('Enter your email')}
                         onChange={(e) => setData('email', e.target.value)}
                         required
                     />
@@ -68,7 +70,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" value={t('Password')} />
 
                     <TextInput
                         id="password"
@@ -77,7 +79,7 @@ export default function Register() {
                         value={data.password}
                         className="mt-1 block w-full"
                         autoComplete="new-password"
-                        placeholder="Create a password"
+                        placeholder={t('Create a password')}
                         onChange={(e) => setData('password', e.target.value)}
                         required
                     />
@@ -88,7 +90,7 @@ export default function Register() {
                 <div>
                     <InputLabel
                         htmlFor="password_confirmation"
-                        value="Confirm Password"
+                        value={t('Confirm Password')}
                     />
 
                     <TextInput
@@ -98,7 +100,7 @@ export default function Register() {
                         value={data.password_confirmation}
                         className="mt-1 block w-full"
                         autoComplete="new-password"
-                        placeholder="Confirm your password"
+                        placeholder={t('Confirm your password')}
                         onChange={(e) =>
                             setData('password_confirmation', e.target.value)
                         }
@@ -113,17 +115,17 @@ export default function Register() {
 
                 <div>
                     <PrimaryButton disabled={processing}>
-                        Create Account
+                        {t('Create Account')}
                     </PrimaryButton>
                 </div>
 
-                <div className="mt-6 text-center text-sm text-gray-400">
-                    Already have an account?{' '}
+                <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+                    {t('Already have an account?')}{' '}
                     <Link
                         href={route('login')}
-                        className="font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                        className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
                     >
-                        Sign in
+                        {t('Sign in')}
                     </Link>
                 </div>
             </form>

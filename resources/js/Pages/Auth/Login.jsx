@@ -6,8 +6,10 @@ import TextInput from '@/Components/TextInput';
 import TelegramLoginWidget from '@/Components/TelegramLoginWidget';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 export default function Login({ status, canResetPassword }) {
+    const { t } = useTranslation();
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -24,22 +26,22 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <GuestLayout>
-            <Head title="Log in" />
+            <Head title={t('Log in')} />
 
             <div className="mb-8 text-center">
-                <h2 className="text-3xl font-bold text-white">Welcome Back</h2>
-                <p className="mt-2 text-sm text-gray-400">Please sign in to your account</p>
+                <h2 className="text-3xl font-bold text-gray-800 dark:text-white">{t('Welcome Back')}</h2>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{t('Please sign in to your account')}</p>
             </div>
 
             {status && (
-                <div className="mb-4 rounded-lg bg-green-500/10 px-4 py-3 text-sm font-medium text-green-400 border border-green-500/20">
+                <div className="mb-4 rounded-lg bg-green-500/10 px-4 py-3 text-sm font-medium text-green-600 dark:text-green-400 border border-green-500/20">
                     {status}
                 </div>
             )}
 
             <form onSubmit={submit} className="space-y-6">
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value={t('Email')} />
 
                     <TextInput
                         id="email"
@@ -49,7 +51,7 @@ export default function Login({ status, canResetPassword }) {
                         className="mt-1 block w-full"
                         autoComplete="username"
                         isFocused={true}
-                        placeholder="Enter your email"
+                        placeholder={t('Enter your email')}
                         onChange={(e) => setData('email', e.target.value)}
                     />
 
@@ -57,7 +59,7 @@ export default function Login({ status, canResetPassword }) {
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" value={t('Password')} />
 
                     <TextInput
                         id="password"
@@ -66,7 +68,7 @@ export default function Login({ status, canResetPassword }) {
                         value={data.password}
                         className="mt-1 block w-full"
                         autoComplete="current-password"
-                        placeholder="Enter your password"
+                        placeholder={t('Enter your password')}
                         onChange={(e) => setData('password', e.target.value)}
                     />
 
@@ -81,36 +83,38 @@ export default function Login({ status, canResetPassword }) {
                             onChange={(e) =>
                                 setData('remember', e.target.checked)
                             }
-                            className="bg-gray-900 border-gray-700 text-blue-600 focus:ring-blue-500 rounded"
+                            className="rounded border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-blue-600 focus:ring-blue-500"
                         />
-                        <span className="ms-2 text-sm text-gray-400">
-                            Remember me
+                        <span className="ms-2 text-sm text-gray-600 dark:text-gray-400">
+                            {t('Remember me')}
                         </span>
                     </label>
 
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
                         >
-                            Forgot password?
+                            {t('Forgot password?')}
                         </Link>
                     )}
                 </div>
 
                 <div>
                     <PrimaryButton disabled={processing}>
-                        Sign in
+                        {t('Sign in')}
                     </PrimaryButton>
                 </div>
 
                 <div className="mt-6">
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-700" />
+                            <div className="w-full border-t border-gray-300 dark:border-gray-700" />
                         </div>
                         <div className="relative flex justify-center text-sm">
-                            <span className="bg-[#151c27] px-2 text-gray-500">Or continue with</span>
+                            <span className="bg-white dark:bg-[#1f2937] px-2 text-gray-500">
+                                {t('Or continue with')}
+                            </span>
                         </div>
                     </div>
 
@@ -119,13 +123,13 @@ export default function Login({ status, canResetPassword }) {
                     </div>
                 </div>
 
-                <div className="mt-6 text-center text-sm text-gray-400">
-                    Don't have an account?{' '}
+                <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+                    {t("Don't have an account?")}{' '}
                     <Link
                         href={route('register')}
-                        className="font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                        className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
                     >
-                        Sign up
+                        {t('Sign up')}
                     </Link>
                 </div>
             </form>

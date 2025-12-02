@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link, useForm, router, usePage } from "@inertiajs/react";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useTranslation } from "react-i18next";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { t } = useTranslation();
     const { data, setData } = useForm({
         q: "",
     });
@@ -55,48 +59,52 @@ export default function Navbar() {
     return (
         <>
             <nav
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                    ? "hidden bg-black/90 backdrop-blur-md py-2 shadow-lg"
-                    : "bg-transparent py-2 md:py-6"
-                    }`}
+                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+                    isScrolled
+                        ? "bg-white/80 dark:bg-black/90 backdrop-blur-md py-2 shadow-lg"
+                        : "bg-transparent py-2 md:py-6"
+                }`}
             >
                 <div className="container mx-auto px-2 md:px-12 flex items-center justify-between">
                     {/* Logo */}
                     <Link
                         href={route("home")}
-                        className="text-2xl font-serif font-bold tracking-tighter text-white z-50"
+                        className="text-2xl font-serif font-bold tracking-tighter text-gray-800 dark:text-white z-50"
                     >
-                        CINE<span className="text-gray-400">VERSE</span>
+                        CINE<span className="text-gray-500 dark:text-gray-400">VERSE</span>
                     </Link>
 
                     {/* Desktop Menu */}
                     <div className="hidden md:flex items-center gap-8">
                         <Link
                             href={route("home")}
-                            className="text-sm font-bold uppercase tracking-widest text-gray-300 hover:text-white transition-colors"
+                            className="text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                         >
-                            Home
+                            {t("Home")}
                         </Link>
                         <Link
                             href={route("movies.index")}
-                            className="text-sm font-bold uppercase tracking-widest text-gray-300 hover:text-white transition-colors"
+                            className="text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                         >
-                            Movies
+                            {t("Movies")}
                         </Link>
                         <Link
                             href={route("series.index")}
-                            className="text-sm font-bold uppercase tracking-widest text-gray-300 hover:text-white transition-colors"
+                            className="text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                         >
-                            Series
+                            {t("Series")}
                         </Link>
+                        <LanguageSwitcher />
+                        <ThemeSwitcher />
                     </div>
 
                     {/* Search & Actions */}
                     <div className="flex items-center gap-4">
                         {/* Desktop Search */}
                         <div
-                            className={`hidden md:flex relative items-center transition-all duration-300 ${isSearchOpen ? "w-64" : "w-8"
-                                }`}
+                            className={`hidden md:flex relative items-center transition-all duration-300 ${
+                                isSearchOpen ? "w-64" : "w-8"
+                            }`}
                         >
                             <form onSubmit={handleSearch} className="w-full">
                                 <input
@@ -105,11 +113,12 @@ export default function Navbar() {
                                     onChange={(e) =>
                                         setData("q", e.target.value)
                                     }
-                                    placeholder="Search titles..."
-                                    className={`w-full p-5 bg-transparent border-b border-white/30 text-white placeholder-gray-400 focus:outline-none focus:border-white py-1 pl-8 pr-2 transition-all duration-300 ${isSearchOpen
-                                        ? "opacity-100 visible"
-                                        : "opacity-0 invisible w-0"
-                                        }`}
+                                    placeholder={t("Search titles...")}
+                                    className={`w-full p-5 bg-transparent border-b border-gray-800/30 dark:border-white/30 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-gray-800 dark:focus:border-white py-1 pl-8 pr-2 transition-all duration-300 ${
+                                        isSearchOpen
+                                            ? "opacity-100 visible"
+                                            : "opacity-0 invisible w-0"
+                                    }`}
                                     onBlur={() =>
                                         !data.q && setIsSearchOpen(false)
                                     }
@@ -130,7 +139,7 @@ export default function Navbar() {
                                         );
                                     }
                                 }}
-                                className="absolute left-0 p-2 text-white hover:text-gray-300 transition-colors"
+                                className="absolute left-0 p-2 text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                             >
                                 <svg
                                     className="w-6 h-6 "
@@ -158,11 +167,12 @@ export default function Navbar() {
                                     onChange={(e) =>
                                         setData("q", e.target.value)
                                     }
-                                    placeholder="Search titles..."
-                                    className={`w-full p-5 bg-transparent border-b border-white/30 text-white placeholder-gray-400 focus:outline-none focus:border-white py-1 pr-2 transition-all duration-300 ${isSearchOpen
-                                        ? "opacity-100 visible"
-                                        : "opacity-0 invisible w-0"
-                                        }`}
+                                    placeholder={t("Search titles...")}
+                                    className={`w-full p-5 bg-transparent border-b border-gray-800/30 dark:border-white/30 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-gray-800 dark:focus:border-white py-1 pr-2 transition-all duration-300 ${
+                                        isSearchOpen
+                                            ? "opacity-100 visible"
+                                            : "opacity-0 invisible w-0"
+                                    }`}
                                     onBlur={() =>
                                         !data.q && setIsSearchOpen(false)
                                     }
@@ -183,8 +193,9 @@ export default function Navbar() {
                                         );
                                     }
                                 }}
-                                className={`${isSearchOpen ? "hidden" : ""} ${isMobileMenuOpen ? "hidden" : ""
-                                    } left-0 p-2 text-white hover:text-gray-300 transition-colors`}
+                                className={`${isSearchOpen ? "hidden" : ""} ${
+                                    isMobileMenuOpen ? "hidden" : ""
+                                } left-0 p-2 text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors`}
                             >
                                 <svg
                                     className="w-6 h-6 "
@@ -207,7 +218,7 @@ export default function Navbar() {
                             onClick={() =>
                                 setIsMobileMenuOpen(!isMobileMenuOpen)
                             }
-                            className="md:hidden text-white hover:text-gray-300 transition-colors z-50"
+                            className="md:hidden text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors z-50"
                             aria-label="Toggle menu"
                         >
                             <svg
@@ -239,17 +250,19 @@ export default function Navbar() {
 
             {/* Mobile Menu Overlay */}
             <div
-                className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden ${isMobileMenuOpen
-                    ? "opacity-100 visible"
-                    : "opacity-0 invisible"
-                    }`}
+                className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden ${
+                    isMobileMenuOpen
+                        ? "opacity-100 visible"
+                        : "opacity-0 invisible"
+                }`}
                 onClick={closeMobileMenu}
             />
 
             {/* Mobile Menu Slide-out */}
             <div
-                className={`fixed top-0 right-0 h-full w-4/5 max-w-sm bg-black z-40 transform transition-transform duration-300 ease-in-out md:hidden ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-                    }`}
+                className={`fixed top-0 right-0 h-full w-4/5 max-w-sm bg-white dark:bg-black z-40 transform transition-transform duration-300 ease-in-out md:hidden ${
+                    isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+                }`}
             >
                 <div className="flex flex-col h-full pt-24 px-6 pb-6">
                     {/* Mobile Search */}
@@ -259,12 +272,12 @@ export default function Navbar() {
                                 type="text"
                                 value={data.q}
                                 onChange={(e) => setData("q", e.target.value)}
-                                placeholder="Search titles..."
-                                className="w-full bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-white py-3 pl-4 pr-12 transition-colors"
+                                placeholder={t("Search titles...")}
+                                className="w-full bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/20 rounded-lg text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-gray-800 dark:focus:border-white py-3 pl-4 pr-12 transition-colors"
                             />
                             <button
                                 type="submit"
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                             >
                                 <svg
                                     className="w-5 h-5"
@@ -288,28 +301,30 @@ export default function Navbar() {
                         <Link
                             href={route("home")}
                             onClick={closeMobileMenu}
-                            className="text-lg font-bold uppercase tracking-widest text-gray-300 hover:text-white hover:bg-white/5 transition-all py-4 px-4 rounded-lg"
+                            className="text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg"
                         >
-                            Home
+                            {t("Home")}
                         </Link>
                         <Link
                             href={route("movies.index")}
                             onClick={closeMobileMenu}
-                            className="text-lg font-bold uppercase tracking-widest text-gray-300 hover:text-white hover:bg-white/5 transition-all py-4 px-4 rounded-lg"
+                            className="text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg"
                         >
-                            Movies
+                            {t("Movies")}
                         </Link>
                         <Link
                             href={route("series.index")}
                             onClick={closeMobileMenu}
-                            className="text-lg font-bold uppercase tracking-widest text-gray-300 hover:text-white hover:bg-white/5 transition-all py-4 px-4 rounded-lg"
+                            className="text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg"
                         >
-                            Series
+                            {t("Series")}
                         </Link>
+                        <LanguageSwitcher />
+                        <ThemeSwitcher />
                     </nav>
 
                     {/* Footer */}
-                    <div className="mt-auto pt-6 border-t border-white/10">
+                    <div className="mt-auto pt-6 border-t border-gray-200 dark:border-white/10">
                         <p className="text-xs text-gray-500 uppercase tracking-widest">
                             CINE<span className="text-gray-600">VERSE</span>
                         </p>
@@ -317,14 +332,15 @@ export default function Navbar() {
                 </div>
             </div>
             {/* Bottom Navigation for Mobile */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-lg border-t border-white/10 md:hidden pb-safe">
+            <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-black/90 backdrop-blur-lg border-t border-gray-200 dark:border-white/10 md:hidden pb-safe">
                 <div className="flex items-center justify-around p-4">
                     <Link
                         href={route("home")}
-                        className={`flex flex-col items-center gap-1 ${route().current("home")
-                            ? "text-white"
-                            : "text-gray-500 hover:text-gray-300"
-                            }`}
+                        className={`flex flex-col items-center gap-1 ${
+                            route().current("home")
+                                ? "text-gray-800 dark:text-white"
+                                : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                        }`}
                     >
                         <svg
                             className="w-6 h-6"
@@ -340,16 +356,17 @@ export default function Navbar() {
                             />
                         </svg>
                         <span className="text-[10px] uppercase tracking-wider font-medium">
-                            Home
+                            {t("Home")}
                         </span>
                     </Link>
 
                     <Link
                         href={route("movies.index")}
-                        className={`flex flex-col items-center gap-1 ${route().current("movies.*")
-                            ? "text-white"
-                            : "text-gray-500 hover:text-gray-300"
-                            }`}
+                        className={`flex flex-col items-center gap-1 ${
+                            route().current("movies.*")
+                                ? "text-gray-800 dark:text-white"
+                                : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                        }`}
                     >
                         <svg
                             className="w-6 h-6"
@@ -365,16 +382,17 @@ export default function Navbar() {
                             />
                         </svg>
                         <span className="text-[10px] uppercase tracking-wider font-medium">
-                            Movies
+                            {t("Movies")}
                         </span>
                     </Link>
 
                     <Link
                         href={route("series.index")}
-                        className={`flex flex-col items-center gap-1 ${route().current("series.*")
-                            ? "text-white"
-                            : "text-gray-500 hover:text-gray-300"
-                            }`}
+                        className={`flex flex-col items-center gap-1 ${
+                            route().current("series.*")
+                                ? "text-gray-800 dark:text-white"
+                                : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                        }`}
                     >
                         <svg
                             className="w-6 h-6"
@@ -390,16 +408,22 @@ export default function Navbar() {
                             />
                         </svg>
                         <span className="text-[10px] uppercase tracking-wider font-medium">
-                            Series
+                            {t("Series")}
                         </span>
                     </Link>
 
                     <Link
-                        href={usePage().props.auth.user ? route("profile.edit") : route("login")}
-                        className={`flex flex-col items-center gap-1 ${route().current("profile.*") || route().current("login")
-                            ? "text-white"
-                            : "text-gray-500 hover:text-gray-300"
-                            }`}
+                        href={
+                            usePage().props.auth.user
+                                ? route("profile.edit")
+                                : route("login")
+                        }
+                        className={`flex flex-col items-center gap-1 ${
+                            route().current("profile.*") ||
+                            route().current("login")
+                                ? "text-gray-800 dark:text-white"
+                                : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                        }`}
                     >
                         <svg
                             className="w-6 h-6"
@@ -415,7 +439,7 @@ export default function Navbar() {
                             />
                         </svg>
                         <span className="text-[10px] uppercase tracking-wider font-medium">
-                            Profile
+                            {t("Profile")}
                         </span>
                     </Link>
                 </div>

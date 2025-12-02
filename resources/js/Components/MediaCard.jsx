@@ -38,7 +38,7 @@ export default function MediaCard({ item, type }) {
     return (
         <Link href={href} className="group block relative w-full">
             {/* Poster Container */}
-            <div className="aspect-[2/3] overflow-hidden rounded-lg bg-gray-900 mb-3 relative shadow-lg group-hover:shadow-2xl transition-all duration-500">
+            <div className="aspect-[2/3] overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-900 mb-3 relative shadow-lg group-hover:shadow-2xl transition-all duration-500">
                 <img
                     src={item.poster_url}
                     alt={item.title}
@@ -74,25 +74,25 @@ export default function MediaCard({ item, type }) {
 
             {/* Info Section */}
             <div className="space-y-1">
-                <h3 className="text-white font-medium text-base leading-tight group-hover:text-indigo-400 transition-colors truncate">
+                <h3 className="text-gray-800 dark:text-white font-medium text-base leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
                     {item.title}
                 </h3>
 
-                <div className="flex items-center gap-2 text-xs text-gray-400 font-medium flex-wrap">
-                    <span className="text-gray-300">{year}</span>
-                    <span className="w-1 h-1 rounded-full bg-gray-600"></span>
+                <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 font-medium flex-wrap">
+                    <span className="text-gray-700 dark:text-gray-300">{year}</span>
+                    <span className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-600"></span>
                     <span
-                        className={`uppercase tracking-wide text-[10px] border border-gray-700 px-1 rounded text-gray-400 ${
+                        className={`uppercase tracking-wide text-[10px] border dark:border-gray-700 px-1 rounded text-gray-600 dark:text-gray-400 ${
                             item.status === "ongoing"
-                                ? "bg-green-500/20"
-                                : "bg-red-800/20"
+                                ? "bg-green-100 dark:bg-green-500/20"
+                                : "bg-red-100 dark:bg-red-800/20"
                         }`}
                     >
                         {item.status}
                     </span>
                     {(duration || seasons) && (
                         <>
-                            <span className="w-1 h-1 rounded-full bg-gray-600"></span>
+                            <span className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-600"></span>
                             <span>{duration || seasons}</span>
                         </>
                     )}

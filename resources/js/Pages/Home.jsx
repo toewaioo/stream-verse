@@ -6,6 +6,7 @@ import Navbar from "@/Components/Navbar";
 import MediaCard from "@/Components/MediaCard";
 import Footer from "@/Components/Footer";
 import LoadingLayout from "@/Layouts/LoadingLayout";
+import { useTranslation } from "react-i18next";
 
 const PlayIcon = ({ className = "w-6 h-6" }) => (
     <svg className={className} fill="currentColor" viewBox="0 0 24 24">
@@ -13,28 +14,32 @@ const PlayIcon = ({ className = "w-6 h-6" }) => (
     </svg>
 );
 
-const SectionTitle = ({ title, subtitle, href }) => (
-    <div className="mb-8 flex items-end justify-between border-b border-white/10 pb-4">
-        <div>
-            <h2 className="text-3xl md:text-4xl font-serif text-white">
-                {title}
-            </h2>
-            {subtitle && (
-                <p className="text-gray-500 text-sm mt-1 uppercase tracking-widest">
-                    {subtitle}
-                </p>
-            )}
+const SectionTitle = ({ title, subtitle, href }) => {
+    const { t } = useTranslation();
+    return (
+        <div className="mb-8 flex items-end justify-between border-b border-gray-200 dark:border-white/10 pb-4">
+            <div>
+                <h2 className="text-3xl md:text-4xl font-serif text-gray-800 dark:text-white">
+                    {t(title)}
+                </h2>
+                {subtitle && (
+                    <p className="text-gray-500 text-sm mt-1 uppercase tracking-widest">
+                        {t(subtitle)}
+                    </p>
+                )}
+            </div>
+            <Link
+                href={href}
+                className="text-xs font-bold text-gray-500 hover:text-gray-800 dark:hover:text-white uppercase tracking-widest transition-colors"
+            >
+                {t('View All')}
+            </Link>
         </div>
-        <Link
-            href={href}
-            className="text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors"
-        >
-            View All
-        </Link>
-    </div>
-);
+    )
+};
 
 export default function Home({ featured, latestMovies, latestSeries, seo }) {
+    const { t } = useTranslation();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
@@ -64,9 +69,8 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
                 structuredData={seo?.structuredData}
             />
 
-            <div className="min-h-screen mt-0 bg-[#050505] text-white font-sans selection:bg-white selection:text-black">
+            <div className="min-h-screen mt-0 bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black">
                 <Navbar />
-                {/* --- HERO SECTION --- */}
                 {/* --- HERO SECTION --- */}
                 {featured && featured.length > 0 && (
                     <div
@@ -114,22 +118,22 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
                                     alt={item.title}
                                     className="hidden md:block w-full h-full object-cover"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent"></div>
-                                <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-transparent"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-gray-100 dark:from-[#050505] via-gray-100/40 dark:via-[#050505]/40 to-transparent"></div>
+                                <div className="absolute inset-0 bg-gradient-to-r from-gray-100 dark:from-[#050505] via-gray-100/60 dark:via-[#050505]/60 to-transparent"></div>
 
                                 <div className="absolute inset-0 flex items-center">
                                     <div className="container mx-auto px-6 md:px-12">
                                         <div className="max-w-2xl">
-                                            <span className="inline-block px-2 py-1 border border-white/30 text-[10px] font-bold uppercase tracking-[0.2em] text-white mb-6 backdrop-blur-sm">
-                                                Featured{" "}
+                                            <span className="inline-block px-2 py-1 border border-gray-800/30 dark:border-white/30 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-800 dark:text-white mb-6 backdrop-blur-sm">
+                                                {t('Featured')}{" "}
                                                 {item.type === "series"
-                                                    ? "Series"
-                                                    : "Film"}
+                                                    ? t("Series")
+                                                    : t("Film")}
                                             </span>
-                                            <h1 className="text-4xl line-clamp-1  md:text-7xl lg:text-8xl font-serif text-white leading-[0.9] mb-6">
+                                            <h1 className="text-4xl line-clamp-1  md:text-7xl lg:text-8xl font-serif text-gray-800 dark:text-white leading-[0.9] mb-6">
                                                 {item.title}
                                             </h1>
-                                            <p className="text-sm md:text-xl text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl">
+                                            <p className="text-sm md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl">
                                                 {item.description}
                                             </p>
 
@@ -147,9 +151,9 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
                                                                 item.slug
                                                             )
                                                     }
-                                                    className="px-2 md:px-8 text-sm md:text-lg py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors"
+                                                    className="px-2 md:px-8 text-sm md:text-lg py-3 bg-gray-800 dark:bg-white text-white dark:text-black font-bold uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors"
                                                 >
-                                                    Watch Now
+                                                    {t('Watch Now')}
                                                 </Link>
                                             </div>
                                         </div>
@@ -165,10 +169,10 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
                                     key={index}
                                     onClick={() => setCurrentIndex(index)}
                                     className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex
-                                        ? "bg-white scale-125"
-                                        : "bg-white/30 hover:bg-white/50"
+                                        ? "bg-gray-800 dark:bg-white scale-125"
+                                        : "bg-gray-800/30 dark:bg-white/30 hover:bg-gray-800/50 dark:hover:bg-white/50"
                                         }`}
-                                    aria-label={`Go to slide ${index + 1}`}
+                                    aria-label={`${t('Go to slide')} ${index + 1}`}
                                 />
                             ))}
                         </div>

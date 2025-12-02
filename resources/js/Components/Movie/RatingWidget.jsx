@@ -39,7 +39,7 @@ export default function RatingWidget({
             return (
                 <svg
                     key={index}
-                    className={`star ${isFilled ? "filled" : ""}`}
+                    className={`star dark:text-yellow-400 ${isFilled ? "filled" : ""}`}
                     onMouseEnter={() =>
                         interactive && setHoveredStar(starValue)
                     }
@@ -72,7 +72,7 @@ export default function RatingWidget({
                     <div className="star-rating flex flex-row items-center justify-center sm:justify-start mt-2 sm:mt-0">
                         {renderStars(ratingAverage)}
                     </div>
-                    <div className="text-xs sm:text-sm text-gray-400 mt-1 text-center sm:text-left w-full sm:w-auto">
+                    <div className="text-xs sm:text-sm dark:text-gray-400 mt-1 text-center sm:text-left w-full sm:w-auto">
                         {ratingCount.toLocaleString()}{" "}
                         {ratingCount === 1 ? "rating" : "ratings"}
                     </div>
@@ -82,14 +82,14 @@ export default function RatingWidget({
             {/* User Rating Input */}
             {onRate && (
                 <div className="glass-card-dark p-4 rounded-lg flex flex-col items-center w-full">
-                    <h4 className="text-sm font-medium text-gray-300 mb-2 text-center w-full">
+                    <h4 className="text-sm font-medium dark:text-gray-300 mb-2 text-center w-full">
                         Rate this movie
                     </h4>
                     <div className="star-rating flex flex-row items-center justify-center w-full">
                         {renderStars(selectedRating, true)}
                     </div>
                     {selectedRating > 0 && (
-                        <p className="text-xs text-gray-400 mt-2 text-center w-full">
+                        <p className="text-xs dark:text-gray-400 mt-2 text-center w-full">
                             You rated this {selectedRating / 2}{" "}
                             {selectedRating / 2 === 1 ? "star" : "stars"}
                         </p>

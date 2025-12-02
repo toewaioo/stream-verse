@@ -1,10 +1,12 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import { Link, usePage, Head, useForm, router, createInertiaApp } from "@inertiajs/react";
-import { Transition, Dialog, TransitionChild, DialogPanel, Combobox } from "@headlessui/react";
 import React, { createContext, useState, useContext, useEffect, forwardRef, useRef, useImperativeHandle, useMemo } from "react";
+import { Transition, Dialog, TransitionChild, DialogPanel, Combobox } from "@headlessui/react";
+import { useTranslation } from "react-i18next";
 import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import axios$1 from "axios";
 import { debounce } from "lodash";
+import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import createServer from "@inertiajs/react/server";
 import ReactDOMServer from "react-dom/server";
 function ApplicationLogo(props) {
@@ -42,7 +44,7 @@ const Trigger = ({ children }) => {
 const Content = ({
   align = "right",
   width = "48",
-  contentClasses = "py-1 bg-white",
+  contentClasses = "py-1 bg-white dark:bg-gray-700",
   children
 }) => {
   const { open, setOpen } = useContext(DropDownContext);
@@ -88,7 +90,7 @@ const DropdownLink = ({ className = "", children, ...props }) => {
     Link,
     {
       ...props,
-      className: "block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none " + className,
+      className: "block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 dark:text-gray-300 transition duration-150 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-gray-100 dark:focus:bg-gray-800 focus:outline-none " + className,
       children
     }
   );
@@ -213,10 +215,11 @@ function AdminLayout({ children }) {
   ] });
 }
 function AdminDashboard({ auth, stats }) {
+  const { t } = useTranslation();
   return /* @__PURE__ */ jsxs(AdminLayout, { children: [
-    /* @__PURE__ */ jsx(Head, { title: "Manage Genres" }),
+    /* @__PURE__ */ jsx(Head, { title: t("Admin Dashboard") }),
     /* @__PURE__ */ jsxs("div", { className: "p-6 bg-white dark:bg-slate-900 rounded shadow-md", children: [
-      /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold mb-6 text-black dark:text-white ", children: "Admin Dashboard" }),
+      /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold mb-6 text-black dark:text-white ", children: t("Admin Dashboard") }),
       /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8", children: [
         /* @__PURE__ */ jsxs(
           Link,
@@ -224,9 +227,9 @@ function AdminDashboard({ auth, stats }) {
             href: route("admin.movies"),
             className: "bg-blue-600 text-white p-6 rounded shadow hover:bg-blue-700 transition",
             children: [
-              /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-2", children: "Movies" }),
+              /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-2", children: t("Movies") }),
               /* @__PURE__ */ jsx("div", { className: "text-3xl font-bold", children: stats?.movies ?? "-" }),
-              /* @__PURE__ */ jsx("div", { className: "text-sm mt-2", children: "Manage all movies" })
+              /* @__PURE__ */ jsx("div", { className: "text-sm mt-2", children: t("Manage all movies") })
             ]
           }
         ),
@@ -236,9 +239,9 @@ function AdminDashboard({ auth, stats }) {
             href: route("admin.series"),
             className: "bg-green-600 text-white p-6 rounded shadow hover:bg-green-700 transition",
             children: [
-              /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-2", children: "Series" }),
+              /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-2", children: t("Series") }),
               /* @__PURE__ */ jsx("div", { className: "text-3xl font-bold", children: stats?.series ?? "-" }),
-              /* @__PURE__ */ jsx("div", { className: "text-sm mt-2", children: "Manage all series" })
+              /* @__PURE__ */ jsx("div", { className: "text-sm mt-2", children: t("Manage all series") })
             ]
           }
         ),
@@ -248,9 +251,9 @@ function AdminDashboard({ auth, stats }) {
             href: route("admin.genres"),
             className: "bg-yellow-500 text-white p-6 rounded shadow hover:bg-yellow-600 transition",
             children: [
-              /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-2", children: "Genres" }),
+              /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-2", children: t("Genres") }),
               /* @__PURE__ */ jsx("div", { className: "text-3xl font-bold", children: stats?.genres ?? "-" }),
-              /* @__PURE__ */ jsx("div", { className: "text-sm mt-2", children: "Manage genres" })
+              /* @__PURE__ */ jsx("div", { className: "text-sm mt-2", children: t("Manage genres") })
             ]
           }
         ),
@@ -260,9 +263,9 @@ function AdminDashboard({ auth, stats }) {
             href: route("admin.persons"),
             className: "bg-purple-600 text-white p-6 rounded shadow hover:bg-purple-700 transition",
             children: [
-              /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-2", children: "Persons" }),
+              /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-2", children: t("Persons") }),
               /* @__PURE__ */ jsx("div", { className: "text-3xl font-bold", children: stats?.persons ?? "-" }),
-              /* @__PURE__ */ jsx("div", { className: "text-sm mt-2", children: "Manage persons" })
+              /* @__PURE__ */ jsx("div", { className: "text-sm mt-2", children: t("Manage persons") })
             ]
           }
         )
@@ -326,7 +329,7 @@ const TextInput = forwardRef(function TextInput2({ type = "text", className = ""
     {
       ...props,
       type,
-      className: "rounded-xl bg-gray-900/50 border border-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 placeholder-gray-500 transition-all duration-200 " + className,
+      className: "rounded-xl border text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 placeholder-gray-500 transition-all duration-200 bg-white dark:bg-gray-900/50 border-gray-300 dark:border-gray-700 " + className,
       ref: localRef
     }
   );
@@ -376,6 +379,7 @@ function SecondaryButton({
   );
 }
 function GenreForm({ genre, onClose, onSuccess }) {
+  const { t } = useTranslation();
   const { data, setData, post, put, processing, errors } = useForm({
     name: genre?.name || "",
     slug: genre?.slug || ""
@@ -404,7 +408,7 @@ function GenreForm({ genre, onClose, onSuccess }) {
   };
   return /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, className: "space-y-6", children: [
     /* @__PURE__ */ jsxs("div", { children: [
-      /* @__PURE__ */ jsx(InputLabel, { htmlFor: "name", value: "Name" }),
+      /* @__PURE__ */ jsx(InputLabel, { htmlFor: "name", value: t("Name") }),
       /* @__PURE__ */ jsx(
         TextInput,
         {
@@ -419,7 +423,7 @@ function GenreForm({ genre, onClose, onSuccess }) {
       /* @__PURE__ */ jsx(InputError, { message: errors.name, className: "mt-2" })
     ] }),
     /* @__PURE__ */ jsxs("div", { children: [
-      /* @__PURE__ */ jsx(InputLabel, { htmlFor: "slug", value: "Slug" }),
+      /* @__PURE__ */ jsx(InputLabel, { htmlFor: "slug", value: t("Slug") }),
       /* @__PURE__ */ jsx(
         TextInput,
         {
@@ -434,8 +438,8 @@ function GenreForm({ genre, onClose, onSuccess }) {
       /* @__PURE__ */ jsx(InputError, { message: errors.slug, className: "mt-2" })
     ] }),
     /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-end gap-4 border-t pt-4", children: [
-      /* @__PURE__ */ jsx(SecondaryButton, { onClick: onClose, disabled: processing, children: "Cancel" }),
-      /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: genre ? "Update Genre" : "Create Genre" })
+      /* @__PURE__ */ jsx(SecondaryButton, { onClick: onClose, disabled: processing, children: t("Cancel") }),
+      /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: genre ? t("Update Genre") : t("Create Genre") })
     ] })
   ] });
 }
@@ -513,6 +517,7 @@ function Modal({
 function Genres({ genres }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingGenre, setEditingGenre] = useState(null);
+  const { t } = useTranslation();
   const openCreateModal = () => {
     setEditingGenre(null);
     setIsModalOpen(true);
@@ -534,30 +539,60 @@ function Genres({ genres }) {
     /* @__PURE__ */ jsx(Head, { title: "Manage Genres" }),
     /* @__PURE__ */ jsx("div", { className: "", children: /* @__PURE__ */ jsx("div", { className: "max-w-7xl mx-auto", children: /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg", children: /* @__PURE__ */ jsxs("div", { className: "p-6 text-gray-900 dark:text-gray-100", children: [
       /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-6", children: [
-        /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold", children: "Genres" }),
+        /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold", children: t("Genres") }),
         /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 w-full md:w-auto", children: [
-          /* @__PURE__ */ jsx("input", { type: "text", placeholder: "Search genres...", className: "border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full md:w-64" }),
-          /* @__PURE__ */ jsx(PrimaryButton, { onClick: openCreateModal, children: "Add Genre" })
+          /* @__PURE__ */ jsx(
+            "input",
+            {
+              type: "text",
+              placeholder: t("Search genres..."),
+              className: "border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full md:w-64"
+            }
+          ),
+          /* @__PURE__ */ jsx(PrimaryButton, { onClick: openCreateModal, children: t("Add Genre") })
         ] })
       ] }),
       /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "min-w-full divide-y divide-gray-200 dark:divide-gray-700", children: [
         /* @__PURE__ */ jsx("thead", { className: "bg-gray-50 dark:bg-gray-700", children: /* @__PURE__ */ jsxs("tr", { children: [
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Name" }),
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Slug" }),
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Actions" })
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: t("Name") }),
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: t("Slug") }),
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: t("Actions") })
         ] }) }),
-        /* @__PURE__ */ jsx("tbody", { className: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700", children: genres.map((genre) => /* @__PURE__ */ jsxs("tr", { className: "hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors", children: [
-          /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white", children: genre.name }),
-          /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400", children: genre.slug }),
-          /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: [
-            /* @__PURE__ */ jsx("button", { onClick: () => openEditModal(genre), className: "text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4", children: "Edit" }),
-            /* @__PURE__ */ jsx("button", { onClick: () => handleDelete(genre.id), className: "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300", children: "Delete" })
-          ] })
-        ] }, genre.id)) })
+        /* @__PURE__ */ jsx("tbody", { className: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700", children: genres.map((genre) => /* @__PURE__ */ jsxs(
+          "tr",
+          {
+            className: "hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors",
+            children: [
+              /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white", children: genre.name }),
+              /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400", children: genre.slug }),
+              /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: [
+                /* @__PURE__ */ jsx(
+                  "button",
+                  {
+                    onClick: () => openEditModal(genre),
+                    className: "text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4",
+                    children: t("Edit")
+                  }
+                ),
+                /* @__PURE__ */ jsx(
+                  "button",
+                  {
+                    onClick: () => handleDelete(
+                      genre.id
+                    ),
+                    className: "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300",
+                    children: t("Delete")
+                  }
+                )
+              ] })
+            ]
+          },
+          genre.id
+        )) })
       ] }) })
     ] }) }) }) }),
-    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "md", children: /* @__PURE__ */ jsxs("div", { className: "p-4 sm:p-6", children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-gray-100 mb-4", children: editingGenre ? `Edit Genre: ${editingGenre.name}` : "Create New Genre" }),
+    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "md", children: /* @__PURE__ */ jsxs("div", { className: "p-4 sm:p-6 bg-white dark:bg-gray-800", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-gray-100 mb-4", children: editingGenre ? `${t("Edit Genre")}: ${editingGenre.name}` : t("Create New Genre") }),
       /* @__PURE__ */ jsx(
         GenreForm,
         {
@@ -4335,14 +4370,31 @@ const __vite_glob_0_9 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.def
   __proto__: null,
   default: AdminSeries
 }, Symbol.toStringTag, { value: "Module" }));
+const ThemeContext = createContext();
+const useTheme = () => useContext(ThemeContext);
+function ThemeSwitcher() {
+  const { theme, toggleTheme } = useTheme();
+  return /* @__PURE__ */ jsx(
+    "button",
+    {
+      onClick: toggleTheme,
+      className: "p-2 rounded-full text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none",
+      "aria-label": "Toggle theme",
+      children: theme === "light" ? /* @__PURE__ */ jsx(MoonIcon, { className: "h-6 w-6" }) : /* @__PURE__ */ jsx(SunIcon, { className: "h-6 w-6" })
+    }
+  );
+}
 function GuestLayout({ children }) {
-  return /* @__PURE__ */ jsxs("div", { className: "flex  flex-col md:p-5 items-center justify-center bg-[#0a0e17] relative overflow-hidden", children: [
-    /* @__PURE__ */ jsx("div", { className: "absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/20 blur-[100px]" }),
-    /* @__PURE__ */ jsx("div", { className: "absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/20 blur-[100px]" }),
-    /* @__PURE__ */ jsx("div", { className: "z-10 p-5 w-full overflow-hidden bg-[#1f2937]/60 backdrop-blur-lg border border-white/5 px-8 py-10 shadow-2xl sm:max-w-md sm:rounded-2xl", children })
+  return /* @__PURE__ */ jsxs("div", { className: "min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-[#0a0e17] relative overflow-hidden", children: [
+    /* @__PURE__ */ jsx("div", { className: "absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/20 blur-[100px] hidden dark:block" }),
+    /* @__PURE__ */ jsx("div", { className: "absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/20 blur-[100px] hidden dark:block" }),
+    /* @__PURE__ */ jsx("div", { className: "absolute top-4 right-4", children: /* @__PURE__ */ jsx(ThemeSwitcher, {}) }),
+    /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, { href: "/", children: /* @__PURE__ */ jsx(ApplicationLogo, { className: "w-20 h-20 fill-current text-gray-500 dark:text-gray-300" }) }) }),
+    /* @__PURE__ */ jsx("div", { className: "w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-[#1f2937]/60 dark:backdrop-blur-lg dark:border dark:border-white/5 shadow-md overflow-hidden sm:rounded-lg", children })
   ] });
 }
 function ConfirmPassword() {
+  const { t } = useTranslation();
   const { data, setData, post, processing, errors, reset } = useForm({
     password: ""
   });
@@ -4353,11 +4405,11 @@ function ConfirmPassword() {
     });
   };
   return /* @__PURE__ */ jsxs(GuestLayout, { children: [
-    /* @__PURE__ */ jsx(Head, { title: "Confirm Password" }),
-    /* @__PURE__ */ jsx("div", { className: "mb-4 text-sm text-gray-600", children: "This is a secure area of the application. Please confirm your password before continuing." }),
+    /* @__PURE__ */ jsx(Head, { title: t("Confirm Password") }),
+    /* @__PURE__ */ jsx("div", { className: "mb-4 text-sm text-gray-600 dark:text-gray-400", children: t("This is a secure area of the application. Please confirm your password before continuing.") }),
     /* @__PURE__ */ jsxs("form", { onSubmit: submit, children: [
       /* @__PURE__ */ jsxs("div", { className: "mt-4", children: [
-        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "password", value: "Password" }),
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "password", value: t("Password") }),
         /* @__PURE__ */ jsx(
           TextInput,
           {
@@ -4372,7 +4424,7 @@ function ConfirmPassword() {
         ),
         /* @__PURE__ */ jsx(InputError, { message: errors.password, className: "mt-2" })
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "mt-4 flex items-center justify-end", children: /* @__PURE__ */ jsx(PrimaryButton, { className: "ms-4", disabled: processing, children: "Confirm" }) })
+      /* @__PURE__ */ jsx("div", { className: "mt-4 flex items-center justify-end", children: /* @__PURE__ */ jsx(PrimaryButton, { className: "ms-4", disabled: processing, children: t("Confirm") }) })
     ] })
   ] });
 }
@@ -4381,6 +4433,7 @@ const __vite_glob_0_11 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: ConfirmPassword
 }, Symbol.toStringTag, { value: "Module" }));
 function ForgotPassword({ status }) {
+  const { t } = useTranslation();
   const { data, setData, post, processing, errors } = useForm({
     email: ""
   });
@@ -4389,9 +4442,9 @@ function ForgotPassword({ status }) {
     post(route("password.email"));
   };
   return /* @__PURE__ */ jsxs(GuestLayout, { children: [
-    /* @__PURE__ */ jsx(Head, { title: "Forgot Password" }),
-    /* @__PURE__ */ jsx("div", { className: "mb-4 text-sm text-gray-600", children: "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one." }),
-    status && /* @__PURE__ */ jsx("div", { className: "mb-4 text-sm font-medium text-green-600", children: status }),
+    /* @__PURE__ */ jsx(Head, { title: t("Forgot Password") }),
+    /* @__PURE__ */ jsx("div", { className: "mb-4 text-sm text-gray-600 dark:text-gray-400", children: t("Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.") }),
+    status && /* @__PURE__ */ jsx("div", { className: "mb-4 text-sm font-medium text-green-600 dark:text-green-400", children: status }),
     /* @__PURE__ */ jsxs("form", { onSubmit: submit, children: [
       /* @__PURE__ */ jsx(
         TextInput,
@@ -4402,11 +4455,12 @@ function ForgotPassword({ status }) {
           value: data.email,
           className: "mt-1 block w-full",
           isFocused: true,
-          onChange: (e) => setData("email", e.target.value)
+          onChange: (e) => setData("email", e.target.value),
+          placeholder: t("Enter your email")
         }
       ),
       /* @__PURE__ */ jsx(InputError, { message: errors.email, className: "mt-2" }),
-      /* @__PURE__ */ jsx("div", { className: "mt-4 flex items-center justify-end", children: /* @__PURE__ */ jsx(PrimaryButton, { className: "ms-4", disabled: processing, children: "Email Password Reset Link" }) })
+      /* @__PURE__ */ jsx("div", { className: "mt-4 flex items-center justify-end", children: /* @__PURE__ */ jsx(PrimaryButton, { className: "ms-4", disabled: processing, children: t("Email Password Reset Link") }) })
     ] })
   ] });
 }
@@ -4434,6 +4488,7 @@ function TelegramLoginWidget({ botName, buttonSize = "large", cornerRadius = 20,
   return /* @__PURE__ */ jsx("div", { ref: containerRef, className: "flex justify-center mt-4" });
 }
 function Login({ status, canResetPassword }) {
+  const { t } = useTranslation();
   const { data, setData, post, processing, errors, reset } = useForm({
     email: "",
     password: "",
@@ -4446,15 +4501,15 @@ function Login({ status, canResetPassword }) {
     });
   };
   return /* @__PURE__ */ jsxs(GuestLayout, { children: [
-    /* @__PURE__ */ jsx(Head, { title: "Log in" }),
+    /* @__PURE__ */ jsx(Head, { title: t("Log in") }),
     /* @__PURE__ */ jsxs("div", { className: "mb-8 text-center", children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-bold text-white", children: "Welcome Back" }),
-      /* @__PURE__ */ jsx("p", { className: "mt-2 text-sm text-gray-400", children: "Please sign in to your account" })
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-bold text-gray-800 dark:text-white", children: t("Welcome Back") }),
+      /* @__PURE__ */ jsx("p", { className: "mt-2 text-sm text-gray-600 dark:text-gray-400", children: t("Please sign in to your account") })
     ] }),
-    status && /* @__PURE__ */ jsx("div", { className: "mb-4 rounded-lg bg-green-500/10 px-4 py-3 text-sm font-medium text-green-400 border border-green-500/20", children: status }),
+    status && /* @__PURE__ */ jsx("div", { className: "mb-4 rounded-lg bg-green-500/10 px-4 py-3 text-sm font-medium text-green-600 dark:text-green-400 border border-green-500/20", children: status }),
     /* @__PURE__ */ jsxs("form", { onSubmit: submit, className: "space-y-6", children: [
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "email", value: "Email" }),
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "email", value: t("Email") }),
         /* @__PURE__ */ jsx(
           TextInput,
           {
@@ -4465,14 +4520,14 @@ function Login({ status, canResetPassword }) {
             className: "mt-1 block w-full",
             autoComplete: "username",
             isFocused: true,
-            placeholder: "Enter your email",
+            placeholder: t("Enter your email"),
             onChange: (e) => setData("email", e.target.value)
           }
         ),
         /* @__PURE__ */ jsx(InputError, { message: errors.email, className: "mt-2" })
       ] }),
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "password", value: "Password" }),
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "password", value: t("Password") }),
         /* @__PURE__ */ jsx(
           TextInput,
           {
@@ -4482,7 +4537,7 @@ function Login({ status, canResetPassword }) {
             value: data.password,
             className: "mt-1 block w-full",
             autoComplete: "current-password",
-            placeholder: "Enter your password",
+            placeholder: t("Enter your password"),
             onChange: (e) => setData("password", e.target.value)
           }
         ),
@@ -4496,37 +4551,37 @@ function Login({ status, canResetPassword }) {
               name: "remember",
               checked: data.remember,
               onChange: (e) => setData("remember", e.target.checked),
-              className: "bg-gray-900 border-gray-700 text-blue-600 focus:ring-blue-500 rounded"
+              className: "rounded border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-blue-600 focus:ring-blue-500"
             }
           ),
-          /* @__PURE__ */ jsx("span", { className: "ms-2 text-sm text-gray-400", children: "Remember me" })
+          /* @__PURE__ */ jsx("span", { className: "ms-2 text-sm text-gray-600 dark:text-gray-400", children: t("Remember me") })
         ] }),
         canResetPassword && /* @__PURE__ */ jsx(
           Link,
           {
             href: route("password.request"),
-            className: "text-sm text-blue-400 hover:text-blue-300 transition-colors",
-            children: "Forgot password?"
+            className: "text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors",
+            children: t("Forgot password?")
           }
         )
       ] }),
-      /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: "Sign in" }) }),
+      /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: t("Sign in") }) }),
       /* @__PURE__ */ jsxs("div", { className: "mt-6", children: [
         /* @__PURE__ */ jsxs("div", { className: "relative", children: [
-          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center", children: /* @__PURE__ */ jsx("div", { className: "w-full border-t border-gray-700" }) }),
-          /* @__PURE__ */ jsx("div", { className: "relative flex justify-center text-sm", children: /* @__PURE__ */ jsx("span", { className: "bg-[#151c27] px-2 text-gray-500", children: "Or continue with" }) })
+          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center", children: /* @__PURE__ */ jsx("div", { className: "w-full border-t border-gray-300 dark:border-gray-700" }) }),
+          /* @__PURE__ */ jsx("div", { className: "relative flex justify-center text-sm", children: /* @__PURE__ */ jsx("span", { className: "bg-white dark:bg-[#1f2937] px-2 text-gray-500", children: t("Or continue with") }) })
         ] }),
         /* @__PURE__ */ jsx("div", { className: "mt-6", children: /* @__PURE__ */ jsx(TelegramLoginWidget, { botName: usePage().props.telegramBotUsername }) })
       ] }),
-      /* @__PURE__ */ jsxs("div", { className: "mt-6 text-center text-sm text-gray-400", children: [
-        "Don't have an account?",
+      /* @__PURE__ */ jsxs("div", { className: "mt-6 text-center text-sm text-gray-600 dark:text-gray-400", children: [
+        t("Don't have an account?"),
         " ",
         /* @__PURE__ */ jsx(
           Link,
           {
             href: route("register"),
-            className: "font-medium text-blue-400 hover:text-blue-300 transition-colors",
-            children: "Sign up"
+            className: "font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors",
+            children: t("Sign up")
           }
         )
       ] })
@@ -4538,6 +4593,7 @@ const __vite_glob_0_13 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Login
 }, Symbol.toStringTag, { value: "Module" }));
 function Register() {
+  const { t } = useTranslation();
   const { data, setData, post, processing, errors, reset } = useForm({
     name: "",
     email: "",
@@ -4551,14 +4607,14 @@ function Register() {
     });
   };
   return /* @__PURE__ */ jsxs(GuestLayout, { children: [
-    /* @__PURE__ */ jsx(Head, { title: "Register" }),
+    /* @__PURE__ */ jsx(Head, { title: t("Register") }),
     /* @__PURE__ */ jsxs("div", { className: "mb-8 text-center", children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-bold text-white", children: "Create Account" }),
-      /* @__PURE__ */ jsx("p", { className: "mt-2 text-sm text-gray-400", children: "Join us and start your journey" })
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl font-bold text-gray-800 dark:text-white", children: t("Create Account") }),
+      /* @__PURE__ */ jsx("p", { className: "mt-2 text-sm text-gray-600 dark:text-gray-400", children: t("Join us and start your journey") })
     ] }),
     /* @__PURE__ */ jsxs("form", { onSubmit: submit, className: "space-y-6", children: [
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "name", value: "Name" }),
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "name", value: t("Name") }),
         /* @__PURE__ */ jsx(
           TextInput,
           {
@@ -4568,7 +4624,7 @@ function Register() {
             className: "mt-1 block w-full",
             autoComplete: "name",
             isFocused: true,
-            placeholder: "Enter your full name",
+            placeholder: t("Enter your full name"),
             onChange: (e) => setData("name", e.target.value),
             required: true
           }
@@ -4576,7 +4632,7 @@ function Register() {
         /* @__PURE__ */ jsx(InputError, { message: errors.name, className: "mt-2" })
       ] }),
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "email", value: "Email" }),
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "email", value: t("Email") }),
         /* @__PURE__ */ jsx(
           TextInput,
           {
@@ -4586,7 +4642,7 @@ function Register() {
             value: data.email,
             className: "mt-1 block w-full",
             autoComplete: "username",
-            placeholder: "Enter your email",
+            placeholder: t("Enter your email"),
             onChange: (e) => setData("email", e.target.value),
             required: true
           }
@@ -4594,7 +4650,7 @@ function Register() {
         /* @__PURE__ */ jsx(InputError, { message: errors.email, className: "mt-2" })
       ] }),
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "password", value: "Password" }),
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "password", value: t("Password") }),
         /* @__PURE__ */ jsx(
           TextInput,
           {
@@ -4604,7 +4660,7 @@ function Register() {
             value: data.password,
             className: "mt-1 block w-full",
             autoComplete: "new-password",
-            placeholder: "Create a password",
+            placeholder: t("Create a password"),
             onChange: (e) => setData("password", e.target.value),
             required: true
           }
@@ -4616,7 +4672,7 @@ function Register() {
           InputLabel,
           {
             htmlFor: "password_confirmation",
-            value: "Confirm Password"
+            value: t("Confirm Password")
           }
         ),
         /* @__PURE__ */ jsx(
@@ -4628,7 +4684,7 @@ function Register() {
             value: data.password_confirmation,
             className: "mt-1 block w-full",
             autoComplete: "new-password",
-            placeholder: "Confirm your password",
+            placeholder: t("Confirm your password"),
             onChange: (e) => setData("password_confirmation", e.target.value),
             required: true
           }
@@ -4641,16 +4697,16 @@ function Register() {
           }
         )
       ] }),
-      /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: "Create Account" }) }),
-      /* @__PURE__ */ jsxs("div", { className: "mt-6 text-center text-sm text-gray-400", children: [
-        "Already have an account?",
+      /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: t("Create Account") }) }),
+      /* @__PURE__ */ jsxs("div", { className: "mt-6 text-center text-sm text-gray-600 dark:text-gray-400", children: [
+        t("Already have an account?"),
         " ",
         /* @__PURE__ */ jsx(
           Link,
           {
             href: route("login"),
-            className: "font-medium text-blue-400 hover:text-blue-300 transition-colors",
-            children: "Sign in"
+            className: "font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors",
+            children: t("Sign in")
           }
         )
       ] })
@@ -4662,6 +4718,7 @@ const __vite_glob_0_14 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Register
 }, Symbol.toStringTag, { value: "Module" }));
 function ResetPassword({ token, email }) {
+  const { t } = useTranslation();
   const { data, setData, post, processing, errors, reset } = useForm({
     token,
     email,
@@ -4675,10 +4732,10 @@ function ResetPassword({ token, email }) {
     });
   };
   return /* @__PURE__ */ jsxs(GuestLayout, { children: [
-    /* @__PURE__ */ jsx(Head, { title: "Reset Password" }),
+    /* @__PURE__ */ jsx(Head, { title: t("Reset Password") }),
     /* @__PURE__ */ jsxs("form", { onSubmit: submit, children: [
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "email", value: "Email" }),
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "email", value: t("Email") }),
         /* @__PURE__ */ jsx(
           TextInput,
           {
@@ -4694,7 +4751,7 @@ function ResetPassword({ token, email }) {
         /* @__PURE__ */ jsx(InputError, { message: errors.email, className: "mt-2" })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "mt-4", children: [
-        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "password", value: "Password" }),
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "password", value: t("Password") }),
         /* @__PURE__ */ jsx(
           TextInput,
           {
@@ -4715,7 +4772,7 @@ function ResetPassword({ token, email }) {
           InputLabel,
           {
             htmlFor: "password_confirmation",
-            value: "Confirm Password"
+            value: t("Confirm Password")
           }
         ),
         /* @__PURE__ */ jsx(
@@ -4738,7 +4795,7 @@ function ResetPassword({ token, email }) {
           }
         )
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "mt-4 flex items-center justify-end", children: /* @__PURE__ */ jsx(PrimaryButton, { className: "ms-4", disabled: processing, children: "Reset Password" }) })
+      /* @__PURE__ */ jsx("div", { className: "mt-4 flex items-center justify-end", children: /* @__PURE__ */ jsx(PrimaryButton, { className: "ms-4", disabled: processing, children: t("Reset Password") }) })
     ] })
   ] });
 }
@@ -4749,8 +4806,8 @@ const __vite_glob_0_15 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
 const Loader = ({ title, status }) => {
   return /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-center flex-col text-center w-full h-[100vh]", children: [
     /* @__PURE__ */ jsx("div", { className: "flex w-16 h-16 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto" }),
-    /* @__PURE__ */ jsx("h1", { className: "text-3xl font-bold text-center mb-4", children: title }),
-    /* @__PURE__ */ jsx("p", { children: status })
+    /* @__PURE__ */ jsx("h1", { className: "text-3xl font-bold dark:text-gray-400 text-center mb-4", children: title }),
+    /* @__PURE__ */ jsx("p", { className: "dark:text-gray-400", children: status })
   ] });
 };
 function TgAuth({ user }) {
@@ -4872,25 +4929,26 @@ const __vite_glob_0_16 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: TgAuth
 }, Symbol.toStringTag, { value: "Module" }));
 function VerifyEmail({ status }) {
+  const { t } = useTranslation();
   const { post, processing } = useForm({});
   const submit = (e) => {
     e.preventDefault();
     post(route("verification.send"));
   };
   return /* @__PURE__ */ jsxs(GuestLayout, { children: [
-    /* @__PURE__ */ jsx(Head, { title: "Email Verification" }),
-    /* @__PURE__ */ jsx("div", { className: "mb-4 text-sm text-gray-600", children: "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another." }),
-    status === "verification-link-sent" && /* @__PURE__ */ jsx("div", { className: "mb-4 text-sm font-medium text-green-600", children: "A new verification link has been sent to the email address you provided during registration." }),
+    /* @__PURE__ */ jsx(Head, { title: t("Email Verification") }),
+    /* @__PURE__ */ jsx("div", { className: "mb-4 text-sm text-gray-600 dark:text-gray-400", children: t("Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.") }),
+    status === "verification-link-sent" && /* @__PURE__ */ jsx("div", { className: "mb-4 text-sm font-medium text-green-600 dark:text-green-400", children: t("A new verification link has been sent to the email address you provided during registration.") }),
     /* @__PURE__ */ jsx("form", { onSubmit: submit, children: /* @__PURE__ */ jsxs("div", { className: "mt-4 flex items-center justify-between", children: [
-      /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: "Resend Verification Email" }),
+      /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: t("Resend Verification Email") }),
       /* @__PURE__ */ jsx(
         Link,
         {
           href: route("logout"),
           method: "post",
           as: "button",
-          className: "rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
-          children: "Log Out"
+          className: "rounded-md text-sm text-gray-600 dark:text-gray-400 underline hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800",
+          children: t("Log Out")
         }
       )
     ] }) })
@@ -4900,10 +4958,35 @@ const __vite_glob_0_17 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: VerifyEmail
 }, Symbol.toStringTag, { value: "Module" }));
+function LanguageSwitcher() {
+  const { i18n } = useTranslation();
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
+  return /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-2", children: [
+    /* @__PURE__ */ jsx(
+      "button",
+      {
+        onClick: () => changeLanguage("en"),
+        className: `px-3 py-1 rounded-md text-sm font-medium ${i18n.language.startsWith("en") ? "bg-blue-600 text-white" : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"}`,
+        children: "EN"
+      }
+    ),
+    /* @__PURE__ */ jsx(
+      "button",
+      {
+        onClick: () => changeLanguage("my"),
+        className: `px-3 py-1 rounded-md text-sm font-medium ${i18n.language.startsWith("my") ? "bg-blue-600 text-white" : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"}`,
+        children: "MY"
+      }
+    )
+  ] });
+}
 function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useTranslation();
   const { data, setData } = useForm({
     q: ""
   });
@@ -4948,16 +5031,16 @@ function Navbar() {
     /* @__PURE__ */ jsx(
       "nav",
       {
-        className: `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "hidden bg-black/90 backdrop-blur-md py-2 shadow-lg" : "bg-transparent py-2 md:py-6"}`,
+        className: `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/80 dark:bg-black/90 backdrop-blur-md py-2 shadow-lg" : "bg-transparent py-2 md:py-6"}`,
         children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12 flex items-center justify-between", children: [
           /* @__PURE__ */ jsxs(
             Link,
             {
               href: route("home"),
-              className: "text-2xl font-serif font-bold tracking-tighter text-white z-50",
+              className: "text-2xl font-serif font-bold tracking-tighter text-gray-800 dark:text-white z-50",
               children: [
                 "CINE",
-                /* @__PURE__ */ jsx("span", { className: "text-gray-400", children: "VERSE" })
+                /* @__PURE__ */ jsx("span", { className: "text-gray-500 dark:text-gray-400", children: "VERSE" })
               ]
             }
           ),
@@ -4966,26 +5049,28 @@ function Navbar() {
               Link,
               {
                 href: route("home"),
-                className: "text-sm font-bold uppercase tracking-widest text-gray-300 hover:text-white transition-colors",
-                children: "Home"
+                className: "text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors",
+                children: t("Home")
               }
             ),
             /* @__PURE__ */ jsx(
               Link,
               {
                 href: route("movies.index"),
-                className: "text-sm font-bold uppercase tracking-widest text-gray-300 hover:text-white transition-colors",
-                children: "Movies"
+                className: "text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors",
+                children: t("Movies")
               }
             ),
             /* @__PURE__ */ jsx(
               Link,
               {
                 href: route("series.index"),
-                className: "text-sm font-bold uppercase tracking-widest text-gray-300 hover:text-white transition-colors",
-                children: "Series"
+                className: "text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors",
+                children: t("Series")
               }
-            )
+            ),
+            /* @__PURE__ */ jsx(LanguageSwitcher, {}),
+            /* @__PURE__ */ jsx(ThemeSwitcher, {})
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
             /* @__PURE__ */ jsxs(
@@ -4999,8 +5084,8 @@ function Navbar() {
                       type: "text",
                       value: data.q,
                       onChange: (e) => setData("q", e.target.value),
-                      placeholder: "Search titles...",
-                      className: `w-full p-5 bg-transparent border-b border-white/30 text-white placeholder-gray-400 focus:outline-none focus:border-white py-1 pl-8 pr-2 transition-all duration-300 ${isSearchOpen ? "opacity-100 visible" : "opacity-0 invisible w-0"}`,
+                      placeholder: t("Search titles..."),
+                      className: `w-full p-5 bg-transparent border-b border-gray-800/30 dark:border-white/30 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-gray-800 dark:focus:border-white py-1 pl-8 pr-2 transition-all duration-300 ${isSearchOpen ? "opacity-100 visible" : "opacity-0 invisible w-0"}`,
                       onBlur: () => !data.q && setIsSearchOpen(false)
                     }
                   ) }),
@@ -5018,7 +5103,7 @@ function Navbar() {
                           );
                         }
                       },
-                      className: "absolute left-0 p-2 text-white hover:text-gray-300 transition-colors",
+                      className: "absolute left-0 p-2 text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors",
                       children: /* @__PURE__ */ jsx(
                         "svg",
                         {
@@ -5054,8 +5139,8 @@ function Navbar() {
                       type: "text",
                       value: data.q,
                       onChange: (e) => setData("q", e.target.value),
-                      placeholder: "Search titles...",
-                      className: `w-full p-5 bg-transparent border-b border-white/30 text-white placeholder-gray-400 focus:outline-none focus:border-white py-1 pr-2 transition-all duration-300 ${isSearchOpen ? "opacity-100 visible" : "opacity-0 invisible w-0"}`,
+                      placeholder: t("Search titles..."),
+                      className: `w-full p-5 bg-transparent border-b border-gray-800/30 dark:border-white/30 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-gray-800 dark:focus:border-white py-1 pr-2 transition-all duration-300 ${isSearchOpen ? "opacity-100 visible" : "opacity-0 invisible w-0"}`,
                       onBlur: () => !data.q && setIsSearchOpen(false)
                     }
                   )
@@ -5075,7 +5160,7 @@ function Navbar() {
                       );
                     }
                   },
-                  className: `${isSearchOpen ? "hidden" : ""} ${isMobileMenuOpen ? "hidden" : ""} left-0 p-2 text-white hover:text-gray-300 transition-colors`,
+                  className: `${isSearchOpen ? "hidden" : ""} ${isMobileMenuOpen ? "hidden" : ""} left-0 p-2 text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors`,
                   children: /* @__PURE__ */ jsx(
                     "svg",
                     {
@@ -5101,7 +5186,7 @@ function Navbar() {
               "button",
               {
                 onClick: () => setIsMobileMenuOpen(!isMobileMenuOpen),
-                className: "md:hidden text-white hover:text-gray-300 transition-colors z-50",
+                className: "md:hidden text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors z-50",
                 "aria-label": "Toggle menu",
                 children: /* @__PURE__ */ jsx(
                   "svg",
@@ -5145,7 +5230,7 @@ function Navbar() {
     /* @__PURE__ */ jsx(
       "div",
       {
-        className: `fixed top-0 right-0 h-full w-4/5 max-w-sm bg-black z-40 transform transition-transform duration-300 ease-in-out md:hidden ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`,
+        className: `fixed top-0 right-0 h-full w-4/5 max-w-sm bg-white dark:bg-black z-40 transform transition-transform duration-300 ease-in-out md:hidden ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`,
         children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col h-full pt-24 px-6 pb-6", children: [
           /* @__PURE__ */ jsx("form", { onSubmit: handleSearch, className: "mb-8", children: /* @__PURE__ */ jsxs("div", { className: "relative", children: [
             /* @__PURE__ */ jsx(
@@ -5154,15 +5239,15 @@ function Navbar() {
                 type: "text",
                 value: data.q,
                 onChange: (e) => setData("q", e.target.value),
-                placeholder: "Search titles...",
-                className: "w-full bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-white py-3 pl-4 pr-12 transition-colors"
+                placeholder: t("Search titles..."),
+                className: "w-full bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/20 rounded-lg text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-gray-800 dark:focus:border-white py-3 pl-4 pr-12 transition-colors"
               }
             ),
             /* @__PURE__ */ jsx(
               "button",
               {
                 type: "submit",
-                className: "absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors",
+                className: "absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors",
                 children: /* @__PURE__ */ jsx(
                   "svg",
                   {
@@ -5190,8 +5275,8 @@ function Navbar() {
               {
                 href: route("home"),
                 onClick: closeMobileMenu,
-                className: "text-lg font-bold uppercase tracking-widest text-gray-300 hover:text-white hover:bg-white/5 transition-all py-4 px-4 rounded-lg",
-                children: "Home"
+                className: "text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg",
+                children: t("Home")
               }
             ),
             /* @__PURE__ */ jsx(
@@ -5199,8 +5284,8 @@ function Navbar() {
               {
                 href: route("movies.index"),
                 onClick: closeMobileMenu,
-                className: "text-lg font-bold uppercase tracking-widest text-gray-300 hover:text-white hover:bg-white/5 transition-all py-4 px-4 rounded-lg",
-                children: "Movies"
+                className: "text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg",
+                children: t("Movies")
               }
             ),
             /* @__PURE__ */ jsx(
@@ -5208,24 +5293,26 @@ function Navbar() {
               {
                 href: route("series.index"),
                 onClick: closeMobileMenu,
-                className: "text-lg font-bold uppercase tracking-widest text-gray-300 hover:text-white hover:bg-white/5 transition-all py-4 px-4 rounded-lg",
-                children: "Series"
+                className: "text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg",
+                children: t("Series")
               }
-            )
+            ),
+            /* @__PURE__ */ jsx(LanguageSwitcher, {}),
+            /* @__PURE__ */ jsx(ThemeSwitcher, {})
           ] }),
-          /* @__PURE__ */ jsx("div", { className: "mt-auto pt-6 border-t border-white/10", children: /* @__PURE__ */ jsxs("p", { className: "text-xs text-gray-500 uppercase tracking-widest", children: [
+          /* @__PURE__ */ jsx("div", { className: "mt-auto pt-6 border-t border-gray-200 dark:border-white/10", children: /* @__PURE__ */ jsxs("p", { className: "text-xs text-gray-500 uppercase tracking-widest", children: [
             "CINE",
             /* @__PURE__ */ jsx("span", { className: "text-gray-600", children: "VERSE" })
           ] }) })
         ] })
       }
     ),
-    /* @__PURE__ */ jsx("div", { className: "fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-lg border-t border-white/10 md:hidden pb-safe", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-around p-4", children: [
+    /* @__PURE__ */ jsx("div", { className: "fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-black/90 backdrop-blur-lg border-t border-gray-200 dark:border-white/10 md:hidden pb-safe", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-around p-4", children: [
       /* @__PURE__ */ jsxs(
         Link,
         {
           href: route("home"),
-          className: `flex flex-col items-center gap-1 ${route().current("home") ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+          className: `flex flex-col items-center gap-1 ${route().current("home") ? "text-gray-800 dark:text-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
           children: [
             /* @__PURE__ */ jsx(
               "svg",
@@ -5245,7 +5332,7 @@ function Navbar() {
                 )
               }
             ),
-            /* @__PURE__ */ jsx("span", { className: "text-[10px] uppercase tracking-wider font-medium", children: "Home" })
+            /* @__PURE__ */ jsx("span", { className: "text-[10px] uppercase tracking-wider font-medium", children: t("Home") })
           ]
         }
       ),
@@ -5253,7 +5340,7 @@ function Navbar() {
         Link,
         {
           href: route("movies.index"),
-          className: `flex flex-col items-center gap-1 ${route().current("movies.*") ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+          className: `flex flex-col items-center gap-1 ${route().current("movies.*") ? "text-gray-800 dark:text-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
           children: [
             /* @__PURE__ */ jsx(
               "svg",
@@ -5273,7 +5360,7 @@ function Navbar() {
                 )
               }
             ),
-            /* @__PURE__ */ jsx("span", { className: "text-[10px] uppercase tracking-wider font-medium", children: "Movies" })
+            /* @__PURE__ */ jsx("span", { className: "text-[10px] uppercase tracking-wider font-medium", children: t("Movies") })
           ]
         }
       ),
@@ -5281,7 +5368,7 @@ function Navbar() {
         Link,
         {
           href: route("series.index"),
-          className: `flex flex-col items-center gap-1 ${route().current("series.*") ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+          className: `flex flex-col items-center gap-1 ${route().current("series.*") ? "text-gray-800 dark:text-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
           children: [
             /* @__PURE__ */ jsx(
               "svg",
@@ -5301,7 +5388,7 @@ function Navbar() {
                 )
               }
             ),
-            /* @__PURE__ */ jsx("span", { className: "text-[10px] uppercase tracking-wider font-medium", children: "Series" })
+            /* @__PURE__ */ jsx("span", { className: "text-[10px] uppercase tracking-wider font-medium", children: t("Series") })
           ]
         }
       ),
@@ -5309,7 +5396,7 @@ function Navbar() {
         Link,
         {
           href: usePage().props.auth.user ? route("profile.edit") : route("login"),
-          className: `flex flex-col items-center gap-1 ${route().current("profile.*") || route().current("login") ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+          className: `flex flex-col items-center gap-1 ${route().current("profile.*") || route().current("login") ? "text-gray-800 dark:text-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
           children: [
             /* @__PURE__ */ jsx(
               "svg",
@@ -5329,7 +5416,7 @@ function Navbar() {
                 )
               }
             ),
-            /* @__PURE__ */ jsx("span", { className: "text-[10px] uppercase tracking-wider font-medium", children: "Profile" })
+            /* @__PURE__ */ jsx("span", { className: "text-[10px] uppercase tracking-wider font-medium", children: t("Profile") })
           ]
         }
       )
@@ -5337,10 +5424,11 @@ function Navbar() {
   ] });
 }
 function Footer() {
+  const { t } = useTranslation();
   const { footerData } = usePage().props;
-  return /* @__PURE__ */ jsx("footer", { className: "border-t border-white/10 py-12 bg-black text-white", children: /* @__PURE__ */ jsx("div", { className: "container mx-auto px-6 md:px-12", children: /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-4 gap-12 mb-12", children: [
+  return /* @__PURE__ */ jsx("footer", { className: "border-t border-white/10 py-12 dark:bg-black dark:text-white", children: /* @__PURE__ */ jsx("div", { className: "container mx-auto px-6 md:px-12", children: /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-4 gap-12 mb-12", children: [
     /* @__PURE__ */ jsxs("div", { children: [
-      /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold uppercase tracking-widest text-gray-500 mb-6", children: "Categories" }),
+      /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold uppercase tracking-widest dark:text-gray-500 mb-6", children: t("Categories") }),
       /* @__PURE__ */ jsx("ul", { className: "space-y-2", children: footerData?.categories?.map((category) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(
         Link,
         {
@@ -5348,7 +5436,7 @@ function Footer() {
             "genre.show",
             category.slug
           ),
-          className: "text-gray-400 hover:text-white transition-colors flex justify-between text-sm group",
+          className: "text-gray-400 dark:*:hover:text-white transition-colors flex justify-between text-sm group",
           children: [
             /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform", children: category.name }),
             /* @__PURE__ */ jsx("span", { className: "text-gray-600 text-xs bg-white/5 px-2 py-0.5 rounded-full", children: category.count })
@@ -5357,12 +5445,12 @@ function Footer() {
       ) }, category.id)) })
     ] }),
     /* @__PURE__ */ jsxs("div", { children: [
-      /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold uppercase tracking-widest text-gray-500 mb-6", children: "Top Actors" }),
+      /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold uppercase tracking-widest text-gray-500 mb-6", children: t("Top Actors") }),
       /* @__PURE__ */ jsx("ul", { className: "space-y-2", children: footerData?.actors?.map((actor) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(
         Link,
         {
           href: route("person.show", actor.id),
-          className: "text-gray-400 hover:text-white transition-colors flex justify-between text-sm group",
+          className: "text-gray-400 dark:hover:text-white transition-colors flex justify-between text-sm group",
           children: [
             /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform", children: actor.name }),
             /* @__PURE__ */ jsx("span", { className: "text-gray-600 text-xs bg-white/5 px-2 py-0.5 rounded-full", children: actor.count })
@@ -5371,14 +5459,14 @@ function Footer() {
       ) }, actor.id)) })
     ] }),
     /* @__PURE__ */ jsxs("div", { children: [
-      /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold uppercase tracking-widest text-gray-500 mb-6", children: "Quick Links" }),
+      /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold uppercase tracking-widest text-gray-500 mb-6", children: t("Quick Links") }),
       /* @__PURE__ */ jsxs("ul", { className: "space-y-2", children: [
         /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(
           Link,
           {
             href: route("about"),
             className: "text-gray-400 hover:text-white transition-colors text-sm group",
-            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: "About Us" })
+            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: t("About Us") })
           }
         ) }),
         /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(
@@ -5386,7 +5474,7 @@ function Footer() {
           {
             href: route("contact"),
             className: "text-gray-400 hover:text-white transition-colors text-sm group",
-            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: "Contact" })
+            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: t("Contact") })
           }
         ) }),
         /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(
@@ -5394,7 +5482,7 @@ function Footer() {
           {
             href: route("faq"),
             className: "text-gray-400 hover:text-white transition-colors text-sm group",
-            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: "FAQ" })
+            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: t("FAQ") })
           }
         ) }),
         /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(
@@ -5402,7 +5490,7 @@ function Footer() {
           {
             href: route("privacy"),
             className: "text-gray-400 hover:text-white transition-colors text-sm group",
-            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: "Privacy Policy" })
+            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: t("Privacy Policy") })
           }
         ) }),
         /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(
@@ -5410,7 +5498,7 @@ function Footer() {
           {
             href: route("terms"),
             className: "text-gray-400 hover:text-white transition-colors text-sm group",
-            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: "Terms of Service" })
+            children: /* @__PURE__ */ jsx("span", { className: "group-hover:translate-x-1 transition-transform inline-block", children: t("Terms of Service") })
           }
         ) })
       ] })
@@ -5420,8 +5508,8 @@ function Footer() {
         "CINE",
         /* @__PURE__ */ jsx("span", { className: "text-gray-600", children: "VERSE" })
       ] }),
-      /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm mb-6", children: "Your ultimate destination for movies and series." }),
-      /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-600 uppercase tracking-widest", children: "© 2025 Cineverse. All rights reserved." })
+      /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm mb-6", children: t("Your ultimate destination for movies and series.") }),
+      /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-600 uppercase tracking-widest", children: t("© 2025 Cineverse. All rights reserved.") })
     ] })
   ] }) }) });
 }
@@ -5434,7 +5522,7 @@ function MediaCard({ item, type }) {
   const duration = type === "movie" && item.runtime ? `${item.runtime} min` : null;
   const seasons = type === "series" && item.seasons_count ? `${item.seasons_count} Seasons` : null;
   return /* @__PURE__ */ jsxs(Link, { href, className: "group block relative w-full", children: [
-    /* @__PURE__ */ jsxs("div", { className: "aspect-[2/3] overflow-hidden rounded-lg bg-gray-900 mb-3 relative shadow-lg group-hover:shadow-2xl transition-all duration-500", children: [
+    /* @__PURE__ */ jsxs("div", { className: "aspect-[2/3] overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-900 mb-3 relative shadow-lg group-hover:shadow-2xl transition-all duration-500", children: [
       /* @__PURE__ */ jsx(
         "img",
         {
@@ -5453,19 +5541,19 @@ function MediaCard({ item, type }) {
       /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-50 group-hover:scale-100", children: /* @__PURE__ */ jsx("div", { className: "w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-xl group-hover:bg-indigo-600/90 group-hover:border-indigo-500 transition-colors", children: /* @__PURE__ */ jsx(PlayIcon$2, { className: "w-6 h-6 text-white ml-1" }) }) })
     ] }),
     /* @__PURE__ */ jsxs("div", { className: "space-y-1", children: [
-      /* @__PURE__ */ jsx("h3", { className: "text-white font-medium text-base leading-tight group-hover:text-indigo-400 transition-colors truncate", children: item.title }),
-      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-xs text-gray-400 font-medium flex-wrap", children: [
-        /* @__PURE__ */ jsx("span", { className: "text-gray-300", children: year }),
-        /* @__PURE__ */ jsx("span", { className: "w-1 h-1 rounded-full bg-gray-600" }),
+      /* @__PURE__ */ jsx("h3", { className: "text-gray-800 dark:text-white font-medium text-base leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate", children: item.title }),
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 font-medium flex-wrap", children: [
+        /* @__PURE__ */ jsx("span", { className: "text-gray-700 dark:text-gray-300", children: year }),
+        /* @__PURE__ */ jsx("span", { className: "w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-600" }),
         /* @__PURE__ */ jsx(
           "span",
           {
-            className: `uppercase tracking-wide text-[10px] border border-gray-700 px-1 rounded text-gray-400 ${item.status === "ongoing" ? "bg-green-500/20" : "bg-red-800/20"}`,
+            className: `uppercase tracking-wide text-[10px] border dark:border-gray-700 px-1 rounded text-gray-600 dark:text-gray-400 ${item.status === "ongoing" ? "bg-green-100 dark:bg-green-500/20" : "bg-red-100 dark:bg-red-800/20"}`,
             children: item.status
           }
         ),
         (duration || seasons) && /* @__PURE__ */ jsxs(Fragment, { children: [
-          /* @__PURE__ */ jsx("span", { className: "w-1 h-1 rounded-full bg-gray-600" }),
+          /* @__PURE__ */ jsx("span", { className: "w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-600" }),
           /* @__PURE__ */ jsx("span", { children: duration || seasons })
         ] })
       ] }),
@@ -5531,6 +5619,7 @@ function LoadingLayout({ children }) {
 }
 function GenreShow({ genre, movies, series, seo }) {
   const [activeTab, setActiveTab] = useState("movies");
+  const { t } = useTranslation();
   const handlePageChange = (url, type) => {
     router.get(url, {}, { preserveState: true, preserveScroll: true });
   };
@@ -5577,32 +5666,26 @@ function GenreShow({ genre, movies, series, seo }) {
         type: "website"
       }
     ),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black", children: [
       /* @__PURE__ */ jsx(Navbar, {}),
       /* @__PURE__ */ jsxs("div", { className: "relative h-[30vh] md:h-[40vh] w-full overflow-hidden", children: [
-        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-purple-900/30 via-black to-blue-900/30", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-10", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]" }) }) }),
+        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-purple-200 via-white to-blue-200 dark:from-purple-900/30 dark:via-black dark:to-blue-900/30", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-10", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.1),transparent)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]" }) }) }),
         /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 text-center", children: [
-          /* @__PURE__ */ jsx("div", { className: "inline-block px-3 py-1 border border-white/30 text-xs font-bold uppercase tracking-widest text-white mb-4 backdrop-blur-sm", children: "Genre" }),
-          /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-serif text-white leading-tight mb-4", children: genre.name }),
-          /* @__PURE__ */ jsxs("p", { className: "text-gray-400 text-sm md:text-base max-w-2xl mx-auto", children: [
-            "Explore ",
-            movies.total + series.total,
-            " movies and series in this genre"
-          ] })
+          /* @__PURE__ */ jsx("div", { className: "inline-block px-3 py-1 border border-gray-800/30 dark:border-white/30 text-xs font-bold uppercase tracking-widest text-gray-800 dark:text-white mb-4 backdrop-blur-sm", children: t("Genre") }),
+          /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-serif text-gray-800 dark:text-white leading-tight mb-4", children: genre.name }),
+          /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto", children: t(`Explore ${movies.total + series.total} movies and series in this genre`, { count: movies.total + series.total }) })
         ] }) })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 py-2", children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex gap-4 mb-12 border-b border-white/10", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex gap-4 mb-12 border-b border-gray-200 dark:border-white/10", children: [
           /* @__PURE__ */ jsxs(
             "button",
             {
               onClick: () => setActiveTab("movies"),
-              className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "movies" ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+              className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "movies" ? "text-gray-800 dark:text-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
               children: [
-                "Movies (",
-                movies.total,
-                ")",
-                activeTab === "movies" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-white" })
+                t(`Movies (${movies.total})`, { count: movies.total }),
+                activeTab === "movies" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-gray-800 dark:bg-white" })
               ]
             }
           ),
@@ -5610,18 +5693,16 @@ function GenreShow({ genre, movies, series, seo }) {
             "button",
             {
               onClick: () => setActiveTab("series"),
-              className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "series" ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+              className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "series" ? "text-gray-800 dark:text-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
               children: [
-                "Series (",
-                series.total,
-                ")",
-                activeTab === "series" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-white" })
+                t(`Series (${series.total})`, { count: series.total }),
+                activeTab === "series" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-gray-800 dark:bg-white" })
               ]
             }
           )
         ] }),
         activeTab === "movies" && /* @__PURE__ */ jsx("div", { children: movies.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
-          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
+          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
             MediaCard,
             {
               item: movie,
@@ -5636,7 +5717,7 @@ function GenreShow({ genre, movies, series, seo }) {
               type: "movies"
             }
           )
-        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: "No movies found in this genre." }) }) }),
+        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t("No movies found in this genre.") }) }) }),
         activeTab === "series" && /* @__PURE__ */ jsx("div", { children: series.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
           /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
             MediaCard,
@@ -5653,7 +5734,7 @@ function GenreShow({ genre, movies, series, seo }) {
               type: "series"
             }
           )
-        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: "No series found in this genre." }) }) })
+        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t("No series found in this genre.") }) }) })
       ] }),
       /* @__PURE__ */ jsx(Footer, {})
     ] })
@@ -5663,21 +5744,25 @@ const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: GenreShow
 }, Symbol.toStringTag, { value: "Module" }));
-const SectionTitle = ({ title, subtitle, href }) => /* @__PURE__ */ jsxs("div", { className: "mb-8 flex items-end justify-between border-b border-white/10 pb-4", children: [
-  /* @__PURE__ */ jsxs("div", { children: [
-    /* @__PURE__ */ jsx("h2", { className: "text-3xl md:text-4xl font-serif text-white", children: title }),
-    subtitle && /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-sm mt-1 uppercase tracking-widest", children: subtitle })
-  ] }),
-  /* @__PURE__ */ jsx(
-    Link,
-    {
-      href,
-      className: "text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors",
-      children: "View All"
-    }
-  )
-] });
+const SectionTitle = ({ title, subtitle, href }) => {
+  const { t } = useTranslation();
+  return /* @__PURE__ */ jsxs("div", { className: "mb-8 flex items-end justify-between border-b border-gray-200 dark:border-white/10 pb-4", children: [
+    /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl md:text-4xl font-serif text-gray-800 dark:text-white", children: t(title) }),
+      subtitle && /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-sm mt-1 uppercase tracking-widest", children: t(subtitle) })
+    ] }),
+    /* @__PURE__ */ jsx(
+      Link,
+      {
+        href,
+        className: "text-xs font-bold text-gray-500 hover:text-gray-800 dark:hover:text-white uppercase tracking-widest transition-colors",
+        children: t("View All")
+      }
+    )
+  ] });
+};
 function Home({ featured, latestMovies, latestSeries, seo }) {
+  const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
@@ -5703,7 +5788,7 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
         structuredData: seo?.structuredData
       }
     ),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen mt-0 bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen mt-0 bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black", children: [
       /* @__PURE__ */ jsx(Navbar, {}),
       featured && featured.length > 0 && /* @__PURE__ */ jsxs(
         "div",
@@ -5753,16 +5838,16 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
                       className: "hidden md:block w-full h-full object-cover"
                     }
                   ),
-                  /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent" }),
-                  /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-transparent" }),
+                  /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-gray-100 dark:from-[#050505] via-gray-100/40 dark:via-[#050505]/40 to-transparent" }),
+                  /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-r from-gray-100 dark:from-[#050505] via-gray-100/60 dark:via-[#050505]/60 to-transparent" }),
                   /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center", children: /* @__PURE__ */ jsx("div", { className: "container mx-auto px-6 md:px-12", children: /* @__PURE__ */ jsxs("div", { className: "max-w-2xl", children: [
-                    /* @__PURE__ */ jsxs("span", { className: "inline-block px-2 py-1 border border-white/30 text-[10px] font-bold uppercase tracking-[0.2em] text-white mb-6 backdrop-blur-sm", children: [
-                      "Featured",
+                    /* @__PURE__ */ jsxs("span", { className: "inline-block px-2 py-1 border border-gray-800/30 dark:border-white/30 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-800 dark:text-white mb-6 backdrop-blur-sm", children: [
+                      t("Featured"),
                       " ",
-                      item.type === "series" ? "Series" : "Film"
+                      item.type === "series" ? t("Series") : t("Film")
                     ] }),
-                    /* @__PURE__ */ jsx("h1", { className: "text-4xl line-clamp-1  md:text-7xl lg:text-8xl font-serif text-white leading-[0.9] mb-6", children: item.title }),
-                    /* @__PURE__ */ jsx("p", { className: "text-sm md:text-xl text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl", children: item.description }),
+                    /* @__PURE__ */ jsx("h1", { className: "text-4xl line-clamp-1  md:text-7xl lg:text-8xl font-serif text-gray-800 dark:text-white leading-[0.9] mb-6", children: item.title }),
+                    /* @__PURE__ */ jsx("p", { className: "text-sm md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl", children: item.description }),
                     /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4", children: /* @__PURE__ */ jsx(
                       Link,
                       {
@@ -5773,8 +5858,8 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
                           "movies.show",
                           item.slug
                         ),
-                        className: "px-2 md:px-8 text-sm md:text-lg py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
-                        children: "Watch Now"
+                        className: "px-2 md:px-8 text-sm md:text-lg py-3 bg-gray-800 dark:bg-white text-white dark:text-black font-bold uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors",
+                        children: t("Watch Now")
                       }
                     ) })
                   ] }) }) })
@@ -5786,8 +5871,8 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
               "button",
               {
                 onClick: () => setCurrentIndex(index),
-                className: `w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex ? "bg-white scale-125" : "bg-white/30 hover:bg-white/50"}`,
-                "aria-label": `Go to slide ${index + 1}`
+                className: `w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex ? "bg-gray-800 dark:bg-white scale-125" : "bg-gray-800/30 dark:bg-white/30 hover:bg-gray-800/50 dark:hover:bg-white/50"}`,
+                "aria-label": `${t("Go to slide")} ${index + 1}`
               },
               index
             )) })
@@ -5869,7 +5954,7 @@ function RatingWidget({
       return /* @__PURE__ */ jsx(
         "svg",
         {
-          className: `star ${isFilled ? "filled" : ""}`,
+          className: `star dark:text-yellow-400 ${isFilled ? "filled" : ""}`,
           onMouseEnter: () => interactive && setHoveredStar(starValue),
           onMouseLeave: () => interactive && setHoveredStar(0),
           onClick: () => interactive && handleStarClick(starValue * 2),
@@ -5895,16 +5980,16 @@ function RatingWidget({
     /* @__PURE__ */ jsx("div", { className: "flex flex-col sm:flex-row items-center sm:items-end justify-center gap-4 w-full", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center sm:items-end sm:flex-row gap-2 w-full", children: [
       /* @__PURE__ */ jsx("div", { className: "text-4xl sm:text-5xl font-bold gradient-text text-center sm:text-right w-full sm:w-auto", children: ratingAverage.toFixed(1) }),
       /* @__PURE__ */ jsx("div", { className: "star-rating flex flex-row items-center justify-center sm:justify-start mt-2 sm:mt-0", children: renderStars(ratingAverage) }),
-      /* @__PURE__ */ jsxs("div", { className: "text-xs sm:text-sm text-gray-400 mt-1 text-center sm:text-left w-full sm:w-auto", children: [
+      /* @__PURE__ */ jsxs("div", { className: "text-xs sm:text-sm dark:text-gray-400 mt-1 text-center sm:text-left w-full sm:w-auto", children: [
         ratingCount.toLocaleString(),
         " ",
         ratingCount === 1 ? "rating" : "ratings"
       ] })
     ] }) }),
     onRate && /* @__PURE__ */ jsxs("div", { className: "glass-card-dark p-4 rounded-lg flex flex-col items-center w-full", children: [
-      /* @__PURE__ */ jsx("h4", { className: "text-sm font-medium text-gray-300 mb-2 text-center w-full", children: "Rate this movie" }),
+      /* @__PURE__ */ jsx("h4", { className: "text-sm font-medium dark:text-gray-300 mb-2 text-center w-full", children: "Rate this movie" }),
       /* @__PURE__ */ jsx("div", { className: "star-rating flex flex-row items-center justify-center w-full", children: renderStars(selectedRating, true) }),
-      selectedRating > 0 && /* @__PURE__ */ jsxs("p", { className: "text-xs text-gray-400 mt-2 text-center w-full", children: [
+      selectedRating > 0 && /* @__PURE__ */ jsxs("p", { className: "text-xs dark:text-gray-400 mt-2 text-center w-full", children: [
         "You rated this ",
         selectedRating / 2,
         " ",
@@ -5933,6 +6018,7 @@ const DownloadIcon$1 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx(
   }
 );
 const LinkItem$1 = ({ link, type, isVip }) => {
+  const { t } = useTranslation();
   const isLocked = link.is_vip_only && !isVip;
   const [copied, setCopied] = useState(false);
   return /* @__PURE__ */ jsxs(
@@ -5940,7 +6026,7 @@ const LinkItem$1 = ({ link, type, isVip }) => {
     {
       className: `group flex items-center justify-between py-4 border-b border-white/10 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""}`,
       children: [
-        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4", children: /* @__PURE__ */ jsx("div", { className: "flex flex-col", children: /* @__PURE__ */ jsx("span", { className: "text-white font-serif text-lg leading-none", children: link.server_name }) }) }),
+        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4", children: /* @__PURE__ */ jsx("div", { className: "flex flex-col", children: /* @__PURE__ */ jsx("span", { className: "dark:text-white font-serif text-lg leading-none", children: link.server_name }) }) }),
         /* @__PURE__ */ jsx(
           "div",
           {
@@ -5948,7 +6034,7 @@ const LinkItem$1 = ({ link, type, isVip }) => {
             children: link.quality?.replace("p", "") || "HD"
           }
         ),
-        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-3", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-1 uppercase tracking-widest", children: "VIP" }) : /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsx(
+        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-3", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-1 uppercase tracking-widest", children: t("VIP") }) : /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsx(
           "a",
           {
             href: link.url,
@@ -6037,6 +6123,7 @@ function MovieDetails({
   isVip,
   seo
 }) {
+  const { t } = useTranslation();
   const { auth } = usePage().props;
   const [showTrailer, setShowTrailer] = useState(false);
   useEffect(() => {
@@ -6061,7 +6148,7 @@ function MovieDetails({
         structuredData: seo?.structuredData
       }
     ),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#080808] text-white font-sans selection:bg-white selection:text-black flex flex-col md:flex-row", children: [
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-[#080808] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black flex flex-col md:flex-row", children: [
       /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/2 lg:w-[45%] h-[60vh] md:h-screen relative md:sticky md:top-0 overflow-hidden", children: [
         /* @__PURE__ */ jsxs("div", { className: "absolute inset-0", children: [
           /* @__PURE__ */ jsx(
@@ -6073,7 +6160,7 @@ function MovieDetails({
             }
           ),
           /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/30" }),
-          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-[#080808] via-transparent to-transparent md:hidden" })
+          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-gray-100 dark:from-[#080808] via-transparent to-transparent md:hidden" })
         ] }),
         /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ jsxs(
           "button",
@@ -6087,14 +6174,14 @@ function MovieDetails({
           }
         ) }),
         /* @__PURE__ */ jsxs("div", { className: "absolute bottom-0 left-0 right-0 p-6 md:hidden", children: [
-          /* @__PURE__ */ jsx("h1", { className: "text-4xl font-serif font-bold text-white leading-none mb-3", children: movie.title }),
-          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 text-sm text-gray-300 mb-3", children: [
+          /* @__PURE__ */ jsx("h1", { className: "text-4xl font-serif font-bold dark:text-white leading-none mb-3", children: movie.title }),
+          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 text-sm dark:text-gray-300 mb-3", children: [
             /* @__PURE__ */ jsx("span", { children: new Date(movie.release_date).getFullYear() }),
             /* @__PURE__ */ jsx("span", { children: "•" }),
             /* @__PURE__ */ jsx("span", { children: movie.formatted_runtime }),
             movie.rating_average && /* @__PURE__ */ jsxs(Fragment, { children: [
               /* @__PURE__ */ jsx("span", { children: "•" }),
-              /* @__PURE__ */ jsxs("span", { className: "text-yellow-400", children: [
+              /* @__PURE__ */ jsxs("span", { className: "text-yellow-700", children: [
                 "★ ",
                 movie.rating_average.toFixed(1)
               ] })
@@ -6103,14 +6190,14 @@ function MovieDetails({
           /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: movie.genres?.slice(0, 3).map((genre) => /* @__PURE__ */ jsx(
             "span",
             {
-              className: "px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white uppercase tracking-wider",
+              className: "px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs dark:text-white uppercase tracking-wider",
               children: genre.name
             },
             genre.id
           )) })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/2 lg:w-[55%] min-h-screen bg-[#080808] relative z-10", children: [
+      /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/2 lg:w-[55%] min-h-screen bg-gray-100 dark:bg-[#080808] relative z-10", children: [
         /* @__PURE__ */ jsxs("div", { className: "p-6 md:p-12 lg:p-20 max-w-3xl mx-auto", children: [
           /* @__PURE__ */ jsxs("div", { className: "hidden md:block mb-12", children: [
             /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 text-sm font-bold tracking-widest text-gray-500 uppercase mb-4", children: [
@@ -6118,29 +6205,30 @@ function MovieDetails({
               /* @__PURE__ */ jsx("span", { className: "w-1 h-1 bg-gray-500 rounded-full" }),
               /* @__PURE__ */ jsx("span", { children: movie.formatted_runtime }),
               /* @__PURE__ */ jsx("span", { className: "w-1 h-1 bg-gray-500 rounded-full" }),
-              /* @__PURE__ */ jsxs("span", { className: "text-white", children: [
+              /* @__PURE__ */ jsxs("span", { className: "text-gray-800 dark:text-white", children: [
                 movie.rating_average?.toFixed(1),
-                " Rating"
+                " ",
+                t("Rating")
               ] })
             ] }),
-            /* @__PURE__ */ jsx("h1", { className: "text-5xl lg:text-7xl font-serif font-medium text-white leading-[0.9] mb-6", children: movie.title }),
+            /* @__PURE__ */ jsx("h1", { className: "text-5xl lg:text-7xl font-serif font-medium text-gray-800 dark:text-white leading-[0.9] mb-6", children: movie.title }),
             /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: movie.genres?.map((genre) => /* @__PURE__ */ jsx(
               "span",
               {
-                className: "px-3 py-1 border border-white/20 rounded-full text-xs text-gray-300 uppercase tracking-wider hover:border-white transition-colors cursor-default",
+                className: "px-3 py-1 border border-gray-800/20 dark:border-white/20 rounded-full text-xs text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:border-gray-800 dark:hover:border-white transition-colors cursor-default",
                 children: genre.name
               },
               genre.id
             )) })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
-            /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-4", children: "Synopsis" }),
-            /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-300 font-serif leading-relaxed", children: movie.description })
+            /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-4", children: t("Synopsis") }),
+            /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed", children: movie.description })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
             /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-8", children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest", children: "Watch & Download" }),
-              movie.is_vip_only && /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-0.5 rounded", children: "VIP ACCESS" })
+              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest", children: t("Watch & Download") }),
+              movie.is_vip_only && /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-0.5 rounded", children: t("VIP ACCESS") })
             ] }),
             auth.user ? /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
               /* @__PURE__ */ jsxs(
@@ -6148,11 +6236,11 @@ function MovieDetails({
                 {
                   className: `${watchLinksByQuality && Object.keys(watchLinksByQuality).length > 0 ? "" : "hidden"}`,
                   children: [
-                    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mb-4 text-white", children: [
+                    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mb-4 text-gray-800 dark:text-white", children: [
                       /* @__PURE__ */ jsx(PlayIcon$1, { className: "w-5 h-5" }),
-                      /* @__PURE__ */ jsx("span", { className: "font-serif text-xl italic", children: "Streaming Sources" })
+                      /* @__PURE__ */ jsx("span", { className: "font-serif text-xl italic", children: t("Streaming Sources") })
                     ] }),
-                    /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-white/10", children: watchLinksByQuality && Object.keys(watchLinksByQuality).length > 0 ? Object.values(
+                    /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-gray-800/10 dark:border-white/10", children: watchLinksByQuality && Object.keys(watchLinksByQuality).length > 0 ? Object.values(
                       watchLinksByQuality
                     ).flat().map((link) => /* @__PURE__ */ jsx(
                       LinkItem$1,
@@ -6162,7 +6250,7 @@ function MovieDetails({
                         isVip
                       },
                       link.id
-                    )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: "No streaming links available." }) })
+                    )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: t("No streaming links available.") }) })
                   ]
                 }
               ),
@@ -6171,11 +6259,11 @@ function MovieDetails({
                 {
                   className: `${downloadLinksByQuality && Object.keys(downloadLinksByQuality).length > 0 ? "" : "hidden"}`,
                   children: [
-                    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mb-4 text-white", children: [
+                    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mb-4 text-gray-800 dark:text-white", children: [
                       /* @__PURE__ */ jsx(DownloadIcon$1, { className: "w-5 h-5" }),
-                      /* @__PURE__ */ jsx("span", { className: "font-serif text-xl italic", children: "Download Files" })
+                      /* @__PURE__ */ jsx("span", { className: "font-serif text-xl italic", children: t("Download Files") })
                     ] }),
-                    /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-white/10", children: downloadLinksByQuality && Object.keys(downloadLinksByQuality).length > 0 ? Object.values(
+                    /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-gray-800/10 dark:border-white/10", children: downloadLinksByQuality && Object.keys(downloadLinksByQuality).length > 0 ? Object.values(
                       downloadLinksByQuality
                     ).flat().map((link) => /* @__PURE__ */ jsx(
                       LinkItem$1,
@@ -6185,18 +6273,18 @@ function MovieDetails({
                         isVip
                       },
                       link.id
-                    )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: "No download links available." }) })
+                    )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: t("No download links available.") }) })
                   ]
                 }
               )
-            ] }) : /* @__PURE__ */ jsxs("div", { className: "p-8 border border-white/10 rounded-lg bg-white/5 text-center", children: [
-              /* @__PURE__ */ jsx("p", { className: "text-gray-400 font-serif text-lg mb-4", children: "Please log in to access streaming and download links." }),
+            ] }) : /* @__PURE__ */ jsxs("div", { className: "p-8 border border-gray-800/10 dark:border-white/10 rounded-lg bg-gray-800/5 dark:bg-white/5 text-center", children: [
+              /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-400 font-serif text-lg mb-4", children: t("Please log in to access streaming and download links.") }),
               /* @__PURE__ */ jsx(
                 "a",
                 {
                   href: route("login"),
-                  className: "inline-block px-6 py-2 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
-                  children: "Log In"
+                  className: "inline-block px-6 py-2 bg-gray-800 dark:bg-white text-white dark:text-black font-bold uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors",
+                  children: t("Log In")
                 }
               )
             ] })
@@ -6205,18 +6293,18 @@ function MovieDetails({
             "img",
             {
               src: movie?.banner_url,
-              alt: "Backdrop",
+              alt: t("Backdrop"),
               className: "w-full h-48 object-cover object-center"
             }
           ) }),
           /* @__PURE__ */ jsxs("div", { className: "mb-16 mt-10", children: [
-            /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: "Cast & Crew" }),
+            /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: t("Cast & Crew") }),
             /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4", children: movie.actors?.slice(0, 6).map((actor) => /* @__PURE__ */ jsxs(
               "div",
               {
                 className: "flex items-center gap-3",
                 children: [
-                  /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-800  hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx(
+                  /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-800  hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx(
                     "img",
                     {
                       src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg",
@@ -6232,7 +6320,7 @@ function MovieDetails({
                           "person.show",
                           actor.person?.id
                         ),
-                        className: "text-gray-400 hover:text-white transition-colors flex justify-between text-sm group",
+                        className: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors flex justify-between text-sm group",
                         children: /* @__PURE__ */ jsx("span", { className: "font-bold", children: actor.person?.name })
                       }
                     ),
@@ -6243,9 +6331,9 @@ function MovieDetails({
               actor.id
             )) })
           ] }),
-          /* @__PURE__ */ jsxs("div", { className: "pt-12 border-t border-white/10", children: [
+          /* @__PURE__ */ jsxs("div", { className: "pt-12 border-t border-gray-800/10 dark:border-white/10", children: [
             /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center mb-12", children: /* @__PURE__ */ jsxs("div", { children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs text-center font-bold text-gray-500 uppercase tracking-widest mb-2", children: "Your Rating" }),
+              /* @__PURE__ */ jsx("h3", { className: "text-xs text-center font-bold text-gray-500 uppercase tracking-widest mb-2", children: t("Your Rating") }),
               auth.user ? /* @__PURE__ */ jsx(
                 RatingWidget,
                 {
@@ -6293,16 +6381,16 @@ function MovieDetails({
                   "a",
                   {
                     href: route("login"),
-                    className: "text-white hover:underline",
-                    children: "Log in"
+                    className: "text-gray-800 dark:text-white hover:underline",
+                    children: t("Log in")
                   }
                 ),
                 " ",
-                "to rate this movie."
+                t("to rate this movie.")
               ] })
             ] }) }),
             relatedMovies && relatedMovies.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: "Related Films" }),
+              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: t("Related Films") }),
               /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-4", children: relatedMovies.slice(0, 3).map((rel) => /* @__PURE__ */ jsxs(
                 "a",
                 {
@@ -6320,7 +6408,7 @@ function MovieDetails({
                         className: "w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
                       }
                     ) }),
-                    /* @__PURE__ */ jsx("h4", { className: "text-white font-serif text-sm truncate group-hover:underline", children: rel.title })
+                    /* @__PURE__ */ jsx("h4", { className: "text-gray-800 dark:text-white font-serif text-sm truncate group-hover:underline", children: rel.title })
                   ]
                 },
                 rel.id
@@ -6366,13 +6454,14 @@ const Pagination$1 = ({ links }) => {
   )) });
 };
 function Index$1({ movies }) {
+  const { t } = useTranslation();
   console.log(movies);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
-    /* @__PURE__ */ jsx(Head, { title: "Movies" }),
+    /* @__PURE__ */ jsx(Head, { title: t("Movies") }),
     /* @__PURE__ */ jsx(Navbar, {}),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen py-16  bg-[#050505] text-white font-sans selection:bg-white selection:text-black pb-12", children: [
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen py-16  bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black pb-12", children: [
       /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12", children: [
-        /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-white", children: "Movies" }) }),
+        /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-gray-200 dark:border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-gray-800 dark:text-white", children: t("Movies") }) }),
         /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
           MediaCard,
           {
@@ -7094,6 +7183,7 @@ const __vite_glob_0_26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Terms
 }, Symbol.toStringTag, { value: "Module" }));
 function PersonShow({ person, movies, series, seo }) {
+  const { t } = useTranslation();
   console.log(person);
   const [activeTab, setActiveTab] = useState("movies");
   const handlePageChange = (url, type) => {
@@ -7142,10 +7232,10 @@ function PersonShow({ person, movies, series, seo }) {
         type: "profile"
       }
     ),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black", children: [
       /* @__PURE__ */ jsx(Navbar, {}),
       /* @__PURE__ */ jsxs("div", { className: "relative h-[45vh] md:h-[60vh] w-full overflow-hidden", children: [
-        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-orange-900/30 via-black to-red-900/30", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-10", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]" }) }) }),
+        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-orange-200 via-white to-red-200 dark:from-orange-900/30 dark:via-black dark:to-red-900/30", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-10", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.1),transparent)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]" }) }) }),
         /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center pt-24", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 text-center", children: [
           person.avatar_url && /* @__PURE__ */ jsx("div", { className: "mb-6 flex justify-center", children: /* @__PURE__ */ jsx(
             "img",
@@ -7155,30 +7245,25 @@ function PersonShow({ person, movies, series, seo }) {
               className: "w-28 h-28 md:w-40 md:h-40 rounded-full object-cover border-4 border-white/20"
             }
           ) }),
-          /* @__PURE__ */ jsx("div", { className: "inline-block px-3 py-1 border border-white/30 text-xs font-bold uppercase tracking-widest text-white mb-4 backdrop-blur-sm", children: "Filmography" }),
-          /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-serif text-white leading-tight mb-4", children: person.name }),
-          /* @__PURE__ */ jsxs("p", { className: "text-gray-400 text-sm md:text-base max-w-2xl mx-auto", children: [
-            movies.total + series.total,
-            " titles featuring this talent"
-          ] })
+          /* @__PURE__ */ jsx("div", { className: "inline-block px-3 py-1 border border-gray-800/30 dark:border-white/30 text-xs font-bold uppercase tracking-widest text-gray-800 dark:text-white mb-4 backdrop-blur-sm", children: t("Filmography") }),
+          /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-serif text-gray-800 dark:text-white leading-tight mb-4", children: person.name }),
+          /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto", children: t("{count} titles featuring this talent", { count: movies.total + series.total }) })
         ] }) })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 py-2", children: [
-        person.biography && /* @__PURE__ */ jsx("div", { className: "mb-2 max-w-4xl mx-auto", children: /* @__PURE__ */ jsxs("div", { className: "bg-white/5 border border-white/10 p-6 md:p-8", children: [
-          /* @__PURE__ */ jsx("h2", { className: "text-2xl font-serif text-white mb-4 border-b border-white/10 pb-3", children: "Biography" }),
-          /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: person.biography })
+        person.biography && /* @__PURE__ */ jsx("div", { className: "mb-2 max-w-4xl mx-auto", children: /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 md:p-8", children: [
+          /* @__PURE__ */ jsx("h2", { className: "text-2xl font-serif text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-white/10 pb-3", children: t("Biography") }),
+          /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-300 leading-relaxed", children: person.biography })
         ] }) }),
-        /* @__PURE__ */ jsxs("div", { className: "flex gap-4 mb-12 border-b border-white/10", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex gap-4 mb-12 border-b border-gray-200 dark:border-white/10", children: [
           /* @__PURE__ */ jsxs(
             "button",
             {
               onClick: () => setActiveTab("movies"),
-              className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "movies" ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+              className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "movies" ? "text-gray-800 dark:text-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
               children: [
-                "Movies (",
-                movies.total,
-                ")",
-                activeTab === "movies" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-white" })
+                t(`Movies (${movies.total})`, { count: movies.total }),
+                activeTab === "movies" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-gray-800 dark:bg-white" })
               ]
             }
           ),
@@ -7186,12 +7271,10 @@ function PersonShow({ person, movies, series, seo }) {
             "button",
             {
               onClick: () => setActiveTab("series"),
-              className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "series" ? "text-white" : "text-gray-500 hover:text-gray-300"}`,
+              className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "series" ? "text-gray-800 dark:text-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
               children: [
-                "Series (",
-                series.total,
-                ")",
-                activeTab === "series" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-white" })
+                t(`Series (${series.total})`, { count: series.total }),
+                activeTab === "series" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-gray-800 dark:bg-white" })
               ]
             }
           )
@@ -7212,9 +7295,9 @@ function PersonShow({ person, movies, series, seo }) {
               type: "movies"
             }
           )
-        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: "No movies found featuring this person." }) }) }),
+        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t("No movies found featuring this person.") }) }) }),
         activeTab === "series" && /* @__PURE__ */ jsx("div", { children: series.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
-          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
+          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
             MediaCard,
             {
               item,
@@ -7229,7 +7312,7 @@ function PersonShow({ person, movies, series, seo }) {
               type: "series"
             }
           )
-        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: "No series found featuring this person." }) }) })
+        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t("No series found featuring this person.") }) }) })
       ] }),
       /* @__PURE__ */ jsx(Footer, {})
     ] })
@@ -7256,6 +7339,7 @@ function DangerButton({
   );
 }
 function DeleteUserForm({ className = "" }) {
+  const { t } = useTranslation();
   const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
   const passwordInput = useRef();
   const {
@@ -7288,19 +7372,19 @@ function DeleteUserForm({ className = "" }) {
   };
   return /* @__PURE__ */ jsxs("section", { className: `space-y-6 ${className}`, children: [
     /* @__PURE__ */ jsxs("header", { children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-red-500", children: "Delete Account" }),
-      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-400", children: "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain." })
+      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-red-600 dark:text-red-500", children: t("Delete Account") }),
+      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-600 dark:text-gray-400", children: t("Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.") })
     ] }),
-    /* @__PURE__ */ jsx(DangerButton, { onClick: confirmUserDeletion, children: "Delete Account" }),
-    /* @__PURE__ */ jsx(Modal, { show: confirmingUserDeletion, onClose: closeModal, children: /* @__PURE__ */ jsxs("form", { onSubmit: deleteUser, className: "p-6 bg-[#1a1a1a] text-white", children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-white", children: "Are you sure you want to delete your account?" }),
-      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-400", children: "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account." }),
+    /* @__PURE__ */ jsx(DangerButton, { onClick: confirmUserDeletion, children: t("Delete Account") }),
+    /* @__PURE__ */ jsx(Modal, { show: confirmingUserDeletion, onClose: closeModal, children: /* @__PURE__ */ jsxs("form", { onSubmit: deleteUser, className: "p-6 bg-white dark:bg-gray-800", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-white", children: t("Are you sure you want to delete your account?") }),
+      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-600 dark:text-gray-400", children: t("Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.") }),
       /* @__PURE__ */ jsxs("div", { className: "mt-6", children: [
         /* @__PURE__ */ jsx(
           InputLabel,
           {
             htmlFor: "password",
-            value: "Password",
+            value: t("Password"),
             className: "sr-only"
           }
         ),
@@ -7315,7 +7399,7 @@ function DeleteUserForm({ className = "" }) {
             onChange: (e) => setData("password", e.target.value),
             className: "mt-1 block w-3/4",
             isFocused: true,
-            placeholder: "Password"
+            placeholder: t("Password")
           }
         ),
         /* @__PURE__ */ jsx(
@@ -7327,8 +7411,8 @@ function DeleteUserForm({ className = "" }) {
         )
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "mt-6 flex justify-end", children: [
-        /* @__PURE__ */ jsx(SecondaryButton, { onClick: closeModal, children: "Cancel" }),
-        /* @__PURE__ */ jsx(DangerButton, { className: "ms-3", disabled: processing, children: "Delete Account" })
+        /* @__PURE__ */ jsx(SecondaryButton, { onClick: closeModal, children: t("Cancel") }),
+        /* @__PURE__ */ jsx(DangerButton, { className: "ms-3", disabled: processing, children: t("Delete Account") })
       ] })
     ] }) })
   ] });
@@ -7338,6 +7422,7 @@ const __vite_glob_0_29 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: DeleteUserForm
 }, Symbol.toStringTag, { value: "Module" }));
 function UpdatePasswordForm({ className = "" }) {
+  const { t } = useTranslation();
   const passwordInput = useRef();
   const currentPasswordInput = useRef();
   const {
@@ -7372,8 +7457,8 @@ function UpdatePasswordForm({ className = "" }) {
   };
   return /* @__PURE__ */ jsxs("section", { className, children: [
     /* @__PURE__ */ jsxs("header", { children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-white", children: "Update Password" }),
-      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-400", children: "Ensure your account is using a long, random password to stay secure." })
+      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-white", children: t("Update Password") }),
+      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-600 dark:text-gray-400", children: t("Ensure your account is using a long, random password to stay secure.") })
     ] }),
     /* @__PURE__ */ jsxs("form", { onSubmit: updatePassword, className: "mt-6 space-y-6", children: [
       /* @__PURE__ */ jsxs("div", { children: [
@@ -7381,7 +7466,7 @@ function UpdatePasswordForm({ className = "" }) {
           InputLabel,
           {
             htmlFor: "current_password",
-            value: "Current Password"
+            value: t("Current Password")
           }
         ),
         /* @__PURE__ */ jsx(
@@ -7405,7 +7490,7 @@ function UpdatePasswordForm({ className = "" }) {
         )
       ] }),
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "password", value: "New Password" }),
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "password", value: t("New Password") }),
         /* @__PURE__ */ jsx(
           TextInput,
           {
@@ -7425,7 +7510,7 @@ function UpdatePasswordForm({ className = "" }) {
           InputLabel,
           {
             htmlFor: "password_confirmation",
-            value: "Confirm Password"
+            value: t("Confirm Password")
           }
         ),
         /* @__PURE__ */ jsx(
@@ -7448,7 +7533,7 @@ function UpdatePasswordForm({ className = "" }) {
         )
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
-        /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: "Save" }),
+        /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: t("Save") }),
         /* @__PURE__ */ jsx(
           Transition,
           {
@@ -7457,7 +7542,7 @@ function UpdatePasswordForm({ className = "" }) {
             enterFrom: "opacity-0",
             leave: "transition ease-in-out",
             leaveTo: "opacity-0",
-            children: /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-400", children: "Saved." })
+            children: /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-600 dark:text-gray-400", children: t("Saved.") })
           }
         )
       ] })
@@ -7473,6 +7558,7 @@ function UpdateProfileInformation({
   status,
   className = ""
 }) {
+  const { t } = useTranslation();
   const user = usePage().props.auth.user;
   const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
     name: user.name,
@@ -7484,12 +7570,12 @@ function UpdateProfileInformation({
   };
   return /* @__PURE__ */ jsxs("section", { className, children: [
     /* @__PURE__ */ jsxs("header", { children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-white", children: "Profile Information" }),
-      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-400", children: "Update your account's profile information and email address." })
+      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-white", children: t("Profile Information") }),
+      /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-600 dark:text-gray-400", children: t("Update your account's profile information and email address.") })
     ] }),
     /* @__PURE__ */ jsxs("form", { onSubmit: submit, className: "mt-6 space-y-6", children: [
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "name", value: "Name" }),
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "name", value: t("Name") }),
         /* @__PURE__ */ jsx(
           TextInput,
           {
@@ -7505,7 +7591,7 @@ function UpdateProfileInformation({
         /* @__PURE__ */ jsx(InputError, { className: "mt-2", message: errors.name })
       ] }),
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "email", value: "Email" }),
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "email", value: t("Email") }),
         /* @__PURE__ */ jsx(
           TextInput,
           {
@@ -7521,23 +7607,23 @@ function UpdateProfileInformation({
         /* @__PURE__ */ jsx(InputError, { className: "mt-2", message: errors.email })
       ] }),
       mustVerifyEmail && user.email_verified_at === null && /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsxs("p", { className: "mt-2 text-sm text-gray-200", children: [
-          "Your email address is unverified.",
+        /* @__PURE__ */ jsxs("p", { className: "mt-2 text-sm text-gray-800 dark:text-gray-200", children: [
+          t("Your email address is unverified."),
           /* @__PURE__ */ jsx(
             Link,
             {
               href: route("verification.send"),
               method: "post",
               as: "button",
-              className: "rounded-md text-sm text-gray-400 underline hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
-              children: "Click here to re-send the verification email."
+              className: "underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800",
+              children: t("Click here to re-send the verification email.")
             }
           )
         ] }),
-        status === "verification-link-sent" && /* @__PURE__ */ jsx("div", { className: "mt-2 text-sm font-medium text-green-400", children: "A new verification link has been sent to your email address." })
+        status === "verification-link-sent" && /* @__PURE__ */ jsx("div", { className: "mt-2 font-medium text-sm text-green-600 dark:text-green-400", children: t("A new verification link has been sent to your email address.") })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
-        /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: "Save" }),
+        /* @__PURE__ */ jsx(PrimaryButton, { disabled: processing, children: t("Save") }),
         /* @__PURE__ */ jsx(
           Transition,
           {
@@ -7546,7 +7632,7 @@ function UpdateProfileInformation({
             enterFrom: "opacity-0",
             leave: "transition ease-in-out",
             leaveTo: "opacity-0",
-            children: /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-400", children: "Saved." })
+            children: /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-600 dark:text-gray-400", children: t("Saved.") })
           }
         )
       ] })
@@ -7558,30 +7644,31 @@ const __vite_glob_0_31 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: UpdateProfileInformation
 }, Symbol.toStringTag, { value: "Module" }));
 function Edit({ mustVerifyEmail, status }) {
+  const { t, i18n } = useTranslation();
   const user = usePage().props.auth.user;
   const getInitials = (name) => {
     return name.split(" ").map((word) => word[0]).join("").toUpperCase().slice(0, 2);
   };
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleDateString(i18n.language, {
       year: "numeric",
       month: "long",
       day: "numeric"
     });
   };
   return /* @__PURE__ */ jsxs(Fragment, { children: [
-    /* @__PURE__ */ jsx(Head, { title: "Profile" }),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
+    /* @__PURE__ */ jsx(Head, { title: t("Profile") }),
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black", children: [
       /* @__PURE__ */ jsx(Navbar, {}),
       /* @__PURE__ */ jsx("div", { className: "pt-24 pb-12 md:pt-32 md:pb-16", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12", children: [
-        /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900/40 via-purple-900/40 to-black border border-white/10 p-8 md:p-12 backdrop-blur-sm", children: [
-          /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl" }),
-          /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 -mb-16 -ml-16 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl" }),
+        /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden rounded-3xl bg-white dark:bg-gradient-to-br from-indigo-400/40 via-purple-900/40 to-black border border-gray-200 dark:border-white/10 p-8 md:p-12 dark:backdrop-blur-sm", children: [
+          /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl hidden dark:block" }),
+          /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 -mb-16 -ml-16 w-64 h-64 bg-indigo-100 rounded-full blur-3xl hidden dark:block" }),
           /* @__PURE__ */ jsxs("div", { className: "relative flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8", children: [
-            /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-black/50", children: /* @__PURE__ */ jsx("span", { className: "text-3xl md:text-4xl font-bold text-white tracking-wider", children: getInitials(user.name) }) }) }),
+            /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-white dark:border-black/50", children: /* @__PURE__ */ jsx("span", { className: "text-3xl md:text-4xl font-bold text-white tracking-wider", children: getInitials(user.name) }) }) }),
             /* @__PURE__ */ jsxs("div", { className: "flex-1 text-center md:text-left space-y-2", children: [
-              /* @__PURE__ */ jsx("h1", { className: "text-3xl md:text-4xl font-bold text-white tracking-tight", children: user.name }),
-              /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row items-center md:items-center gap-2 md:gap-4 text-gray-400", children: [
+              /* @__PURE__ */ jsx("h1", { className: "text-3xl md:text-4xl font-bold text-gray-900 dark:text-white tracking-tight", children: user.name }),
+              /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row items-center justify-center md:justify-start md:items-center gap-2 md:gap-4 text-gray-500 dark:text-gray-400", children: [
                 /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
                   /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "currentColor", className: "w-4 h-4", children: [
                     /* @__PURE__ */ jsx("path", { d: "M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" }),
@@ -7589,32 +7676,33 @@ function Edit({ mustVerifyEmail, status }) {
                   ] }),
                   /* @__PURE__ */ jsx("span", { children: user.email })
                 ] }),
-                /* @__PURE__ */ jsx("span", { className: "hidden md:inline text-gray-600", children: "•" }),
+                /* @__PURE__ */ jsx("span", { className: "hidden md:inline text-gray-400 dark:text-gray-600", children: "•" }),
                 /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
                   /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "currentColor", className: "w-4 h-4", children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z", clipRule: "evenodd" }) }),
                   /* @__PURE__ */ jsxs("span", { children: [
-                    "Member since ",
-                    user.created_at ? formatDate(user.created_at) : "Recently"
+                    t("Member since"),
+                    " ",
+                    user.created_at ? formatDate(user.created_at) : t("Recently")
                   ] })
                 ] })
               ] }),
               /* @__PURE__ */ jsxs("div", { className: "pt-4 flex flex-wrap justify-center md:justify-start gap-3", children: [
-                /* @__PURE__ */ jsx("span", { className: "px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-indigo-300", children: "Free Plan" }),
-                user.email_verified_at ? /* @__PURE__ */ jsxs("span", { className: "px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-xs font-medium text-green-400 flex items-center gap-1", children: [
+                /* @__PURE__ */ jsx("span", { className: "px-3 py-1 rounded-full bg-indigo-100 dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-xs font-medium text-indigo-800 dark:text-indigo-300", children: t("Free Plan") }),
+                user.email_verified_at ? /* @__PURE__ */ jsxs("span", { className: "px-3 py-1 rounded-full bg-green-100 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 text-xs font-medium text-green-800 dark:text-green-400 flex items-center gap-1", children: [
                   /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", className: "w-3 h-3", children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z", clipRule: "evenodd" }) }),
-                  "Verified"
-                ] }) : /* @__PURE__ */ jsx("span", { className: "px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-xs font-medium text-yellow-400", children: "Unverified" })
+                  t("Verified")
+                ] }) : /* @__PURE__ */ jsx("span", { className: "px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 text-xs font-medium text-yellow-800 dark:text-yellow-400", children: t("Unverified") })
               ] })
             ] })
           ] })
         ] }),
-        /* @__PURE__ */ jsxs("div", { className: "mt-12 border-b border-white/10 pb-6", children: [
-          /* @__PURE__ */ jsx("h2", { className: "text-2xl font-serif text-white", children: "Account Settings" }),
-          /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-sm mt-1", children: "Manage your profile details and security" })
+        /* @__PURE__ */ jsxs("div", { className: "mt-12 border-b border-gray-200 dark:border-white/10 pb-6", children: [
+          /* @__PURE__ */ jsx("h2", { className: "text-2xl font-serif text-gray-900 dark:text-white", children: t("Account Settings") }),
+          /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-500 text-sm mt-1", children: t("Manage your profile details and security") })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: "mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8", children: [
           /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
-            /* @__PURE__ */ jsx("div", { className: "bg-white/5 border border-white/10 p-6 md:p-8 rounded-2xl backdrop-blur-sm", children: /* @__PURE__ */ jsx(
+            /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 md:p-8 rounded-2xl dark:backdrop-blur-sm", children: /* @__PURE__ */ jsx(
               UpdateProfileInformation,
               {
                 mustVerifyEmail,
@@ -7622,9 +7710,9 @@ function Edit({ mustVerifyEmail, status }) {
                 className: "max-w-xl"
               }
             ) }),
-            /* @__PURE__ */ jsx("div", { className: "bg-white/5 border border-white/10 p-6 md:p-8 rounded-2xl backdrop-blur-sm", children: /* @__PURE__ */ jsx(UpdatePasswordForm, { className: "max-w-xl" }) })
+            /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 md:p-8 rounded-2xl dark:backdrop-blur-sm", children: /* @__PURE__ */ jsx(UpdatePasswordForm, { className: "max-w-xl" }) })
           ] }),
-          /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("div", { className: "bg-red-500/5 border border-red-500/20 p-6 md:p-8 rounded-2xl backdrop-blur-sm", children: /* @__PURE__ */ jsx(DeleteUserForm, { className: "max-w-xl" }) }) })
+          /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("div", { className: "bg-red-100 dark:bg-red-500/5 border border-red-200 dark:border-red-500/20 p-6 md:p-8 rounded-2xl dark:backdrop-blur-sm", children: /* @__PURE__ */ jsx(DeleteUserForm, { className: "max-w-xl" }) }) })
         ] })
       ] }) }),
       /* @__PURE__ */ jsx(Footer, {})
@@ -7636,6 +7724,7 @@ const __vite_glob_0_28 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Edit
 }, Symbol.toStringTag, { value: "Module" }));
 function Search({ results, query, seo }) {
+  const { t } = useTranslation();
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
@@ -7653,12 +7742,12 @@ function Search({ results, query, seo }) {
         description: seo?.description
       }
     ),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black", children: [
       /* @__PURE__ */ jsx(Navbar, {}),
       /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 py-32", children: [
         /* @__PURE__ */ jsxs("div", { className: "mb-12", children: [
-          /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-white mb-4", children: "Search Results" }),
-          /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-lg", children: results.length > 0 ? `Found ${results.length} results for "${query}"` : `No results found for "${query}"` })
+          /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-gray-800 dark:text-white mb-4", children: t("Search Results") }),
+          /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-400 text-lg", children: results.length > 0 ? t('Found {count} results for "{query}"', { count: results.length, query }) : t('No results found for "{query}"', { query }) })
         ] }),
         results.length > 0 ? /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: results.map((item) => /* @__PURE__ */ jsx(
           MediaCard,
@@ -7668,15 +7757,15 @@ function Search({ results, query, seo }) {
           },
           `${item.type}-${item.id}`
         )) }) : /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center justify-center py-20 text-center", children: [
-          /* @__PURE__ */ jsx("div", { className: "w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-6", children: /* @__PURE__ */ jsx("svg", { className: "w-10 h-10 text-gray-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" }) }) }),
-          /* @__PURE__ */ jsx("h3", { className: "text-xl font-serif text-white mb-2", children: "No matches found" }),
-          /* @__PURE__ */ jsx("p", { className: "text-gray-500 max-w-md", children: "We couldn't find any movies or series matching your search. Try checking for typos or using different keywords." }),
+          /* @__PURE__ */ jsx("div", { className: "w-24 h-24 rounded-full bg-gray-200 dark:bg-white/5 flex items-center justify-center mb-6", children: /* @__PURE__ */ jsx("svg", { className: "w-10 h-10 text-gray-400 dark:text-gray-600", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" }) }) }),
+          /* @__PURE__ */ jsx("h3", { className: "text-xl font-serif text-gray-800 dark:text-white mb-2", children: t("No matches found") }),
+          /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-500 max-w-md", children: t("We couldn't find any movies or series matching your search. Try checking for typos or using different keywords.") }),
           /* @__PURE__ */ jsx(
             Link,
             {
               href: route("home"),
-              className: "mt-8 px-8 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
-              children: "Back to Home"
+              className: "mt-8 px-8 py-3 bg-gray-800 dark:bg-white text-white dark:text-black font-bold uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors",
+              children: t("Back to Home")
             }
           )
         ] })
@@ -7710,12 +7799,13 @@ const Pagination = ({ links }) => {
   )) });
 };
 function Index({ series }) {
+  const { t } = useTranslation();
   return /* @__PURE__ */ jsxs(Fragment, { children: [
-    /* @__PURE__ */ jsx(Head, { title: "Series" }),
+    /* @__PURE__ */ jsx(Head, { title: t("Series") }),
     /* @__PURE__ */ jsx(Navbar, {}),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen py-16 bg-[#050505] text-white font-sans selection:bg-white selection:text-black pb-12", children: [
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen py-16 bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black pb-12", children: [
       /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12", children: [
-        /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-white", children: "Series" }) }),
+        /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-gray-200 dark:border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-gray-800 dark:text-white", children: t("Series") }) }),
         /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
           MediaCard,
           {
@@ -7754,6 +7844,7 @@ const DownloadIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx(
   }
 );
 const LinkItem = ({ link, type, isVip }) => {
+  const { t } = useTranslation();
   const isLocked = link.is_vip_only && !isVip;
   const [copied, setCopied] = useState(false);
   return /* @__PURE__ */ jsxs(
@@ -7769,7 +7860,7 @@ const LinkItem = ({ link, type, isVip }) => {
             children: link.quality?.replace("p", "") || "HD"
           }
         ),
-        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-[10px] font-bold text-yellow-500 border border-yellow-500 px-1 uppercase", children: "VIP" }) : /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsx(
+        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-[10px] font-bold text-yellow-500 border border-yellow-500 px-1 uppercase", children: t("VIP") }) : /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsx(
           "a",
           {
             href: link.url,
@@ -7799,6 +7890,7 @@ const LinkItem = ({ link, type, isVip }) => {
   );
 };
 const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
+  const { t } = useTranslation();
   return /* @__PURE__ */ jsxs("div", { className: "border-b border-white/10 last:border-0", children: [
     /* @__PURE__ */ jsxs(
       "button",
@@ -7818,7 +7910,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
               ),
               /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-600 mt-1 block", children: episode.air_date ? new Date(
                 episode.air_date
-              ).toLocaleDateString() : "Unknown Date" })
+              ).toLocaleDateString() : t("Unknown Date") })
             ] })
           ] }),
           /* @__PURE__ */ jsx(
@@ -7858,13 +7950,14 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
             className: "w-full h-full object-cover"
           }
         ) }),
-        /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-400 leading-relaxed font-serif", children: episode.description || "No synopsis available for this episode." })
+        /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-400 leading-relaxed font-serif", children: episode.description || t("No synopsis available for this episode.") })
       ] }),
       isAuthenticated ? /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-8", children: [
         /* @__PURE__ */ jsxs("div", { children: [
           /* @__PURE__ */ jsxs("h5", { className: "text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2", children: [
             /* @__PURE__ */ jsx(PlayIcon, { className: "w-3 h-3" }),
-            " Stream"
+            " ",
+            t("Stream")
           ] }),
           /* @__PURE__ */ jsx("div", { className: "space-y-1", children: episode.watch_links && episode.watch_links.length > 0 ? episode.watch_links.map((link) => /* @__PURE__ */ jsx(
             LinkItem,
@@ -7874,7 +7967,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
               isVip
             },
             link.id
-          )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 text-xs italic", children: "No sources." }) })
+          )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 text-xs italic", children: t("No sources.") }) })
         ] }),
         /* @__PURE__ */ jsxs(
           "div",
@@ -7884,7 +7977,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
               /* @__PURE__ */ jsxs("h5", { className: "text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2", children: [
                 /* @__PURE__ */ jsx(DownloadIcon, { className: "w-3 h-3" }),
                 " ",
-                "Download"
+                t("Download")
               ] }),
               /* @__PURE__ */ jsx("div", { className: "space-y-1", children: episode.download_links && episode.download_links.length > 0 ? episode.download_links.map((link) => /* @__PURE__ */ jsx(
                 LinkItem,
@@ -7894,18 +7987,18 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                   isVip
                 },
                 link.id
-              )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 text-xs italic", children: "No sources." }) })
+              )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 text-xs italic", children: t("No sources.") }) })
             ]
           }
         )
       ] }) : /* @__PURE__ */ jsxs("div", { className: "p-4 border border-white/10 rounded bg-white/5 text-center", children: [
-        /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm mb-2", children: "Please log in to access episode links." }),
+        /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm mb-2", children: t("Please log in to access episode links.") }),
         /* @__PURE__ */ jsx(
           "a",
           {
             href: route("login"),
             className: "inline-block px-4 py-1.5 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
-            children: "Log In"
+            children: t("Log In")
           }
         )
       ] })
@@ -7970,6 +8063,7 @@ function SeriesDetails({
   isVip,
   seo
 }) {
+  const { t } = useTranslation();
   const { auth } = usePage().props;
   const [showTrailer, setShowTrailer] = useState(false);
   const [activeSeason, setActiveSeason] = useState(
@@ -8005,7 +8099,7 @@ function SeriesDetails({
         structuredData: seo?.structuredData
       }
     ),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#080808] text-white font-sans selection:bg-white selection:text-black flex flex-col md:flex-row", children: [
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-[#080808] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black flex flex-col md:flex-row", children: [
       /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/2 lg:w-[45%] h-[60vh] md:h-screen relative md:sticky md:top-0 overflow-hidden", children: [
         /* @__PURE__ */ jsxs("div", { className: "absolute inset-0", children: [
           /* @__PURE__ */ jsx(
@@ -8017,7 +8111,7 @@ function SeriesDetails({
             }
           ),
           /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/30" }),
-          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-[#080808] via-transparent to-transparent md:hidden" })
+          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-gray-100 dark:from-[#080808] via-transparent to-transparent md:hidden" })
         ] }),
         /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ jsxs(
           "button",
@@ -8031,18 +8125,19 @@ function SeriesDetails({
           }
         ) }),
         /* @__PURE__ */ jsxs("div", { className: "absolute bottom-0 left-0 right-0 p-6 md:hidden", children: [
-          /* @__PURE__ */ jsx("h1", { className: "text-4xl font-serif font-bold text-white leading-none mb-3", children: series.title }),
-          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 text-sm text-gray-300 mb-3", children: [
+          /* @__PURE__ */ jsx("h1", { className: "text-4xl font-serif font-bold dark:text-white leading-none mb-3", children: series.title }),
+          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 text-sm dark:text-gray-300 mb-3", children: [
             /* @__PURE__ */ jsxs("span", { children: [
               series.release_year_start,
               " -",
               " ",
-              series.release_year_end || "Present"
+              series.release_year_end || t("Present")
             ] }),
             /* @__PURE__ */ jsx("span", { children: "•" }),
             /* @__PURE__ */ jsxs("span", { children: [
               series.seasons?.length,
-              " Seasons"
+              " ",
+              t("Seasons")
             ] }),
             series.rating_average && /* @__PURE__ */ jsxs(Fragment, { children: [
               /* @__PURE__ */ jsx("span", { children: "•" }),
@@ -8055,14 +8150,14 @@ function SeriesDetails({
           /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: series.genres?.slice(0, 3).map((genre) => /* @__PURE__ */ jsx(
             "span",
             {
-              className: "px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white uppercase tracking-wider",
+              className: "px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs dark:text-white uppercase tracking-wider",
               children: genre.name
             },
             genre.id
           )) })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/2 lg:w-[55%] min-h-screen bg-[#080808] relative z-10", children: [
+      /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/2 lg:w-[55%] min-h-screen bg-gray-100 dark:bg-[#080808] relative z-10", children: [
         /* @__PURE__ */ jsxs("div", { className: "p-6 md:p-12 lg:p-20 max-w-3xl mx-auto", children: [
           /* @__PURE__ */ jsxs("div", { className: "hidden md:block mb-12", children: [
             /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 text-sm font-bold tracking-widest text-gray-500 uppercase mb-4", children: [
@@ -8070,53 +8165,51 @@ function SeriesDetails({
                 series.release_year_start,
                 " -",
                 " ",
-                series.release_year_end || "Present"
+                series.release_year_end || t("Present")
               ] }),
               /* @__PURE__ */ jsx("span", { className: "w-1 h-1 bg-gray-500 rounded-full" }),
               /* @__PURE__ */ jsxs("span", { children: [
                 series.seasons?.length,
-                " Seasons"
+                " ",
+                t("Seasons")
               ] }),
               /* @__PURE__ */ jsx("span", { className: "w-1 h-1 bg-gray-500 rounded-full" }),
-              /* @__PURE__ */ jsxs("span", { className: "text-white", children: [
+              /* @__PURE__ */ jsxs("span", { className: "text-gray-800 dark:text-white", children: [
                 series.rating_average?.toFixed(1),
-                " Rating"
+                " ",
+                t("Rating")
               ] })
             ] }),
-            /* @__PURE__ */ jsx("h1", { className: "text-5xl lg:text-7xl font-serif font-medium text-white leading-[0.9] mb-6", children: series.title }),
+            /* @__PURE__ */ jsx("h1", { className: "text-5xl lg:text-7xl font-serif font-medium text-gray-800 dark:text-white leading-[0.9] mb-6", children: series.title }),
             /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: series.genres?.map((genre) => /* @__PURE__ */ jsx(
               "span",
               {
-                className: "px-3 py-1 border border-white/20 rounded-full text-xs text-gray-300 uppercase tracking-wider hover:border-white transition-colors cursor-default",
+                className: "px-3 py-1 border border-gray-800/20 dark:border-white/20 rounded-full text-xs text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:border-gray-800 dark:hover:border-white transition-colors cursor-default",
                 children: genre.name
               },
               genre.id
             )) })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
-            /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-4", children: "Synopsis" }),
-            /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-300 font-serif leading-relaxed", children: series.description })
+            /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-4", children: t("Synopsis") }),
+            /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed", children: series.description })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
             /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-8", children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest", children: "Episode Guide" }),
-              series.is_vip_only && /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-0.5 rounded", children: "VIP ACCESS" })
+              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest", children: t("Episode Guide") }),
+              series.is_vip_only && /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-0.5 rounded", children: t("VIP ACCESS") })
             ] }),
             series.seasons && series.seasons.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
-              /* @__PURE__ */ jsx("div", { className: "flex overflow-x-auto pb-4 mb-6 gap-4 border-b border-white/10 custom-scrollbar", children: series.seasons.slice().reverse().map((season) => /* @__PURE__ */ jsxs(
+              /* @__PURE__ */ jsx("div", { className: "flex overflow-x-auto pb-4 mb-6 gap-4 border-b border-gray-800/10 dark:border-white/10 custom-scrollbar", children: series.seasons.slice().reverse().map((season) => /* @__PURE__ */ jsx(
                 "button",
                 {
                   onClick: () => setActiveSeason(season),
-                  className: `whitespace-nowrap px-4 py-2 font-serif text-lg transition-colors ${activeSeason?.id === season.id ? "text-white border-b-2 border-white" : "text-gray-500 hover:text-gray-300"}`,
-                  children: [
-                    "Season",
-                    " ",
-                    season.season_number
-                  ]
+                  className: `whitespace-nowrap px-4 py-2 font-serif text-lg transition-colors ${activeSeason?.id === season.id ? "text-gray-800 dark:text-white border-b-2 border-gray-800 dark:border-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
+                  children: t("Season {season_number}", { season_number: season.season_number })
                 },
                 season.id
               )) }),
-              /* @__PURE__ */ jsx("div", { className: "border border-white/10 rounded-lg overflow-hidden bg-white/5", children: activeSeason?.episodes && activeSeason.episodes.length > 0 ? activeSeason.episodes.slice().reverse().map((episode) => /* @__PURE__ */ jsx(
+              /* @__PURE__ */ jsx("div", { className: "border border-gray-800/10 dark:border-white/10 rounded-lg overflow-hidden bg-gray-800/5 dark:bg-white/5", children: activeSeason?.episodes && activeSeason.episodes.length > 0 ? activeSeason.episodes.slice().reverse().map((episode) => /* @__PURE__ */ jsx(
                 EpisodeRow,
                 {
                   episode,
@@ -8128,25 +8221,25 @@ function SeriesDetails({
                   isAuthenticated: !!auth.user
                 },
                 episode.id
-              )) : /* @__PURE__ */ jsx("div", { className: "p-8 text-center text-gray-500 italic", children: "No episodes available for this season." }) })
-            ] }) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic", children: "No seasons available." })
+              )) : /* @__PURE__ */ jsx("div", { className: "p-8 text-center text-gray-500 italic", children: t("No episodes available for this season.") }) })
+            ] }) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic", children: t("No seasons available.") })
           ] }),
           series?.banner_url && /* @__PURE__ */ jsx("div", { className: "mt-8 w-full rounded overflow-hidden", children: /* @__PURE__ */ jsx(
             "img",
             {
               src: series?.banner_url,
-              alt: "Backdrop",
+              alt: t("Backdrop"),
               className: "w-full h-48 object-cover object-center"
             }
           ) }),
           /* @__PURE__ */ jsxs("div", { className: "mb-16 mt-10", children: [
-            /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: "Cast & Crew" }),
+            /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: t("Cast & Crew") }),
             /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4", children: series.actors?.slice(0, 9).map((actor) => /* @__PURE__ */ jsxs(
               "div",
               {
                 className: "flex items-center gap-3",
                 children: [
-                  /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-800  hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx(
+                  /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-800  hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx(
                     "img",
                     {
                       src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg",
@@ -8162,7 +8255,7 @@ function SeriesDetails({
                           "person.show",
                           actor.person?.id
                         ),
-                        className: "text-gray-400 hover:text-white transition-colors flex justify-between text-sm group",
+                        className: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors flex justify-between text-sm group",
                         children: /* @__PURE__ */ jsx("span", { className: "font-bold", children: actor.person?.name })
                       }
                     ),
@@ -8173,9 +8266,9 @@ function SeriesDetails({
               actor.id
             )) })
           ] }),
-          /* @__PURE__ */ jsxs("div", { className: "pt-12 border-t border-white/10", children: [
+          /* @__PURE__ */ jsxs("div", { className: "pt-12 border-t border-gray-800/10 dark:border-white/10", children: [
             /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center mb-12", children: /* @__PURE__ */ jsxs("div", { children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs text-center font-bold text-gray-500 uppercase tracking-widest mb-2", children: "Your Rating" }),
+              /* @__PURE__ */ jsx("h3", { className: "text-xs text-center font-bold text-gray-500 uppercase tracking-widest mb-2", children: t("Your Rating") }),
               auth.user ? /* @__PURE__ */ jsx(
                 RatingWidget,
                 {
@@ -8223,16 +8316,16 @@ function SeriesDetails({
                   "a",
                   {
                     href: route("login"),
-                    className: "text-white hover:underline",
-                    children: "Log in"
+                    className: "text-gray-800 dark:text-white hover:underline",
+                    children: t("Log in")
                   }
                 ),
                 " ",
-                "to rate this series."
+                t("to rate this series.")
               ] })
             ] }) }),
             relatedSeries && relatedSeries.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: "Related Series" }),
+              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: t("Related Series") }),
               /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-4", children: relatedSeries.slice(0, 3).map((rel) => /* @__PURE__ */ jsxs(
                 "a",
                 {
@@ -8250,7 +8343,7 @@ function SeriesDetails({
                         className: "w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
                       }
                     ) }),
-                    /* @__PURE__ */ jsx("h4", { className: "text-white font-serif text-sm truncate group-hover:underline", children: rel.title })
+                    /* @__PURE__ */ jsx("h4", { className: "text-gray-800 dark:text-white font-serif text-sm truncate group-hover:underline", children: rel.title })
                   ]
                 },
                 rel.id

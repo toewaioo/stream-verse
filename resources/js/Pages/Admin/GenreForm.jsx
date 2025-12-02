@@ -6,8 +6,10 @@ import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
+import { useTranslation } from 'react-i18next';
 
 export default function GenreForm({ genre, onClose, onSuccess }) {
+    const { t } = useTranslation();
     const { data, setData, post, put, processing, errors } = useForm({
         name: genre?.name || '',
         slug: genre?.slug || '',
@@ -40,7 +42,7 @@ export default function GenreForm({ genre, onClose, onSuccess }) {
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-                <InputLabel htmlFor="name" value="Name" />
+                <InputLabel htmlFor="name" value={t('Name')} />
                 <TextInput
                     id="name"
                     type="text"
@@ -53,7 +55,7 @@ export default function GenreForm({ genre, onClose, onSuccess }) {
             </div>
 
             <div>
-                <InputLabel htmlFor="slug" value="Slug" />
+                <InputLabel htmlFor="slug" value={t('Slug')} />
                 <TextInput
                     id="slug"
                     type="text"
@@ -67,10 +69,10 @@ export default function GenreForm({ genre, onClose, onSuccess }) {
 
             <div className="flex items-center justify-end gap-4 border-t pt-4">
                 <SecondaryButton onClick={onClose} disabled={processing}>
-                    Cancel
+                    {t('Cancel')}
                 </SecondaryButton>
                 <PrimaryButton disabled={processing}>
-                    {genre ? 'Update Genre' : 'Create Genre'}
+                    {genre ? t('Update Genre') : t('Create Genre')}
                 </PrimaryButton>
             </div>
         </form>

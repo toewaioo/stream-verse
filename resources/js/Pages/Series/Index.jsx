@@ -3,6 +3,7 @@ import { Head, Link, router } from "@inertiajs/react";
 import MediaCard from "@/Components/MediaCard";
 import Footer from "@/Components/Footer";
 import Navbar from "@/Components/Navbar";
+import { useTranslation } from "react-i18next";
 
 const Pagination = ({ links }) => {
     useEffect(() => {
@@ -36,15 +37,16 @@ const Pagination = ({ links }) => {
 };
 
 export default function Index({ series }) {
+    const { t } = useTranslation();
     return (
         <>
-            <Head title="Series" />
+            <Head title={t('Series')} />
             <Navbar />
-            <div className="min-h-screen py-16 bg-[#050505] text-white font-sans selection:bg-white selection:text-black pb-12">
+            <div className="min-h-screen py-16 bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black pb-12">
                 <div className="container mx-auto px-2 md:px-12">
-                    <div className="mb-4 border-b border-white/10 pt-2">
-                        <h1 className="text-4xl md:text-5xl font-serif text-white">
-                            Series
+                    <div className="mb-4 border-b border-gray-200 dark:border-white/10 pt-2">
+                        <h1 className="text-4xl md:text-5xl font-serif text-gray-800 dark:text-white">
+                            {t('Series')}
                         </h1>
                         {/* <p className="text-gray-500 text-sm mt-2 uppercase tracking-widest">
                             Browse all available series

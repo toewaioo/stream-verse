@@ -1,17 +1,19 @@
 import React from "react";
 import { Link, usePage } from "@inertiajs/react";
+import { useTranslation } from "react-i18next";
 
 export default function Footer() {
+    const { t } = useTranslation();
     const { footerData } = usePage().props;
 
     return (
-        <footer className="border-t border-white/10 py-12 bg-black text-white">
+        <footer className="border-t border-white/10 py-12 dark:bg-black dark:text-white">
             <div className="container mx-auto px-6 md:px-12">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                     {/* Categories */}
                     <div>
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-6">
-                            Categories
+                        <h3 className="text-sm font-bold uppercase tracking-widest dark:text-gray-500 mb-6">
+                            {t('Categories')}
                         </h3>
                         <ul className="space-y-2">
                             {footerData?.categories?.map((category) => (
@@ -21,7 +23,7 @@ export default function Footer() {
                                             "genre.show",
                                             category.slug
                                         )}
-                                        className="text-gray-400 hover:text-white transition-colors flex justify-between text-sm group"
+                                        className="text-gray-400 dark:*:hover:text-white transition-colors flex justify-between text-sm group"
                                     >
                                         <span className="group-hover:translate-x-1 transition-transform">
                                             {category.name}
@@ -38,14 +40,14 @@ export default function Footer() {
                     {/* Actors */}
                     <div>
                         <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-6">
-                            Top Actors
+                            {t('Top Actors')}
                         </h3>
                         <ul className="space-y-2">
                             {footerData?.actors?.map((actor) => (
                                 <li key={actor.id}>
                                     <Link
                                         href={route("person.show", actor.id)}
-                                        className="text-gray-400 hover:text-white transition-colors flex justify-between text-sm group"
+                                        className="text-gray-400 dark:hover:text-white transition-colors flex justify-between text-sm group"
                                     >
                                         <span className="group-hover:translate-x-1 transition-transform">
                                             {actor.name}
@@ -62,7 +64,7 @@ export default function Footer() {
                     {/* Quick Links */}
                     <div>
                         <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-6">
-                            Quick Links
+                            {t('Quick Links')}
                         </h3>
                         <ul className="space-y-2">
                             <li>
@@ -71,7 +73,7 @@ export default function Footer() {
                                     className="text-gray-400 hover:text-white transition-colors text-sm group"
                                 >
                                     <span className="group-hover:translate-x-1 transition-transform inline-block">
-                                        About Us
+                                        {t('About Us')}
                                     </span>
                                 </Link>
                             </li>
@@ -81,7 +83,7 @@ export default function Footer() {
                                     className="text-gray-400 hover:text-white transition-colors text-sm group"
                                 >
                                     <span className="group-hover:translate-x-1 transition-transform inline-block">
-                                        Contact
+                                        {t('Contact')}
                                     </span>
                                 </Link>
                             </li>
@@ -91,7 +93,7 @@ export default function Footer() {
                                     className="text-gray-400 hover:text-white transition-colors text-sm group"
                                 >
                                     <span className="group-hover:translate-x-1 transition-transform inline-block">
-                                        FAQ
+                                        {t('FAQ')}
                                     </span>
                                 </Link>
                             </li>
@@ -101,7 +103,7 @@ export default function Footer() {
                                     className="text-gray-400 hover:text-white transition-colors text-sm group"
                                 >
                                     <span className="group-hover:translate-x-1 transition-transform inline-block">
-                                        Privacy Policy
+                                        {t('Privacy Policy')}
                                     </span>
                                 </Link>
                             </li>
@@ -111,7 +113,7 @@ export default function Footer() {
                                     className="text-gray-400 hover:text-white transition-colors text-sm group"
                                 >
                                     <span className="group-hover:translate-x-1 transition-transform inline-block">
-                                        Terms of Service
+                                        {t('Terms of Service')}
                                     </span>
                                 </Link>
                             </li>
@@ -123,10 +125,10 @@ export default function Footer() {
                             CINE<span className="text-gray-600">VERSE</span>
                         </div>
                         <p className="text-gray-400 text-sm mb-6">
-                            Your ultimate destination for movies and series.
+                            {t('Your ultimate destination for movies and series.')}
                         </p>
                         <div className="text-xs text-gray-600 uppercase tracking-widest">
-                            © 2025 Cineverse. All rights reserved.
+                            {t('© 2025 Cineverse. All rights reserved.')}
                         </div>
                     </div>
                 </div>
