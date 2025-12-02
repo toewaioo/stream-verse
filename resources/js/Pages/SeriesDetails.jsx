@@ -40,25 +40,25 @@ const LinkItem = ({ link, type, isVip }) => {
 
     return (
         <div
-            className={`group flex items-center justify-between py-3 border-b border-white/5 hover:bg-white/5 transition-colors px-2 ${
+            className={`group flex items-center justify-around py-3 border-b border-white/5 hover:bg-white/5 transition-colors px-2 ${
                 isLocked ? "opacity-50" : ""
             }`}
         >
-            <div className="flex items-center gap-3 min-w-0">
-                <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${
-                        type === "download"
-                            ? "border-blue-500 text-blue-500"
-                            : "border-red-500 text-red-500"
-                    }`}
-                >
-                    {link.quality?.replace("p", "") || "HD"}
-                </div>
+            <div className="flex items-center justify-center gap-3 min-w-0">
                 <div className="flex flex-col min-w-0">
                     <span className="text-gray-300 font-serif text-sm leading-none truncate">
                         {link.server_name}
                     </span>
                 </div>
+            </div>
+            <div
+                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${
+                    type === "download"
+                        ? "border-blue-500 text-blue-500"
+                        : "border-red-500 text-red-500"
+                }`}
+            >
+                {link.quality?.replace("p", "") || "HD"}
             </div>
 
             <div className="flex items-center gap-2">
@@ -68,12 +68,12 @@ const LinkItem = ({ link, type, isVip }) => {
                     </span>
                 ) : (
                     <>
-                        <button
+                        {/* <button
                             onClick={handleCopy}
                             className="text-gray-600 hover:text-white text-[10px] uppercase tracking-widest transition-colors"
                         >
                             {copied ? "Copied" : "Copy"}
-                        </button>
+                        </button> */}
                         <a
                             href={link.url}
                             target="_blank"
@@ -198,7 +198,14 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                                     )}
                                 </div>
                             </div>
-                            <div>
+                            <div
+                                className={`${
+                                    episode.download_links &&
+                                    episode.download_links.length > 0
+                                        ? ""
+                                        : "hidden"
+                                }`}
+                            >
                                 <h5 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                                     <DownloadIcon className="w-3 h-3" />{" "}
                                     Download
@@ -308,7 +315,8 @@ export default function SeriesDetails({
         tg.BackButton.show();
 
         tg.onEvent("backButtonClicked", () => {
-            const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
+            const prevRoute =
+                sessionStorage.getItem("tgPrevRoute") || route("home");
             router.visit(prevRoute);
         });
     }, []);
@@ -553,9 +561,9 @@ export default function SeriesDetails({
 
                         {/* Rating & Related */}
                         <div className="pt-12 border-t border-white/10">
-                            <div className="flex items-center justify-between mb-12">
+                            <div className="flex items-center justify-center mb-12">
                                 <div>
-                                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
+                                    <h3 className="text-xs text-center font-bold text-gray-500 uppercase tracking-widest mb-2">
                                         Your Rating
                                     </h3>
                                     {auth.user ? (

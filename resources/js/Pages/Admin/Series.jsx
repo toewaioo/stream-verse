@@ -209,7 +209,7 @@ export default function AdminSeries({ series, genres, persons, auth }) {
             </div>
 
             <Modal show={isModalOpen} onClose={closeModal} maxWidth="4xl">
-                <div className="p-4 sm:p-6">
+                <div className="p-4 sm:p-6 dark:bg-gray-800">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                         {editingSeries
                             ? `Edit Series: ${editingSeries.title}`

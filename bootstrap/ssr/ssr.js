@@ -306,7 +306,7 @@ function InputLabel({
     "label",
     {
       ...props,
-      className: `block text-sm font-medium text-gray-300 ` + className,
+      className: `block text-sm font-medium text-gray-900 dark:text-gray-300 ` + className,
       children: value ? value : children
     }
   );
@@ -707,6 +707,61 @@ function MovieForm({
   });
   const storageKey = movie?.id ? `movie_form_update_${movie.id}` : "movie_form_create";
   const { clearStorage } = useFormPersistence(storageKey, data, setData);
+  const [showTmdbModal, setShowTmdbModal] = useState(false);
+  const [tmdbQuery, setTmdbQuery] = useState("");
+  const [tmdbResults, setTmdbResults] = useState([]);
+  const [tmdbLoading, setTmdbLoading] = useState(false);
+  const searchTmdb = async (e) => {
+    e.preventDefault();
+    if (!tmdbQuery) return;
+    setTmdbLoading(true);
+    try {
+      const response = await axios$1.post(route("admin.tmdb.search"), {
+        query: tmdbQuery,
+        type: "movie"
+      });
+      setTmdbResults(response.data.results || []);
+    } catch (error) {
+      console.error("TMDB Search Error:", error);
+    } finally {
+      setTmdbLoading(false);
+    }
+  };
+  const fetchTmdbDetails = async (tmdbId) => {
+    setTmdbLoading(true);
+    try {
+      const response = await axios$1.post(route("admin.tmdb.details"), {
+        tmdb_id: tmdbId,
+        type: "movie"
+      });
+      const details = response.data;
+      setData((prev) => ({
+        ...prev,
+        title: details.title,
+        original_title: details.original_title,
+        description: details.description,
+        release_date: details.release_date,
+        runtime: details.runtime,
+        language: details.language,
+        status: details.status === "released" ? "released" : "upcoming",
+        imdb_id: details.imdb_id,
+        budget: details.budget,
+        revenue: details.revenue,
+        poster_url: details.poster_url,
+        banner_url: details.banner_url,
+        trailer_url: details.trailer_url,
+        age_rating: details.age_rating
+        // Note: Genres and Persons mapping would require more complex logic 
+        // to match existing DB records or create new ones. 
+        // For now, we'll just fill the text fields.
+      }));
+      setShowTmdbModal(false);
+    } catch (error) {
+      console.error("TMDB Details Error:", error);
+    } finally {
+      setTmdbLoading(false);
+    }
+  };
   const [slugError, setSlugError] = useState("");
   React.useEffect(() => {
     if (data.title && !movie?.id) {
@@ -718,7 +773,7 @@ function MovieForm({
     const checkSlug = async () => {
       if (!data.slug) return;
       try {
-        const response = await axios.get(route("admin.movies.check-slug"), {
+        const response = await axios$1.get(route("admin.movies.check-slug"), {
           params: {
             slug: data.slug,
             id: movie?.id
@@ -857,7 +912,10 @@ function MovieForm({
     ] }),
     /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
       /* @__PURE__ */ jsxs("div", { className: "md:col-span-2", children: [
-        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "title", value: "Movie Title" }),
+        /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-2", children: [
+          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "title", value: "Movie Title" }),
+          /* @__PURE__ */ jsx(SecondaryButton, { size: "sm", onClick: () => setShowTmdbModal(true), type: "button", children: "Fetch from TMDB" })
+        ] }),
         /* @__PURE__ */ jsx(
           TextInput,
           {
@@ -1721,7 +1779,7 @@ function MovieForm({
       currentStep === 3 && renderStep3(),
       currentStep === 4 && renderStep4()
     ] }),
-    /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-700", children: [
+    /* @__PURE__ */ jsxs("div", { className: "flex gap-3", children: [
       /* @__PURE__ */ jsx(
         SecondaryButton,
         {
@@ -1736,7 +1794,7 @@ function MovieForm({
         {
           type: "submit",
           disabled: processing,
-          className: "min-w-[120px] justify-center",
+          className: " justify-center",
           children: processing ? /* @__PURE__ */ jsxs("span", { className: "flex items-center gap-2", children: [
             /* @__PURE__ */ jsxs(
               "svg",
@@ -1773,7 +1831,48 @@ function MovieForm({
         },
         "submit-btn"
       )
-    ] })
+    ] }),
+    /* @__PURE__ */ jsx(Modal, { show: showTmdbModal, onClose: () => setShowTmdbModal(false), maxWidth: "2xl", children: /* @__PURE__ */ jsxs("div", { className: "p-6", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-gray-100 mb-4", children: "Search TMDB" }),
+      /* @__PURE__ */ jsxs("form", { onSubmit: searchTmdb, className: "flex gap-2 mb-4", children: [
+        /* @__PURE__ */ jsx(
+          TextInput,
+          {
+            type: "text",
+            className: "w-full",
+            placeholder: "Search for a movie...",
+            value: tmdbQuery,
+            onChange: (e) => setTmdbQuery(e.target.value)
+          }
+        ),
+        /* @__PURE__ */ jsx(PrimaryButton, { type: "submit", disabled: tmdbLoading, children: tmdbLoading ? "Searching..." : "Search" })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "space-y-2 max-h-96 overflow-y-auto", children: [
+        tmdbResults.map((result) => /* @__PURE__ */ jsxs(
+          "div",
+          {
+            className: "flex items-center gap-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer border border-gray-200 dark:border-gray-600",
+            onClick: () => fetchTmdbDetails(result.id),
+            children: [
+              result.poster_path ? /* @__PURE__ */ jsx(
+                "img",
+                {
+                  src: `https://image.tmdb.org/t/p/w92${result.poster_path}`,
+                  alt: result.title,
+                  className: "w-12 h-18 object-cover rounded"
+                }
+              ) : /* @__PURE__ */ jsx("div", { className: "w-12 h-18 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center", children: /* @__PURE__ */ jsx("span", { className: "text-xs", children: "No Img" }) }),
+              /* @__PURE__ */ jsxs("div", { children: [
+                /* @__PURE__ */ jsx("h3", { className: "font-semibold text-gray-900 dark:text-white", children: result.title }),
+                /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: result.release_date })
+              ] })
+            ]
+          },
+          result.id
+        )),
+        tmdbResults.length === 0 && !tmdbLoading && /* @__PURE__ */ jsx("p", { className: "text-center text-gray-500", children: "No results found." })
+      ] })
+    ] }) })
   ] });
 }
 const __vite_glob_0_3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -1800,7 +1899,7 @@ function AdminMovies({ movies, genres, persons, auth }) {
   };
   const debounceSearch = debounce((value) => {
     router.get(
-      route("admin.series"),
+      route("admin.movies"),
       { search: searchQuery },
       { preserveState: true, replace: true }
     );
@@ -1823,7 +1922,7 @@ function AdminMovies({ movies, genres, persons, auth }) {
       /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row justify-between items-center mb-6 gap-4", children: [
         /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold", children: "Movies" }),
         /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 w-full md:w-auto", children: [
-          /* @__PURE__ */ jsx("div", { className: "flex-1 md:w-64", children: /* @__PURE__ */ jsx(
+          /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4 w-full md:w-auto", children: /* @__PURE__ */ jsx(
             TextInput,
             {
               type: "text",
@@ -1963,7 +2062,7 @@ function AdminMovies({ movies, genres, persons, auth }) {
         index
       )) }) })
     ] }) }) }) }),
-    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "5xl", children: /* @__PURE__ */ jsxs("div", { className: "p-4 sm:p-6", children: [
+    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "5xl", children: /* @__PURE__ */ jsxs("div", { className: "p-4 sm:p-6 dark:bg-gray-800", children: [
       /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-gray-100 mb-4", children: editingMovie ? `Edit Movie: ${editingMovie.title}` : "Create New Movie" }),
       /* @__PURE__ */ jsx(
         MovieForm,
@@ -2633,6 +2732,22 @@ function SeriesForm({
     });
     return links;
   };
+  const getInitialEpisodeMetadata = () => {
+    if (!series?.seasons) return [];
+    const metadata = [];
+    series.seasons.forEach((season) => {
+      season.episodes?.forEach((episode) => {
+        metadata.push({
+          season_number: season.season_number,
+          episode_number: episode.episode_number,
+          description: episode.description || "",
+          air_date: episode.air_date || "",
+          poster_url: episode.poster_url || ""
+        });
+      });
+    });
+    return metadata;
+  };
   const { data, setData, post, put, processing, errors } = useForm({
     title: series?.title || "",
     slug: series?.slug || "",
@@ -2655,10 +2770,62 @@ function SeriesForm({
       role_type: p.role_type,
       character_name: p.character_name
     })) || [],
-    episode_links: getInitialEpisodeLinks()
+    episode_links: getInitialEpisodeLinks(),
+    episodes_data: getInitialEpisodeMetadata()
   });
   const storageKey = series?.id ? `series_form_update_${series.id}` : "series_form_create";
   const { clearStorage } = useFormPersistence(storageKey, data, setData);
+  const [showTmdbModal, setShowTmdbModal] = useState(false);
+  const [tmdbQuery, setTmdbQuery] = useState("");
+  const [tmdbResults, setTmdbResults] = useState([]);
+  const [tmdbLoading, setTmdbLoading] = useState(false);
+  const searchTmdb = async (e) => {
+    e.preventDefault();
+    if (!tmdbQuery) return;
+    setTmdbLoading(true);
+    try {
+      const response = await axios$1.post(route("admin.tmdb.search"), {
+        query: tmdbQuery,
+        type: "series"
+      });
+      setTmdbResults(response.data.results || []);
+    } catch (error) {
+      console.error("TMDB Search Error:", error);
+    } finally {
+      setTmdbLoading(false);
+    }
+  };
+  const fetchTmdbDetails = async (tmdbId) => {
+    setTmdbLoading(true);
+    try {
+      const response = await axios$1.post(route("admin.tmdb.details"), {
+        tmdb_id: tmdbId,
+        type: "series"
+      });
+      const details = response.data;
+      setData((prev) => ({
+        ...prev,
+        title: details.title,
+        original_title: details.original_title,
+        description: details.description,
+        release_year_start: details.release_year_start,
+        release_year_end: details.release_year_end || "",
+        status: details.status,
+        language: details.language,
+        country: details.country,
+        poster_url: details.poster_url,
+        banner_url: details.banner_url,
+        trailer_url: details.trailer_url,
+        imdb_id: details.imdb_id
+        // Note: Genres and Persons mapping would require more complex logic
+      }));
+      setShowTmdbModal(false);
+    } catch (error) {
+      console.error("TMDB Details Error:", error);
+    } finally {
+      setTmdbLoading(false);
+    }
+  };
   const [slugError, setSlugError] = useState("");
   useEffect(() => {
     if (data.title && !series?.id) {
@@ -2670,12 +2837,15 @@ function SeriesForm({
     const checkSlug = async () => {
       if (!data.slug) return;
       try {
-        const response = await axios.get(route("admin.series.check-slug"), {
-          params: {
-            slug: data.slug,
-            id: series?.id
+        const response = await axios$1.get(
+          route("admin.series.check-slug"),
+          {
+            params: {
+              slug: data.slug,
+              id: series?.id
+            }
           }
-        });
+        );
         if (response.data.exists) {
           setSlugError("This slug is already taken.");
         } else {
@@ -2726,11 +2896,39 @@ function SeriesForm({
       if (!tree[s][e]) tree[s][e] = [];
       tree[s][e].push({ ...link, originalIndex: index });
     });
+    data.episodes_data.forEach((meta) => {
+      const s = meta.season_number || 0;
+      const e = meta.episode_number || 0;
+      if (!tree[s]) tree[s] = {};
+      if (!tree[s][e]) tree[s][e] = tree[s][e] || [];
+    });
     return tree;
-  }, [data.episode_links]);
+  }, [data.episode_links, data.episodes_data]);
+  const updateEpisodeMetadata = (seasonNum, episodeNum, field, value) => {
+    const newMetadata = [...data.episodes_data];
+    const index = newMetadata.findIndex(
+      (m) => m.season_number === seasonNum && m.episode_number === episodeNum
+    );
+    if (index > -1) {
+      newMetadata[index][field] = value;
+    } else {
+      newMetadata.push({
+        season_number: seasonNum,
+        episode_number: episodeNum,
+        description: "",
+        air_date: "",
+        poster_url: "",
+        [field]: value
+      });
+    }
+    setData("episodes_data", newMetadata);
+  };
   const [expandedSeasons, setExpandedSeasons] = useState({});
   const [expandedEpisodes, setExpandedEpisodes] = useState({});
-  const toggleEpisode = (s, e) => setExpandedEpisodes((prev) => ({ ...prev, [`${s}-${e}`]: !prev[`${s}-${e}`] }));
+  const toggleEpisode = (s, e) => setExpandedEpisodes((prev) => ({
+    ...prev,
+    [`${s}-${e}`]: !prev[`${s}-${e}`]
+  }));
   const addLinkToEpisode = (seasonNum, episodeNum) => {
     setData("episode_links", [
       ...data.episode_links,
@@ -2749,7 +2947,10 @@ function SeriesForm({
       }
     ]);
     setExpandedSeasons((prev) => ({ ...prev, [seasonNum]: true }));
-    setExpandedEpisodes((prev) => ({ ...prev, [`${seasonNum}-${episodeNum}`]: true }));
+    setExpandedEpisodes((prev) => ({
+      ...prev,
+      [`${seasonNum}-${episodeNum}`]: true
+    }));
   };
   const removeLink = (originalIndex) => {
     const newLinks = [...data.episode_links];
@@ -2778,17 +2979,37 @@ function SeriesForm({
       post(route("admin.series.store"), options);
     }
   };
-  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 3));
+  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 4));
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
   const renderStep1 = () => /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
-    /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700", children: [
-      /* @__PURE__ */ jsxs("h3", { className: "text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2", children: [
-        /* @__PURE__ */ jsx("svg", { className: "w-5 h-5 text-indigo-500", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" }) }),
+    /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700", children: [
+      /* @__PURE__ */ jsxs("h3", { className: "text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2", children: [
+        /* @__PURE__ */ jsx(
+          "svg",
+          {
+            className: "w-5 h-5 text-blue-600 dark:text-blue-400",
+            fill: "none",
+            stroke: "currentColor",
+            viewBox: "0 0 24 24",
+            children: /* @__PURE__ */ jsx(
+              "path",
+              {
+                strokeLinecap: "round",
+                strokeLinejoin: "round",
+                strokeWidth: 2,
+                d: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              }
+            )
+          }
+        ),
         "Basic Information"
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
         /* @__PURE__ */ jsxs("div", { className: "md:col-span-2", children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "title", value: "Series Title" }),
+          /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-2", children: [
+            /* @__PURE__ */ jsx(InputLabel, { htmlFor: "title", value: "Series Title" }),
+            /* @__PURE__ */ jsx(SecondaryButton, { size: "sm", onClick: () => setShowTmdbModal(true), type: "button", children: "Fetch from TMDB" })
+          ] }),
           /* @__PURE__ */ jsx(
             TextInput,
             {
@@ -2804,7 +3025,13 @@ function SeriesForm({
           /* @__PURE__ */ jsx(InputError, { message: errors.title, className: "mt-2" })
         ] }),
         /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "original_title", value: "Original Title" }),
+          /* @__PURE__ */ jsx(
+            InputLabel,
+            {
+              htmlFor: "original_title",
+              value: "Original Title"
+            }
+          ),
           /* @__PURE__ */ jsx(
             TextInput,
             {
@@ -2816,7 +3043,13 @@ function SeriesForm({
               placeholder: "Original language title"
             }
           ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.original_title, className: "mt-2" })
+          /* @__PURE__ */ jsx(
+            InputError,
+            {
+              message: errors.original_title,
+              className: "mt-2"
+            }
+          )
         ] }),
         /* @__PURE__ */ jsxs("div", { children: [
           /* @__PURE__ */ jsx(InputLabel, { htmlFor: "slug", value: "Slug" }),
@@ -2831,7 +3064,13 @@ function SeriesForm({
               placeholder: "e.g. breaking-bad"
             }
           ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.slug || slugError, className: "mt-2" })
+          /* @__PURE__ */ jsx(
+            InputError,
+            {
+              message: errors.slug || slugError,
+              className: "mt-2"
+            }
+          )
         ] }),
         /* @__PURE__ */ jsxs("div", { children: [
           /* @__PURE__ */ jsx(InputLabel, { htmlFor: "imdb_id", value: "IMDb ID" }),
@@ -2854,143 +3093,211 @@ function SeriesForm({
             "textarea",
             {
               id: "description",
-              className: "mt-1 block w-full text-black border-gray-300 dark:border-gray-300 dark:bg-gray-300 dark:text-gray-500 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm",
+              className: "mt-1 block w-full text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm",
               rows: "4",
               value: data.description,
               onChange: (e) => setData("description", e.target.value),
               placeholder: "Enter a detailed description of the series..."
             }
           ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.description, className: "mt-2" })
+          /* @__PURE__ */ jsx(
+            InputError,
+            {
+              message: errors.description,
+              className: "mt-2"
+            }
+          )
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700", children: [
-      /* @__PURE__ */ jsx("h3", { className: "text-lg font-semibold text-gray-900 dark:text-white mb-4", children: "Details & Settings" }),
-      /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "status", value: "Status" }),
-          /* @__PURE__ */ jsxs(
-            "select",
-            {
-              id: "status",
-              className: "mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm",
-              value: data.status,
-              onChange: (e) => setData("status", e.target.value),
-              children: [
-                /* @__PURE__ */ jsx("option", { value: "ongoing", children: "Ongoing" }),
-                /* @__PURE__ */ jsx("option", { value: "ended", children: "Ended" }),
-                /* @__PURE__ */ jsx("option", { value: "canceled", children: "Canceled" })
-              ]
-            }
-          ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.status, className: "mt-2" })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-2 gap-4", children: [
-          /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx(InputLabel, { htmlFor: "release_year_start", value: "Start Year" }),
+    /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700", children: [
+      /* @__PURE__ */ jsx("h3", { className: "text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4", children: "Genres" }),
+      /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 gap-4", children: genres.map((genre) => /* @__PURE__ */ jsxs(
+        "label",
+        {
+          className: "flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700",
+          children: [
             /* @__PURE__ */ jsx(
-              TextInput,
+              Checkbox,
               {
-                id: "release_year_start",
-                type: "number",
-                className: "mt-1 block w-full",
-                value: data.release_year_start,
-                onChange: (e) => setData("release_year_start", e.target.value),
-                placeholder: "2008"
+                checked: data.genres.includes(genre.id),
+                onChange: () => handleGenreChange(genre.id)
               }
             ),
-            /* @__PURE__ */ jsx(InputError, { message: errors.release_year_start, className: "mt-2" })
-          ] }),
-          /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx(InputLabel, { htmlFor: "release_year_end", value: "End Year" }),
-            /* @__PURE__ */ jsx(
-              TextInput,
-              {
-                id: "release_year_end",
-                type: "number",
-                className: "mt-1 block w-full",
-                value: data.release_year_end,
-                onChange: (e) => setData("release_year_end", e.target.value),
-                placeholder: "2013"
-              }
-            ),
-            /* @__PURE__ */ jsx(InputError, { message: errors.release_year_end, className: "mt-2" })
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "language", value: "Language" }),
-          /* @__PURE__ */ jsx(
-            TextInput,
-            {
-              id: "language",
-              type: "text",
-              className: "mt-1 block w-full",
-              value: data.language,
-              onChange: (e) => setData("language", e.target.value),
-              placeholder: "en"
-            }
-          ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.language, className: "mt-2" })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "country", value: "Country" }),
-          /* @__PURE__ */ jsx(
-            TextInput,
-            {
-              id: "country",
-              type: "text",
-              className: "mt-1 block w-full",
-              value: data.country,
-              onChange: (e) => setData("country", e.target.value),
-              placeholder: "USA"
-            }
-          ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.country, className: "mt-2" })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "age_rating", value: "Age Rating" }),
-          /* @__PURE__ */ jsxs(
-            "select",
-            {
-              id: "age_rating",
-              className: "mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm",
-              value: data.age_rating,
-              onChange: (e) => setData("age_rating", e.target.value),
-              children: [
-                /* @__PURE__ */ jsx("option", { value: "", children: "Select Rating" }),
-                /* @__PURE__ */ jsx("option", { value: "G", children: "G - General Audiences" }),
-                /* @__PURE__ */ jsx("option", { value: "PG", children: "PG - Parental Guidance" }),
-                /* @__PURE__ */ jsx("option", { value: "PG-13", children: "PG-13" }),
-                /* @__PURE__ */ jsx("option", { value: "TV-14", children: "TV-14" }),
-                /* @__PURE__ */ jsx("option", { value: "TV-MA", children: "TV-MA - Mature" }),
-                /* @__PURE__ */ jsx("option", { value: "R", children: "R - Restricted" })
-              ]
-            }
-          ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.age_rating, className: "mt-2" })
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "md:col-span-2", children: /* @__PURE__ */ jsxs("label", { className: "flex items-center p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer", children: [
-          /* @__PURE__ */ jsx(
-            Checkbox,
-            {
-              name: "is_vip_only",
-              checked: data.is_vip_only,
-              onChange: (e) => setData("is_vip_only", e.target.checked)
-            }
-          ),
-          /* @__PURE__ */ jsxs("div", { className: "ml-3", children: [
-            /* @__PURE__ */ jsx("span", { className: "block text-sm font-medium text-gray-900 dark:text-gray-100", children: "VIP Exclusive" }),
-            /* @__PURE__ */ jsx("span", { className: "block text-xs text-gray-500 dark:text-gray-400", children: "Only accessible to VIP members" })
-          ] })
-        ] }) })
-      ] })
+            /* @__PURE__ */ jsx("span", { className: "text-gray-700 dark:text-gray-300", children: genre.name })
+          ]
+        },
+        genre.id
+      )) }),
+      /* @__PURE__ */ jsx(InputError, { message: errors.genres, className: "mt-2" })
     ] })
   ] });
-  const renderStep2 = () => /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
-    /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700", children: [
-      /* @__PURE__ */ jsxs("h3", { className: "text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2", children: [
-        /* @__PURE__ */ jsx("svg", { className: "w-5 h-5 text-indigo-500", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" }) }),
+  const renderStep2 = () => /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700", children: [
+    /* @__PURE__ */ jsx("h3", { className: "text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4", children: "Details & Settings" }),
+    /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "status", value: "Status" }),
+        /* @__PURE__ */ jsxs(
+          "select",
+          {
+            id: "status",
+            className: "mt-1 block w-full border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm",
+            value: data.status,
+            onChange: (e) => setData("status", e.target.value),
+            children: [
+              /* @__PURE__ */ jsx("option", { value: "ongoing", children: "Ongoing" }),
+              /* @__PURE__ */ jsx("option", { value: "ended", children: "Ended" }),
+              /* @__PURE__ */ jsx("option", { value: "canceled", children: "Canceled" })
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsx(InputError, { message: errors.status, className: "mt-2" })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-2 gap-4", children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx(
+            InputLabel,
+            {
+              htmlFor: "release_year_start",
+              value: "Start Year"
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            TextInput,
+            {
+              id: "release_year_start",
+              type: "number",
+              className: "mt-1 block w-full",
+              value: data.release_year_start,
+              onChange: (e) => setData("release_year_start", e.target.value),
+              placeholder: "2008"
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            InputError,
+            {
+              message: errors.release_year_start,
+              className: "mt-2"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx(
+            InputLabel,
+            {
+              htmlFor: "release_year_end",
+              value: "End Year"
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            TextInput,
+            {
+              id: "release_year_end",
+              type: "number",
+              className: "mt-1 block w-full",
+              value: data.release_year_end,
+              onChange: (e) => setData("release_year_end", e.target.value),
+              placeholder: "2013"
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            InputError,
+            {
+              message: errors.release_year_end,
+              className: "mt-2"
+            }
+          )
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "language", value: "Language" }),
+        /* @__PURE__ */ jsx(
+          TextInput,
+          {
+            id: "language",
+            type: "text",
+            className: "mt-1 block w-full",
+            value: data.language,
+            onChange: (e) => setData("language", e.target.value),
+            placeholder: "en"
+          }
+        ),
+        /* @__PURE__ */ jsx(InputError, { message: errors.language, className: "mt-2" })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "country", value: "Country" }),
+        /* @__PURE__ */ jsx(
+          TextInput,
+          {
+            id: "country",
+            type: "text",
+            className: "mt-1 block w-full",
+            value: data.country,
+            onChange: (e) => setData("country", e.target.value),
+            placeholder: "USA"
+          }
+        ),
+        /* @__PURE__ */ jsx(InputError, { message: errors.country, className: "mt-2" })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx(InputLabel, { htmlFor: "age_rating", value: "Age Rating" }),
+        /* @__PURE__ */ jsxs(
+          "select",
+          {
+            id: "age_rating",
+            className: "mt-1 block w-full border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm",
+            value: data.age_rating,
+            onChange: (e) => setData("age_rating", e.target.value),
+            children: [
+              /* @__PURE__ */ jsx("option", { value: "", children: "Select Rating" }),
+              /* @__PURE__ */ jsx("option", { value: "G", children: "G - General Audiences" }),
+              /* @__PURE__ */ jsx("option", { value: "PG", children: "PG - Parental Guidance" }),
+              /* @__PURE__ */ jsx("option", { value: "PG-13", children: "PG-13" }),
+              /* @__PURE__ */ jsx("option", { value: "TV-14", children: "TV-14" }),
+              /* @__PURE__ */ jsx("option", { value: "TV-MA", children: "TV-MA - Mature" }),
+              /* @__PURE__ */ jsx("option", { value: "R", children: "R - Restricted" })
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsx(InputError, { message: errors.age_rating, className: "mt-2" })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "md:col-span-2", children: /* @__PURE__ */ jsxs("label", { className: "flex items-center p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer", children: [
+        /* @__PURE__ */ jsx(
+          Checkbox,
+          {
+            name: "is_vip_only",
+            checked: data.is_vip_only,
+            onChange: (e) => setData("is_vip_only", e.target.checked)
+          }
+        ),
+        /* @__PURE__ */ jsxs("div", { className: "ml-3", children: [
+          /* @__PURE__ */ jsx("span", { className: "block text-sm font-medium text-gray-800 dark:text-gray-200", children: "VIP Exclusive" }),
+          /* @__PURE__ */ jsx("span", { className: "block text-xs text-gray-500 dark:text-gray-400", children: "Only accessible to VIP members" })
+        ] })
+      ] }) })
+    ] })
+  ] });
+  const renderStep3 = () => /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
+    /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700", children: [
+      /* @__PURE__ */ jsxs("h3", { className: "text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2", children: [
+        /* @__PURE__ */ jsx(
+          "svg",
+          {
+            className: "w-5 h-5 text-blue-600 dark:text-blue-400",
+            fill: "none",
+            stroke: "currentColor",
+            viewBox: "0 0 24 24",
+            children: /* @__PURE__ */ jsx(
+              "path",
+              {
+                strokeLinecap: "round",
+                strokeLinejoin: "round",
+                strokeWidth: 2,
+                d: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              }
+            )
+          }
+        ),
         "Media Assets"
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
@@ -3008,12 +3315,31 @@ function SeriesForm({
                 placeholder: "https://..."
               }
             ),
-            data.poster_url && /* @__PURE__ */ jsx("div", { className: "flex-shrink-0 h-10 w-8 bg-gray-100 rounded overflow-hidden border border-gray-200", children: /* @__PURE__ */ jsx("img", { src: data.poster_url, alt: "Preview", className: "w-full h-full object-cover" }) })
+            data.poster_url && /* @__PURE__ */ jsx("div", { className: "flex-shrink-0 h-10 w-8 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden border border-gray-200 dark:border-gray-600", children: /* @__PURE__ */ jsx(
+              "img",
+              {
+                src: data.poster_url,
+                alt: "Preview",
+                className: "w-full h-full object-cover"
+              }
+            ) })
           ] }),
-          /* @__PURE__ */ jsx(InputError, { message: errors.poster_url, className: "mt-2" })
+          /* @__PURE__ */ jsx(
+            InputError,
+            {
+              message: errors.poster_url,
+              className: "mt-2"
+            }
+          )
         ] }),
         /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "banner_url", value: "Banner/Backdrop URL" }),
+          /* @__PURE__ */ jsx(
+            InputLabel,
+            {
+              htmlFor: "banner_url",
+              value: "Banner/Backdrop URL"
+            }
+          ),
           /* @__PURE__ */ jsxs("div", { className: "flex gap-4", children: [
             /* @__PURE__ */ jsx(
               TextInput,
@@ -3026,12 +3352,31 @@ function SeriesForm({
                 placeholder: "https://..."
               }
             ),
-            data.banner_url && /* @__PURE__ */ jsx("div", { className: "flex-shrink-0 h-10 w-16 bg-gray-100 rounded overflow-hidden border border-gray-200", children: /* @__PURE__ */ jsx("img", { src: data.banner_url, alt: "Preview", className: "w-full h-full object-cover" }) })
+            data.banner_url && /* @__PURE__ */ jsx("div", { className: "flex-shrink-0 h-10 w-16 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden border border-gray-200 dark:border-gray-600", children: /* @__PURE__ */ jsx(
+              "img",
+              {
+                src: data.banner_url,
+                alt: "Preview",
+                className: "w-full h-full object-cover"
+              }
+            ) })
           ] }),
-          /* @__PURE__ */ jsx(InputError, { message: errors.banner_url, className: "mt-2" })
+          /* @__PURE__ */ jsx(
+            InputError,
+            {
+              message: errors.banner_url,
+              className: "mt-2"
+            }
+          )
         ] }),
         /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "trailer_url", value: "Trailer URL (YouTube/Embed)" }),
+          /* @__PURE__ */ jsx(
+            InputLabel,
+            {
+              htmlFor: "trailer_url",
+              value: "Trailer URL (YouTube/Embed)"
+            }
+          ),
           /* @__PURE__ */ jsx(
             TextInput,
             {
@@ -3043,81 +3388,132 @@ function SeriesForm({
               placeholder: "https://youtube.com/..."
             }
           ),
-          /* @__PURE__ */ jsx(InputError, { message: errors.trailer_url, className: "mt-2" })
+          /* @__PURE__ */ jsx(
+            InputError,
+            {
+              message: errors.trailer_url,
+              className: "mt-2"
+            }
+          )
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700", children: [
-      /* @__PURE__ */ jsx("h3", { className: "text-lg font-semibold text-gray-900 dark:text-white mb-4", children: "Genres" }),
-      /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 gap-4", children: genres.map((genre) => /* @__PURE__ */ jsxs("label", { className: "flex items-center space-x-2", children: [
-        /* @__PURE__ */ jsx(
-          Checkbox,
-          {
-            checked: data.genres.includes(genre.id),
-            onChange: () => handleGenreChange(genre.id)
-          }
-        ),
-        /* @__PURE__ */ jsx("span", { className: "text-gray-700 dark:text-gray-300", children: genre.name })
-      ] }, genre.id)) }),
-      /* @__PURE__ */ jsx(InputError, { message: errors.genres, className: "mt-2" })
-    ] }),
-    /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700", children: [
+    /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700", children: [
       /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-4", children: [
-        /* @__PURE__ */ jsx("h3", { className: "text-lg font-semibold text-gray-900 dark:text-white", children: "Cast & Crew" }),
-        /* @__PURE__ */ jsx(SecondaryButton, { onClick: addPerson, type: "button", size: "sm", children: "+ Add Person" })
+        /* @__PURE__ */ jsx("h3", { className: "text-lg font-semibold text-gray-800 dark:text-gray-100", children: "Cast & Crew" }),
+        /* @__PURE__ */ jsx(
+          SecondaryButton,
+          {
+            onClick: addPerson,
+            type: "button",
+            size: "sm",
+            children: "+ Add Person"
+          }
+        )
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "space-y-4", children: data.persons.map((person, index) => /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row gap-4 items-start border-b border-gray-100 dark:border-gray-700 pb-4 last:border-0", children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex-1 w-full", children: [
-          /* @__PURE__ */ jsx(InputLabel, { value: "Person" }),
-          /* @__PURE__ */ jsx(
-            PersonSelector,
-            {
-              value: person.person_id,
-              onChange: (id) => updatePerson(index, "person_id", id),
-              persons
-            }
-          )
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/4", children: [
-          /* @__PURE__ */ jsx(InputLabel, { value: "Role" }),
-          /* @__PURE__ */ jsxs(
-            "select",
-            {
-              className: "mt-1 block w-full text-gray-500 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm",
-              value: person.role_type,
-              onChange: (e) => updatePerson(index, "role_type", e.target.value),
-              children: [
-                /* @__PURE__ */ jsx("option", { value: "actor", children: "Actor" }),
-                /* @__PURE__ */ jsx("option", { value: "director", children: "Director" }),
-                /* @__PURE__ */ jsx("option", { value: "writer", children: "Writer" }),
-                /* @__PURE__ */ jsx("option", { value: "producer", children: "Producer" })
-              ]
-            }
-          )
-        ] }),
-        person.role_type === "actor" && /* @__PURE__ */ jsxs("div", { className: "flex-1 w-full", children: [
-          /* @__PURE__ */ jsx(InputLabel, { value: "Character Name" }),
-          /* @__PURE__ */ jsx(
-            TextInput,
-            {
-              className: "mt-1 block w-full",
-              value: person.character_name,
-              onChange: (e) => updatePerson(index, "character_name", e.target.value),
-              placeholder: "e.g. Walter White"
-            }
-          )
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "mt-6", children: /* @__PURE__ */ jsx("button", { type: "button", onClick: () => removePerson(index), className: "text-red-500 hover:text-red-700", children: /* @__PURE__ */ jsx("svg", { className: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" }) }) }) })
-      ] }, index)) }),
-      data.persons.length === 0 && /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 text-center py-4", children: "No cast or crew added yet." })
+      /* @__PURE__ */ jsx("div", { className: "space-y-4", children: data.persons.map((person, index) => /* @__PURE__ */ jsxs(
+        "div",
+        {
+          className: "flex flex-col md:flex-row gap-4 items-start border-b border-gray-100 dark:border-gray-700 pb-4 last:border-0",
+          children: [
+            /* @__PURE__ */ jsxs("div", { className: "flex-1 w-full", children: [
+              /* @__PURE__ */ jsx(InputLabel, { value: "Person" }),
+              /* @__PURE__ */ jsx(
+                PersonSelector,
+                {
+                  value: person.person_id,
+                  onChange: (id) => updatePerson(index, "person_id", id),
+                  persons
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/4", children: [
+              /* @__PURE__ */ jsx(InputLabel, { value: "Role" }),
+              /* @__PURE__ */ jsxs(
+                "select",
+                {
+                  className: "mt-1 block w-full text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm",
+                  value: person.role_type,
+                  onChange: (e) => updatePerson(
+                    index,
+                    "role_type",
+                    e.target.value
+                  ),
+                  children: [
+                    /* @__PURE__ */ jsx("option", { value: "actor", children: "Actor" }),
+                    /* @__PURE__ */ jsx("option", { value: "director", children: "Director" }),
+                    /* @__PURE__ */ jsx("option", { value: "writer", children: "Writer" }),
+                    /* @__PURE__ */ jsx("option", { value: "producer", children: "Producer" })
+                  ]
+                }
+              )
+            ] }),
+            person.role_type === "actor" && /* @__PURE__ */ jsxs("div", { className: "flex-1 w-full", children: [
+              /* @__PURE__ */ jsx(InputLabel, { value: "Character Name" }),
+              /* @__PURE__ */ jsx(
+                TextInput,
+                {
+                  className: "mt-1 block w-full",
+                  value: person.character_name,
+                  onChange: (e) => updatePerson(
+                    index,
+                    "character_name",
+                    e.target.value
+                  ),
+                  placeholder: "e.g. Walter White"
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsx("div", { className: "mt-6", children: /* @__PURE__ */ jsx(
+              "button",
+              {
+                type: "button",
+                onClick: () => removePerson(index),
+                className: "text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300",
+                children: /* @__PURE__ */ jsx(
+                  "svg",
+                  {
+                    className: "w-5 h-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24",
+                    children: /* @__PURE__ */ jsx(
+                      "path",
+                      {
+                        strokeLinecap: "round",
+                        strokeLinejoin: "round",
+                        strokeWidth: 2,
+                        d: "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      }
+                    )
+                  }
+                )
+              }
+            ) })
+          ]
+        },
+        index
+      )) }),
+      data.persons.length === 0 && /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400 text-center py-4", children: "No cast or crew added yet." })
     ] })
   ] });
-  const [activeSeasonTab, setActiveSeasonTab] = useState(1);
+  const getInitialActiveSeason = () => {
+    if (series?.seasons && series.seasons.length > 0) {
+      const lastSeason = Math.max(
+        ...series.seasons.map((s) => s.season_number)
+      );
+      return lastSeason;
+    }
+    return 1;
+  };
+  const [activeSeasonTab, setActiveSeasonTab] = useState(getInitialActiveSeason());
   useEffect(() => {
     const seasons = Object.keys(hierarchy).map(Number).sort((a, b) => a - b);
-    if (seasons.length > 0 && !seasons.includes(activeSeasonTab)) {
-      setActiveSeasonTab(seasons[0]);
-    } else if (seasons.length === 0) {
+    if (seasons.length > 0) {
+      if (!seasons.includes(activeSeasonTab)) {
+        setActiveSeasonTab(seasons[seasons.length - 1]);
+      }
+    } else {
       setActiveSeasonTab(1);
     }
   }, [hierarchy]);
@@ -3131,261 +3527,518 @@ function SeriesForm({
     const nextEpisode = episodes.length > 0 ? Math.max(...episodes) + 1 : 1;
     addLinkToEpisode(activeSeasonTab, nextEpisode);
   };
-  const renderStep3 = () => {
+  const renderStep4 = () => {
     const seasons = Object.keys(hierarchy).map(Number).sort((a, b) => a - b);
     const activeEpisodes = hierarchy[activeSeasonTab] ? Object.keys(hierarchy[activeSeasonTab]).map(Number).sort((a, b) => a - b) : [];
-    return /* @__PURE__ */ jsxs("div", { className: "space-y-6 pb-20", children: [
-      " ",
-      /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden", children: [
-        /* @__PURE__ */ jsxs("div", { className: "p-5 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4", children: [
-          /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-gray-900 dark:text-white", children: "Episode Manager" }),
-            /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400 mt-1", children: "Manage seasons, episodes, and streaming links." })
-          ] }),
-          /* @__PURE__ */ jsx(SecondaryButton, { onClick: handleAddSeason, className: "w-full sm:w-auto justify-center", children: "+ Add Season" })
+    return /* @__PURE__ */ jsx("div", { className: "space-y-6 pb-20", children: /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden", children: [
+      /* @__PURE__ */ jsxs("div", { className: "p-5 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4", children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-gray-800 dark:text-gray-100", children: "Episode Manager" }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400 mt-1", children: "Manage seasons, episodes, and streaming links." })
         ] }),
-        /* @__PURE__ */ jsx("div", { className: "p-4 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700", children: /* @__PURE__ */ jsxs("div", { className: "flex overflow-x-auto gap-3 pb-2 custom-scrollbar snap-x", children: [
-          seasons.map((season) => /* @__PURE__ */ jsxs(
-            "button",
+        /* @__PURE__ */ jsx(
+          SecondaryButton,
+          {
+            onClick: handleAddSeason,
+            className: "w-full sm:w-auto justify-center",
+            children: "+ Add Season"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "p-4 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700", children: /* @__PURE__ */ jsxs("div", { className: "flex overflow-x-auto gap-3 pb-2 custom-scrollbar snap-x", children: [
+        seasons.slice().reverse().map((season) => /* @__PURE__ */ jsxs(
+          "button",
+          {
+            type: "button",
+            onClick: () => setActiveSeasonTab(season),
+            className: `flex-shrink-0 snap-start px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${activeSeasonTab === season ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30 ring-2 ring-blue-600 ring-offset-2 dark:ring-offset-gray-800" : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-md"}`,
+            children: [
+              "Season ",
+              season
+            ]
+          },
+          season
+        )),
+        !seasons.includes(activeSeasonTab) && /* @__PURE__ */ jsxs(
+          "button",
+          {
+            type: "button",
+            className: "flex-shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 text-white shadow-lg shadow-blue-500/30 ring-2 ring-blue-600 ring-offset-2 dark:ring-offset-gray-800",
+            children: [
+              "Season ",
+              activeSeasonTab,
+              " (New)"
+            ]
+          }
+        )
+      ] }) }),
+      /* @__PURE__ */ jsxs("div", { className: "p-4 sm:p-6 bg-gray-50/50 dark:bg-gray-800 min-h-[400px]", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6", children: [
+          /* @__PURE__ */ jsxs("h4", { className: "text-lg font-semibold text-gray-700 dark:text-gray-200", children: [
+            "Season ",
+            activeSeasonTab,
+            /* @__PURE__ */ jsxs("span", { className: "text-gray-500 dark:text-gray-400 font-normal text-sm ml-2", children: [
+              "(",
+              activeEpisodes.length,
+              " Episodes)"
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxs(
+            PrimaryButton,
             {
+              onClick: handleAddEpisodeToActiveSeason,
               type: "button",
-              onClick: () => setActiveSeasonTab(season),
-              className: `flex-shrink-0 snap-start px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${activeSeasonTab === season ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 ring-2 ring-indigo-600 ring-offset-2 ring-offset-gray-50 dark:ring-offset-gray-900" : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-700"}`,
+              className: "w-full sm:w-auto justify-center",
               children: [
-                "Season ",
-                season
-              ]
-            },
-            season
-          )),
-          !seasons.includes(activeSeasonTab) && /* @__PURE__ */ jsxs(
-            "button",
-            {
-              type: "button",
-              className: "flex-shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 text-white shadow-lg shadow-indigo-500/30",
-              children: [
-                "Season ",
-                activeSeasonTab,
-                " (New)"
+                "+ Add Episode",
+                " ",
+                activeEpisodes.length > 0 ? Math.max(...activeEpisodes) + 1 : 1
               ]
             }
           )
-        ] }) }),
-        /* @__PURE__ */ jsxs("div", { className: "p-4 sm:p-6 bg-gray-50/50 dark:bg-gray-900/20 min-h-[400px]", children: [
-          /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6", children: [
-            /* @__PURE__ */ jsxs("h4", { className: "text-lg font-semibold text-gray-800 dark:text-gray-200", children: [
-              "Season ",
-              activeSeasonTab,
-              " ",
-              /* @__PURE__ */ jsxs("span", { className: "text-gray-400 font-normal text-sm ml-2", children: [
-                "(",
-                activeEpisodes.length,
-                " Episodes)"
-              ] })
-            ] }),
-            /* @__PURE__ */ jsxs(PrimaryButton, { onClick: handleAddEpisodeToActiveSeason, type: "button", className: "w-full sm:w-auto justify-center", children: [
-              "+ Add Episode ",
-              activeEpisodes.length > 0 ? Math.max(...activeEpisodes) + 1 : 1
-            ] })
+        ] }),
+        activeEpisodes.length === 0 ? /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800/50", children: [
+          /* @__PURE__ */ jsx("div", { className: "w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4", children: /* @__PURE__ */ jsx(
+            "svg",
+            {
+              className: "w-8 h-8 text-gray-400 dark:text-gray-500",
+              fill: "none",
+              stroke: "currentColor",
+              viewBox: "0 0 24 24",
+              children: /* @__PURE__ */ jsx(
+                "path",
+                {
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  strokeWidth: 1.5,
+                  d: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                }
+              )
+            }
+          ) }),
+          /* @__PURE__ */ jsx("h5", { className: "text-lg font-medium text-gray-800 dark:text-gray-200 mb-2", children: "No episodes yet" }),
+          /* @__PURE__ */ jsxs("p", { className: "text-gray-500 dark:text-gray-400 mb-6 max-w-xs mx-auto", children: [
+            "Add the first episode to Season",
+            " ",
+            activeSeasonTab,
+            "."
           ] }),
-          activeEpisodes.length === 0 ? /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50", children: [
-            /* @__PURE__ */ jsx("div", { className: "w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4", children: /* @__PURE__ */ jsx("svg", { className: "w-8 h-8 text-gray-400", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 1.5, d: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" }) }) }),
-            /* @__PURE__ */ jsx("h5", { className: "text-lg font-medium text-gray-900 dark:text-white mb-2", children: "No episodes yet" }),
-            /* @__PURE__ */ jsxs("p", { className: "text-gray-500 dark:text-gray-400 mb-6 max-w-xs mx-auto", children: [
-              "Get started by adding the first episode to Season ",
-              activeSeasonTab,
-              "."
-            ] }),
-            /* @__PURE__ */ jsx(PrimaryButton, { onClick: handleAddEpisodeToActiveSeason, type: "button", children: "Create Episode 1" })
-          ] }) : /* @__PURE__ */ jsx("div", { className: "space-y-4", children: activeEpisodes.map((episodeNum) => /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-200 hover:shadow-md", children: [
-            /* @__PURE__ */ jsxs(
-              "div",
-              {
-                className: "p-4 flex items-center justify-between cursor-pointer active:bg-gray-50 dark:active:bg-gray-700/50 touch-manipulation",
-                onClick: () => toggleEpisode(activeSeasonTab, episodeNum),
-                children: [
-                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
-                    /* @__PURE__ */ jsx("div", { className: "flex-shrink-0 w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-base", children: episodeNum }),
-                    /* @__PURE__ */ jsxs("div", { children: [
-                      /* @__PURE__ */ jsxs("h5", { className: "font-semibold text-gray-900 dark:text-white", children: [
-                        "Episode ",
-                        episodeNum
-                      ] }),
-                      /* @__PURE__ */ jsxs("p", { className: "text-xs text-gray-500 dark:text-gray-400", children: [
-                        hierarchy[activeSeasonTab][episodeNum].length,
-                        " Links"
+          /* @__PURE__ */ jsx(
+            PrimaryButton,
+            {
+              onClick: handleAddEpisodeToActiveSeason,
+              type: "button",
+              children: "Create Episode 1"
+            }
+          )
+        ] }) : /* @__PURE__ */ jsx("div", { className: "space-y-4", children: activeEpisodes.slice().reverse().map((episodeNum) => /* @__PURE__ */ jsxs(
+          "div",
+          {
+            className: "bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-200 hover:shadow-md",
+            children: [
+              /* @__PURE__ */ jsxs(
+                "div",
+                {
+                  className: "p-4 flex items-center justify-between cursor-pointer active:bg-gray-50 dark:active:bg-gray-700/50",
+                  onClick: () => toggleEpisode(
+                    activeSeasonTab,
+                    episodeNum
+                  ),
+                  children: [
+                    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
+                      /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold", children: episodeNum }),
+                      /* @__PURE__ */ jsxs("div", { children: [
+                        /* @__PURE__ */ jsxs("h5", { className: "font-semibold text-gray-800 dark:text-gray-200", children: [
+                          "Episode ",
+                          episodeNum
+                        ] }),
+                        /* @__PURE__ */ jsxs("p", { className: "text-xs text-gray-500 dark:text-gray-400", children: [
+                          hierarchy[activeSeasonTab][episodeNum].length,
+                          " ",
+                          "Links"
+                        ] })
                       ] })
+                    ] }),
+                    /* @__PURE__ */ jsx(
+                      "div",
+                      {
+                        className: `p-2 rounded-full bg-gray-50 dark:bg-gray-700/50 text-gray-400 transition-transform duration-200 ${expandedEpisodes[`${activeSeasonTab}-${episodeNum}`] ? "rotate-180 bg-blue-50 dark:bg-blue-900/30 text-blue-500 dark:text-blue-400" : ""}`,
+                        children: /* @__PURE__ */ jsx(
+                          "svg",
+                          {
+                            className: "w-5 h-5",
+                            fill: "none",
+                            stroke: "currentColor",
+                            viewBox: "0 0 24 24",
+                            children: /* @__PURE__ */ jsx(
+                              "path",
+                              {
+                                strokeLinecap: "round",
+                                strokeLinejoin: "round",
+                                strokeWidth: 2,
+                                d: "M19 9l-7 7-7-7"
+                              }
+                            )
+                          }
+                        )
+                      }
+                    )
+                  ]
+                }
+              ),
+              expandedEpisodes[`${activeSeasonTab}-${episodeNum}`] && /* @__PURE__ */ jsxs("div", { className: "border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/30 p-4 space-y-6", children: [
+                /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm space-y-4", children: [
+                  /* @__PURE__ */ jsx("h6", { className: "text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2", children: "Episode Details" }),
+                  /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-4", children: [
+                    /* @__PURE__ */ jsxs("div", { className: "md:col-span-2", children: [
+                      /* @__PURE__ */ jsx(InputLabel, { value: "Description" }),
+                      /* @__PURE__ */ jsx(
+                        "textarea",
+                        {
+                          className: "mt-1 block w-full text-sm border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-lg focus:border-blue-500 focus:ring-blue-500",
+                          rows: "2",
+                          value: data.episodes_data.find(
+                            (m) => m.season_number === activeSeasonTab && m.episode_number === episodeNum
+                          )?.description || "",
+                          onChange: (e) => updateEpisodeMetadata(
+                            activeSeasonTab,
+                            episodeNum,
+                            "description",
+                            e.target.value
+                          )
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ jsxs("div", { children: [
+                      /* @__PURE__ */ jsx(InputLabel, { value: "Air Date" }),
+                      /* @__PURE__ */ jsx(
+                        TextInput,
+                        {
+                          type: "date",
+                          className: "mt-1 block w-full text-sm",
+                          value: data.episodes_data.find(
+                            (m) => m.season_number === activeSeasonTab && m.episode_number === episodeNum
+                          )?.air_date || "",
+                          onChange: (e) => updateEpisodeMetadata(
+                            activeSeasonTab,
+                            episodeNum,
+                            "air_date",
+                            e.target.value
+                          )
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ jsxs("div", { children: [
+                      /* @__PURE__ */ jsx(InputLabel, { value: "Poster URL" }),
+                      /* @__PURE__ */ jsx("div", { className: "flex gap-2", children: /* @__PURE__ */ jsx(
+                        TextInput,
+                        {
+                          type: "url",
+                          className: "mt-1 block w-full text-sm",
+                          value: data.episodes_data.find(
+                            (m) => m.season_number === activeSeasonTab && m.episode_number === episodeNum
+                          )?.poster_url || "",
+                          onChange: (e) => updateEpisodeMetadata(
+                            activeSeasonTab,
+                            episodeNum,
+                            "poster_url",
+                            e.target.value
+                          ),
+                          placeholder: "https://..."
+                        }
+                      ) })
                     ] })
-                  ] }),
-                  /* @__PURE__ */ jsx("div", { className: `p-2 rounded-full bg-gray-50 dark:bg-gray-700/50 text-gray-400 transition-transform duration-200 ${expandedEpisodes[`${activeSeasonTab}-${episodeNum}`] ? "rotate-180 bg-indigo-50 text-indigo-500" : ""}`, children: /* @__PURE__ */ jsx("svg", { className: "w-5 h-5", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 9l-7 7-7-7" }) }) })
-                ]
-              }
-            ),
-            expandedEpisodes[`${activeSeasonTab}-${episodeNum}`] && /* @__PURE__ */ jsxs("div", { className: "border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/30 p-4 space-y-4", children: [
-              hierarchy[activeSeasonTab][episodeNum].map((link) => /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm relative group", children: [
-                /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-start mb-4", children: [
-                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
-                    /* @__PURE__ */ jsx("span", { className: `px-2.5 py-1 rounded-md text-xs font-medium ${link.link_category === "watch" ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400" : "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400"}`, children: link.link_category === "watch" ? "Stream" : "Download" }),
-                    link.server_name && /* @__PURE__ */ jsx("span", { className: "text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md", children: link.server_name })
-                  ] }),
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+                  /* @__PURE__ */ jsx("h6", { className: "text-sm font-semibold text-gray-700 dark:text-gray-300", children: "Streaming & Download Links" }),
+                  hierarchy[activeSeasonTab][episodeNum].map(
+                    (link) => /* @__PURE__ */ jsxs(
+                      "div",
+                      {
+                        className: "bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm relative",
+                        children: [
+                          /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-start mb-4", children: [
+                            /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+                              /* @__PURE__ */ jsx(
+                                "span",
+                                {
+                                  className: `px-2.5 py-1 rounded-md text-xs font-medium ${link.link_category === "watch" ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400" : "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400"}`,
+                                  children: link.link_category === "watch" ? "Stream" : "Download"
+                                }
+                              ),
+                              link.server_name && /* @__PURE__ */ jsx("span", { className: "text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md", children: link.server_name })
+                            ] }),
+                            /* @__PURE__ */ jsx(
+                              "button",
+                              {
+                                type: "button",
+                                onClick: () => removeLink(
+                                  link.originalIndex
+                                ),
+                                className: "p-2 text-gray-400 hover:text-red-500 dark:hover:text-red-400",
+                                children: /* @__PURE__ */ jsx(
+                                  "svg",
+                                  {
+                                    className: "w-5 h-5",
+                                    fill: "none",
+                                    stroke: "currentColor",
+                                    viewBox: "0 0 24 24",
+                                    children: /* @__PURE__ */ jsx(
+                                      "path",
+                                      {
+                                        strokeLinecap: "round",
+                                        strokeLinejoin: "round",
+                                        strokeWidth: 2,
+                                        d: "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                      }
+                                    )
+                                  }
+                                )
+                              }
+                            )
+                          ] }),
+                          /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4", children: [
+                            /* @__PURE__ */ jsxs("div", { children: [
+                              /* @__PURE__ */ jsx(InputLabel, { value: "Category" }),
+                              /* @__PURE__ */ jsxs(
+                                "select",
+                                {
+                                  className: "w-full text-sm rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 focus:border-blue-500 focus:ring-blue-500",
+                                  value: link.link_category,
+                                  onChange: (e) => updateLink(
+                                    link.originalIndex,
+                                    "link_category",
+                                    e.target.value
+                                  ),
+                                  children: [
+                                    /* @__PURE__ */ jsx("option", { value: "watch", children: "Stream" }),
+                                    /* @__PURE__ */ jsx("option", { value: "download", children: "Download" })
+                                  ]
+                                }
+                              )
+                            ] }),
+                            /* @__PURE__ */ jsxs("div", { children: [
+                              /* @__PURE__ */ jsx(InputLabel, { value: "Server Name" }),
+                              /* @__PURE__ */ jsx(
+                                TextInput,
+                                {
+                                  className: "w-full text-sm",
+                                  value: link.server_name,
+                                  onChange: (e) => updateLink(
+                                    link.originalIndex,
+                                    "server_name",
+                                    e.target.value
+                                  ),
+                                  placeholder: "VidCloud"
+                                }
+                              )
+                            ] })
+                          ] }),
+                          link.link_category === "watch" ? /* @__PURE__ */ jsxs("div", { className: "space-y-3", children: [
+                            /* @__PURE__ */ jsxs("div", { className: "flex gap-4 p-1 bg-gray-50 dark:bg-gray-900/50 rounded-lg w-fit", children: [
+                              /* @__PURE__ */ jsx(
+                                "button",
+                                {
+                                  type: "button",
+                                  onClick: () => updateLink(
+                                    link.originalIndex,
+                                    "type",
+                                    "url"
+                                  ),
+                                  className: `px-3 py-1.5 text-xs font-medium rounded-md ${link.type === "url" ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"}`,
+                                  children: "Direct URL"
+                                }
+                              ),
+                              /* @__PURE__ */ jsx(
+                                "button",
+                                {
+                                  type: "button",
+                                  onClick: () => updateLink(
+                                    link.originalIndex,
+                                    "type",
+                                    "embed"
+                                  ),
+                                  className: `px-3 py-1.5 text-xs font-medium rounded-md ${link.type === "embed" ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"}`,
+                                  children: "Embed Code"
+                                }
+                              )
+                            ] }),
+                            link.type === "url" ? /* @__PURE__ */ jsx(
+                              TextInput,
+                              {
+                                className: "w-full text-sm font-mono",
+                                value: link.url,
+                                onChange: (e) => updateLink(
+                                  link.originalIndex,
+                                  "url",
+                                  e.target.value
+                                )
+                              }
+                            ) : /* @__PURE__ */ jsx(
+                              "textarea",
+                              {
+                                className: "w-full text-sm font-mono rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 p-3 focus:border-blue-500 focus:ring-blue-500",
+                                rows: "3",
+                                value: link.embed_code,
+                                onChange: (e) => updateLink(
+                                  link.originalIndex,
+                                  "embed_code",
+                                  e.target.value
+                                )
+                              }
+                            )
+                          ] }) : /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+                            /* @__PURE__ */ jsxs("div", { children: [
+                              /* @__PURE__ */ jsx(InputLabel, { value: "Download URL" }),
+                              /* @__PURE__ */ jsx(
+                                TextInput,
+                                {
+                                  className: "w-full text-sm font-mono",
+                                  value: link.url,
+                                  onChange: (e) => updateLink(
+                                    link.originalIndex,
+                                    "url",
+                                    e.target.value
+                                  )
+                                }
+                              )
+                            ] }),
+                            /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-2 gap-4", children: [
+                              /* @__PURE__ */ jsxs("div", { children: [
+                                /* @__PURE__ */ jsx(InputLabel, { value: "Quality" }),
+                                /* @__PURE__ */ jsx(
+                                  TextInput,
+                                  {
+                                    className: "w-full text-sm",
+                                    value: link.quality,
+                                    onChange: (e) => updateLink(
+                                      link.originalIndex,
+                                      "quality",
+                                      e.target.value
+                                    )
+                                  }
+                                )
+                              ] }),
+                              /* @__PURE__ */ jsxs("div", { children: [
+                                /* @__PURE__ */ jsx(InputLabel, { value: "Format" }),
+                                /* @__PURE__ */ jsx(
+                                  TextInput,
+                                  {
+                                    className: "w-full text-sm",
+                                    value: link.file_format,
+                                    onChange: (e) => updateLink(
+                                      link.originalIndex,
+                                      "file_format",
+                                      e.target.value
+                                    )
+                                  }
+                                )
+                              ] })
+                            ] })
+                          ] })
+                        ]
+                      },
+                      link.originalIndex
+                    )
+                  ),
                   /* @__PURE__ */ jsx(
                     "button",
                     {
                       type: "button",
-                      onClick: () => removeLink(link.originalIndex),
-                      className: "p-2 -mr-2 -mt-2 text-gray-400 hover:text-red-500 transition-colors",
-                      children: /* @__PURE__ */ jsx("svg", { className: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" }) })
+                      onClick: () => addLinkToEpisode(
+                        activeSeasonTab,
+                        episodeNum
+                      ),
+                      className: "w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-sm font-medium text-gray-500 dark:text-gray-400 hover:border-blue-500 hover:text-blue-500 dark:hover:border-blue-400 dark:hover:text-blue-400",
+                      children: "+ Add Another Link"
                     }
                   )
-                ] }),
-                /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
-                  /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-4", children: [
-                    /* @__PURE__ */ jsxs("div", { children: [
-                      /* @__PURE__ */ jsx(InputLabel, { value: "Category", className: "text-xs mb-1.5" }),
-                      /* @__PURE__ */ jsxs(
-                        "select",
-                        {
-                          className: "w-full text-sm rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500 py-2.5",
-                          value: link.link_category,
-                          onChange: (e) => updateLink(link.originalIndex, "link_category", e.target.value),
-                          children: [
-                            /* @__PURE__ */ jsx("option", { value: "watch", children: "Stream" }),
-                            /* @__PURE__ */ jsx("option", { value: "download", children: "Download" })
-                          ]
-                        }
-                      )
-                    ] }),
-                    /* @__PURE__ */ jsxs("div", { children: [
-                      /* @__PURE__ */ jsx(InputLabel, { value: "Server Name", className: "text-xs mb-1.5" }),
-                      /* @__PURE__ */ jsx(
-                        TextInput,
-                        {
-                          className: "w-full text-sm py-2.5",
-                          value: link.server_name,
-                          onChange: (e) => updateLink(link.originalIndex, "server_name", e.target.value),
-                          placeholder: "e.g. VidCloud"
-                        }
-                      )
-                    ] })
-                  ] }),
-                  link.link_category === "watch" ? /* @__PURE__ */ jsxs("div", { className: "space-y-3", children: [
-                    /* @__PURE__ */ jsxs("div", { className: "flex gap-4 p-1 bg-gray-50 dark:bg-gray-900/50 rounded-lg w-fit", children: [
-                      /* @__PURE__ */ jsx(
-                        "button",
-                        {
-                          type: "button",
-                          onClick: () => updateLink(link.originalIndex, "type", "url"),
-                          className: `px-3 py-1.5 text-xs font-medium rounded-md transition-all ${link.type === "url" ? "bg-white dark:bg-gray-700 text-indigo-600 dark:text-indigo-400 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700"}`,
-                          children: "Direct URL"
-                        }
-                      ),
-                      /* @__PURE__ */ jsx(
-                        "button",
-                        {
-                          type: "button",
-                          onClick: () => updateLink(link.originalIndex, "type", "embed"),
-                          className: `px-3 py-1.5 text-xs font-medium rounded-md transition-all ${link.type === "embed" ? "bg-white dark:bg-gray-700 text-indigo-600 dark:text-indigo-400 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700"}`,
-                          children: "Embed Code"
-                        }
-                      )
-                    ] }),
-                    link.type === "url" ? /* @__PURE__ */ jsx(
-                      TextInput,
-                      {
-                        className: "w-full text-sm font-mono py-2.5",
-                        value: link.url,
-                        onChange: (e) => updateLink(link.originalIndex, "url", e.target.value),
-                        placeholder: "https://example.com/video.mp4"
-                      }
-                    ) : /* @__PURE__ */ jsx(
-                      "textarea",
-                      {
-                        className: "w-full text-sm font-mono rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500 p-3",
-                        rows: "3",
-                        value: link.embed_code,
-                        onChange: (e) => updateLink(link.originalIndex, "embed_code", e.target.value),
-                        placeholder: "<iframe src='...'></iframe>"
-                      }
-                    )
-                  ] }) : /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
-                    /* @__PURE__ */ jsxs("div", { children: [
-                      /* @__PURE__ */ jsx(InputLabel, { value: "Download URL", className: "text-xs mb-1.5" }),
-                      /* @__PURE__ */ jsx(
-                        TextInput,
-                        {
-                          className: "w-full text-sm font-mono py-2.5",
-                          value: link.url,
-                          onChange: (e) => updateLink(link.originalIndex, "url", e.target.value),
-                          placeholder: "https://..."
-                        }
-                      )
-                    ] }),
-                    /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-2 gap-4", children: [
-                      /* @__PURE__ */ jsxs("div", { children: [
-                        /* @__PURE__ */ jsx(InputLabel, { value: "Quality", className: "text-xs mb-1.5" }),
-                        /* @__PURE__ */ jsx(
-                          TextInput,
-                          {
-                            className: "w-full text-sm py-2.5",
-                            value: link.quality,
-                            onChange: (e) => updateLink(link.originalIndex, "quality", e.target.value),
-                            placeholder: "1080p"
-                          }
-                        )
-                      ] }),
-                      /* @__PURE__ */ jsxs("div", { children: [
-                        /* @__PURE__ */ jsx(InputLabel, { value: "Format", className: "text-xs mb-1.5" }),
-                        /* @__PURE__ */ jsx(
-                          TextInput,
-                          {
-                            className: "w-full text-sm py-2.5",
-                            value: link.file_format,
-                            onChange: (e) => updateLink(link.originalIndex, "file_format", e.target.value),
-                            placeholder: "MKV"
-                          }
-                        )
-                      ] })
-                    ] })
-                  ] })
                 ] })
-              ] }, link.originalIndex)),
-              /* @__PURE__ */ jsxs(
-                "button",
-                {
-                  type: "button",
-                  onClick: () => addLinkToEpisode(activeSeasonTab, episodeNum),
-                  className: "w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-sm font-medium text-gray-500 dark:text-gray-400 hover:border-indigo-500 hover:text-indigo-500 dark:hover:border-indigo-400 dark:hover:text-indigo-400 transition-all bg-white dark:bg-gray-800/50 flex items-center justify-center gap-2",
-                  children: [
-                    /* @__PURE__ */ jsx("svg", { className: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M12 4v16m8-8H4" }) }),
-                    "Add Another Link"
-                  ]
-                }
-              )
-            ] })
-          ] }, episodeNum)) })
-        ] })
+              ] })
+            ]
+          },
+          episodeNum
+        )) })
       ] })
-    ] });
+    ] }) });
   };
   return /* @__PURE__ */ jsxs("div", { className: "flex flex-col h-full", children: [
     /* @__PURE__ */ jsx("div", { className: "flex-1 overflow-y-auto custom-scrollbar", children: /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, className: "p-6", children: [
       currentStep === 1 && renderStep1(),
       currentStep === 2 && renderStep2(),
-      currentStep === 3 && renderStep3()
+      currentStep === 3 && renderStep3(),
+      currentStep === 4 && renderStep4()
     ] }) }),
-    /* @__PURE__ */ jsxs("div", { className: "px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex justify-between items-center sticky bottom-0 z-10", children: [
-      /* @__PURE__ */ jsx("div", { className: "flex gap-2", children: [1, 2, 3].map((step) => /* @__PURE__ */ jsx(
+    /* @__PURE__ */ jsxs("div", { className: "px-6 py-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800 flex justify-between items-center sticky bottom-0 z-10", children: [
+      /* @__PURE__ */ jsx("div", { className: "flex gap-2", children: [1, 2, 3, 4].map((step) => /* @__PURE__ */ jsx(
         "div",
         {
-          className: `w-2.5 h-2.5 rounded-full transition-colors ${step === currentStep ? "bg-indigo-600" : "bg-gray-300 dark:bg-gray-600"}`
+          className: `w-2.5 h-2.5 rounded-full transition-colors ${step === currentStep ? "bg-blue-600 dark:bg-blue-500" : "bg-gray-300 dark:bg-gray-800"}`
         },
         step
       )) }),
       /* @__PURE__ */ jsxs("div", { className: "flex gap-3", children: [
-        currentStep > 1 && /* @__PURE__ */ jsx(SecondaryButton, { onClick: prevStep, disabled: processing, children: "Back" }),
-        currentStep < 3 ? /* @__PURE__ */ jsx(PrimaryButton, { onClick: nextStep, children: "Next" }) : /* @__PURE__ */ jsx(PrimaryButton, { onClick: handleSubmit, disabled: processing, children: series ? "Update Series" : "Create Series" })
+        /* @__PURE__ */ jsx(
+          SecondaryButton,
+          {
+            onClick: currentStep === 1 ? onClose : prevStep,
+            type: "button",
+            disabled: processing,
+            children: currentStep === 1 ? "Cancel" : "Previous"
+          }
+        ),
+        currentStep < 4 ? /* @__PURE__ */ jsx(PrimaryButton, { onClick: nextStep, children: "Next" }) : /* @__PURE__ */ jsx(
+          PrimaryButton,
+          {
+            onClick: handleSubmit,
+            disabled: processing,
+            children: series ? "Update Series" : "Create Series"
+          }
+        )
       ] })
-    ] })
+    ] }),
+    /* @__PURE__ */ jsx(Modal, { show: showTmdbModal, onClose: () => setShowTmdbModal(false), maxWidth: "2xl", children: /* @__PURE__ */ jsxs("div", { className: "p-6", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-gray-100 mb-4", children: "Search TMDB" }),
+      /* @__PURE__ */ jsxs("form", { onSubmit: searchTmdb, className: "flex gap-2 mb-4", children: [
+        /* @__PURE__ */ jsx(
+          TextInput,
+          {
+            type: "text",
+            className: "w-full",
+            placeholder: "Search for a series...",
+            value: tmdbQuery,
+            onChange: (e) => setTmdbQuery(e.target.value)
+          }
+        ),
+        /* @__PURE__ */ jsx(PrimaryButton, { type: "submit", disabled: tmdbLoading, children: tmdbLoading ? "Searching..." : "Search" })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "space-y-2 max-h-96 overflow-y-auto", children: [
+        tmdbResults.map((result) => /* @__PURE__ */ jsxs(
+          "div",
+          {
+            className: "flex items-center gap-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer border border-gray-200 dark:border-gray-600",
+            onClick: () => fetchTmdbDetails(result.id),
+            children: [
+              result.poster_path ? /* @__PURE__ */ jsx(
+                "img",
+                {
+                  src: `https://image.tmdb.org/t/p/w92${result.poster_path}`,
+                  alt: result.name,
+                  className: "w-12 h-18 object-cover rounded"
+                }
+              ) : /* @__PURE__ */ jsx("div", { className: "w-12 h-18 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center", children: /* @__PURE__ */ jsx("span", { className: "text-xs", children: "No Img" }) }),
+              /* @__PURE__ */ jsxs("div", { children: [
+                /* @__PURE__ */ jsx("h3", { className: "font-semibold text-gray-900 dark:text-white", children: result.name }),
+                /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: result.first_air_date })
+              ] })
+            ]
+          },
+          result.id
+        )),
+        tmdbResults.length === 0 && !tmdbLoading && /* @__PURE__ */ jsx("p", { className: "text-center text-gray-500", children: "No results found." })
+      ] })
+    ] }) })
   ] });
 }
 const __vite_glob_0_10 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -3535,7 +4188,7 @@ function AdminSeries({ series, genres, persons, auth }) {
         index
       )) }) })
     ] }) }) }) }),
-    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "4xl", children: /* @__PURE__ */ jsxs("div", { className: "p-4 sm:p-6", children: [
+    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "4xl", children: /* @__PURE__ */ jsxs("div", { className: "p-4 sm:p-6 dark:bg-gray-800", children: [
       /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-gray-100 mb-4", children: editingSeries ? `Edit Series: ${editingSeries.title}` : "Create New Series" }),
       /* @__PURE__ */ jsx(
         SeriesForm,
@@ -4017,10 +4670,10 @@ function TgAuth({ user }) {
             `Response: ${JSON.stringify(response.data)}`,
             "info"
           );
-          setStatus("Login successful! Redirecting to home...");
+          setStatus("Redirecting to home...");
           setTimeout(() => {
             router.visit(route("home"));
-          }, 1500);
+          }, 1e3);
         }).catch((error) => {
           addLog("Login failed!", "error");
           setStatus("Authentication failed");
@@ -4052,14 +4705,14 @@ function TgAuth({ user }) {
           setTimeout(() => {
             addLog("Redirecting to home page...", "info");
             router.visit(route("home"));
-          }, 3e3);
+          }, 1e3);
         } else if (loginAttempted.current) {
           addLog("Login already attempted", "info");
           setStatus("Authenticate success");
           setTimeout(() => {
             addLog("Redirecting to home page...", "info");
             router.visit(route("home"));
-          }, 3e3);
+          }, 1e3);
         }
       }
     } else {
@@ -4068,7 +4721,7 @@ function TgAuth({ user }) {
       setTimeout(() => {
         addLog("Redirecting to home page...", "info");
         router.visit(route("home"));
-      }, 3e3);
+      }, 1e3);
     }
   }, [user]);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
@@ -4974,8 +5627,8 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
                       " ",
                       item.type === "series" ? "Series" : "Film"
                     ] }),
-                    /* @__PURE__ */ jsx("h1", { className: "text-5xl line-clamp-1 md:text-7xl lg:text-8xl font-serif text-white leading-[0.9] mb-6", children: item.title }),
-                    /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl", children: item.description }),
+                    /* @__PURE__ */ jsx("h1", { className: "text-4xl line-clamp-1  md:text-7xl lg:text-8xl font-serif text-white leading-[0.9] mb-6", children: item.title }),
+                    /* @__PURE__ */ jsx("p", { className: "text-sm md:text-xl text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl", children: item.description }),
                     /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4", children: /* @__PURE__ */ jsx(
                       Link,
                       {
@@ -4986,7 +5639,7 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
                           "movies.show",
                           item.slug
                         ),
-                        className: "px-8 text- py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
+                        className: "px-2 md:px-8 text-sm md:text-lg py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors",
                         children: "Watch Now"
                       }
                     ) })
@@ -5148,64 +5801,44 @@ const DownloadIcon$1 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx(
 const LinkItem$1 = ({ link, type, isVip }) => {
   const isLocked = link.is_vip_only && !isVip;
   const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(link.url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2e3);
-  };
   return /* @__PURE__ */ jsxs(
     "div",
     {
       className: `group flex items-center justify-between py-4 border-b border-white/10 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""}`,
       children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
-          /* @__PURE__ */ jsx(
-            "div",
-            {
-              className: `w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download" ? "border-blue-500 text-blue-500" : "border-red-500 text-red-500"}`,
-              children: link.quality?.replace("p", "") || "HD"
-            }
-          ),
-          /* @__PURE__ */ jsxs("div", { className: "flex flex-col", children: [
-            /* @__PURE__ */ jsx("span", { className: "text-white font-serif text-lg leading-none", children: link.server_name }),
-            /* @__PURE__ */ jsx("span", { className: "text-gray-500 text-xs font-mono mt-1", children: link.url })
-          ] })
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-3", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-1 uppercase tracking-widest", children: "VIP" }) : /* @__PURE__ */ jsxs(Fragment, { children: [
-          /* @__PURE__ */ jsx(
-            "button",
-            {
-              onClick: handleCopy,
-              className: "text-gray-500 hover:text-white text-xs uppercase tracking-widest transition-colors",
-              children: copied ? "Copied" : "Copy"
-            }
-          ),
-          /* @__PURE__ */ jsx(
-            "a",
-            {
-              href: link.url,
-              target: "_blank",
-              rel: "noopener noreferrer",
-              className: `w-10 h-10 rounded-full flex items-center justify-center transition-all ${type === "download" ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-red-600 hover:bg-red-500 text-white"}`,
-              children: /* @__PURE__ */ jsx(
-                "svg",
-                {
-                  className: "w-4 h-4",
-                  fill: "currentColor",
-                  viewBox: "0 0 20 20",
-                  children: /* @__PURE__ */ jsx(
-                    "path",
-                    {
-                      fillRule: "evenodd",
-                      d: "M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z",
-                      clipRule: "evenodd"
-                    }
-                  )
-                }
-              )
-            }
-          )
-        ] }) })
+        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4", children: /* @__PURE__ */ jsx("div", { className: "flex flex-col", children: /* @__PURE__ */ jsx("span", { className: "text-white font-serif text-lg leading-none", children: link.server_name }) }) }),
+        /* @__PURE__ */ jsx(
+          "div",
+          {
+            className: `w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download" ? "border-blue-500 text-blue-500" : "border-red-500 text-red-500"}`,
+            children: link.quality?.replace("p", "") || "HD"
+          }
+        ),
+        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-3", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-1 uppercase tracking-widest", children: "VIP" }) : /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsx(
+          "a",
+          {
+            href: link.url,
+            target: "_blank",
+            rel: "noopener noreferrer",
+            className: `w-10 h-10 rounded-full flex items-center justify-center transition-all ${type === "download" ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-red-600 hover:bg-red-500 text-white"}`,
+            children: /* @__PURE__ */ jsx(
+              "svg",
+              {
+                className: "w-4 h-4",
+                fill: "currentColor",
+                viewBox: "0 0 20 20",
+                children: /* @__PURE__ */ jsx(
+                  "path",
+                  {
+                    fillRule: "evenodd",
+                    d: "M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z",
+                    clipRule: "evenodd"
+                  }
+                )
+              }
+            )
+          }
+        ) }) })
       ]
     }
   );
@@ -5376,40 +6009,52 @@ function MovieDetails({
               movie.is_vip_only && /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-0.5 rounded", children: "VIP ACCESS" })
             ] }),
             auth.user ? /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
-              /* @__PURE__ */ jsxs("div", { children: [
-                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mb-4 text-white", children: [
-                  /* @__PURE__ */ jsx(PlayIcon$1, { className: "w-5 h-5" }),
-                  /* @__PURE__ */ jsx("span", { className: "font-serif text-xl italic", children: "Streaming Sources" })
-                ] }),
-                /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-white/10", children: watchLinksByQuality && Object.keys(watchLinksByQuality).length > 0 ? Object.values(
-                  watchLinksByQuality
-                ).flat().map((link) => /* @__PURE__ */ jsx(
-                  LinkItem$1,
-                  {
-                    link,
-                    type: "watch",
-                    isVip
-                  },
-                  link.id
-                )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: "No streaming links available." }) })
-              ] }),
-              /* @__PURE__ */ jsxs("div", { children: [
-                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mb-4 text-white", children: [
-                  /* @__PURE__ */ jsx(DownloadIcon$1, { className: "w-5 h-5" }),
-                  /* @__PURE__ */ jsx("span", { className: "font-serif text-xl italic", children: "Download Files" })
-                ] }),
-                /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-white/10", children: downloadLinksByQuality && Object.keys(downloadLinksByQuality).length > 0 ? Object.values(
-                  downloadLinksByQuality
-                ).flat().map((link) => /* @__PURE__ */ jsx(
-                  LinkItem$1,
-                  {
-                    link,
-                    type: "download",
-                    isVip
-                  },
-                  link.id
-                )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: "No download links available." }) })
-              ] })
+              /* @__PURE__ */ jsxs(
+                "div",
+                {
+                  className: `${watchLinksByQuality && Object.keys(watchLinksByQuality).length > 0 ? "" : "hidden"}`,
+                  children: [
+                    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mb-4 text-white", children: [
+                      /* @__PURE__ */ jsx(PlayIcon$1, { className: "w-5 h-5" }),
+                      /* @__PURE__ */ jsx("span", { className: "font-serif text-xl italic", children: "Streaming Sources" })
+                    ] }),
+                    /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-white/10", children: watchLinksByQuality && Object.keys(watchLinksByQuality).length > 0 ? Object.values(
+                      watchLinksByQuality
+                    ).flat().map((link) => /* @__PURE__ */ jsx(
+                      LinkItem$1,
+                      {
+                        link,
+                        type: "watch",
+                        isVip
+                      },
+                      link.id
+                    )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: "No streaming links available." }) })
+                  ]
+                }
+              ),
+              /* @__PURE__ */ jsxs(
+                "div",
+                {
+                  className: `${downloadLinksByQuality && Object.keys(downloadLinksByQuality).length > 0 ? "" : "hidden"}`,
+                  children: [
+                    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mb-4 text-white", children: [
+                      /* @__PURE__ */ jsx(DownloadIcon$1, { className: "w-5 h-5" }),
+                      /* @__PURE__ */ jsx("span", { className: "font-serif text-xl italic", children: "Download Files" })
+                    ] }),
+                    /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-white/10", children: downloadLinksByQuality && Object.keys(downloadLinksByQuality).length > 0 ? Object.values(
+                      downloadLinksByQuality
+                    ).flat().map((link) => /* @__PURE__ */ jsx(
+                      LinkItem$1,
+                      {
+                        link,
+                        type: "download",
+                        isVip
+                      },
+                      link.id
+                    )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: "No download links available." }) })
+                  ]
+                }
+              )
             ] }) : /* @__PURE__ */ jsxs("div", { className: "p-8 border border-white/10 rounded-lg bg-white/5 text-center", children: [
               /* @__PURE__ */ jsx("p", { className: "text-gray-400 font-serif text-lg mb-4", children: "Please log in to access streaming and download links." }),
               /* @__PURE__ */ jsx(
@@ -5447,8 +6092,8 @@ function MovieDetails({
             )) })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "pt-12 border-t border-white/10", children: [
-            /* @__PURE__ */ jsx("div", { className: "flex items-center justify-between mb-12", children: /* @__PURE__ */ jsxs("div", { children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-2", children: "Your Rating" }),
+            /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center mb-12", children: /* @__PURE__ */ jsxs("div", { children: [
+              /* @__PURE__ */ jsx("h3", { className: "text-xs text-center font-bold text-gray-500 uppercase tracking-widest mb-2", children: "Your Rating" }),
               auth.user ? /* @__PURE__ */ jsx(
                 RatingWidget,
                 {
@@ -6958,61 +7603,44 @@ const DownloadIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx(
 const LinkItem = ({ link, type, isVip }) => {
   const isLocked = link.is_vip_only && !isVip;
   const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(link.url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2e3);
-  };
   return /* @__PURE__ */ jsxs(
     "div",
     {
-      className: `group flex items-center justify-between py-3 border-b border-white/5 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""}`,
+      className: `group flex items-center justify-around py-3 border-b border-white/5 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""}`,
       children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 min-w-0", children: [
-          /* @__PURE__ */ jsx(
-            "div",
-            {
-              className: `w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download" ? "border-blue-500 text-blue-500" : "border-red-500 text-red-500"}`,
-              children: link.quality?.replace("p", "") || "HD"
-            }
-          ),
-          /* @__PURE__ */ jsx("div", { className: "flex flex-col min-w-0", children: /* @__PURE__ */ jsx("span", { className: "text-gray-300 font-serif text-sm leading-none truncate", children: link.server_name }) })
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-[10px] font-bold text-yellow-500 border border-yellow-500 px-1 uppercase", children: "VIP" }) : /* @__PURE__ */ jsxs(Fragment, { children: [
-          /* @__PURE__ */ jsx(
-            "button",
-            {
-              onClick: handleCopy,
-              className: "text-gray-600 hover:text-white text-[10px] uppercase tracking-widest transition-colors",
-              children: copied ? "Copied" : "Copy"
-            }
-          ),
-          /* @__PURE__ */ jsx(
-            "a",
-            {
-              href: link.url,
-              target: "_blank",
-              rel: "noopener noreferrer",
-              className: `w-8 h-8 rounded-full flex items-center justify-center transition-all ${type === "download" ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-red-600 hover:bg-red-500 text-white"}`,
-              children: /* @__PURE__ */ jsx(
-                "svg",
-                {
-                  className: "w-3 h-3",
-                  fill: "currentColor",
-                  viewBox: "0 0 20 20",
-                  children: /* @__PURE__ */ jsx(
-                    "path",
-                    {
-                      fillRule: "evenodd",
-                      d: "M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z",
-                      clipRule: "evenodd"
-                    }
-                  )
-                }
-              )
-            }
-          )
-        ] }) })
+        /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center gap-3 min-w-0", children: /* @__PURE__ */ jsx("div", { className: "flex flex-col min-w-0", children: /* @__PURE__ */ jsx("span", { className: "text-gray-300 font-serif text-sm leading-none truncate", children: link.server_name }) }) }),
+        /* @__PURE__ */ jsx(
+          "div",
+          {
+            className: `w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download" ? "border-blue-500 text-blue-500" : "border-red-500 text-red-500"}`,
+            children: link.quality?.replace("p", "") || "HD"
+          }
+        ),
+        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-[10px] font-bold text-yellow-500 border border-yellow-500 px-1 uppercase", children: "VIP" }) : /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsx(
+          "a",
+          {
+            href: link.url,
+            target: "_blank",
+            rel: "noopener noreferrer",
+            className: `w-8 h-8 rounded-full flex items-center justify-center transition-all ${type === "download" ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-red-600 hover:bg-red-500 text-white"}`,
+            children: /* @__PURE__ */ jsx(
+              "svg",
+              {
+                className: "w-3 h-3",
+                fill: "currentColor",
+                viewBox: "0 0 20 20",
+                children: /* @__PURE__ */ jsx(
+                  "path",
+                  {
+                    fillRule: "evenodd",
+                    d: "M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z",
+                    clipRule: "evenodd"
+                  }
+                )
+              }
+            )
+          }
+        ) }) })
       ]
     }
   );
@@ -7095,22 +7723,28 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
             link.id
           )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 text-xs italic", children: "No sources." }) })
         ] }),
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsxs("h5", { className: "text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2", children: [
-            /* @__PURE__ */ jsx(DownloadIcon, { className: "w-3 h-3" }),
-            " ",
-            "Download"
-          ] }),
-          /* @__PURE__ */ jsx("div", { className: "space-y-1", children: episode.download_links && episode.download_links.length > 0 ? episode.download_links.map((link) => /* @__PURE__ */ jsx(
-            LinkItem,
-            {
-              link,
-              type: "download",
-              isVip
-            },
-            link.id
-          )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 text-xs italic", children: "No sources." }) })
-        ] })
+        /* @__PURE__ */ jsxs(
+          "div",
+          {
+            className: `${episode.download_links && episode.download_links.length > 0 ? "" : "hidden"}`,
+            children: [
+              /* @__PURE__ */ jsxs("h5", { className: "text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2", children: [
+                /* @__PURE__ */ jsx(DownloadIcon, { className: "w-3 h-3" }),
+                " ",
+                "Download"
+              ] }),
+              /* @__PURE__ */ jsx("div", { className: "space-y-1", children: episode.download_links && episode.download_links.length > 0 ? episode.download_links.map((link) => /* @__PURE__ */ jsx(
+                LinkItem,
+                {
+                  link,
+                  type: "download",
+                  isVip
+                },
+                link.id
+              )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 text-xs italic", children: "No sources." }) })
+            ]
+          }
+        )
       ] }) : /* @__PURE__ */ jsxs("div", { className: "p-4 border border-white/10 rounded bg-white/5 text-center", children: [
         /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-sm mb-2", children: "Please log in to access episode links." }),
         /* @__PURE__ */ jsx(
@@ -7369,8 +8003,8 @@ function SeriesDetails({
             )) })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "pt-12 border-t border-white/10", children: [
-            /* @__PURE__ */ jsx("div", { className: "flex items-center justify-between mb-12", children: /* @__PURE__ */ jsxs("div", { children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-2", children: "Your Rating" }),
+            /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center mb-12", children: /* @__PURE__ */ jsxs("div", { children: [
+              /* @__PURE__ */ jsx("h3", { className: "text-xs text-center font-bold text-gray-500 uppercase tracking-widest mb-2", children: "Your Rating" }),
               auth.user ? /* @__PURE__ */ jsx(
                 RatingWidget,
                 {

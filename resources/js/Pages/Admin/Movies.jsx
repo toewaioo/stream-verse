@@ -8,7 +8,6 @@ import TextInput from "@/Components/TextInput";
 import MovieForm from "./MovieForm";
 import { debounce } from "lodash";
 
-
 export default function AdminMovies({ movies, genres, persons, auth }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingMovie, setEditingMovie] = useState(null);
@@ -30,12 +29,10 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
         setEditingMovie(null);
     };
 
-
-
     // Debounced search effect
     const debounceSearch = debounce((value) => {
         router.get(
-            route("admin.series"),
+            route("admin.movies"),
             { search: searchQuery },
             { preserveState: true, replace: true }
         );
@@ -46,7 +43,6 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
             return;
         }
         debounceSearch(searchQuery);
-
     }, [searchQuery]);
 
     const handleDelete = (movie) => {
@@ -67,7 +63,7 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                             <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                                 <h1 className="text-2xl font-bold">Movies</h1>
                                 <div className="flex items-center gap-4 w-full md:w-auto">
-                                    <div className="flex-1 md:w-64">
+                                    <div className="flex items-center gap-4 w-full md:w-auto">
                                         <TextInput
                                             type="text"
                                             placeholder="Search movies..."
@@ -158,32 +154,34 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                                                     <div className="text-sm text-gray-900 dark:text-gray-300">
                                                         {movie.release_date
                                                             ? new Date(
-                                                                movie.release_date
-                                                            ).getFullYear()
+                                                                  movie.release_date
+                                                              ).getFullYear()
                                                             : "N/A"}
                                                     </div>
                                                     <div className="text-xs text-gray-500 dark:text-gray-400">
                                                         {movie.runtime
                                                             ? `${Math.floor(
-                                                                movie.runtime /
-                                                                60
-                                                            )}h ${movie.runtime %
-                                                            60
-                                                            }m`
+                                                                  movie.runtime /
+                                                                      60
+                                                              )}h ${
+                                                                  movie.runtime %
+                                                                  60
+                                                              }m`
                                                             : ""}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex flex-col gap-1">
                                                         <span
-                                                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full w-fit ${movie.status ===
+                                                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full w-fit ${
+                                                                movie.status ===
                                                                 "released"
-                                                                ? "bg-green-100 text-green-800"
-                                                                : movie.status ===
-                                                                    "upcoming"
+                                                                    ? "bg-green-100 text-green-800"
+                                                                    : movie.status ===
+                                                                      "upcoming"
                                                                     ? "bg-blue-100 text-blue-800"
                                                                     : "bg-gray-100 text-gray-800"
-                                                                }`}
+                                                            }`}
                                                         >
                                                             {movie.status}
                                                         </span>
@@ -250,12 +248,14 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                                                 }
                                             }}
                                             disabled={!link.url}
-                                            className={`px-4 py-2 text-sm rounded-md ${link.active
-                                                ? "bg-indigo-600 text-white"
-                                                : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                                } ${!link.url &&
+                                            className={`px-4 py-2 text-sm rounded-md ${
+                                                link.active
+                                                    ? "bg-indigo-600 text-white"
+                                                    : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                            } ${
+                                                !link.url &&
                                                 "opacity-50 cursor-not-allowed"
-                                                }`}
+                                            }`}
                                             dangerouslySetInnerHTML={{
                                                 __html: link.label,
                                             }}
@@ -270,7 +270,7 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
 
             {/* Create/Edit Modal */}
             <Modal show={isModalOpen} onClose={closeModal} maxWidth="5xl">
-                <div className="p-4 sm:p-6">
+                <div className="p-4 sm:p-6 dark:bg-gray-800">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                         {editingMovie
                             ? `Edit Movie: ${editingMovie.title}`

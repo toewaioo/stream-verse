@@ -126,10 +126,10 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
                                                     ? "Series"
                                                     : "Film"}
                                             </span>
-                                            <h1 className="text-5xl line-clamp-1 md:text-7xl lg:text-8xl font-serif text-white leading-[0.9] mb-6">
+                                            <h1 className="text-4xl line-clamp-1  md:text-7xl lg:text-8xl font-serif text-white leading-[0.9] mb-6">
                                                 {item.title}
                                             </h1>
-                                            <p className="text-lg md:text-xl text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl">
+                                            <p className="text-sm md:text-xl text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl">
                                                 {item.description}
                                             </p>
 
@@ -147,7 +147,7 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
                                                                 item.slug
                                                             )
                                                     }
-                                                    className="px-8 text- py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors"
+                                                    className="px-2 md:px-8 text-sm md:text-lg py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors"
                                                 >
                                                     Watch Now
                                                 </Link>

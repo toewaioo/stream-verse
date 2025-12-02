@@ -8,6 +8,8 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import Checkbox from "@/Components/Checkbox";
 import PersonSelector from "@/Components/Admin/PersonSelector";
+import Modal from "@/Components/Modal";
+import axios from "axios";
 
 export default function MovieForm({
     movie,
@@ -49,6 +51,67 @@ export default function MovieForm({
 
     const storageKey = movie?.id ? `movie_form_update_${movie.id}` : "movie_form_create";
     const { clearStorage } = useFormPersistence(storageKey, data, setData);
+
+    // TMDB State
+    const [showTmdbModal, setShowTmdbModal] = useState(false);
+    const [tmdbQuery, setTmdbQuery] = useState("");
+    const [tmdbResults, setTmdbResults] = useState([]);
+    const [tmdbLoading, setTmdbLoading] = useState(false);
+
+    const searchTmdb = async (e) => {
+        e.preventDefault();
+        if (!tmdbQuery) return;
+        setTmdbLoading(true);
+        try {
+            const response = await axios.post(route('admin.tmdb.search'), {
+                query: tmdbQuery,
+                type: 'movie'
+            });
+            setTmdbResults(response.data.results || []);
+        } catch (error) {
+            console.error("TMDB Search Error:", error);
+        } finally {
+            setTmdbLoading(false);
+        }
+    };
+
+    const fetchTmdbDetails = async (tmdbId) => {
+        setTmdbLoading(true);
+        try {
+            const response = await axios.post(route('admin.tmdb.details'), {
+                tmdb_id: tmdbId,
+                type: 'movie'
+            });
+            const details = response.data;
+
+            // Map TMDB data to form
+            setData(prev => ({
+                ...prev,
+                title: details.title,
+                original_title: details.original_title,
+                description: details.description,
+                release_date: details.release_date,
+                runtime: details.runtime,
+                language: details.language,
+                status: details.status === 'released' ? 'released' : 'upcoming',
+                imdb_id: details.imdb_id,
+                budget: details.budget,
+                revenue: details.revenue,
+                poster_url: details.poster_url,
+                banner_url: details.banner_url,
+                trailer_url: details.trailer_url,
+                age_rating: details.age_rating,
+                // Note: Genres and Persons mapping would require more complex logic 
+                // to match existing DB records or create new ones. 
+                // For now, we'll just fill the text fields.
+            }));
+            setShowTmdbModal(false);
+        } catch (error) {
+            console.error("TMDB Details Error:", error);
+        } finally {
+            setTmdbLoading(false);
+        }
+    };
 
 
 
@@ -227,7 +290,12 @@ export default function MovieForm({
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2">
-                        <InputLabel htmlFor="title" value="Movie Title" />
+                        <div className="flex justify-between items-center mb-2">
+                            <InputLabel htmlFor="title" value="Movie Title" />
+                            <SecondaryButton size="sm" onClick={() => setShowTmdbModal(true)} type="button">
+                                Fetch from TMDB
+                            </SecondaryButton>
+                        </div>
                         <TextInput
                             id="title"
                             type="text"
@@ -1034,7 +1102,7 @@ export default function MovieForm({
             </div>
 
             {/* Footer Actions */}
-            <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex gap-3">
                 <SecondaryButton
                     onClick={currentStep === 1 ? onClose : prevStep}
                     type="button"
@@ -1052,7 +1120,7 @@ export default function MovieForm({
                         key="submit-btn"
                         type="submit"
                         disabled={processing}
-                        className="min-w-[120px] justify-center"
+                        className=" justify-center"
                     >
                         {processing ? (
                             <span className="flex items-center gap-2">
@@ -1086,6 +1154,59 @@ export default function MovieForm({
                     </PrimaryButton>
                 )}
             </div>
+            {/* TMDB Modal */}
+            <Modal show={showTmdbModal} onClose={() => setShowTmdbModal(false)} maxWidth="2xl">
+                <div className="p-6">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+                        Search TMDB
+                    </h2>
+                    <form onSubmit={searchTmdb} className="flex gap-2 mb-4">
+                        <TextInput
+                            type="text"
+                            className="w-full"
+                            placeholder="Search for a movie..."
+                            value={tmdbQuery}
+                            onChange={(e) => setTmdbQuery(e.target.value)}
+                        />
+                        <PrimaryButton type="submit" disabled={tmdbLoading}>
+                            {tmdbLoading ? "Searching..." : "Search"}
+                        </PrimaryButton>
+                    </form>
+
+                    <div className="space-y-2 max-h-96 overflow-y-auto">
+                        {tmdbResults.map((result) => (
+                            <div
+                                key={result.id}
+                                className="flex items-center gap-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer border border-gray-200 dark:border-gray-600"
+                                onClick={() => fetchTmdbDetails(result.id)}
+                            >
+                                {result.poster_path ? (
+                                    <img
+                                        src={`https://image.tmdb.org/t/p/w92${result.poster_path}`}
+                                        alt={result.title}
+                                        className="w-12 h-18 object-cover rounded"
+                                    />
+                                ) : (
+                                    <div className="w-12 h-18 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center">
+                                        <span className="text-xs">No Img</span>
+                                    </div>
+                                )}
+                                <div>
+                                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                                        {result.title}
+                                    </h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        {result.release_date}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                        {tmdbResults.length === 0 && !tmdbLoading && (
+                            <p className="text-center text-gray-500">No results found.</p>
+                        )}
+                    </div>
+                </div>
+            </Modal>
         </form>
     );
 }

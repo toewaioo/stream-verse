@@ -45,23 +45,23 @@ const LinkItem = ({ link, type, isVip }) => {
             }`}
         >
             <div className="flex items-center gap-4">
-                <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border ${
-                        type === "download"
-                            ? "border-blue-500 text-blue-500"
-                            : "border-red-500 text-red-500"
-                    }`}
-                >
-                    {link.quality?.replace("p", "") || "HD"}
-                </div>
                 <div className="flex flex-col">
                     <span className="text-white font-serif text-lg leading-none">
                         {link.server_name}
                     </span>
-                    <span className="text-gray-500 text-xs font-mono mt-1">
+                    {/* <span className="text-gray-500 text-xs font-mono mt-1">
                         {link.url}
-                    </span>
+                    </span> */}
                 </div>
+            </div>
+            <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border ${
+                    type === "download"
+                        ? "border-blue-500 text-blue-500"
+                        : "border-red-500 text-red-500"
+                }`}
+            >
+                {link.quality?.replace("p", "") || "HD"}
             </div>
 
             <div className="flex items-center gap-3">
@@ -71,12 +71,12 @@ const LinkItem = ({ link, type, isVip }) => {
                     </span>
                 ) : (
                     <>
-                        <button
+                        {/* <button
                             onClick={handleCopy}
                             className="text-gray-500 hover:text-white text-xs uppercase tracking-widest transition-colors"
                         >
                             {copied ? "Copied" : "Copy"}
-                        </button>
+                        </button> */}
                         <a
                             href={link.url}
                             target="_blank"
@@ -303,7 +303,15 @@ export default function MovieDetails({
                             {auth.user ? (
                                 <div className="space-y-8">
                                     {/* Watch */}
-                                    <div>
+                                    <div
+                                        className={`${
+                                            watchLinksByQuality &&
+                                            Object.keys(watchLinksByQuality)
+                                                .length > 0
+                                                ? ""
+                                                : "hidden"
+                                        }`}
+                                    >
                                         <div className="flex items-center gap-2 mb-4 text-white">
                                             <PlayIcon className="w-5 h-5" />
                                             <span className="font-serif text-xl italic">
@@ -336,7 +344,15 @@ export default function MovieDetails({
                                     </div>
 
                                     {/* Download */}
-                                    <div>
+                                    <div
+                                        className={`${
+                                            downloadLinksByQuality &&
+                                            Object.keys(downloadLinksByQuality)
+                                                .length > 0
+                                                ? ""
+                                                : "hidden"
+                                        }`}
+                                    >
                                         <div className="flex items-center gap-2 mb-4 text-white">
                                             <DownloadIcon className="w-5 h-5" />
                                             <span className="font-serif text-xl italic">
@@ -419,9 +435,9 @@ export default function MovieDetails({
 
                         {/* Rating & Related */}
                         <div className="pt-12 border-t border-white/10">
-                            <div className="flex items-center justify-between mb-12">
+                            <div className="flex items-center justify-center mb-12">
                                 <div>
-                                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
+                                    <h3 className="text-xs text-center font-bold text-gray-500 uppercase tracking-widest mb-2">
                                         Your Rating
                                     </h3>
                                     {auth.user ? (

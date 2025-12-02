@@ -111,6 +111,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
             'episodes' => \App\Models\Episode::all(),
         ]);
     })->name('admin.episodes');
+
+    // TMDB Integration
+    Route::post('/tmdb/search', [\App\Http\Controllers\Admin\TmdbController::class, 'search'])->name('admin.tmdb.search');
+    Route::post('/tmdb/details', [\App\Http\Controllers\Admin\TmdbController::class, 'details'])->name('admin.tmdb.details');
 });
 
 Route::middleware('auth')->group(function () {

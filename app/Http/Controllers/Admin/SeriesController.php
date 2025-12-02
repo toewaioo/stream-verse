@@ -74,6 +74,12 @@ class SeriesController extends Controller
             'episode_links.*.file_size' => 'nullable|string',
             'episode_links.*.file_format' => 'nullable|string',
             'episode_links.*.is_vip_only' => 'boolean',
+            'episodes_data' => 'nullable|array',
+            'episodes_data.*.season_number' => 'required|integer|min:1',
+            'episodes_data.*.episode_number' => 'required|integer|min:1',
+            'episodes_data.*.description' => 'nullable|string',
+            'episodes_data.*.air_date' => 'nullable|date',
+            'episodes_data.*.poster_url' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($validated) {
@@ -93,8 +99,12 @@ class SeriesController extends Controller
                 }
             }
 
-            if (isset($validated['episode_links'])) {
-                $this->syncEpisodeLinks($series, $validated['episode_links']);
+            if (isset($validated['episode_links']) || isset($validated['episodes_data'])) {
+                $this->syncEpisodeLinks(
+                    $series, 
+                    $validated['episode_links'] ?? [], 
+                    $validated['episodes_data'] ?? []
+                );
             }
         });
 
@@ -139,6 +149,12 @@ class SeriesController extends Controller
             'episode_links.*.file_size' => 'nullable|string',
             'episode_links.*.file_format' => 'nullable|string',
             'episode_links.*.is_vip_only' => 'boolean',
+            'episodes_data' => 'nullable|array',
+            'episodes_data.*.season_number' => 'required|integer|min:1',
+            'episodes_data.*.episode_number' => 'required|integer|min:1',
+            'episodes_data.*.description' => 'nullable|string',
+            'episodes_data.*.air_date' => 'nullable|date',
+            'episodes_data.*.poster_url' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($series, $validated) {
@@ -159,8 +175,12 @@ class SeriesController extends Controller
                 }
             }
 
-            if (isset($validated['episode_links'])) {
-                $this->syncEpisodeLinks($series, $validated['episode_links']);
+            if (isset($validated['episode_links']) || isset($validated['episodes_data'])) {
+                $this->syncEpisodeLinks(
+                    $series, 
+                    $validated['episode_links'] ?? [], 
+                    $validated['episodes_data'] ?? []
+                );
             }
         });
 
@@ -173,7 +193,7 @@ class SeriesController extends Controller
         return redirect()->back()->with('success', 'Series deleted successfully.');
     }
 
-    private function syncEpisodeLinks(Series $series, array $links)
+    private function syncEpisodeLinks(Series $series, array $links, array $episodesMetadata = [])
     {
         // 1. Pre-fetch existing structure to minimize queries
         $series->load('seasons.episodes');
@@ -191,7 +211,16 @@ class SeriesController extends Controller
             $groupedLinks[$s][$e][] = $link;
         }
 
-        foreach ($groupedLinks as $seasonNum => $episodes) {
+        // Group metadata
+        $groupedMetadata = [];
+        foreach ($episodesMetadata as $meta) {
+            $groupedMetadata[$meta['season_number']][$meta['episode_number']] = $meta;
+        }
+
+        // Get all unique season/episode pairs
+        $allSeasons = array_unique(array_merge(array_keys($groupedLinks), array_keys($groupedMetadata)));
+
+        foreach ($allSeasons as $seasonNum) {
             // Find or Create Season (In-memory check first)
             $season = $existingSeasons->firstWhere('season_number', $seasonNum);
             if (!$season) {
@@ -202,7 +231,11 @@ class SeriesController extends Controller
                 $existingSeasons->push($season);
             }
 
-            foreach ($episodes as $episodeNum => $episodeLinks) {
+            $linkEpisodes = $groupedLinks[$seasonNum] ?? [];
+            $metaEpisodes = $groupedMetadata[$seasonNum] ?? [];
+            $allEpisodes = array_unique(array_merge(array_keys($linkEpisodes), array_keys($metaEpisodes)));
+
+            foreach ($allEpisodes as $episodeNum) {
                 // Find or Create Episode
                 $episode = $season->episodes->firstWhere('episode_number', $episodeNum);
                 if (!$episode) {
@@ -213,6 +246,17 @@ class SeriesController extends Controller
                     $season->episodes->push($episode); // Update in-memory relation
                 }
 
+                // Update Metadata
+                if (isset($metaEpisodes[$episodeNum])) {
+                    $meta = $metaEpisodes[$episodeNum];
+                    $episode->update([
+                        'description' => $meta['description'] ?? null,
+                        'air_date' => $meta['air_date'] ?? null,
+                        'poster_url' => $meta['poster_url'] ?? null,
+                    ]);
+                }
+
+                $episodeLinks = $linkEpisodes[$episodeNum] ?? [];
                 foreach ($episodeLinks as $linkData) {
                     // Handle Watch Links
                     if ($linkData['link_category'] === 'watch') {
@@ -222,7 +266,7 @@ class SeriesController extends Controller
                         if (empty($linkData['url'])) continue;
 
                         $data = [
-                            'server_name' => $linkData['server_name'],
+                            'server_name' => $linkData['server_name'] ?? null,
                             'url' => $linkData['url'],
                             'embed_code' => $linkData['embed_code'] ?? null,
                             'quality' => $linkData['quality'],

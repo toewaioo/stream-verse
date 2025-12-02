@@ -78,12 +78,12 @@ export default function TgAuth({ user }) {
                             `Response: ${JSON.stringify(response.data)}`,
                             "info"
                         );
-                        setStatus("Login successful! Redirecting to home...");
+                        setStatus("Redirecting to home...");
 
                         // Redirect to home page after successful login
                         setTimeout(() => {
                             router.visit(route("home"));
-                        }, 1500);
+                        }, 1000);
                     })
                     .catch((error) => {
                         addLog("Login failed!", "error");
@@ -118,14 +118,14 @@ export default function TgAuth({ user }) {
                     setTimeout(() => {
                         addLog("Redirecting to home page...", "info");
                         router.visit(route("home"));
-                    }, 3000);
+                    }, 1000);
                 } else if (loginAttempted.current) {
                     addLog("Login already attempted", "info");
                     setStatus("Authenticate success");
                     setTimeout(() => {
                         addLog("Redirecting to home page...", "info");
                         router.visit(route("home"));
-                    }, 3000);
+                    }, 1000);
                 }
             }
         } else {
@@ -136,7 +136,7 @@ export default function TgAuth({ user }) {
             setTimeout(() => {
                 addLog("Redirecting to home page...", "info");
                 router.visit(route("home"));
-            }, 3000);
+            }, 1000);
         }
     }, [user]);
 
