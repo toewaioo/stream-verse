@@ -7,6 +7,7 @@ import SeoHead from "@/Components/SeoHead";
 import LoadingLayout from "@/Layouts/LoadingLayout";
 
 export default function PersonShow({ person, movies, series, seo }) {
+    console.log(person);
     const [activeTab, setActiveTab] = useState("movies");
 
     const handlePageChange = (url, type) => {
@@ -72,18 +73,27 @@ export default function PersonShow({ person, movies, series, seo }) {
                     <Navbar />
 
                     {/* Hero Section */}
-                    <div className="relative h-[30vh] md:h-[40vh] w-full overflow-hidden">
+                    <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-br from-orange-900/30 via-black to-red-900/30">
                             <div className="absolute inset-0 opacity-10">
-                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]"></div>
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]">
+                                  
+                                </div>
                             </div>
                         </div>
-                        <div className="absolute inset-0 flex items-center justify-center">
+                        {/* <div className="flex-shrink-0">
+                            <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-black/50">
+                                <span className="text-3xl md:text-4xl font-bold text-white tracking-wider">
+                                    
+                                </span>
+                            </div>
+                        </div> */}
+                        <div className="absolute inset-0 flex items-center justify-center pt-24">
                             <div className="container mx-auto px-6 md:px-12 text-center">
-                                {person.profile_image_url && (
+                                {person.avatar_url && (
                                     <div className="mb-6 flex justify-center">
                                         <img
-                                            src={person.profile_image_url}
+                                            src={person.avatar_url}
                                             alt={person.name}
                                             className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white/20"
                                         />
@@ -104,10 +114,10 @@ export default function PersonShow({ person, movies, series, seo }) {
                     </div>
 
                     {/* Content Section */}
-                    <div className="container mx-auto px-6 md:px-12 py-16">
+                    <div className="container mx-auto px-6 md:px-12 py-2">
                         {/* Biography (if available) */}
                         {person.biography && (
-                            <div className="mb-12 max-w-4xl mx-auto">
+                            <div className="mb-2 max-w-4xl mx-auto">
                                 <div className="bg-white/5 border border-white/10 p-6 md:p-8">
                                     <h2 className="text-2xl font-serif text-white mb-4 border-b border-white/10 pb-3">
                                         Biography

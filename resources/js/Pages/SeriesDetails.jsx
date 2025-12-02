@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { usePage, router } from "@inertiajs/react";
+import { usePage, router, Link } from "@inertiajs/react";
 import SeoHead from "@/Components/SeoHead";
 import RatingWidget from "@/Components/Movie/RatingWidget";
 import Footer from "@/Components/Footer";
@@ -547,9 +547,16 @@ export default function SeriesDetails({
                                             />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-white font-serif leading-none mb-1">
-                                                {actor.person?.name}
-                                            </span>
+                                            <Link
+                                                href={route(
+                                                    "person.show",
+                                                    actor.person?.id
+                                                )}
+                                                className="text-gray-400 hover:text-white transition-colors flex justify-between text-sm group"
+                                            >
+                                                <span className="font-bold">{actor.person?.name}</span>
+                                            </Link>
+                                            
                                             <span className="text-xs text-gray-500 uppercase tracking-wider">
                                                 {actor.character_name}
                                             </span>

@@ -1,0 +1,1 @@
+import{r as s}from"./app-BLFRXCjI.js";function f(r,e,a){return s.useEffect(()=>{const t=localStorage.getItem(r);if(t)try{const o=JSON.parse(t);a(c=>({...c,...o}))}catch(o){console.error("Error parsing local storage data:",o)}},[r]),s.useEffect(()=>{e&&localStorage.setItem(r,JSON.stringify(e))},[e,r]),{clearStorage:()=>{localStorage.removeItem(r)}}}export{f as u};

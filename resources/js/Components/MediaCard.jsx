@@ -14,6 +14,7 @@ const StarIcon = ({ className = "w-3 h-3" }) => (
 );
 
 export default function MediaCard({ item, type }) {
+    console.log(item);
     const href =
         type === "movie"
             ? route("movies.show", item.slug)
@@ -22,11 +23,17 @@ export default function MediaCard({ item, type }) {
     const year =
         item.release_year ||
         item.release_year_start ||
-        (item.release_date ? new Date(item.release_date).getFullYear() : null) ||
+        (item.release_date
+            ? new Date(item.release_date).getFullYear()
+            : null) ||
         (item.created_at ? new Date(item.created_at).getFullYear() : "N/A");
 
-    const duration = type === 'movie' && item.runtime ? `${item.runtime} min` : null;
-    const seasons = type === 'series' && item.seasons_count ? `${item.seasons_count} Seasons` : null;
+    const duration =
+        type === "movie" && item.runtime ? `${item.runtime} min` : null;
+    const seasons =
+        type === "series" && item.seasons_count
+            ? `${item.seasons_count} Seasons`
+            : null;
 
     return (
         <Link href={href} className="group block relative w-full">
@@ -74,8 +81,14 @@ export default function MediaCard({ item, type }) {
                 <div className="flex items-center gap-2 text-xs text-gray-400 font-medium flex-wrap">
                     <span className="text-gray-300">{year}</span>
                     <span className="w-1 h-1 rounded-full bg-gray-600"></span>
-                    <span className="uppercase tracking-wide text-[10px] border border-gray-700 px-1 rounded text-gray-400">
-                        {type === "movie" ? "Movie" : "Series"}
+                    <span
+                        className={`uppercase tracking-wide text-[10px] border border-gray-700 px-1 rounded text-gray-400 ${
+                            item.status === "ongoing"
+                                ? "bg-green-500/20"
+                                : "bg-red-800/20"
+                        }`}
+                    >
+                        {item.status}
                     </span>
                     {(duration || seasons) && (
                         <>
@@ -88,7 +101,7 @@ export default function MediaCard({ item, type }) {
                 {/* Genres (Optional - check if exists) */}
                 {item.genres && item.genres.length > 0 && (
                     <div className="text-xs text-gray-500 truncate">
-                        {item.genres.map(g => g.name).join(", ")}
+                        {item.genres.map((g) => g.name).join(", ")}
                     </div>
                 )}
             </div>

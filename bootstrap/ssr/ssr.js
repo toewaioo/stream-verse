@@ -5400,6 +5400,7 @@ function Footer() {
 const PlayIcon$2 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
 const StarIcon = ({ className = "w-3 h-3" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" }) });
 function MediaCard({ item, type }) {
+  console.log(item);
   const href = type === "movie" ? route("movies.show", item.slug) : route("series.show", item.slug);
   const year = item.release_year || item.release_year_start || (item.release_date ? new Date(item.release_date).getFullYear() : null) || (item.created_at ? new Date(item.created_at).getFullYear() : "N/A");
   const duration = type === "movie" && item.runtime ? `${item.runtime} min` : null;
@@ -5428,7 +5429,13 @@ function MediaCard({ item, type }) {
       /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-xs text-gray-400 font-medium flex-wrap", children: [
         /* @__PURE__ */ jsx("span", { className: "text-gray-300", children: year }),
         /* @__PURE__ */ jsx("span", { className: "w-1 h-1 rounded-full bg-gray-600" }),
-        /* @__PURE__ */ jsx("span", { className: "uppercase tracking-wide text-[10px] border border-gray-700 px-1 rounded text-gray-400", children: type === "movie" ? "Movie" : "Series" }),
+        /* @__PURE__ */ jsx(
+          "span",
+          {
+            className: `uppercase tracking-wide text-[10px] border border-gray-700 px-1 rounded text-gray-400 ${item.status === "ongoing" ? "bg-green-500/20" : "bg-red-800/20"}`,
+            children: item.status
+          }
+        ),
         (duration || seasons) && /* @__PURE__ */ jsxs(Fragment, { children: [
           /* @__PURE__ */ jsx("span", { className: "w-1 h-1 rounded-full bg-gray-600" }),
           /* @__PURE__ */ jsx("span", { children: duration || seasons })
@@ -7041,6 +7048,7 @@ const __vite_glob_0_26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Terms
 }, Symbol.toStringTag, { value: "Module" }));
 function PersonShow({ person, movies, series, seo }) {
+  console.log(person);
   const [activeTab, setActiveTab] = useState("movies");
   const handlePageChange = (url, type) => {
     router.get(url, {}, { preserveState: true, preserveScroll: true });
@@ -7090,13 +7098,13 @@ function PersonShow({ person, movies, series, seo }) {
     ),
     /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
       /* @__PURE__ */ jsx(Navbar, {}),
-      /* @__PURE__ */ jsxs("div", { className: "relative h-[30vh] md:h-[40vh] w-full overflow-hidden", children: [
+      /* @__PURE__ */ jsxs("div", { className: "relative h-[50vh] md:h-[60vh] w-full overflow-hidden", children: [
         /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-orange-900/30 via-black to-red-900/30", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-10", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]" }) }) }),
-        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 text-center", children: [
-          person.profile_image_url && /* @__PURE__ */ jsx("div", { className: "mb-6 flex justify-center", children: /* @__PURE__ */ jsx(
+        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center pt-24", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 text-center", children: [
+          person.avatar_url && /* @__PURE__ */ jsx("div", { className: "mb-6 flex justify-center", children: /* @__PURE__ */ jsx(
             "img",
             {
-              src: person.profile_image_url,
+              src: person.avatar_url,
               alt: person.name,
               className: "w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white/20"
             }
@@ -7109,8 +7117,8 @@ function PersonShow({ person, movies, series, seo }) {
           ] })
         ] }) })
       ] }),
-      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 py-16", children: [
-        person.biography && /* @__PURE__ */ jsx("div", { className: "mb-12 max-w-4xl mx-auto", children: /* @__PURE__ */ jsxs("div", { className: "bg-white/5 border border-white/10 p-6 md:p-8", children: [
+      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 py-2", children: [
+        person.biography && /* @__PURE__ */ jsx("div", { className: "mb-2 max-w-4xl mx-auto", children: /* @__PURE__ */ jsxs("div", { className: "bg-white/5 border border-white/10 p-6 md:p-8", children: [
           /* @__PURE__ */ jsx("h2", { className: "text-2xl font-serif text-white mb-4 border-b border-white/10 pb-3", children: "Biography" }),
           /* @__PURE__ */ jsx("p", { className: "text-gray-300 leading-relaxed", children: person.biography })
         ] }) }),
@@ -8093,7 +8101,17 @@ function SeriesDetails({
                     }
                   ) }),
                   /* @__PURE__ */ jsxs("div", { className: "flex flex-col", children: [
-                    /* @__PURE__ */ jsx("span", { className: "text-white font-serif leading-none mb-1", children: actor.person?.name }),
+                    /* @__PURE__ */ jsx(
+                      Link,
+                      {
+                        href: route(
+                          "person.show",
+                          actor.person?.id
+                        ),
+                        className: "text-gray-400 hover:text-white transition-colors flex justify-between text-sm group",
+                        children: /* @__PURE__ */ jsx("span", { className: "font-bold", children: actor.person?.name })
+                      }
+                    ),
                     /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-500 uppercase tracking-wider", children: actor.character_name })
                   ] })
                 ]
