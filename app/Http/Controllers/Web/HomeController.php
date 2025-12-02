@@ -47,16 +47,16 @@ class HomeController extends Controller
         $latestMovies = Movie::select(['id', 'title', 'slug', 'poster_url', 'release_date', 'created_at', 'status', 'rating_average'])
             ->where('status', 'released')
             ->with(['genres:id,name,slug'])
-            ->orderBy('created_at', 'desc')
-            ->take(12)
+            ->orderBy('updated_at', 'desc')
+            ->take(9)
             ->get();
 
         // Fetch latest series with genres eager loaded
         $latestSeries = Series::select(['id', 'title', 'slug', 'poster_url', 'release_year_start', 'created_at', 'status', 'rating_average'])
             ->where('status', '!=', 'upcoming')
             ->with(['genres:id,name,slug'])
-            ->orderBy('created_at', 'desc')
-            ->take(12)
+            ->orderBy('updated_at', 'desc')
+            ->take(9)
             ->get();
 
         // Fetch genres with counts - optimized with select

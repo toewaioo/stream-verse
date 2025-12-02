@@ -524,9 +524,19 @@ export default function SeriesDetails({
                                 </div>
                             )}
                         </div>
+                        {/* Backdrop Poster Below Links */}
+                        {series?.banner_url && (
+                            <div className="mt-8 w-full rounded overflow-hidden">
+                                <img
+                                    src={series?.banner_url}
+                                    alt="Backdrop"
+                                    className="w-full h-48 object-cover object-center"
+                                />
+                            </div>
+                        )}
 
                         {/* Cast */}
-                        <div className="mb-16">
+                        <div className="mb-16 mt-10">
                             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">
                                 Cast & Crew
                             </h3>
@@ -536,7 +546,7 @@ export default function SeriesDetails({
                                         key={actor.id}
                                         className="flex items-center gap-3"
                                     >
-                                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-800 grayscale hover:grayscale-0 transition-all">
+                                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-800  hover:grayscale-0 transition-all">
                                             <img
                                                 src={
                                                     actor.person?.avatar_url ||
@@ -554,9 +564,11 @@ export default function SeriesDetails({
                                                 )}
                                                 className="text-gray-400 hover:text-white transition-colors flex justify-between text-sm group"
                                             >
-                                                <span className="font-bold">{actor.person?.name}</span>
+                                                <span className="font-bold">
+                                                    {actor.person?.name}
+                                                </span>
                                             </Link>
-                                            
+
                                             <span className="text-xs text-gray-500 uppercase tracking-wider">
                                                 {actor.character_name}
                                             </span>

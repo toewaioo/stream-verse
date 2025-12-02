@@ -605,12 +605,11 @@ export default function SeriesForm({
                         value={data.age_rating}
                         onChange={(e) => setData("age_rating", e.target.value)}
                     >
-                        <option value="">Select Rating</option>
+                        <option value="G">Select Rating</option>
                         <option value="G">G - General Audiences</option>
                         <option value="PG">PG - Parental Guidance</option>
                         <option value="PG-13">PG-13</option>
-                        <option value="TV-14">TV-14</option>
-                        <option value="TV-MA">TV-MA - Mature</option>
+                        <option value="18+">18+</option>
                         <option value="R">R - Restricted</option>
                     </select>
                     <InputError message={errors.age_rating} className="mt-2" />

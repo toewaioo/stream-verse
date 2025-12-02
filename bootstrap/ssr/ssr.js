@@ -751,8 +751,8 @@ function MovieForm({
         banner_url: details.banner_url,
         trailer_url: details.trailer_url,
         age_rating: details.age_rating
-        // Note: Genres and Persons mapping would require more complex logic 
-        // to match existing DB records or create new ones. 
+        // Note: Genres and Persons mapping would require more complex logic
+        // to match existing DB records or create new ones.
         // For now, we'll just fill the text fields.
       }));
       setShowTmdbModal(false);
@@ -773,12 +773,15 @@ function MovieForm({
     const checkSlug = async () => {
       if (!data.slug) return;
       try {
-        const response = await axios$1.get(route("admin.movies.check-slug"), {
-          params: {
-            slug: data.slug,
-            id: movie?.id
+        const response = await axios$1.get(
+          route("admin.movies.check-slug"),
+          {
+            params: {
+              slug: data.slug,
+              id: movie?.id
+            }
           }
-        });
+        );
         if (response.data.exists) {
           setSlugError("This slug is already taken.");
         } else {
@@ -914,7 +917,15 @@ function MovieForm({
       /* @__PURE__ */ jsxs("div", { className: "md:col-span-2", children: [
         /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-2", children: [
           /* @__PURE__ */ jsx(InputLabel, { htmlFor: "title", value: "Movie Title" }),
-          /* @__PURE__ */ jsx(SecondaryButton, { size: "sm", onClick: () => setShowTmdbModal(true), type: "button", children: "Fetch from TMDB" })
+          /* @__PURE__ */ jsx(
+            SecondaryButton,
+            {
+              size: "sm",
+              onClick: () => setShowTmdbModal(true),
+              type: "button",
+              children: "Fetch from TMDB"
+            }
+          )
         ] }),
         /* @__PURE__ */ jsx(
           TextInput,
@@ -970,7 +981,13 @@ function MovieForm({
             placeholder: "e.g. inception"
           }
         ),
-        /* @__PURE__ */ jsx(InputError, { message: errors.slug || slugError, className: "mt-2" })
+        /* @__PURE__ */ jsx(
+          InputError,
+          {
+            message: errors.slug || slugError,
+            className: "mt-2"
+          }
+        )
       ] }),
       /* @__PURE__ */ jsxs("div", { children: [
         /* @__PURE__ */ jsx(InputLabel, { htmlFor: "imdb_id", value: "IMDb ID" }),
@@ -1117,12 +1134,12 @@ function MovieForm({
             value: data.age_rating,
             onChange: (e) => setData("age_rating", e.target.value),
             children: [
-              /* @__PURE__ */ jsx("option", { value: "", children: "Select Rating" }),
+              /* @__PURE__ */ jsx("option", { value: "G", children: "Select Rating" }),
               /* @__PURE__ */ jsx("option", { value: "G", children: "G" }),
               /* @__PURE__ */ jsx("option", { value: "PG", children: "PG" }),
               /* @__PURE__ */ jsx("option", { value: "PG-13", children: "PG-13" }),
-              /* @__PURE__ */ jsx("option", { value: "R", children: "R" }),
-              /* @__PURE__ */ jsx("option", { value: "NC-17", children: "NC-17" })
+              /* @__PURE__ */ jsx("option", { value: "R", children: "R - Restricted" }),
+              /* @__PURE__ */ jsx("option", { value: "18+", children: "18+" })
             ]
           }
         ),
@@ -1382,11 +1399,7 @@ function MovieForm({
                 PersonSelector,
                 {
                   value: person.person_id,
-                  onChange: (id) => updatePerson(
-                    index,
-                    "person_id",
-                    id
-                  ),
+                  onChange: (id) => updatePerson(index, "person_id", id),
                   persons
                 }
               )
@@ -1789,7 +1802,15 @@ function MovieForm({
           children: currentStep === 1 ? "Cancel" : "Previous"
         }
       ),
-      currentStep < 4 ? /* @__PURE__ */ jsx(PrimaryButton, { type: "button", onClick: nextStep, children: "Next" }, "next-btn") : /* @__PURE__ */ jsx(
+      currentStep < 4 ? /* @__PURE__ */ jsx(
+        PrimaryButton,
+        {
+          type: "button",
+          onClick: nextStep,
+          children: "Next"
+        },
+        "next-btn"
+      ) : /* @__PURE__ */ jsx(
         PrimaryButton,
         {
           type: "submit",
@@ -1832,47 +1853,55 @@ function MovieForm({
         "submit-btn"
       )
     ] }),
-    /* @__PURE__ */ jsx(Modal, { show: showTmdbModal, onClose: () => setShowTmdbModal(false), maxWidth: "2xl", children: /* @__PURE__ */ jsxs("div", { className: "p-6", children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-gray-100 mb-4", children: "Search TMDB" }),
-      /* @__PURE__ */ jsxs("form", { onSubmit: searchTmdb, className: "flex gap-2 mb-4", children: [
-        /* @__PURE__ */ jsx(
-          TextInput,
-          {
-            type: "text",
-            className: "w-full",
-            placeholder: "Search for a movie...",
-            value: tmdbQuery,
-            onChange: (e) => setTmdbQuery(e.target.value)
-          }
-        ),
-        /* @__PURE__ */ jsx(PrimaryButton, { type: "submit", disabled: tmdbLoading, children: tmdbLoading ? "Searching..." : "Search" })
-      ] }),
-      /* @__PURE__ */ jsxs("div", { className: "space-y-2 max-h-96 overflow-y-auto", children: [
-        tmdbResults.map((result) => /* @__PURE__ */ jsxs(
-          "div",
-          {
-            className: "flex items-center gap-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer border border-gray-200 dark:border-gray-600",
-            onClick: () => fetchTmdbDetails(result.id),
-            children: [
-              result.poster_path ? /* @__PURE__ */ jsx(
-                "img",
-                {
-                  src: `https://image.tmdb.org/t/p/w92${result.poster_path}`,
-                  alt: result.title,
-                  className: "w-12 h-18 object-cover rounded"
-                }
-              ) : /* @__PURE__ */ jsx("div", { className: "w-12 h-18 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center", children: /* @__PURE__ */ jsx("span", { className: "text-xs", children: "No Img" }) }),
-              /* @__PURE__ */ jsxs("div", { children: [
-                /* @__PURE__ */ jsx("h3", { className: "font-semibold text-gray-900 dark:text-white", children: result.title }),
-                /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: result.release_date })
-              ] })
-            ]
-          },
-          result.id
-        )),
-        tmdbResults.length === 0 && !tmdbLoading && /* @__PURE__ */ jsx("p", { className: "text-center text-gray-500", children: "No results found." })
-      ] })
-    ] }) })
+    /* @__PURE__ */ jsx(
+      Modal,
+      {
+        show: showTmdbModal,
+        onClose: () => setShowTmdbModal(false),
+        maxWidth: "2xl",
+        children: /* @__PURE__ */ jsxs("div", { className: "p-6", children: [
+          /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-gray-100 mb-4", children: "Search TMDB" }),
+          /* @__PURE__ */ jsxs("form", { onSubmit: searchTmdb, className: "flex gap-2 mb-4", children: [
+            /* @__PURE__ */ jsx(
+              TextInput,
+              {
+                type: "text",
+                className: "w-full",
+                placeholder: "Search for a movie...",
+                value: tmdbQuery,
+                onChange: (e) => setTmdbQuery(e.target.value)
+              }
+            ),
+            /* @__PURE__ */ jsx(PrimaryButton, { type: "submit", disabled: tmdbLoading, children: tmdbLoading ? "Searching..." : "Search" })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "space-y-2 max-h-96 overflow-y-auto", children: [
+            tmdbResults.map((result) => /* @__PURE__ */ jsxs(
+              "div",
+              {
+                className: "flex items-center gap-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer border border-gray-200 dark:border-gray-600",
+                onClick: () => fetchTmdbDetails(result.id),
+                children: [
+                  result.poster_path ? /* @__PURE__ */ jsx(
+                    "img",
+                    {
+                      src: `https://image.tmdb.org/t/p/w92${result.poster_path}`,
+                      alt: result.title,
+                      className: "w-12 h-18 object-cover rounded"
+                    }
+                  ) : /* @__PURE__ */ jsx("div", { className: "w-12 h-18 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center", children: /* @__PURE__ */ jsx("span", { className: "text-xs", children: "No Img" }) }),
+                  /* @__PURE__ */ jsxs("div", { children: [
+                    /* @__PURE__ */ jsx("h3", { className: "font-semibold text-gray-900 dark:text-white", children: result.title }),
+                    /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: result.release_date })
+                  ] })
+                ]
+              },
+              result.id
+            )),
+            tmdbResults.length === 0 && !tmdbLoading && /* @__PURE__ */ jsx("p", { className: "text-center text-gray-500", children: "No results found." })
+          ] })
+        ] })
+      }
+    )
   ] });
 }
 const __vite_glob_0_3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -3348,12 +3377,11 @@ function SeriesForm({
             value: data.age_rating,
             onChange: (e) => setData("age_rating", e.target.value),
             children: [
-              /* @__PURE__ */ jsx("option", { value: "", children: "Select Rating" }),
+              /* @__PURE__ */ jsx("option", { value: "G", children: "Select Rating" }),
               /* @__PURE__ */ jsx("option", { value: "G", children: "G - General Audiences" }),
               /* @__PURE__ */ jsx("option", { value: "PG", children: "PG - Parental Guidance" }),
               /* @__PURE__ */ jsx("option", { value: "PG-13", children: "PG-13" }),
-              /* @__PURE__ */ jsx("option", { value: "TV-14", children: "TV-14" }),
-              /* @__PURE__ */ jsx("option", { value: "TV-MA", children: "TV-MA - Mature" }),
+              /* @__PURE__ */ jsx("option", { value: "18+", children: "18+" }),
               /* @__PURE__ */ jsx("option", { value: "R", children: "R - Restricted" })
             ]
           }
@@ -6173,14 +6201,22 @@ function MovieDetails({
               )
             ] })
           ] }),
-          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+          movie?.banner_url && /* @__PURE__ */ jsx("div", { className: "mt-8 w-full rounded overflow-hidden", children: /* @__PURE__ */ jsx(
+            "img",
+            {
+              src: movie?.banner_url,
+              alt: "Backdrop",
+              className: "w-full h-48 object-cover object-center"
+            }
+          ) }),
+          /* @__PURE__ */ jsxs("div", { className: "mb-16 mt-10", children: [
             /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: "Cast & Crew" }),
             /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4", children: movie.actors?.slice(0, 6).map((actor) => /* @__PURE__ */ jsxs(
               "div",
               {
                 className: "flex items-center gap-3",
                 children: [
-                  /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-800 grayscale hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx(
+                  /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-800  hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx(
                     "img",
                     {
                       src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg",
@@ -6189,7 +6225,17 @@ function MovieDetails({
                     }
                   ) }),
                   /* @__PURE__ */ jsxs("div", { className: "flex flex-col", children: [
-                    /* @__PURE__ */ jsx("span", { className: "text-white font-serif leading-none mb-1", children: actor.person?.name }),
+                    /* @__PURE__ */ jsx(
+                      Link,
+                      {
+                        href: route(
+                          "person.show",
+                          actor.person?.id
+                        ),
+                        className: "text-gray-400 hover:text-white transition-colors flex justify-between text-sm group",
+                        children: /* @__PURE__ */ jsx("span", { className: "font-bold", children: actor.person?.name })
+                      }
+                    ),
                     /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-500 uppercase tracking-wider", children: actor.character_name })
                   ] })
                 ]
@@ -7098,7 +7144,7 @@ function PersonShow({ person, movies, series, seo }) {
     ),
     /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-[#050505] text-white font-sans selection:bg-white selection:text-black", children: [
       /* @__PURE__ */ jsx(Navbar, {}),
-      /* @__PURE__ */ jsxs("div", { className: "relative h-[50vh] md:h-[60vh] w-full overflow-hidden", children: [
+      /* @__PURE__ */ jsxs("div", { className: "relative h-[45vh] md:h-[60vh] w-full overflow-hidden", children: [
         /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-orange-900/30 via-black to-red-900/30", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-10", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]" }) }) }),
         /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center pt-24", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 text-center", children: [
           person.avatar_url && /* @__PURE__ */ jsx("div", { className: "mb-6 flex justify-center", children: /* @__PURE__ */ jsx(
@@ -7106,7 +7152,7 @@ function PersonShow({ person, movies, series, seo }) {
             {
               src: person.avatar_url,
               alt: person.name,
-              className: "w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white/20"
+              className: "w-28 h-28 md:w-40 md:h-40 rounded-full object-cover border-4 border-white/20"
             }
           ) }),
           /* @__PURE__ */ jsx("div", { className: "inline-block px-3 py-1 border border-white/30 text-xs font-bold uppercase tracking-widest text-white mb-4 backdrop-blur-sm", children: "Filmography" }),
@@ -7151,7 +7197,7 @@ function PersonShow({ person, movies, series, seo }) {
           )
         ] }),
         activeTab === "movies" && /* @__PURE__ */ jsx("div", { children: movies.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
-          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
+          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
             MediaCard,
             {
               item: movie,
@@ -7168,7 +7214,7 @@ function PersonShow({ person, movies, series, seo }) {
           )
         ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: "No movies found featuring this person." }) }) }),
         activeTab === "series" && /* @__PURE__ */ jsx("div", { children: series.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
-          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
+          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
             MediaCard,
             {
               item,
@@ -8085,14 +8131,22 @@ function SeriesDetails({
               )) : /* @__PURE__ */ jsx("div", { className: "p-8 text-center text-gray-500 italic", children: "No episodes available for this season." }) })
             ] }) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic", children: "No seasons available." })
           ] }),
-          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+          series?.banner_url && /* @__PURE__ */ jsx("div", { className: "mt-8 w-full rounded overflow-hidden", children: /* @__PURE__ */ jsx(
+            "img",
+            {
+              src: series?.banner_url,
+              alt: "Backdrop",
+              className: "w-full h-48 object-cover object-center"
+            }
+          ) }),
+          /* @__PURE__ */ jsxs("div", { className: "mb-16 mt-10", children: [
             /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: "Cast & Crew" }),
             /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4", children: series.actors?.slice(0, 9).map((actor) => /* @__PURE__ */ jsxs(
               "div",
               {
                 className: "flex items-center gap-3",
                 children: [
-                  /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-800 grayscale hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx(
+                  /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-800  hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx(
                     "img",
                     {
                       src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg",

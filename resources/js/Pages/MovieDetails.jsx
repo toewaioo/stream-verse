@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { usePage, router } from "@inertiajs/react";
+import { usePage, router, Link } from "@inertiajs/react";
 import RatingWidget from "@/Components/Movie/RatingWidget";
 import SeoHead from "@/Components/SeoHead";
 import Footer from "@/Components/Footer";
@@ -398,9 +398,19 @@ export default function MovieDetails({
                                 </div>
                             )}
                         </div>
+                        {/* Backdrop Poster Below Links */}
+                        {movie?.banner_url && (
+                            <div className="mt-8 w-full rounded overflow-hidden">
+                                <img
+                                    src={movie?.banner_url}
+                                    alt="Backdrop"
+                                    className="w-full h-48 object-cover object-center"
+                                />
+                            </div>
+                        )}
 
                         {/* Cast */}
-                        <div className="mb-16">
+                        <div className="mb-16 mt-10">
                             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">
                                 Cast & Crew
                             </h3>
@@ -410,7 +420,7 @@ export default function MovieDetails({
                                         key={actor.id}
                                         className="flex items-center gap-3"
                                     >
-                                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-800 grayscale hover:grayscale-0 transition-all">
+                                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-800  hover:grayscale-0 transition-all">
                                             <img
                                                 src={
                                                     actor.person?.avatar_url ||
@@ -421,9 +431,17 @@ export default function MovieDetails({
                                             />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-white font-serif leading-none mb-1">
-                                                {actor.person?.name}
-                                            </span>
+                                            <Link
+                                                href={route(
+                                                    "person.show",
+                                                    actor.person?.id
+                                                )}
+                                                className="text-gray-400 hover:text-white transition-colors flex justify-between text-sm group"
+                                            >
+                                                <span className="font-bold">
+                                                    {actor.person?.name}
+                                                </span>
+                                            </Link>
                                             <span className="text-xs text-gray-500 uppercase tracking-wider">
                                                 {actor.character_name}
                                             </span>

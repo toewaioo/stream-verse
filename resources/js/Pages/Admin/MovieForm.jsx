@@ -49,7 +49,9 @@ export default function MovieForm({
         download_links: movie?.download_links || [],
     });
 
-    const storageKey = movie?.id ? `movie_form_update_${movie.id}` : "movie_form_create";
+    const storageKey = movie?.id
+        ? `movie_form_update_${movie.id}`
+        : "movie_form_create";
     const { clearStorage } = useFormPersistence(storageKey, data, setData);
 
     // TMDB State
@@ -63,9 +65,9 @@ export default function MovieForm({
         if (!tmdbQuery) return;
         setTmdbLoading(true);
         try {
-            const response = await axios.post(route('admin.tmdb.search'), {
+            const response = await axios.post(route("admin.tmdb.search"), {
                 query: tmdbQuery,
-                type: 'movie'
+                type: "movie",
             });
             setTmdbResults(response.data.results || []);
         } catch (error) {
@@ -78,14 +80,14 @@ export default function MovieForm({
     const fetchTmdbDetails = async (tmdbId) => {
         setTmdbLoading(true);
         try {
-            const response = await axios.post(route('admin.tmdb.details'), {
+            const response = await axios.post(route("admin.tmdb.details"), {
                 tmdb_id: tmdbId,
-                type: 'movie'
+                type: "movie",
             });
             const details = response.data;
 
             // Map TMDB data to form
-            setData(prev => ({
+            setData((prev) => ({
                 ...prev,
                 title: details.title,
                 original_title: details.original_title,
@@ -93,7 +95,7 @@ export default function MovieForm({
                 release_date: details.release_date,
                 runtime: details.runtime,
                 language: details.language,
-                status: details.status === 'released' ? 'released' : 'upcoming',
+                status: details.status === "released" ? "released" : "upcoming",
                 imdb_id: details.imdb_id,
                 budget: details.budget,
                 revenue: details.revenue,
@@ -101,8 +103,8 @@ export default function MovieForm({
                 banner_url: details.banner_url,
                 trailer_url: details.trailer_url,
                 age_rating: details.age_rating,
-                // Note: Genres and Persons mapping would require more complex logic 
-                // to match existing DB records or create new ones. 
+                // Note: Genres and Persons mapping would require more complex logic
+                // to match existing DB records or create new ones.
                 // For now, we'll just fill the text fields.
             }));
             setShowTmdbModal(false);
@@ -113,13 +115,12 @@ export default function MovieForm({
         }
     };
 
-
-
     const [slugError, setSlugError] = useState("");
 
     // Auto-generate slug from title
     React.useEffect(() => {
-        if (data.title && !movie?.id) { // Only auto-generate on create or if explicitly wanted
+        if (data.title && !movie?.id) {
+            // Only auto-generate on create or if explicitly wanted
             const slug = data.title
                 .toLowerCase()
                 .replace(/ /g, "-")
@@ -134,12 +135,15 @@ export default function MovieForm({
             if (!data.slug) return;
 
             try {
-                const response = await axios.get(route('admin.movies.check-slug'), {
-                    params: {
-                        slug: data.slug,
-                        id: movie?.id
+                const response = await axios.get(
+                    route("admin.movies.check-slug"),
+                    {
+                        params: {
+                            slug: data.slug,
+                            id: movie?.id,
+                        },
                     }
-                });
+                );
 
                 if (response.data.exists) {
                     setSlugError("This slug is already taken.");
@@ -292,7 +296,11 @@ export default function MovieForm({
                     <div className="md:col-span-2">
                         <div className="flex justify-between items-center mb-2">
                             <InputLabel htmlFor="title" value="Movie Title" />
-                            <SecondaryButton size="sm" onClick={() => setShowTmdbModal(true)} type="button">
+                            <SecondaryButton
+                                size="sm"
+                                onClick={() => setShowTmdbModal(true)}
+                                type="button"
+                            >
                                 Fetch from TMDB
                             </SecondaryButton>
                         </div>
@@ -337,7 +345,10 @@ export default function MovieForm({
                             onChange={(e) => setData("slug", e.target.value)}
                             placeholder="e.g. inception"
                         />
-                        <InputError message={errors.slug || slugError} className="mt-2" />
+                        <InputError
+                            message={errors.slug || slugError}
+                            className="mt-2"
+                        />
                     </div>
                     <div>
                         <InputLabel htmlFor="imdb_id" value="IMDb ID" />
@@ -458,12 +469,12 @@ export default function MovieForm({
                                 setData("age_rating", e.target.value)
                             }
                         >
-                            <option value="">Select Rating</option>
+                            <option value="G">Select Rating</option>
                             <option value="G">G</option>
                             <option value="PG">PG</option>
                             <option value="PG-13">PG-13</option>
-                            <option value="R">R</option>
-                            <option value="NC-17">NC-17</option>
+                            <option value="R">R - Restricted</option>
+                            <option value="18+">18+</option>
                         </select>
                         <InputError
                             message={errors.age_rating}
@@ -696,11 +707,7 @@ export default function MovieForm({
                                 <PersonSelector
                                     value={person.person_id}
                                     onChange={(id) =>
-                                        updatePerson(
-                                            index,
-                                            "person_id",
-                                            id
-                                        )
+                                        updatePerson(index, "person_id", id)
                                     }
                                     persons={persons}
                                 />
@@ -1074,19 +1081,21 @@ export default function MovieForm({
                 {[1, 2, 3, 4].map((step) => (
                     <div key={step} className="flex items-center">
                         <div
-                            className={` w-8 h-8 rounded-full flex items-center justify-center font-bold ${currentStep >= step
-                                ? "bg-indigo-600 text-white"
-                                : "bg-gray-200 dark:bg-gray-700 text-gray-500"
-                                }`}
+                            className={` w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                                currentStep >= step
+                                    ? "bg-indigo-600 text-white"
+                                    : "bg-gray-200 dark:bg-gray-700 text-gray-500"
+                            }`}
                         >
                             {step}
                         </div>
                         {step < 4 && (
                             <div
-                                className={`relative w-16 sm:w-24 h-1 ${currentStep > step
-                                    ? "bg-indigo-600"
-                                    : "bg-gray-200 dark:bg-gray-700"
-                                    }`}
+                                className={`relative w-16 sm:w-24 h-1 ${
+                                    currentStep > step
+                                        ? "bg-indigo-600"
+                                        : "bg-gray-200 dark:bg-gray-700"
+                                }`}
                             />
                         )}
                     </div>
@@ -1112,7 +1121,11 @@ export default function MovieForm({
                 </SecondaryButton>
 
                 {currentStep < 4 ? (
-                    <PrimaryButton key="next-btn" type="button" onClick={nextStep}>
+                    <PrimaryButton
+                        key="next-btn"
+                        type="button"
+                        onClick={nextStep}
+                    >
                         Next
                     </PrimaryButton>
                 ) : (
@@ -1155,7 +1168,11 @@ export default function MovieForm({
                 )}
             </div>
             {/* TMDB Modal */}
-            <Modal show={showTmdbModal} onClose={() => setShowTmdbModal(false)} maxWidth="2xl">
+            <Modal
+                show={showTmdbModal}
+                onClose={() => setShowTmdbModal(false)}
+                maxWidth="2xl"
+            >
                 <div className="p-6">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                         Search TMDB
@@ -1202,7 +1219,9 @@ export default function MovieForm({
                             </div>
                         ))}
                         {tmdbResults.length === 0 && !tmdbLoading && (
-                            <p className="text-center text-gray-500">No results found.</p>
+                            <p className="text-center text-gray-500">
+                                No results found.
+                            </p>
                         )}
                     </div>
                 </div>
