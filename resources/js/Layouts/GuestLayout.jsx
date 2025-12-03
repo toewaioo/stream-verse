@@ -4,7 +4,7 @@ import { Link } from '@inertiajs/react';
 
 export default function GuestLayout({ children }) {
     return (
-        <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-[#0a0e17] relative overflow-hidden">
+        <div className="min-h-screen flex flex-col sm:justify-center items-center pt-[calc(1.5rem+env(safe-area-inset-top))] sm:pt-0 bg-gray-100 dark:bg-[#0a0e17] relative overflow-hidden">
             {/* Background Gradients for dark mode */}
             <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/20 blur-[100px] hidden dark:block" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/20 blur-[100px] hidden dark:block" />

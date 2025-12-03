@@ -1,1 +1,0 @@
-import{j as s}from"./app-MyQzOIYu.js";function a({className:r="",disabled:t,children:o,...n}){return s.jsx("button",{...n,className:`btn-primary w-full justify-center ${t&&"opacity-25 cursor-not-allowed"} `+r,disabled:t,children:o})}export{a as P};

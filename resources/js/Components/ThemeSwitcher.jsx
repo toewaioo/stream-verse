@@ -8,10 +8,23 @@ export default function ThemeSwitcher() {
     return (
         <button
             onClick={toggleTheme}
-            className="p-2 rounded-full text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
+            className={`
+                relative p-2.5 rounded-full transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+                ${theme === 'light'
+                    ? 'bg-white/80 text-amber-500 hover:bg-white shadow-lg shadow-amber-500/20 border border-amber-100'
+                    : 'bg-slate-800/80 text-indigo-400 hover:bg-slate-800 shadow-lg shadow-indigo-500/20 border border-slate-700'}
+            `}
             aria-label="Toggle theme"
         >
-            {theme === 'light' ? <MoonIcon className="h-6 w-6" /> : <SunIcon className="h-6 w-6" />}
+            <div className="relative w-6 h-6 overflow-hidden">
+                <div className={`absolute inset-0 transform transition-transform duration-500 ${theme === 'dark' ? 'rotate-0 opacity-100' : 'rotate-90 opacity-0'}`}>
+                    <MoonIcon className="w-6 h-6" />
+                </div>
+                <div className={`absolute inset-0 transform transition-transform duration-500 ${theme === 'light' ? 'rotate-0 opacity-100' : '-rotate-90 opacity-0'}`}>
+                    <SunIcon className="w-6 h-6" />
+                </div>
+            </div>
+            <span className="sr-only">Toggle theme</span>
         </button>
     );
 }

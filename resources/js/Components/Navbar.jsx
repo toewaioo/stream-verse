@@ -59,11 +59,10 @@ export default function Navbar() {
     return (
         <>
             <nav
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-                    isScrolled
-                        ? "bg-white/80 dark:bg-black/90 backdrop-blur-md py-2 shadow-lg"
-                        : "bg-transparent py-2 md:py-6"
-                }`}
+                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+                        ? "bg-white/80 dark:bg-black/90 backdrop-blur-md pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] shadow-lg"
+                        : "bg-transparent pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] md:pb-6 md:pt-[calc(1.5rem+env(safe-area-inset-top))]"
+                    }`}
             >
                 <div className="container mx-auto px-2 md:px-12 flex items-center justify-between">
                     {/* Logo */}
@@ -102,9 +101,8 @@ export default function Navbar() {
                     <div className="flex items-center gap-4">
                         {/* Desktop Search */}
                         <div
-                            className={`hidden md:flex relative items-center transition-all duration-300 ${
-                                isSearchOpen ? "w-64" : "w-8"
-                            }`}
+                            className={`hidden md:flex relative items-center transition-all duration-300 ${isSearchOpen ? "w-64" : "w-8"
+                                }`}
                         >
                             <form onSubmit={handleSearch} className="w-full">
                                 <input
@@ -114,11 +112,10 @@ export default function Navbar() {
                                         setData("q", e.target.value)
                                     }
                                     placeholder={t("Search titles...")}
-                                    className={`w-full p-5 bg-transparent border-b border-gray-800/30 dark:border-white/30 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-gray-800 dark:focus:border-white py-1 pl-8 pr-2 transition-all duration-300 ${
-                                        isSearchOpen
-                                            ? "opacity-100 visible"
-                                            : "opacity-0 invisible w-0"
-                                    }`}
+                                    className={`w-full p-5 bg-transparent border-b border-gray-800/30 dark:border-white/30 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-gray-800 dark:focus:border-white py-1 pl-8 pr-2 transition-all duration-300 ${isSearchOpen
+                                        ? "opacity-100 visible"
+                                        : "opacity-0 invisible w-0"
+                                        }`}
                                     onBlur={() =>
                                         !data.q && setIsSearchOpen(false)
                                     }
@@ -168,11 +165,10 @@ export default function Navbar() {
                                         setData("q", e.target.value)
                                     }
                                     placeholder={t("Search titles...")}
-                                    className={`w-full p-5 bg-transparent border-b border-gray-800/30 dark:border-white/30 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-gray-800 dark:focus:border-white py-1 pr-2 transition-all duration-300 ${
-                                        isSearchOpen
-                                            ? "opacity-100 visible"
-                                            : "opacity-0 invisible w-0"
-                                    }`}
+                                    className={`w-full p-5 bg-transparent border-b border-gray-800/30 dark:border-white/30 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-gray-800 dark:focus:border-white py-1 pr-2 transition-all duration-300 ${isSearchOpen
+                                        ? "opacity-100 visible"
+                                        : "opacity-0 invisible w-0"
+                                        }`}
                                     onBlur={() =>
                                         !data.q && setIsSearchOpen(false)
                                     }
@@ -193,9 +189,8 @@ export default function Navbar() {
                                         );
                                     }
                                 }}
-                                className={`${isSearchOpen ? "hidden" : ""} ${
-                                    isMobileMenuOpen ? "hidden" : ""
-                                } left-0 p-2 text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors`}
+                                className={`${isSearchOpen ? "hidden" : ""} ${isMobileMenuOpen ? "hidden" : ""
+                                    } left-0 p-2 text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors`}
                             >
                                 <svg
                                     className="w-6 h-6 "
@@ -250,19 +245,17 @@ export default function Navbar() {
 
             {/* Mobile Menu Overlay */}
             <div
-                className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden ${
-                    isMobileMenuOpen
-                        ? "opacity-100 visible"
-                        : "opacity-0 invisible"
-                }`}
+                className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden ${isMobileMenuOpen
+                    ? "opacity-100 visible"
+                    : "opacity-0 invisible"
+                    }`}
                 onClick={closeMobileMenu}
             />
 
             {/* Mobile Menu Slide-out */}
             <div
-                className={`fixed top-0 right-0 h-full w-4/5 max-w-sm bg-white dark:bg-black z-40 transform transition-transform duration-300 ease-in-out md:hidden ${
-                    isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-                }`}
+                className={`fixed top-0 right-0 h-full w-4/5 max-w-sm bg-white dark:bg-black z-40 transform transition-transform duration-300 ease-in-out md:hidden ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+                    }`}
             >
                 <div className="flex flex-col h-full pt-24 px-6 pb-6">
                     {/* Mobile Search */}
@@ -319,8 +312,10 @@ export default function Navbar() {
                         >
                             {t("Series")}
                         </Link>
-                        <LanguageSwitcher />
-                        <ThemeSwitcher />
+                        <div className="flex items-center gap-4 mt-4 px-2">
+                            <LanguageSwitcher />
+                            <ThemeSwitcher />
+                        </div>
                     </nav>
 
                     {/* Footer */}
@@ -336,11 +331,10 @@ export default function Navbar() {
                 <div className="flex items-center justify-around p-4">
                     <Link
                         href={route("home")}
-                        className={`flex flex-col items-center gap-1 ${
-                            route().current("home")
-                                ? "text-gray-800 dark:text-white"
-                                : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
-                        }`}
+                        className={`flex flex-col items-center gap-1 ${route().current("home")
+                            ? "text-gray-800 dark:text-white"
+                            : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                            }`}
                     >
                         <svg
                             className="w-6 h-6"
@@ -362,11 +356,10 @@ export default function Navbar() {
 
                     <Link
                         href={route("movies.index")}
-                        className={`flex flex-col items-center gap-1 ${
-                            route().current("movies.*")
-                                ? "text-gray-800 dark:text-white"
-                                : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
-                        }`}
+                        className={`flex flex-col items-center gap-1 ${route().current("movies.*")
+                            ? "text-gray-800 dark:text-white"
+                            : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                            }`}
                     >
                         <svg
                             className="w-6 h-6"
@@ -388,11 +381,10 @@ export default function Navbar() {
 
                     <Link
                         href={route("series.index")}
-                        className={`flex flex-col items-center gap-1 ${
-                            route().current("series.*")
-                                ? "text-gray-800 dark:text-white"
-                                : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
-                        }`}
+                        className={`flex flex-col items-center gap-1 ${route().current("series.*")
+                            ? "text-gray-800 dark:text-white"
+                            : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                            }`}
                     >
                         <svg
                             className="w-6 h-6"
@@ -418,12 +410,11 @@ export default function Navbar() {
                                 ? route("profile.edit")
                                 : route("login")
                         }
-                        className={`flex flex-col items-center gap-1 ${
-                            route().current("profile.*") ||
+                        className={`flex flex-col items-center gap-1 ${route().current("profile.*") ||
                             route().current("login")
-                                ? "text-gray-800 dark:text-white"
-                                : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
-                        }`}
+                            ? "text-gray-800 dark:text-white"
+                            : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                            }`}
                     >
                         <svg
                             className="w-6 h-6"

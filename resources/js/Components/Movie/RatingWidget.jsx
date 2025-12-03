@@ -39,7 +39,7 @@ export default function RatingWidget({
             return (
                 <svg
                     key={index}
-                    className={`star dark:text-yellow-400 ${isFilled ? "filled" : ""}`}
+                    className={`star  text-yellow-500 ${isFilled ? "filled" : ""}`}
                     onMouseEnter={() =>
                         interactive && setHoveredStar(starValue)
                     }

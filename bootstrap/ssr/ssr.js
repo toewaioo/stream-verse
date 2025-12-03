@@ -1,12 +1,13 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import { Link, usePage, Head, useForm, router, createInertiaApp } from "@inertiajs/react";
-import React, { createContext, useState, useContext, useEffect, forwardRef, useRef, useImperativeHandle, useMemo } from "react";
-import { Transition, Dialog, TransitionChild, DialogPanel, Combobox } from "@headlessui/react";
+import React, { createContext, useState, useContext, useEffect, forwardRef, useRef, useImperativeHandle, useMemo, Fragment as Fragment$1 } from "react";
+import { Transition, Dialog, TransitionChild, DialogPanel, Combobox, Menu } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
-import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
+import { ChevronUpDownIcon, CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import axios$1 from "axios";
 import { debounce } from "lodash";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
+import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import createServer from "@inertiajs/react/server";
 import ReactDOMServer from "react-dom/server";
 function ApplicationLogo(props) {
@@ -4374,18 +4375,27 @@ const ThemeContext = createContext();
 const useTheme = () => useContext(ThemeContext);
 function ThemeSwitcher() {
   const { theme, toggleTheme } = useTheme();
-  return /* @__PURE__ */ jsx(
+  return /* @__PURE__ */ jsxs(
     "button",
     {
       onClick: toggleTheme,
-      className: "p-2 rounded-full text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none",
+      className: `
+                relative p-2.5 rounded-full transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+                ${theme === "light" ? "bg-white/80 text-amber-500 hover:bg-white shadow-lg shadow-amber-500/20 border border-amber-100" : "bg-slate-800/80 text-indigo-400 hover:bg-slate-800 shadow-lg shadow-indigo-500/20 border border-slate-700"}
+            `,
       "aria-label": "Toggle theme",
-      children: theme === "light" ? /* @__PURE__ */ jsx(MoonIcon, { className: "h-6 w-6" }) : /* @__PURE__ */ jsx(SunIcon, { className: "h-6 w-6" })
+      children: [
+        /* @__PURE__ */ jsxs("div", { className: "relative w-6 h-6 overflow-hidden", children: [
+          /* @__PURE__ */ jsx("div", { className: `absolute inset-0 transform transition-transform duration-500 ${theme === "dark" ? "rotate-0 opacity-100" : "rotate-90 opacity-0"}`, children: /* @__PURE__ */ jsx(MoonIcon, { className: "w-6 h-6" }) }),
+          /* @__PURE__ */ jsx("div", { className: `absolute inset-0 transform transition-transform duration-500 ${theme === "light" ? "rotate-0 opacity-100" : "-rotate-90 opacity-0"}`, children: /* @__PURE__ */ jsx(SunIcon, { className: "w-6 h-6" }) })
+        ] }),
+        /* @__PURE__ */ jsx("span", { className: "sr-only", children: "Toggle theme" })
+      ]
     }
   );
 }
 function GuestLayout({ children }) {
-  return /* @__PURE__ */ jsxs("div", { className: "min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-[#0a0e17] relative overflow-hidden", children: [
+  return /* @__PURE__ */ jsxs("div", { className: "min-h-screen flex flex-col sm:justify-center items-center pt-[calc(1.5rem+env(safe-area-inset-top))] sm:pt-0 bg-gray-100 dark:bg-[#0a0e17] relative overflow-hidden", children: [
     /* @__PURE__ */ jsx("div", { className: "absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/20 blur-[100px] hidden dark:block" }),
     /* @__PURE__ */ jsx("div", { className: "absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/20 blur-[100px] hidden dark:block" }),
     /* @__PURE__ */ jsx("div", { className: "absolute top-4 right-4", children: /* @__PURE__ */ jsx(ThemeSwitcher, {}) }),
@@ -4960,24 +4970,45 @@ const __vite_glob_0_17 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
 }, Symbol.toStringTag, { value: "Module" }));
 function LanguageSwitcher() {
   const { i18n } = useTranslation();
+  const languages = [
+    { code: "en", name: "English", flag: "🇺🇸" },
+    { code: "my", name: "Myanmar", flag: "🇲🇲" }
+  ];
+  const currentLanguage = languages.find((lang) => i18n.language.startsWith(lang.code)) || languages[0];
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
   };
-  return /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-2", children: [
+  return /* @__PURE__ */ jsxs(Menu, { as: "div", className: "relative inline-block text-left", children: [
+    /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs(Menu.Button, { className: "inline-flex w-full items-center justify-center gap-x-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 px-3 py-2.5 text-sm font-semibold text-gray-900 dark:text-white shadow-lg shadow-gray-200/50 dark:shadow-black/20 ring-1 ring-inset ring-gray-300 dark:ring-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-all duration-200", children: [
+      /* @__PURE__ */ jsx(GlobeAltIcon, { className: "h-5 w-5 text-gray-500 dark:text-gray-400", "aria-hidden": "true" }),
+      /* @__PURE__ */ jsx("span", { className: "uppercase", children: currentLanguage.code }),
+      /* @__PURE__ */ jsx(ChevronDownIcon, { className: "-mr-1 h-5 w-5 text-gray-400", "aria-hidden": "true" })
+    ] }) }),
     /* @__PURE__ */ jsx(
-      "button",
+      Transition,
       {
-        onClick: () => changeLanguage("en"),
-        className: `px-3 py-1 rounded-md text-sm font-medium ${i18n.language.startsWith("en") ? "bg-blue-600 text-white" : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"}`,
-        children: "EN"
-      }
-    ),
-    /* @__PURE__ */ jsx(
-      "button",
-      {
-        onClick: () => changeLanguage("my"),
-        className: `px-3 py-1 rounded-md text-sm font-medium ${i18n.language.startsWith("my") ? "bg-blue-600 text-white" : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"}`,
-        children: "MY"
+        as: Fragment$1,
+        enter: "transition ease-out duration-100",
+        enterFrom: "transform opacity-0 scale-95",
+        enterTo: "transform opacity-100 scale-100",
+        leave: "transition ease-in duration-75",
+        leaveFrom: "transform opacity-100 scale-100",
+        leaveTo: "transform opacity-0 scale-95",
+        children: /* @__PURE__ */ jsx(Menu.Items, { className: "absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-xl bg-white dark:bg-slate-800 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none divide-y divide-gray-100 dark:divide-slate-700", children: /* @__PURE__ */ jsx("div", { className: "py-1", children: languages.map((language) => /* @__PURE__ */ jsx(Menu.Item, { children: ({ active }) => /* @__PURE__ */ jsxs(
+          "button",
+          {
+            onClick: () => changeLanguage(language.code),
+            className: `
+                                            ${active ? "bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-white" : "text-gray-700 dark:text-gray-300"}
+                                            group flex w-full items-center px-4 py-2 text-sm transition-colors duration-150
+                                        `,
+            children: [
+              /* @__PURE__ */ jsx("span", { className: "mr-3 text-lg", children: language.flag }),
+              language.name,
+              currentLanguage.code === language.code && /* @__PURE__ */ jsx("span", { className: "ml-auto text-indigo-600 dark:text-indigo-400", children: /* @__PURE__ */ jsx("svg", { className: "h-4 w-4", fill: "none", viewBox: "0 0 24 24", strokeWidth: "3", stroke: "currentColor", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M4.5 12.75l6 6 9-13.5" }) }) })
+            ]
+          }
+        ) }, language.code)) }) })
       }
     )
   ] });
@@ -5031,7 +5062,7 @@ function Navbar() {
     /* @__PURE__ */ jsx(
       "nav",
       {
-        className: `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/80 dark:bg-black/90 backdrop-blur-md py-2 shadow-lg" : "bg-transparent py-2 md:py-6"}`,
+        className: `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/80 dark:bg-black/90 backdrop-blur-md pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] shadow-lg" : "bg-transparent pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] md:pb-6 md:pt-[calc(1.5rem+env(safe-area-inset-top))]"}`,
         children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12 flex items-center justify-between", children: [
           /* @__PURE__ */ jsxs(
             Link,
@@ -5297,8 +5328,10 @@ function Navbar() {
                 children: t("Series")
               }
             ),
-            /* @__PURE__ */ jsx(LanguageSwitcher, {}),
-            /* @__PURE__ */ jsx(ThemeSwitcher, {})
+            /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 mt-4 px-2", children: [
+              /* @__PURE__ */ jsx(LanguageSwitcher, {}),
+              /* @__PURE__ */ jsx(ThemeSwitcher, {})
+            ] })
           ] }),
           /* @__PURE__ */ jsx("div", { className: "mt-auto pt-6 border-t border-gray-200 dark:border-white/10", children: /* @__PURE__ */ jsxs("p", { className: "text-xs text-gray-500 uppercase tracking-widest", children: [
             "CINE",
@@ -5954,7 +5987,7 @@ function RatingWidget({
       return /* @__PURE__ */ jsx(
         "svg",
         {
-          className: `star dark:text-yellow-400 ${isFilled ? "filled" : ""}`,
+          className: `star  text-yellow-500 ${isFilled ? "filled" : ""}`,
           onMouseEnter: () => interactive && setHoveredStar(starValue),
           onMouseLeave: () => interactive && setHoveredStar(0),
           onClick: () => interactive && handleStarClick(starValue * 2),
@@ -5999,24 +6032,6 @@ function RatingWidget({
   ] });
 }
 const PlayIcon$1 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
-const DownloadIcon$1 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx(
-  "svg",
-  {
-    className,
-    fill: "none",
-    stroke: "currentColor",
-    viewBox: "0 0 24 24",
-    children: /* @__PURE__ */ jsx(
-      "path",
-      {
-        strokeLinecap: "round",
-        strokeLinejoin: "round",
-        strokeWidth: 2,
-        d: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-      }
-    )
-  }
-);
 const LinkItem$1 = ({ link, type, isVip }) => {
   const { t } = useTranslation();
   const isLocked = link.is_vip_only && !isVip;
@@ -6123,6 +6138,7 @@ function MovieDetails({
   isVip,
   seo
 }) {
+  console.log(movie);
   const { t } = useTranslation();
   const { auth } = usePage().props;
   const [showTrailer, setShowTrailer] = useState(false);
@@ -6135,6 +6151,9 @@ function MovieDetails({
       router.visit(prevRoute);
     });
   }, []);
+  const scrollToWatch = () => {
+    document.getElementById("watch-section")?.scrollIntoView({ behavior: "smooth" });
+  };
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(
       SeoHead,
@@ -6148,276 +6167,381 @@ function MovieDetails({
         structuredData: seo?.structuredData
       }
     ),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-[#080808] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black flex flex-col md:flex-row", children: [
-      /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/2 lg:w-[45%] h-[60vh] md:h-screen relative md:sticky md:top-0 overflow-hidden", children: [
-        /* @__PURE__ */ jsxs("div", { className: "absolute inset-0", children: [
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-50 dark:bg-[#0a0e17] text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500 selection:text-white transition-colors duration-300", children: [
+      /* @__PURE__ */ jsxs("div", { className: "relative w-full min-h-[85vh] md:min-h-[100vh] flex items-end pb-12 md:pb-24 overflow-hidden", children: [
+        /* @__PURE__ */ jsxs("div", { className: "absolute inset-0 z-0", children: [
           /* @__PURE__ */ jsx(
+            "img",
+            {
+              src: movie.banner_url || movie.poster_url,
+              alt: movie.title,
+              className: "w-full h-full object-cover"
+            }
+          ),
+          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-gray-50 dark:from-[#0a0e17] via-gray-50/60 dark:via-[#0a0e17]/60 to-transparent" }),
+          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-r from-gray-50 dark:from-[#0a0e17] via-gray-50/40 dark:via-[#0a0e17]/40 to-transparent" }),
+          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-white/10 dark:bg-black/20" })
+        ] }),
+        /* @__PURE__ */ jsx("div", { className: "relative z-10 container-custom w-full", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-end", children: [
+          /* @__PURE__ */ jsx("div", { className: "hidden md:block w-64 lg:w-72 flex-shrink-0 rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.2)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-gray-200 dark:border-white/10 transform hover:scale-105 transition-transform duration-500", children: /* @__PURE__ */ jsx(
             "img",
             {
               src: movie.poster_url,
               alt: movie.title,
               className: "w-full h-full object-cover"
             }
-          ),
-          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/30" }),
-          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-gray-100 dark:from-[#080808] via-transparent to-transparent md:hidden" })
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ jsxs(
-          "button",
-          {
-            onClick: () => setShowTrailer(true),
-            className: "group relative w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white hover:scale-110 transition-all duration-500",
-            children: [
-              /* @__PURE__ */ jsx("div", { className: "absolute inset-0 rounded-full border border-white/30 animate-ping-slow" }),
-              /* @__PURE__ */ jsx(PlayIcon$1, { className: "w-8 h-8 md:w-10 md:h-10 text-white group-hover:text-black ml-1 transition-colors" })
-            ]
-          }
-        ) }),
-        /* @__PURE__ */ jsxs("div", { className: "absolute bottom-0 left-0 right-0 p-6 md:hidden", children: [
-          /* @__PURE__ */ jsx("h1", { className: "text-4xl font-serif font-bold dark:text-white leading-none mb-3", children: movie.title }),
-          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 text-sm dark:text-gray-300 mb-3", children: [
-            /* @__PURE__ */ jsx("span", { children: new Date(movie.release_date).getFullYear() }),
-            /* @__PURE__ */ jsx("span", { children: "•" }),
-            /* @__PURE__ */ jsx("span", { children: movie.formatted_runtime }),
-            movie.rating_average && /* @__PURE__ */ jsxs(Fragment, { children: [
-              /* @__PURE__ */ jsx("span", { children: "•" }),
-              /* @__PURE__ */ jsxs("span", { className: "text-yellow-700", children: [
-                "★ ",
-                movie.rating_average.toFixed(1)
-              ] })
-            ] })
-          ] }),
-          /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: movie.genres?.slice(0, 3).map((genre) => /* @__PURE__ */ jsx(
-            "span",
-            {
-              className: "px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs dark:text-white uppercase tracking-wider",
-              children: genre.name
-            },
-            genre.id
-          )) })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/2 lg:w-[55%] min-h-screen bg-gray-100 dark:bg-[#080808] relative z-10", children: [
-        /* @__PURE__ */ jsxs("div", { className: "p-6 md:p-12 lg:p-20 max-w-3xl mx-auto", children: [
-          /* @__PURE__ */ jsxs("div", { className: "hidden md:block mb-12", children: [
-            /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 text-sm font-bold tracking-widest text-gray-500 uppercase mb-4", children: [
-              /* @__PURE__ */ jsx("span", { children: new Date(movie.release_date).getFullYear() }),
-              /* @__PURE__ */ jsx("span", { className: "w-1 h-1 bg-gray-500 rounded-full" }),
-              /* @__PURE__ */ jsx("span", { children: movie.formatted_runtime }),
-              /* @__PURE__ */ jsx("span", { className: "w-1 h-1 bg-gray-500 rounded-full" }),
-              /* @__PURE__ */ jsxs("span", { className: "text-gray-800 dark:text-white", children: [
-                movie.rating_average?.toFixed(1),
-                " ",
-                t("Rating")
-              ] })
-            ] }),
-            /* @__PURE__ */ jsx("h1", { className: "text-5xl lg:text-7xl font-serif font-medium text-gray-800 dark:text-white leading-[0.9] mb-6", children: movie.title }),
-            /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: movie.genres?.map((genre) => /* @__PURE__ */ jsx(
-              "span",
-              {
-                className: "px-3 py-1 border border-gray-800/20 dark:border-white/20 rounded-full text-xs text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:border-gray-800 dark:hover:border-white transition-colors cursor-default",
-                children: genre.name
-              },
-              genre.id
-            )) })
-          ] }),
-          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
-            /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-4", children: t("Synopsis") }),
-            /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed", children: movie.description })
-          ] }),
-          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
-            /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-8", children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest", children: t("Watch & Download") }),
-              movie.is_vip_only && /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-0.5 rounded", children: t("VIP ACCESS") })
-            ] }),
-            auth.user ? /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
-              /* @__PURE__ */ jsxs(
-                "div",
-                {
-                  className: `${watchLinksByQuality && Object.keys(watchLinksByQuality).length > 0 ? "" : "hidden"}`,
-                  children: [
-                    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mb-4 text-gray-800 dark:text-white", children: [
-                      /* @__PURE__ */ jsx(PlayIcon$1, { className: "w-5 h-5" }),
-                      /* @__PURE__ */ jsx("span", { className: "font-serif text-xl italic", children: t("Streaming Sources") })
-                    ] }),
-                    /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-gray-800/10 dark:border-white/10", children: watchLinksByQuality && Object.keys(watchLinksByQuality).length > 0 ? Object.values(
-                      watchLinksByQuality
-                    ).flat().map((link) => /* @__PURE__ */ jsx(
-                      LinkItem$1,
-                      {
-                        link,
-                        type: "watch",
-                        isVip
-                      },
-                      link.id
-                    )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: t("No streaming links available.") }) })
-                  ]
-                }
-              ),
-              /* @__PURE__ */ jsxs(
-                "div",
-                {
-                  className: `${downloadLinksByQuality && Object.keys(downloadLinksByQuality).length > 0 ? "" : "hidden"}`,
-                  children: [
-                    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mb-4 text-gray-800 dark:text-white", children: [
-                      /* @__PURE__ */ jsx(DownloadIcon$1, { className: "w-5 h-5" }),
-                      /* @__PURE__ */ jsx("span", { className: "font-serif text-xl italic", children: t("Download Files") })
-                    ] }),
-                    /* @__PURE__ */ jsx("div", { className: "pl-4 border-l border-gray-800/10 dark:border-white/10", children: downloadLinksByQuality && Object.keys(downloadLinksByQuality).length > 0 ? Object.values(
-                      downloadLinksByQuality
-                    ).flat().map((link) => /* @__PURE__ */ jsx(
-                      LinkItem$1,
-                      {
-                        link,
-                        type: "download",
-                        isVip
-                      },
-                      link.id
-                    )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 italic px-2", children: t("No download links available.") }) })
-                  ]
-                }
-              )
-            ] }) : /* @__PURE__ */ jsxs("div", { className: "p-8 border border-gray-800/10 dark:border-white/10 rounded-lg bg-gray-800/5 dark:bg-white/5 text-center", children: [
-              /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-400 font-serif text-lg mb-4", children: t("Please log in to access streaming and download links.") }),
-              /* @__PURE__ */ jsx(
-                "a",
-                {
-                  href: route("login"),
-                  className: "inline-block px-6 py-2 bg-gray-800 dark:bg-white text-white dark:text-black font-bold uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors",
-                  children: t("Log In")
-                }
-              )
-            ] })
-          ] }),
-          movie?.banner_url && /* @__PURE__ */ jsx("div", { className: "mt-8 w-full rounded overflow-hidden", children: /* @__PURE__ */ jsx(
-            "img",
-            {
-              src: movie?.banner_url,
-              alt: t("Backdrop"),
-              className: "w-full h-48 object-cover object-center"
-            }
           ) }),
-          /* @__PURE__ */ jsxs("div", { className: "mb-16 mt-10", children: [
-            /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: t("Cast & Crew") }),
-            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4", children: movie.actors?.slice(0, 6).map((actor) => /* @__PURE__ */ jsxs(
+          /* @__PURE__ */ jsxs("div", { className: "flex-1 w-full text-center md:text-left", children: [
+            /* @__PURE__ */ jsxs(
               "div",
               {
-                className: "flex items-center gap-3",
+                className: "mb-4 animate-slide-up",
+                style: { animationDelay: "0.1s" },
                 children: [
-                  /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-800  hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx(
+                  /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-2 font-serif leading-tight drop-shadow-lg", children: movie.title }),
+                  movie.original_title && /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-500 dark:text-gray-400 font-serif italic", children: movie.original_title })
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxs(
+              "div",
+              {
+                className: "flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 mb-8 text-sm md:text-base font-medium text-gray-600 dark:text-gray-300 animate-slide-up",
+                style: { animationDelay: "0.2s" },
+                children: [
+                  movie.rating_average > 0 && /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1 text-yellow-500 dark:text-yellow-400", children: [
+                    /* @__PURE__ */ jsx("span", { children: "★" }),
+                    /* @__PURE__ */ jsx("span", { className: "text-gray-900 dark:text-white", children: movie.rating_average })
+                  ] }),
+                  /* @__PURE__ */ jsx("span", { children: new Date(
+                    movie.release_date
+                  ).getFullYear() }),
+                  /* @__PURE__ */ jsx("span", { className: "px-2 py-0.5 border border-gray-300 dark:border-white/20 rounded text-xs uppercase tracking-wider bg-gray-200 dark:bg-white/5", children: movie.age_rating || "PG-13" }),
+                  /* @__PURE__ */ jsx("span", { children: movie.formatted_runtime }),
+                  movie.country && /* @__PURE__ */ jsxs(Fragment, { children: [
+                    /* @__PURE__ */ jsx("span", { className: "hidden md:inline", children: "•" }),
+                    /* @__PURE__ */ jsx("span", { children: movie.country })
+                  ] }),
+                  movie.view_count > 0 && /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs", children: [
+                    /* @__PURE__ */ jsxs(
+                      "svg",
+                      {
+                        className: "w-4 h-4",
+                        fill: "none",
+                        stroke: "currentColor",
+                        viewBox: "0 0 24 24",
+                        children: [
+                          /* @__PURE__ */ jsx(
+                            "path",
+                            {
+                              strokeLinecap: "round",
+                              strokeLinejoin: "round",
+                              strokeWidth: 2,
+                              d: "M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            }
+                          ),
+                          /* @__PURE__ */ jsx(
+                            "path",
+                            {
+                              strokeLinecap: "round",
+                              strokeLinejoin: "round",
+                              strokeWidth: 2,
+                              d: "M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            }
+                          )
+                        ]
+                      }
+                    ),
+                    /* @__PURE__ */ jsx("span", { children: movie.view_count })
+                  ] })
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              "div",
+              {
+                className: "flex flex-wrap justify-center md:justify-start gap-2 mb-8 animate-slide-up",
+                style: { animationDelay: "0.3s" },
+                children: movie.genres?.map((genre) => /* @__PURE__ */ jsx(
+                  "span",
+                  {
+                    className: "genre-pill",
+                    children: genre.name
+                  },
+                  genre.id
+                ))
+              }
+            ),
+            /* @__PURE__ */ jsxs(
+              "div",
+              {
+                className: "flex flex-wrap justify-center md:justify-start gap-4 animate-slide-up",
+                style: { animationDelay: "0.4s" },
+                children: [
+                  /* @__PURE__ */ jsxs(
+                    "button",
+                    {
+                      onClick: scrollToWatch,
+                      className: "btn-primary group",
+                      children: [
+                        /* @__PURE__ */ jsx(PlayIcon$1, { className: "w-5 h-5 mr-2 group-hover:scale-110 transition-transform" }),
+                        t("Watch Now")
+                      ]
+                    }
+                  ),
+                  movie.trailer_url && /* @__PURE__ */ jsxs(
+                    "button",
+                    {
+                      onClick: () => setShowTrailer(true),
+                      className: "btn-secondary group",
+                      children: [
+                        /* @__PURE__ */ jsxs(
+                          "svg",
+                          {
+                            className: "w-5 h-5 mr-2 group-hover:scale-110 transition-transform",
+                            fill: "none",
+                            stroke: "currentColor",
+                            viewBox: "0 0 24 24",
+                            children: [
+                              /* @__PURE__ */ jsx(
+                                "path",
+                                {
+                                  strokeLinecap: "round",
+                                  strokeLinejoin: "round",
+                                  strokeWidth: 2,
+                                  d: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                                }
+                              ),
+                              /* @__PURE__ */ jsx(
+                                "path",
+                                {
+                                  strokeLinecap: "round",
+                                  strokeLinejoin: "round",
+                                  strokeWidth: 2,
+                                  d: "M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                }
+                              )
+                            ]
+                          }
+                        ),
+                        t("Trailer")
+                      ]
+                    }
+                  )
+                ]
+              }
+            )
+          ] })
+        ] }) })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "container-custom py-12 md:py-20", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col lg:flex-row gap-12", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
+          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+            /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2", children: [
+              /* @__PURE__ */ jsx("span", { className: "w-8 h-[2px] bg-blue-500" }),
+              t("Storyline")
+            ] }),
+            /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed opacity-90", children: movie.description })
+          ] }),
+          /* @__PURE__ */ jsx(
+            "div",
+            {
+              id: "watch-section",
+              className: "mb-16 scroll-mt-24",
+              children: /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-6 md:p-8", children: [
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-8", children: [
+                  /* @__PURE__ */ jsxs("h3", { className: "text-xl font-serif text-gray-900 dark:text-white flex items-center gap-3", children: [
+                    /* @__PURE__ */ jsx(PlayIcon$1, { className: "w-6 h-6 text-blue-500" }),
+                    t("Watch & Download")
+                  ] }),
+                  movie.is_vip_only && /* @__PURE__ */ jsx("span", { className: "badge-vip", children: t("VIP ACCESS") })
+                ] }),
+                auth.user ? /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
+                  /* @__PURE__ */ jsxs(
+                    "div",
+                    {
+                      className: `${watchLinksByQuality && Object.keys(
+                        watchLinksByQuality
+                      ).length > 0 ? "" : "hidden"}`,
+                      children: [
+                        /* @__PURE__ */ jsx("h4", { className: "text-sm font-bold text-gray-500 uppercase tracking-widest mb-4", children: t("Streaming Sources") }),
+                        /* @__PURE__ */ jsx("div", { className: "grid gap-2", children: watchLinksByQuality && Object.keys(
+                          watchLinksByQuality
+                        ).length > 0 ? Object.values(
+                          watchLinksByQuality
+                        ).flat().map((link) => /* @__PURE__ */ jsx(
+                          LinkItem$1,
+                          {
+                            link,
+                            type: "watch",
+                            isVip
+                          },
+                          link.id
+                        )) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic", children: t(
+                          "No streaming links available."
+                        ) }) })
+                      ]
+                    }
+                  ),
+                  /* @__PURE__ */ jsxs(
+                    "div",
+                    {
+                      className: `${downloadLinksByQuality && Object.keys(
+                        downloadLinksByQuality
+                      ).length > 0 ? "" : "hidden"}`,
+                      children: [
+                        /* @__PURE__ */ jsx("h4", { className: "text-sm font-bold text-gray-500 uppercase tracking-widest mb-4", children: t("Download Files") }),
+                        /* @__PURE__ */ jsx("div", { className: "grid gap-2", children: downloadLinksByQuality && Object.keys(
+                          downloadLinksByQuality
+                        ).length > 0 ? Object.values(
+                          downloadLinksByQuality
+                        ).flat().map((link) => /* @__PURE__ */ jsx(
+                          LinkItem$1,
+                          {
+                            link,
+                            type: "download",
+                            isVip
+                          },
+                          link.id
+                        )) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic", children: t(
+                          "No download links available."
+                        ) }) })
+                      ]
+                    }
+                  )
+                ] }) : /* @__PURE__ */ jsxs("div", { className: "text-center py-8", children: [
+                  /* @__PURE__ */ jsx("p", { className: "text-gray-400 mb-6", children: t(
+                    "Please log in to access streaming and download links."
+                  ) }),
+                  /* @__PURE__ */ jsx(
+                    "a",
+                    {
+                      href: route("login"),
+                      className: "btn-primary",
+                      children: t("Log In to Watch")
+                    }
+                  )
+                ] })
+              ] })
+            }
+          ),
+          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+            /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
+              /* @__PURE__ */ jsx("span", { className: "w-8 h-[2px] bg-blue-500" }),
+              t("Top Cast")
+            ] }),
+            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6", children: movie.actors?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
+              Link,
+              {
+                href: route(
+                  "person.show",
+                  actor.person?.id
+                ),
+                className: "group block",
+                children: [
+                  /* @__PURE__ */ jsx("div", { className: "aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-gray-200 dark:bg-gray-800", children: /* @__PURE__ */ jsx(
                     "img",
                     {
                       src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg",
-                      alt: "",
-                      className: "w-full h-full object-cover"
+                      alt: actor.person?.name,
+                      className: "w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     }
                   ) }),
-                  /* @__PURE__ */ jsxs("div", { className: "flex flex-col", children: [
-                    /* @__PURE__ */ jsx(
-                      Link,
-                      {
-                        href: route(
-                          "person.show",
-                          actor.person?.id
-                        ),
-                        className: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors flex justify-between text-sm group",
-                        children: /* @__PURE__ */ jsx("span", { className: "font-bold", children: actor.person?.name })
-                      }
-                    ),
-                    /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-500 uppercase tracking-wider", children: actor.character_name })
-                  ] })
+                  /* @__PURE__ */ jsx("h4", { className: "text-gray-900 dark:text-white font-medium truncate group-hover:text-blue-400 transition-colors", children: actor.person?.name }),
+                  /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 truncate", children: actor.character_name })
                 ]
               },
               actor.id
             )) })
-          ] }),
-          /* @__PURE__ */ jsxs("div", { className: "pt-12 border-t border-gray-800/10 dark:border-white/10", children: [
-            /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center mb-12", children: /* @__PURE__ */ jsxs("div", { children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs text-center font-bold text-gray-500 uppercase tracking-widest mb-2", children: t("Your Rating") }),
-              auth.user ? /* @__PURE__ */ jsx(
-                RatingWidget,
-                {
-                  ratingAverage: movie.rating_average || 0,
-                  ratingCount: movie.rating_count || 0,
-                  userRating,
-                  onRate: (rating) => {
-                    if (userRating) {
-                      router.put(
-                        route(
-                          "admin.ratings.update",
-                          userRating.id
-                        ),
-                        {
-                          rating
-                        },
-                        {
-                          preserveScroll: true,
-                          onSuccess: () => console.log(
-                            "Rating updated"
-                          )
-                        }
-                      );
-                    } else {
-                      router.post(
-                        route(
-                          "admin.ratings.store"
-                        ),
-                        {
-                          movie_id: movie.id,
-                          rating
-                        },
-                        {
-                          preserveScroll: true,
-                          onSuccess: () => console.log(
-                            "Rating submitted"
-                          )
-                        }
-                      );
-                    }
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "w-full lg:w-80 flex-shrink-0 space-y-12", children: [
+          /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-6", children: [
+            /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 text-center", children: t("Rate this Movie") }),
+            auth.user ? /* @__PURE__ */ jsx(
+              RatingWidget,
+              {
+                ratingAverage: movie.rating_average || 0,
+                ratingCount: movie.rating_count || 0,
+                userRating,
+                onRate: (rating) => {
+                  if (userRating) {
+                    router.put(
+                      route(
+                        "admin.ratings.update",
+                        userRating.id
+                      ),
+                      { rating },
+                      { preserveScroll: true }
+                    );
+                  } else {
+                    router.post(
+                      route(
+                        "admin.ratings.store"
+                      ),
+                      {
+                        movie_id: movie.id,
+                        rating
+                      },
+                      { preserveScroll: true }
+                    );
                   }
                 }
-              ) : /* @__PURE__ */ jsxs("div", { className: "text-gray-500 text-sm italic", children: [
-                /* @__PURE__ */ jsx(
-                  "a",
-                  {
-                    href: route("login"),
-                    className: "text-gray-800 dark:text-white hover:underline",
-                    children: t("Log in")
-                  }
-                ),
-                " ",
-                t("to rate this movie.")
-              ] })
-            ] }) }),
-            relatedMovies && relatedMovies.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: t("Related Films") }),
-              /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-4", children: relatedMovies.slice(0, 3).map((rel) => /* @__PURE__ */ jsxs(
+              }
+            ) : /* @__PURE__ */ jsxs("div", { className: "text-center text-sm text-gray-500", children: [
+              /* @__PURE__ */ jsx(
                 "a",
                 {
-                  href: route(
-                    "movies.show",
-                    rel.slug
-                  ),
-                  className: "group block",
-                  children: [
-                    /* @__PURE__ */ jsx("div", { className: "aspect-[3/2] overflow-hidden mb-2", children: /* @__PURE__ */ jsx(
+                  href: route("login"),
+                  className: "text-blue-400 hover:underline",
+                  children: t("Log in")
+                }
+              ),
+              " ",
+              t("to rate.")
+            ] })
+          ] }),
+          relatedMovies && relatedMovies.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6 border-l-4 border-blue-500 pl-3", children: t("You May Also Like") }),
+            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-2 gap-4", children: relatedMovies.slice(0, 6).map((rel) => /* @__PURE__ */ jsxs(
+              "a",
+              {
+                href: route(
+                  "movies.show",
+                  rel.slug
+                ),
+                className: "group block",
+                children: [
+                  /* @__PURE__ */ jsxs("div", { className: "aspect-[2/3] rounded-lg overflow-hidden mb-2 relative", children: [
+                    /* @__PURE__ */ jsx(
                       "img",
                       {
                         src: rel.poster_url,
-                        alt: "",
-                        className: "w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                        alt: rel.title,
+                        className: "w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       }
-                    ) }),
-                    /* @__PURE__ */ jsx("h4", { className: "text-gray-800 dark:text-white font-serif text-sm truncate group-hover:underline", children: rel.title })
-                  ]
-                },
-                rel.id
-              )) })
-            ] })
+                    ),
+                    /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" })
+                  ] }),
+                  /* @__PURE__ */ jsx("h4", { className: "text-sm text-gray-600 dark:text-gray-300 font-medium truncate group-hover:text-blue-600 dark:group-hover:text-white transition-colors", children: rel.title }),
+                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-xs text-gray-500", children: [
+                    /* @__PURE__ */ jsx("span", { children: new Date(
+                      rel.release_date
+                    ).getFullYear() }),
+                    /* @__PURE__ */ jsxs("span", { className: "text-yellow-500", children: [
+                      "★",
+                      " ",
+                      rel.rating_average
+                    ] })
+                  ] })
+                ]
+              },
+              rel.id
+            )) })
           ] })
-        ] }),
-        /* @__PURE__ */ jsx(Footer, {})
-      ] })
+        ] })
+      ] }) }),
+      /* @__PURE__ */ jsx(Footer, {})
     ] }),
     showTrailer && /* @__PURE__ */ jsx(
       TrailerModal$1,
@@ -7665,7 +7789,17 @@ function Edit({ mustVerifyEmail, status }) {
           /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl hidden dark:block" }),
           /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 -mb-16 -ml-16 w-64 h-64 bg-indigo-100 rounded-full blur-3xl hidden dark:block" }),
           /* @__PURE__ */ jsxs("div", { className: "relative flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8", children: [
-            /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-white dark:border-black/50", children: /* @__PURE__ */ jsx("span", { className: "text-3xl md:text-4xl font-bold text-white tracking-wider", children: getInitials(user.name) }) }) }),
+            /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsxs("div", { className: "w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-white dark:border-black/50", children: [
+              user?.avatar_url && /* @__PURE__ */ jsx("div", { className: "mb-6 flex justify-center", children: /* @__PURE__ */ jsx(
+                "img",
+                {
+                  src: user?.avatar_url,
+                  alt: user?.name,
+                  className: "w-28 h-28 md:w-40 md:h-40 rounded-full object-cover border-4 border-white/20"
+                }
+              ) }),
+              /* @__PURE__ */ jsx("span", { className: "text-3xl md:text-4xl font-bold text-white tracking-wider", children: getInitials(user.name) })
+            ] }) }),
             /* @__PURE__ */ jsxs("div", { className: "flex-1 text-center md:text-left space-y-2", children: [
               /* @__PURE__ */ jsx("h1", { className: "text-3xl md:text-4xl font-bold text-gray-900 dark:text-white tracking-tight", children: user.name }),
               /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row items-center justify-center md:justify-start md:items-center gap-2 md:gap-4 text-gray-500 dark:text-gray-400", children: [
@@ -7852,7 +7986,7 @@ const LinkItem = ({ link, type, isVip }) => {
     {
       className: `group flex items-center justify-around py-3 border-b border-white/5 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""}`,
       children: [
-        /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center gap-3 min-w-0", children: /* @__PURE__ */ jsx("div", { className: "flex flex-col min-w-0", children: /* @__PURE__ */ jsx("span", { className: "text-gray-300 font-serif text-sm leading-none truncate", children: link.server_name }) }) }),
+        /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center gap-3 min-w-0", children: /* @__PURE__ */ jsx("div", { className: "flex flex-col min-w-0", children: /* @__PURE__ */ jsx("span", { className: "dark:text-gray-300 font-serif text-sm leading-none truncate", children: link.server_name }) }) }),
         /* @__PURE__ */ jsx(
           "div",
           {
@@ -7904,11 +8038,11 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
               /* @__PURE__ */ jsx(
                 "h4",
                 {
-                  className: `font-serif text-lg leading-none ${isActive ? "text-white" : "text-gray-300"}`,
+                  className: `font-serif text-lg leading-none ${isActive ? "dark:text-white" : "dark:text-gray-300"}`,
                   children: episode.title
                 }
               ),
-              /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-600 mt-1 block", children: episode.air_date ? new Date(
+              /* @__PURE__ */ jsx("span", { className: "text-xs dark:text-gray-600 mt-1 block", children: episode.air_date ? new Date(
                 episode.air_date
               ).toLocaleDateString() : t("Unknown Date") })
             ] })
@@ -7950,7 +8084,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
             className: "w-full h-full object-cover"
           }
         ) }),
-        /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-400 leading-relaxed font-serif", children: episode.description || t("No synopsis available for this episode.") })
+        /* @__PURE__ */ jsx("p", { className: "text-sm dark:text-gray-400 leading-relaxed font-serif", children: episode.description || t("No synopsis available for this episode.") })
       ] }),
       isAuthenticated ? /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-8", children: [
         /* @__PURE__ */ jsxs("div", { children: [
@@ -8086,6 +8220,9 @@ function SeriesDetails({
       );
     }
   }, [activeSeason]);
+  const scrollToEpisodes = () => {
+    document.getElementById("episodes-section")?.scrollIntoView({ behavior: "smooth" });
+  };
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(
       SeoHead,
@@ -8099,260 +8236,221 @@ function SeriesDetails({
         structuredData: seo?.structuredData
       }
     ),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-[#080808] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black flex flex-col md:flex-row", children: [
-      /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/2 lg:w-[45%] h-[60vh] md:h-screen relative md:sticky md:top-0 overflow-hidden", children: [
-        /* @__PURE__ */ jsxs("div", { className: "absolute inset-0", children: [
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-50 dark:bg-[#0a0e17] text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500 selection:text-white transition-colors duration-300", children: [
+      /* @__PURE__ */ jsxs("div", { className: "relative w-full min-h-[85vh] md:min-h-[100vh] flex items-end pb-12 md:pb-24 overflow-hidden", children: [
+        /* @__PURE__ */ jsxs("div", { className: "absolute inset-0 z-0", children: [
           /* @__PURE__ */ jsx(
+            "img",
+            {
+              src: series.banner_url || series.poster_url,
+              alt: series.title,
+              className: "w-full h-full object-cover"
+            }
+          ),
+          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-gray-50 dark:from-[#0a0e17] via-gray-50/60 dark:via-[#0a0e17]/60 to-transparent" }),
+          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-r from-gray-50 dark:from-[#0a0e17] via-gray-50/40 dark:via-[#0a0e17]/40 to-transparent" }),
+          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-white/10 dark:bg-black/20" })
+        ] }),
+        /* @__PURE__ */ jsx("div", { className: "relative z-10 container-custom w-full", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-end", children: [
+          /* @__PURE__ */ jsx("div", { className: "hidden md:block w-64 lg:w-72 flex-shrink-0 rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.2)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-gray-200 dark:border-white/10 transform hover:scale-105 transition-transform duration-500", children: /* @__PURE__ */ jsx(
             "img",
             {
               src: series.poster_url,
               alt: series.title,
               className: "w-full h-full object-cover"
             }
-          ),
-          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/30" }),
-          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-gray-100 dark:from-[#080808] via-transparent to-transparent md:hidden" })
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ jsxs(
-          "button",
-          {
-            onClick: () => setShowTrailer(true),
-            className: "group relative w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white hover:scale-110 transition-all duration-500",
-            children: [
-              /* @__PURE__ */ jsx("div", { className: "absolute inset-0 rounded-full border border-white/30 animate-ping-slow" }),
-              /* @__PURE__ */ jsx(PlayIcon, { className: "w-8 h-8 md:w-10 md:h-10 text-white group-hover:text-black ml-1 transition-colors" })
-            ]
-          }
-        ) }),
-        /* @__PURE__ */ jsxs("div", { className: "absolute bottom-0 left-0 right-0 p-6 md:hidden", children: [
-          /* @__PURE__ */ jsx("h1", { className: "text-4xl font-serif font-bold dark:text-white leading-none mb-3", children: series.title }),
-          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 text-sm dark:text-gray-300 mb-3", children: [
-            /* @__PURE__ */ jsxs("span", { children: [
-              series.release_year_start,
-              " -",
-              " ",
-              series.release_year_end || t("Present")
-            ] }),
-            /* @__PURE__ */ jsx("span", { children: "•" }),
-            /* @__PURE__ */ jsxs("span", { children: [
-              series.seasons?.length,
-              " ",
-              t("Seasons")
-            ] }),
-            series.rating_average && /* @__PURE__ */ jsxs(Fragment, { children: [
-              /* @__PURE__ */ jsx("span", { children: "•" }),
-              /* @__PURE__ */ jsxs("span", { className: "text-yellow-400", children: [
-                "★ ",
-                series.rating_average.toFixed(1)
+          ) }),
+          /* @__PURE__ */ jsxs("div", { className: "flex-1 w-full text-center md:text-left", children: [
+            /* @__PURE__ */ jsxs("div", { className: "mb-4 animate-slide-up", style: { animationDelay: "0.1s" }, children: [
+              /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-2 font-serif leading-tight drop-shadow-lg", children: series.title }),
+              /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap justify-center md:justify-start gap-3 text-lg md:text-xl text-gray-500 dark:text-gray-400 font-serif italic", children: [
+                /* @__PURE__ */ jsx("span", { children: series.release_year_start }),
+                series.release_year_end && /* @__PURE__ */ jsxs(Fragment, { children: [
+                  /* @__PURE__ */ jsx("span", { children: "-" }),
+                  /* @__PURE__ */ jsx("span", { children: series.release_year_end })
+                ] }),
+                !series.release_year_end && /* @__PURE__ */ jsx("span", { children: "- Present" })
               ] })
-            ] })
-          ] }),
-          /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: series.genres?.slice(0, 3).map((genre) => /* @__PURE__ */ jsx(
-            "span",
-            {
-              className: "px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs dark:text-white uppercase tracking-wider",
-              children: genre.name
-            },
-            genre.id
-          )) })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxs("div", { className: "w-full md:w-1/2 lg:w-[55%] min-h-screen bg-gray-100 dark:bg-[#080808] relative z-10", children: [
-        /* @__PURE__ */ jsxs("div", { className: "p-6 md:p-12 lg:p-20 max-w-3xl mx-auto", children: [
-          /* @__PURE__ */ jsxs("div", { className: "hidden md:block mb-12", children: [
-            /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 text-sm font-bold tracking-widest text-gray-500 uppercase mb-4", children: [
-              /* @__PURE__ */ jsxs("span", { children: [
-                series.release_year_start,
-                " -",
-                " ",
-                series.release_year_end || t("Present")
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 mb-8 text-sm md:text-base font-medium text-gray-600 dark:text-gray-300 animate-slide-up", style: { animationDelay: "0.2s" }, children: [
+              series.rating_average > 0 && /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1 text-yellow-500 dark:text-yellow-400", children: [
+                /* @__PURE__ */ jsx("span", { children: "★" }),
+                /* @__PURE__ */ jsx("span", { className: "text-gray-900 dark:text-white", children: series.rating_average })
               ] }),
-              /* @__PURE__ */ jsx("span", { className: "w-1 h-1 bg-gray-500 rounded-full" }),
               /* @__PURE__ */ jsxs("span", { children: [
                 series.seasons?.length,
                 " ",
                 t("Seasons")
               ] }),
-              /* @__PURE__ */ jsx("span", { className: "w-1 h-1 bg-gray-500 rounded-full" }),
-              /* @__PURE__ */ jsxs("span", { className: "text-gray-800 dark:text-white", children: [
-                series.rating_average?.toFixed(1),
-                " ",
-                t("Rating")
+              series.age_rating && /* @__PURE__ */ jsx("span", { className: "px-2 py-0.5 border border-gray-300 dark:border-white/20 rounded text-xs uppercase tracking-wider bg-gray-200 dark:bg-white/5", children: series.age_rating }),
+              series.country && /* @__PURE__ */ jsxs(Fragment, { children: [
+                /* @__PURE__ */ jsx("span", { className: "hidden md:inline", children: "•" }),
+                /* @__PURE__ */ jsx("span", { children: series.country })
               ] })
             ] }),
-            /* @__PURE__ */ jsx("h1", { className: "text-5xl lg:text-7xl font-serif font-medium text-gray-800 dark:text-white leading-[0.9] mb-6", children: series.title }),
-            /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: series.genres?.map((genre) => /* @__PURE__ */ jsx(
+            /* @__PURE__ */ jsx("div", { className: "flex flex-wrap justify-center md:justify-start gap-2 mb-8 animate-slide-up", style: { animationDelay: "0.3s" }, children: series.genres?.map((genre) => /* @__PURE__ */ jsx(
               "span",
               {
-                className: "px-3 py-1 border border-gray-800/20 dark:border-white/20 rounded-full text-xs text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:border-gray-800 dark:hover:border-white transition-colors cursor-default",
+                className: "genre-pill",
                 children: genre.name
               },
               genre.id
-            )) })
-          ] }),
+            )) }),
+            /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap justify-center md:justify-start gap-4 animate-slide-up", style: { animationDelay: "0.4s" }, children: [
+              /* @__PURE__ */ jsxs(
+                "button",
+                {
+                  onClick: scrollToEpisodes,
+                  className: "btn-primary group",
+                  children: [
+                    /* @__PURE__ */ jsx(PlayIcon, { className: "w-5 h-5 mr-2 group-hover:scale-110 transition-transform" }),
+                    t("Watch Episodes")
+                  ]
+                }
+              ),
+              series.trailer_url && /* @__PURE__ */ jsxs(
+                "button",
+                {
+                  onClick: () => setShowTrailer(true),
+                  className: "btn-secondary group",
+                  children: [
+                    /* @__PURE__ */ jsxs("svg", { className: "w-5 h-5 mr-2 group-hover:scale-110 transition-transform", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
+                      /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" }),
+                      /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M21 12a9 9 0 11-18 0 9 9 0 0118 0z" })
+                    ] }),
+                    t("Trailer")
+                  ]
+                }
+              )
+            ] })
+          ] })
+        ] }) })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "container-custom py-12 md:py-20", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col lg:flex-row gap-12", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
-            /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-4", children: t("Synopsis") }),
-            /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed", children: series.description })
-          ] }),
-          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
-            /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-8", children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest", children: t("Episode Guide") }),
-              series.is_vip_only && /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-0.5 rounded", children: t("VIP ACCESS") })
+            /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2", children: [
+              /* @__PURE__ */ jsx("span", { className: "w-8 h-[2px] bg-blue-500" }),
+              t("Storyline")
             ] }),
-            series.seasons && series.seasons.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
-              /* @__PURE__ */ jsx("div", { className: "flex overflow-x-auto pb-4 mb-6 gap-4 border-b border-gray-800/10 dark:border-white/10 custom-scrollbar", children: series.seasons.slice().reverse().map((season) => /* @__PURE__ */ jsx(
+            /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed opacity-90", children: series.description })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { id: "episodes-section", className: "mb-16 scroll-mt-24", children: [
+            /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-8", children: [
+              /* @__PURE__ */ jsxs("h3", { className: "text-xl font-serif text-gray-900 dark:text-white flex items-center gap-3", children: [
+                /* @__PURE__ */ jsx(PlayIcon, { className: "w-6 h-6 text-blue-500" }),
+                t("Episode Guide")
+              ] }),
+              series.is_vip_only && /* @__PURE__ */ jsx("span", { className: "badge-vip", children: t("VIP ACCESS") })
+            ] }),
+            series.seasons && series.seasons.length > 0 ? /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive overflow-hidden", children: [
+              /* @__PURE__ */ jsx("div", { className: "flex overflow-x-auto p-4 gap-2 border-b border-gray-200 dark:border-white/5 custom-scrollbar bg-gray-100 dark:bg-black/20", children: series.seasons.slice().reverse().map((season) => /* @__PURE__ */ jsx(
                 "button",
                 {
                   onClick: () => setActiveSeason(season),
-                  className: `whitespace-nowrap px-4 py-2 font-serif text-lg transition-colors ${activeSeason?.id === season.id ? "text-gray-800 dark:text-white border-b-2 border-gray-800 dark:border-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
+                  className: `whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all ${activeSeason?.id === season.id ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20" : "bg-gray-200 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white"}`,
                   children: t("Season {season_number}", { season_number: season.season_number })
                 },
                 season.id
               )) }),
-              /* @__PURE__ */ jsx("div", { className: "border border-gray-800/10 dark:border-white/10 rounded-lg overflow-hidden bg-gray-800/5 dark:bg-white/5", children: activeSeason?.episodes && activeSeason.episodes.length > 0 ? activeSeason.episodes.slice().reverse().map((episode) => /* @__PURE__ */ jsx(
+              /* @__PURE__ */ jsx("div", { className: "divide-y divide-gray-200 dark:divide-white/5", children: activeSeason?.episodes && activeSeason.episodes.length > 0 ? activeSeason.episodes.slice().reverse().map((episode) => /* @__PURE__ */ jsx(
                 EpisodeRow,
                 {
                   episode,
                   isActive: expandedEpisodeId === episode.id,
-                  onClick: () => setExpandedEpisodeId(
-                    expandedEpisodeId === episode.id ? null : episode.id
-                  ),
+                  onClick: () => setExpandedEpisodeId(expandedEpisodeId === episode.id ? null : episode.id),
                   isVip,
                   isAuthenticated: !!auth.user
                 },
                 episode.id
-              )) : /* @__PURE__ */ jsx("div", { className: "p-8 text-center text-gray-500 italic", children: t("No episodes available for this season.") }) })
-            ] }) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic", children: t("No seasons available.") })
+              )) : /* @__PURE__ */ jsx("div", { className: "p-12 text-center text-gray-500 italic", children: t("No episodes available for this season.") }) })
+            ] }) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic p-8 border border-gray-200 dark:border-white/10 rounded-lg text-center", children: t("No seasons available.") })
           ] }),
-          series?.banner_url && /* @__PURE__ */ jsx("div", { className: "mt-8 w-full rounded overflow-hidden", children: /* @__PURE__ */ jsx(
-            "img",
-            {
-              src: series?.banner_url,
-              alt: t("Backdrop"),
-              className: "w-full h-48 object-cover object-center"
-            }
-          ) }),
-          /* @__PURE__ */ jsxs("div", { className: "mb-16 mt-10", children: [
-            /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: t("Cast & Crew") }),
-            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4", children: series.actors?.slice(0, 9).map((actor) => /* @__PURE__ */ jsxs(
-              "div",
+          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+            /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
+              /* @__PURE__ */ jsx("span", { className: "w-8 h-[2px] bg-blue-500" }),
+              t("Top Cast")
+            ] }),
+            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6", children: series.actors?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
+              Link,
               {
-                className: "flex items-center gap-3",
+                href: route("person.show", actor.person?.id),
+                className: "group block",
                 children: [
-                  /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-800  hover:grayscale-0 transition-all", children: /* @__PURE__ */ jsx(
+                  /* @__PURE__ */ jsx("div", { className: "aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-gray-200 dark:bg-gray-800", children: /* @__PURE__ */ jsx(
                     "img",
                     {
                       src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg",
-                      alt: "",
-                      className: "w-full h-full object-cover"
+                      alt: actor.person?.name,
+                      className: "w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     }
                   ) }),
-                  /* @__PURE__ */ jsxs("div", { className: "flex flex-col", children: [
-                    /* @__PURE__ */ jsx(
-                      Link,
-                      {
-                        href: route(
-                          "person.show",
-                          actor.person?.id
-                        ),
-                        className: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors flex justify-between text-sm group",
-                        children: /* @__PURE__ */ jsx("span", { className: "font-bold", children: actor.person?.name })
-                      }
-                    ),
-                    /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-500 uppercase tracking-wider", children: actor.character_name })
-                  ] })
+                  /* @__PURE__ */ jsx("h4", { className: "text-gray-900 dark:text-white font-medium truncate group-hover:text-blue-400 transition-colors", children: actor.person?.name }),
+                  /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 truncate", children: actor.character_name })
                 ]
               },
               actor.id
             )) })
-          ] }),
-          /* @__PURE__ */ jsxs("div", { className: "pt-12 border-t border-gray-800/10 dark:border-white/10", children: [
-            /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center mb-12", children: /* @__PURE__ */ jsxs("div", { children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs text-center font-bold text-gray-500 uppercase tracking-widest mb-2", children: t("Your Rating") }),
-              auth.user ? /* @__PURE__ */ jsx(
-                RatingWidget,
-                {
-                  ratingAverage: series.rating_average || 0,
-                  ratingCount: series.rating_count || 0,
-                  userRating,
-                  onRate: (rating) => {
-                    if (userRating) {
-                      router.put(
-                        route(
-                          "admin.ratings.update",
-                          userRating.id
-                        ),
-                        {
-                          rating
-                        },
-                        {
-                          preserveScroll: true,
-                          onSuccess: () => console.log(
-                            "Rating updated"
-                          )
-                        }
-                      );
-                    } else {
-                      router.post(
-                        route(
-                          "admin.ratings.store"
-                        ),
-                        {
-                          series_id: series.id,
-                          rating
-                        },
-                        {
-                          preserveScroll: true,
-                          onSuccess: () => console.log(
-                            "Rating submitted"
-                          )
-                        }
-                      );
-                    }
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "w-full lg:w-80 flex-shrink-0 space-y-12", children: [
+          /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-6", children: [
+            /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 text-center", children: t("Rate this Series") }),
+            auth.user ? /* @__PURE__ */ jsx(
+              RatingWidget,
+              {
+                ratingAverage: series.rating_average || 0,
+                ratingCount: series.rating_count || 0,
+                userRating,
+                onRate: (rating) => {
+                  if (userRating) {
+                    router.put(route("admin.ratings.update", userRating.id), { rating }, { preserveScroll: true });
+                  } else {
+                    router.post(route("admin.ratings.store"), { series_id: series.id, rating }, { preserveScroll: true });
                   }
                 }
-              ) : /* @__PURE__ */ jsxs("div", { className: "text-gray-500 text-sm italic", children: [
-                /* @__PURE__ */ jsx(
-                  "a",
-                  {
-                    href: route("login"),
-                    className: "text-gray-800 dark:text-white hover:underline",
-                    children: t("Log in")
-                  }
-                ),
-                " ",
-                t("to rate this series.")
-              ] })
-            ] }) }),
-            relatedSeries && relatedSeries.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
-              /* @__PURE__ */ jsx("h3", { className: "text-xs font-bold text-gray-500 uppercase tracking-widest mb-6", children: t("Related Series") }),
-              /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-4", children: relatedSeries.slice(0, 3).map((rel) => /* @__PURE__ */ jsxs(
-                "a",
-                {
-                  href: route(
-                    "series.show",
-                    rel.slug
-                  ),
-                  className: "group block",
-                  children: [
-                    /* @__PURE__ */ jsx("div", { className: "aspect-[3/2] overflow-hidden mb-2", children: /* @__PURE__ */ jsx(
+              }
+            ) : /* @__PURE__ */ jsxs("div", { className: "text-center text-sm text-gray-500", children: [
+              /* @__PURE__ */ jsx("a", { href: route("login"), className: "text-blue-400 hover:underline", children: t("Log in") }),
+              " ",
+              t("to rate.")
+            ] })
+          ] }),
+          relatedSeries && relatedSeries.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6 border-l-4 border-blue-500 pl-3", children: t("You May Also Like") }),
+            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 gap-4", children: relatedSeries.slice(0, 6).map((rel) => /* @__PURE__ */ jsxs(
+              "a",
+              {
+                href: route("series.show", rel.slug),
+                className: "group block",
+                children: [
+                  /* @__PURE__ */ jsxs("div", { className: "aspect-[2/3] rounded-lg overflow-hidden mb-2 relative", children: [
+                    /* @__PURE__ */ jsx(
                       "img",
                       {
                         src: rel.poster_url,
-                        alt: "",
-                        className: "w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                        alt: rel.title,
+                        className: "w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       }
-                    ) }),
-                    /* @__PURE__ */ jsx("h4", { className: "text-gray-800 dark:text-white font-serif text-sm truncate group-hover:underline", children: rel.title })
-                  ]
-                },
-                rel.id
-              )) })
-            ] })
+                    ),
+                    /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" })
+                  ] }),
+                  /* @__PURE__ */ jsx("h4", { className: "text-sm text-gray-600 dark:text-gray-300 font-medium truncate group-hover:text-blue-600 dark:group-hover:text-white transition-colors", children: rel.title }),
+                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-xs text-gray-500", children: [
+                    /* @__PURE__ */ jsx("span", { children: rel.release_year_start }),
+                    /* @__PURE__ */ jsxs("span", { className: "text-yellow-500", children: [
+                      "★ ",
+                      rel.rating_average
+                    ] })
+                  ] })
+                ]
+              },
+              rel.id
+            )) })
           ] })
-        ] }),
-        /* @__PURE__ */ jsx(Footer, {})
-      ] })
+        ] })
+      ] }) }),
+      /* @__PURE__ */ jsx(Footer, {})
     ] }),
     showTrailer && /* @__PURE__ */ jsx(
       TrailerModal,

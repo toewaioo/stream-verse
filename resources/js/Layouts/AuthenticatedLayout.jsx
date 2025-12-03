@@ -17,7 +17,7 @@ export default function AuthenticatedLayout({ header, children }) {
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <nav className="border-b border-gray-100 bg-white dark:bg-gray-800 dark:border-gray-700">
+            <nav className="border-b border-gray-100 bg-white dark:bg-gray-800 dark:border-gray-700 pt-[env(safe-area-inset-top)]">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
@@ -221,6 +221,10 @@ export default function AuthenticatedLayout({ header, children }) {
                             >
                                 {t('Log Out')}
                             </ResponsiveNavLink>
+                        </div>
+                        <div className="mt-3 px-4 flex items-center gap-4">
+                            <LanguageSwitcher />
+                            <ThemeSwitcher />
                         </div>
                     </div>
                 </div>

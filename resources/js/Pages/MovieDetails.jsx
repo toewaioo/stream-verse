@@ -42,9 +42,8 @@ const LinkItem = ({ link, type, isVip }) => {
 
     return (
         <div
-            className={`group flex items-center justify-between py-4 border-b border-white/10 hover:bg-white/5 transition-colors px-2 ${
-                isLocked ? "opacity-50" : ""
-            }`}
+            className={`group flex items-center justify-between py-4 border-b border-white/10 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""
+                }`}
         >
             <div className="flex items-center gap-4">
                 <div className="flex flex-col">
@@ -57,11 +56,10 @@ const LinkItem = ({ link, type, isVip }) => {
                 </div>
             </div>
             <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border ${
-                    type === "download"
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download"
                         ? "border-blue-500 text-blue-500"
                         : "border-red-500 text-red-500"
-                }`}
+                    }`}
             >
                 {link.quality?.replace("p", "") || "HD"}
             </div>
@@ -69,7 +67,7 @@ const LinkItem = ({ link, type, isVip }) => {
             <div className="flex items-center gap-3">
                 {isLocked ? (
                     <span className="text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-1 uppercase tracking-widest">
-                        {t('VIP')}
+                        {t("VIP")}
                     </span>
                 ) : (
                     <>
@@ -83,11 +81,10 @@ const LinkItem = ({ link, type, isVip }) => {
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                                type === "download"
+                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${type === "download"
                                     ? "bg-blue-600 hover:bg-blue-500 text-white"
                                     : "bg-red-600 hover:bg-red-500 text-white"
-                            }`}
+                                }`}
                         >
                             <svg
                                 className="w-4 h-4"
@@ -163,6 +160,7 @@ export default function MovieDetails({
     isVip,
     seo,
 }) {
+    console.log(movie);
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const [showTrailer, setShowTrailer] = useState(false);
@@ -179,6 +177,12 @@ export default function MovieDetails({
         });
     }, []);
 
+    const scrollToWatch = () => {
+        document
+            .getElementById("watch-section")
+            ?.scrollIntoView({ behavior: "smooth" });
+    };
+
     return (
         <>
             <SeoHead
@@ -191,345 +195,413 @@ export default function MovieDetails({
                 structuredData={seo?.structuredData}
             />
 
-            <div className="min-h-screen bg-gray-100 dark:bg-[#080808] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black flex flex-col md:flex-row">
-                {/* --- LEFT PANE: VISUAL (Fixed on Desktop) --- */}
-                <div className="w-full md:w-1/2 lg:w-[45%] h-[60vh] md:h-screen relative md:sticky md:top-0 overflow-hidden">
-                    <div className="absolute inset-0">
+            <div className="min-h-screen bg-gray-50 dark:bg-[#0a0e17] text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500 selection:text-white transition-colors duration-300">
+                {/* --- HERO SECTION --- */}
+                <div className="relative w-full min-h-[85vh] md:min-h-[100vh] flex items-end pb-12 md:pb-24 overflow-hidden">
+                    {/* Background Image */}
+                    <div className="absolute inset-0 z-0">
                         <img
-                            src={movie.poster_url}
+                            src={movie.banner_url || movie.poster_url}
                             alt={movie.title}
                             className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-black/30"></div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-gray-100 dark:from-[#080808] via-transparent to-transparent md:hidden"></div>
+                        {/* Gradient Overlays */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-gray-50 dark:from-[#0a0e17] via-gray-50/60 dark:via-[#0a0e17]/60 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-gray-50 dark:from-[#0a0e17] via-gray-50/40 dark:via-[#0a0e17]/40 to-transparent" />
+                        <div className="absolute inset-0 bg-white/10 dark:bg-black/20" />
                     </div>
 
-                    {/* Play Button (Centered) */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <button
-                            onClick={() => setShowTrailer(true)}
-                            className="group relative w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white hover:scale-110 transition-all duration-500"
-                        >
-                            <div className="absolute inset-0 rounded-full border border-white/30 animate-ping-slow"></div>
-                            <PlayIcon className="w-8 h-8 md:w-10 md:h-10 text-white group-hover:text-black ml-1 transition-colors" />
-                        </button>
-                    </div>
+                    {/* Hero Content */}
+                    <div className="relative z-10 container-custom w-full">
+                        <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-end">
+                            {/* Poster Card (Floating) */}
+                            <div className="hidden md:block w-64 lg:w-72 flex-shrink-0 rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.2)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-gray-200 dark:border-white/10 transform hover:scale-105 transition-transform duration-500">
+                                <img
+                                    src={movie.poster_url}
+                                    alt={movie.title}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
 
-                    {/* Mobile Title Overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-6 md:hidden">
-                        <h1 className="text-4xl font-serif font-bold dark:text-white leading-none mb-3">
-                            {movie.title}
-                        </h1>
-                        <div className="flex items-center gap-3 text-sm dark:text-gray-300 mb-3">
-                            <span>
-                                {new Date(movie.release_date).getFullYear()}
-                            </span>
-                            <span>•</span>
-                            <span>{movie.formatted_runtime}</span>
-                            {movie.rating_average && (
-                                <>
-                                    <span>•</span>
-                                    <span className="text-yellow-700">
-                                        ★ {movie.rating_average.toFixed(1)}
-                                    </span>
-                                </>
-                            )}
-                        </div>
-                        {/* Mobile Genres */}
-                        <div className="flex flex-wrap gap-2">
-                            {movie.genres?.slice(0, 3).map((genre) => (
-                                <span
-                                    key={genre.id}
-                                    className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs dark:text-white uppercase tracking-wider"
+                            {/* Text Info */}
+                            <div className="flex-1 w-full text-center md:text-left">
+                                <div
+                                    className="mb-4 animate-slide-up"
+                                    style={{ animationDelay: "0.1s" }}
                                 >
-                                    {genre.name}
-                                </span>
-                            ))}
+                                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-2 font-serif leading-tight drop-shadow-lg">
+                                        {movie.title}
+                                    </h1>
+                                    {movie.original_title && (
+                                        <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 font-serif italic">
+                                            {movie.original_title}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Metadata Row */}
+                                <div
+                                    className="flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 mb-8 text-sm md:text-base font-medium text-gray-600 dark:text-gray-300 animate-slide-up"
+                                    style={{ animationDelay: "0.2s" }}
+                                >
+                                    {movie.rating_average > 0 && (
+                                        <div className="flex items-center gap-1 text-yellow-500 dark:text-yellow-400">
+                                            <span>★</span>
+                                            <span className="text-gray-900 dark:text-white">
+                                                {movie.rating_average}
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    <span>
+                                        {new Date(
+                                            movie.release_date
+                                        ).getFullYear()}
+                                    </span>
+
+                                    <span className="px-2 py-0.5 border border-gray-300 dark:border-white/20 rounded text-xs uppercase tracking-wider bg-gray-200 dark:bg-white/5">
+                                        {movie.age_rating || "PG-13"}
+                                    </span>
+
+                                    <span>{movie.formatted_runtime}</span>
+
+                                    {movie.country && (
+                                        <>
+                                            <span className="hidden md:inline">
+                                                •
+                                            </span>
+                                            <span>{movie.country}</span>
+                                        </>
+                                    )}
+
+                                    {movie.view_count > 0 && (
+                                        <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs">
+                                            <svg
+                                                className="w-4 h-4"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                                />
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                                />
+                                            </svg>
+                                            <span>{movie.view_count}</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Genres */}
+                                <div
+                                    className="flex flex-wrap justify-center md:justify-start gap-2 mb-8 animate-slide-up"
+                                    style={{ animationDelay: "0.3s" }}
+                                >
+                                    {movie.genres?.map((genre) => (
+                                        <span
+                                            key={genre.id}
+                                            className="genre-pill"
+                                        >
+                                            {genre.name}
+                                        </span>
+                                    ))}
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div
+                                    className="flex flex-wrap justify-center md:justify-start gap-4 animate-slide-up"
+                                    style={{ animationDelay: "0.4s" }}
+                                >
+                                    <button
+                                        onClick={scrollToWatch}
+                                        className="btn-primary group"
+                                    >
+                                        <PlayIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                                        {t("Watch Now")}
+                                    </button>
+
+                                    {movie.trailer_url && (
+                                        <button
+                                            onClick={() => setShowTrailer(true)}
+                                            className="btn-secondary group"
+                                        >
+                                            <svg
+                                                className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                                                />
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                />
+                                            </svg>
+                                            {t("Trailer")}
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* --- RIGHT PANE: CONTENT (Scrollable) --- */}
-                <div className="w-full md:w-1/2 lg:w-[55%] min-h-screen bg-gray-100 dark:bg-[#080808] relative z-10">
-                    <div className="p-6 md:p-12 lg:p-20 max-w-3xl mx-auto">
-                        {/* Desktop Title */}
-                        <div className="hidden md:block mb-12">
-                            <div className="flex items-center gap-4 text-sm font-bold tracking-widest text-gray-500 uppercase mb-4">
-                                <span>
-                                    {new Date(movie.release_date).getFullYear()}
-                                </span>
-                                <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
-                                <span>{movie.formatted_runtime}</span>
-                                <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
-                                <span className="text-gray-800 dark:text-white">
-                                    {movie.rating_average?.toFixed(1)} {t('Rating')}
-                                </span>
-                            </div>
-                            <h1 className="text-5xl lg:text-7xl font-serif font-medium text-gray-800 dark:text-white leading-[0.9] mb-6">
-                                {movie.title}
-                            </h1>
-                            <div className="flex flex-wrap gap-2">
-                                {movie.genres?.map((genre) => (
-                                    <span
-                                        key={genre.id}
-                                        className="px-3 py-1 border border-gray-800/20 dark:border-white/20 rounded-full text-xs text-gray-600 dark:text-gray-300 uppercase tracking-wider hover:border-gray-800 dark:hover:border-white transition-colors cursor-default"
-                                    >
-                                        {genre.name}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Synopsis */}
-                        <div className="mb-16">
-                            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">
-                                {t('Synopsis')}
-                            </h3>
-                            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed">
-                                {movie.description}
-                            </p>
-                        </div>
-
-                        {/* Links Section */}
-                        <div className="mb-16">
-                            <div className="flex items-center justify-between mb-8">
-                                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                                    {t('Watch & Download')}
+                {/* --- MAIN CONTENT --- */}
+                <div className="container-custom py-12 md:py-20">
+                    <div className="flex flex-col lg:flex-row gap-12">
+                        {/* Left Column: Synopsis, Links, Cast */}
+                        <div className="flex-1">
+                            {/* Synopsis */}
+                            <div className="mb-16">
+                                <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <span className="w-8 h-[2px] bg-blue-500"></span>
+                                    {t("Storyline")}
                                 </h3>
-                                {movie.is_vip_only && (
-                                    <span className="text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-0.5 rounded">
-                                        {t('VIP ACCESS')}
-                                    </span>
-                                )}
+                                <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed opacity-90">
+                                    {movie.description}
+                                </p>
                             </div>
 
-                            {auth.user ? (
-                                <div className="space-y-8">
-                                    {/* Watch */}
-                                    <div
-                                        className={`${
-                                            watchLinksByQuality &&
-                                            Object.keys(watchLinksByQuality)
-                                                .length > 0
-                                                ? ""
-                                                : "hidden"
-                                        }`}
-                                    >
-                                        <div className="flex items-center gap-2 mb-4 text-gray-800 dark:text-white">
-                                            <PlayIcon className="w-5 h-5" />
-                                            <span className="font-serif text-xl italic">
-                                                {t('Streaming Sources')}
+                            {/* Links Section */}
+                            <div
+                                id="watch-section"
+                                className="mb-16 scroll-mt-24"
+                            >
+                                <div className="glass-card-adaptive p-6 md:p-8">
+                                    <div className="flex items-center justify-between mb-8">
+                                        <h3 className="text-xl font-serif text-gray-900 dark:text-white flex items-center gap-3">
+                                            <PlayIcon className="w-6 h-6 text-blue-500" />
+                                            {t("Watch & Download")}
+                                        </h3>
+                                        {movie.is_vip_only && (
+                                            <span className="badge-vip">
+                                                {t("VIP ACCESS")}
                                             </span>
-                                        </div>
-                                        <div className="pl-4 border-l border-gray-800/10 dark:border-white/10">
-                                            {watchLinksByQuality &&
-                                            Object.keys(watchLinksByQuality)
-                                                .length > 0 ? (
-                                                Object.values(
-                                                    watchLinksByQuality
-                                                )
-                                                    .flat()
-                                                    .map((link) => (
-                                                        <LinkItem
-                                                            key={link.id}
-                                                            link={link}
-                                                            type="watch"
-                                                            isVip={isVip}
-                                                        />
-                                                    ))
-                                            ) : (
-                                                <div className="text-gray-600 italic px-2">
-                                                    {t('No streaming links available.')}
-                                                </div>
-                                            )}
-                                        </div>
+                                        )}
                                     </div>
 
-                                    {/* Download */}
-                                    <div
-                                        className={`${
-                                            downloadLinksByQuality &&
-                                            Object.keys(downloadLinksByQuality)
-                                                .length > 0
-                                                ? ""
-                                                : "hidden"
-                                        }`}
-                                    >
-                                        <div className="flex items-center gap-2 mb-4 text-gray-800 dark:text-white">
-                                            <DownloadIcon className="w-5 h-5" />
-                                            <span className="font-serif text-xl italic">
-                                                {t('Download Files')}
-                                            </span>
-                                        </div>
-                                        <div className="pl-4 border-l border-gray-800/10 dark:border-white/10">
-                                            {downloadLinksByQuality &&
-                                            Object.keys(downloadLinksByQuality)
-                                                .length > 0 ? (
-                                                Object.values(
-                                                    downloadLinksByQuality
-                                                )
-                                                    .flat()
-                                                    .map((link) => (
-                                                        <LinkItem
-                                                            key={link.id}
-                                                            link={link}
-                                                            type="download"
-                                                            isVip={isVip}
-                                                        />
-                                                    ))
-                                            ) : (
-                                                <div className="text-gray-600 italic px-2">
-                                                    {t('No download links available.')}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="p-8 border border-gray-800/10 dark:border-white/10 rounded-lg bg-gray-800/5 dark:bg-white/5 text-center">
-                                    <p className="text-gray-600 dark:text-gray-400 font-serif text-lg mb-4">
-                                        {t('Please log in to access streaming and download links.')}
-                                    </p>
-                                    <a
-                                        href={route("login")}
-                                        className="inline-block px-6 py-2 bg-gray-800 dark:bg-white text-white dark:text-black font-bold uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors"
-                                    >
-                                        {t('Log In')}
-                                    </a>
-                                </div>
-                            )}
-                        </div>
-                        {/* Backdrop Poster Below Links */}
-                        {movie?.banner_url && (
-                            <div className="mt-8 w-full rounded overflow-hidden">
-                                <img
-                                    src={movie?.banner_url}
-                                    alt={t('Backdrop')}
-                                    className="w-full h-48 object-cover object-center"
-                                />
-                            </div>
-                        )}
-
-                        {/* Cast */}
-                        <div className="mb-16 mt-10">
-                            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">
-                                {t('Cast & Crew')}
-                            </h3>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-8 gap-x-4">
-                                {movie.actors?.slice(0, 6).map((actor) => (
-                                    <div
-                                        key={actor.id}
-                                        className="flex items-center gap-3"
-                                    >
-                                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-800  hover:grayscale-0 transition-all">
-                                            <img
-                                                src={
-                                                    actor.person?.avatar_url ||
-                                                    "/images/placeholder-avatar.jpg"
-                                                }
-                                                alt=""
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <Link
-                                                href={route(
-                                                    "person.show",
-                                                    actor.person?.id
-                                                )}
-                                                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors flex justify-between text-sm group"
-                                            >
-                                                <span className="font-bold">
-                                                    {actor.person?.name}
-                                                </span>
-                                            </Link>
-                                            <span className="text-xs text-gray-500 uppercase tracking-wider">
-                                                {actor.character_name}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Rating & Related */}
-                        <div className="pt-12 border-t border-gray-800/10 dark:border-white/10">
-                            <div className="flex items-center justify-center mb-12">
-                                <div>
-                                    <h3 className="text-xs text-center font-bold text-gray-500 uppercase tracking-widest mb-2">
-                                        {t('Your Rating')}
-                                    </h3>
                                     {auth.user ? (
-                                        <RatingWidget
-                                            ratingAverage={
-                                                movie.rating_average || 0
-                                            }
-                                            ratingCount={
-                                                movie.rating_count || 0
-                                            }
-                                            userRating={userRating}
-                                            onRate={(rating) => {
-                                                if (userRating) {
-                                                    // Update
-                                                    router.put(
-                                                        route(
-                                                            "admin.ratings.update",
-                                                            userRating.id
-                                                        ),
-                                                        {
-                                                            rating: rating,
-                                                        },
-                                                        {
-                                                            preserveScroll: true,
-                                                            onSuccess: () =>
-                                                                console.log(
-                                                                    "Rating updated"
-                                                                ),
-                                                        }
-                                                    );
-                                                } else {
-                                                    // Create
-                                                    router.post(
-                                                        route(
-                                                            "admin.ratings.store"
-                                                        ),
-                                                        {
-                                                            movie_id: movie.id,
-                                                            rating: rating,
-                                                        },
-                                                        {
-                                                            preserveScroll: true,
-                                                            onSuccess: () =>
-                                                                console.log(
-                                                                    "Rating submitted"
-                                                                ),
-                                                        }
-                                                    );
-                                                }
-                                            }}
-                                        />
+                                        <div className="space-y-8">
+                                            {/* Watch Links */}
+                                            <div
+                                                className={`${watchLinksByQuality &&
+                                                        Object.keys(
+                                                            watchLinksByQuality
+                                                        ).length > 0
+                                                        ? ""
+                                                        : "hidden"
+                                                    }`}
+                                            >
+                                                <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">
+                                                    {t("Streaming Sources")}
+                                                </h4>
+                                                <div className="grid gap-2">
+                                                    {watchLinksByQuality &&
+                                                        Object.keys(
+                                                            watchLinksByQuality
+                                                        ).length > 0 ? (
+                                                        Object.values(
+                                                            watchLinksByQuality
+                                                        )
+                                                            .flat()
+                                                            .map((link) => (
+                                                                <LinkItem
+                                                                    key={
+                                                                        link.id
+                                                                    }
+                                                                    link={link}
+                                                                    type="watch"
+                                                                    isVip={
+                                                                        isVip
+                                                                    }
+                                                                />
+                                                            ))
+                                                    ) : (
+                                                        <div className="text-gray-500 italic">
+                                                            {t(
+                                                                "No streaming links available."
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Download Links */}
+                                            <div
+                                                className={`${downloadLinksByQuality &&
+                                                        Object.keys(
+                                                            downloadLinksByQuality
+                                                        ).length > 0
+                                                        ? ""
+                                                        : "hidden"
+                                                    }`}
+                                            >
+                                                <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">
+                                                    {t("Download Files")}
+                                                </h4>
+                                                <div className="grid gap-2">
+                                                    {downloadLinksByQuality &&
+                                                        Object.keys(
+                                                            downloadLinksByQuality
+                                                        ).length > 0 ? (
+                                                        Object.values(
+                                                            downloadLinksByQuality
+                                                        )
+                                                            .flat()
+                                                            .map((link) => (
+                                                                <LinkItem
+                                                                    key={
+                                                                        link.id
+                                                                    }
+                                                                    link={link}
+                                                                    type="download"
+                                                                    isVip={
+                                                                        isVip
+                                                                    }
+                                                                />
+                                                            ))
+                                                    ) : (
+                                                        <div className="text-gray-500 italic">
+                                                            {t(
+                                                                "No download links available."
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
                                     ) : (
-                                        <div className="text-gray-500 text-sm italic">
+                                        <div className="text-center py-8">
+                                            <p className="text-gray-400 mb-6">
+                                                {t(
+                                                    "Please log in to access streaming and download links."
+                                                )}
+                                            </p>
                                             <a
                                                 href={route("login")}
-                                                className="text-gray-800 dark:text-white hover:underline"
+                                                className="btn-primary"
                                             >
-                                                {t('Log in')}
-                                            </a>{" "}
-                                            {t('to rate this movie.')}
+                                                {t("Log In to Watch")}
+                                            </a>
                                         </div>
                                     )}
                                 </div>
                             </div>
 
+                            {/* Cast */}
+                            <div className="mb-16">
+                                <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                    <span className="w-8 h-[2px] bg-blue-500"></span>
+                                    {t("Top Cast")}
+                                </h3>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+                                    {movie.actors?.slice(0, 8).map((actor) => (
+                                        <Link
+                                            key={actor.id}
+                                            href={route(
+                                                "person.show",
+                                                actor.person?.id
+                                            )}
+                                            className="group block"
+                                        >
+                                            <div className="aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-gray-200 dark:bg-gray-800">
+                                                <img
+                                                    src={
+                                                        actor.person
+                                                            ?.avatar_url ||
+                                                        "/images/placeholder-avatar.jpg"
+                                                    }
+                                                    alt={actor.person?.name}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                />
+                                            </div>
+                                            <h4 className="text-gray-900 dark:text-white font-medium truncate group-hover:text-blue-400 transition-colors">
+                                                {actor.person?.name}
+                                            </h4>
+                                            <p className="text-sm text-gray-500 truncate">
+                                                {actor.character_name}
+                                            </p>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right Column: Sidebar (Rating, Related) */}
+                        <div className="w-full lg:w-80 flex-shrink-0 space-y-12">
+                            {/* Rating Widget */}
+                            <div className="glass-card-adaptive p-6">
+                                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 text-center">
+                                    {t("Rate this Movie")}
+                                </h3>
+                                {auth.user ? (
+                                    <RatingWidget
+                                        ratingAverage={
+                                            movie.rating_average || 0
+                                        }
+                                        ratingCount={movie.rating_count || 0}
+                                        userRating={userRating}
+                                        onRate={(rating) => {
+                                            if (userRating) {
+                                                router.put(
+                                                    route(
+                                                        "admin.ratings.update",
+                                                        userRating.id
+                                                    ),
+                                                    { rating },
+                                                    { preserveScroll: true }
+                                                );
+                                            } else {
+                                                router.post(
+                                                    route(
+                                                        "admin.ratings.store"
+                                                    ),
+                                                    {
+                                                        movie_id: movie.id,
+                                                        rating,
+                                                    },
+                                                    { preserveScroll: true }
+                                                );
+                                            }
+                                        }}
+                                    />
+                                ) : (
+                                    <div className="text-center text-sm text-gray-500">
+                                        <a
+                                            href={route("login")}
+                                            className="text-blue-400 hover:underline"
+                                        >
+                                            {t("Log in")}
+                                        </a>{" "}
+                                        {t("to rate.")}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Related Movies */}
                             {relatedMovies && relatedMovies.length > 0 && (
                                 <div>
-                                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">
-                                        {t('Related Films')}
+                                    <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6 border-l-4 border-blue-500 pl-3">
+                                        {t("You May Also Like")}
                                     </h3>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-3 md:grid-cols-2 gap-4">
                                         {relatedMovies
-                                            .slice(0, 3)
+                                            .slice(0, 6)
                                             .map((rel) => (
                                                 <a
                                                     href={route(
@@ -539,16 +611,28 @@ export default function MovieDetails({
                                                     key={rel.id}
                                                     className="group block"
                                                 >
-                                                    <div className="aspect-[3/2] overflow-hidden mb-2">
+                                                    <div className="aspect-[2/3] rounded-lg overflow-hidden mb-2 relative">
                                                         <img
                                                             src={rel.poster_url}
-                                                            alt=""
-                                                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                                                            alt={rel.title}
+                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                         />
+                                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                                                     </div>
-                                                    <h4 className="text-gray-800 dark:text-white font-serif text-sm truncate group-hover:underline">
+                                                    <h4 className="text-sm text-gray-600 dark:text-gray-300 font-medium truncate group-hover:text-blue-600 dark:group-hover:text-white transition-colors">
                                                         {rel.title}
                                                     </h4>
+                                                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                        <span>
+                                                            {new Date(
+                                                                rel.release_date
+                                                            ).getFullYear()}
+                                                        </span>
+                                                        <span className="text-yellow-500">
+                                                            ★{" "}
+                                                            {rel.rating_average}
+                                                        </span>
+                                                    </div>
                                                 </a>
                                             ))}
                                     </div>
@@ -556,10 +640,10 @@ export default function MovieDetails({
                             )}
                         </div>
                     </div>
-                    <Footer />
                 </div>
-            </div>
 
+                <Footer />
+            </div>
 
             {/* Trailer Modal */}
             {showTrailer && (
