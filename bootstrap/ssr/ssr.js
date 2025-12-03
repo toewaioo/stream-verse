@@ -6173,9 +6173,17 @@ function MovieDetails({
           /* @__PURE__ */ jsx(
             "img",
             {
-              src: movie.banner_url || movie.poster_url,
+              src: movie.banner_url,
               alt: movie.title,
-              className: "w-full h-full object-cover"
+              className: `hidden md:block w-full h-full object-cover`
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            "img",
+            {
+              src: movie.poster_url,
+              alt: movie.title,
+              className: `block md:hidden w-full h-full object-cover`
             }
           ),
           /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-gray-50 dark:from-[#0a0e17] via-gray-50/60 dark:via-[#0a0e17]/60 to-transparent" }),
@@ -6338,8 +6346,8 @@ function MovieDetails({
         /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
             /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2", children: [
-              /* @__PURE__ */ jsx("span", { className: "w-8 h-[2px] bg-blue-500" }),
-              t("Storyline")
+              /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
+              t("Synopsis")
             ] }),
             /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed opacity-90", children: movie.description })
           ] }),
@@ -6427,10 +6435,10 @@ function MovieDetails({
           ),
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
             /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
-              /* @__PURE__ */ jsx("span", { className: "w-8 h-[2px] bg-blue-500" }),
-              t("Top Cast")
+              /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
+              t("Cast & Crew")
             ] }),
-            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6", children: movie.actors?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
+            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6", children: movie.actors?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
               Link,
               {
                 href: route(
@@ -6453,6 +6461,17 @@ function MovieDetails({
               },
               actor.id
             )) })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
+            /* @__PURE__ */ jsx("h1", { children: t("Backdrop") }),
+            /* @__PURE__ */ jsx(
+              "img",
+              {
+                className: "w-full rounded-lg mt-8",
+                src: movie.banner_url,
+                alt: `${movie.title} Backdrop`
+              }
+            )
           ] })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: "w-full lg:w-80 flex-shrink-0 space-y-12", children: [
@@ -7789,17 +7808,14 @@ function Edit({ mustVerifyEmail, status }) {
           /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl hidden dark:block" }),
           /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 -mb-16 -ml-16 w-64 h-64 bg-indigo-100 rounded-full blur-3xl hidden dark:block" }),
           /* @__PURE__ */ jsxs("div", { className: "relative flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8", children: [
-            /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsxs("div", { className: "w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-white dark:border-black/50", children: [
-              user?.avatar_url && /* @__PURE__ */ jsx("div", { className: "mb-6 flex justify-center", children: /* @__PURE__ */ jsx(
-                "img",
-                {
-                  src: user?.avatar_url,
-                  alt: user?.name,
-                  className: "w-28 h-28 md:w-40 md:h-40 rounded-full object-cover border-4 border-white/20"
-                }
-              ) }),
-              /* @__PURE__ */ jsx("span", { className: "text-3xl md:text-4xl font-bold text-white tracking-wider", children: getInitials(user.name) })
-            ] }) }),
+            /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-white dark:border-black/50", children: user?.avatar_url ? user?.avatar_url && /* @__PURE__ */ jsx("div", { className: "mb-6 flex justify-center", children: /* @__PURE__ */ jsx(
+              "img",
+              {
+                src: user?.avatar_url,
+                alt: user?.name,
+                className: "w-28 h-28 md:w-40 md:h-40 rounded-full object-cover border-4 border-white/20"
+              }
+            ) }) : /* @__PURE__ */ jsx("span", { className: "text-3xl md:text-4xl font-bold text-white tracking-wider", children: getInitials(user.name) }) }) }),
             /* @__PURE__ */ jsxs("div", { className: "flex-1 text-center md:text-left space-y-2", children: [
               /* @__PURE__ */ jsx("h1", { className: "text-3xl md:text-4xl font-bold text-gray-900 dark:text-white tracking-tight", children: user.name }),
               /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row items-center justify-center md:justify-start md:items-center gap-2 md:gap-4 text-gray-500 dark:text-gray-400", children: [
@@ -8242,9 +8258,17 @@ function SeriesDetails({
           /* @__PURE__ */ jsx(
             "img",
             {
-              src: series.banner_url || series.poster_url,
+              src: series.banner_url,
               alt: series.title,
-              className: "w-full h-full object-cover"
+              className: `hidden md:block w-full h-full object-cover`
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            "img",
+            {
+              src: series.poster_url,
+              alt: series.title,
+              className: `block md:hidden w-full h-full object-cover`
             }
           ),
           /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-gray-50 dark:from-[#0a0e17] via-gray-50/60 dark:via-[#0a0e17]/60 to-transparent" }),
@@ -8261,68 +8285,153 @@ function SeriesDetails({
             }
           ) }),
           /* @__PURE__ */ jsxs("div", { className: "flex-1 w-full text-center md:text-left", children: [
-            /* @__PURE__ */ jsxs("div", { className: "mb-4 animate-slide-up", style: { animationDelay: "0.1s" }, children: [
-              /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-2 font-serif leading-tight drop-shadow-lg", children: series.title }),
-              /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap justify-center md:justify-start gap-3 text-lg md:text-xl text-gray-500 dark:text-gray-400 font-serif italic", children: [
-                /* @__PURE__ */ jsx("span", { children: series.release_year_start }),
-                series.release_year_end && /* @__PURE__ */ jsxs(Fragment, { children: [
-                  /* @__PURE__ */ jsx("span", { children: "-" }),
-                  /* @__PURE__ */ jsx("span", { children: series.release_year_end })
-                ] }),
-                !series.release_year_end && /* @__PURE__ */ jsx("span", { children: "- Present" })
-              ] })
-            ] }),
-            /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 mb-8 text-sm md:text-base font-medium text-gray-600 dark:text-gray-300 animate-slide-up", style: { animationDelay: "0.2s" }, children: [
-              series.rating_average > 0 && /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1 text-yellow-500 dark:text-yellow-400", children: [
-                /* @__PURE__ */ jsx("span", { children: "★" }),
-                /* @__PURE__ */ jsx("span", { className: "text-gray-900 dark:text-white", children: series.rating_average })
-              ] }),
-              /* @__PURE__ */ jsxs("span", { children: [
-                series.seasons?.length,
-                " ",
-                t("Seasons")
-              ] }),
-              series.age_rating && /* @__PURE__ */ jsx("span", { className: "px-2 py-0.5 border border-gray-300 dark:border-white/20 rounded text-xs uppercase tracking-wider bg-gray-200 dark:bg-white/5", children: series.age_rating }),
-              series.country && /* @__PURE__ */ jsxs(Fragment, { children: [
-                /* @__PURE__ */ jsx("span", { className: "hidden md:inline", children: "•" }),
-                /* @__PURE__ */ jsx("span", { children: series.country })
-              ] })
-            ] }),
-            /* @__PURE__ */ jsx("div", { className: "flex flex-wrap justify-center md:justify-start gap-2 mb-8 animate-slide-up", style: { animationDelay: "0.3s" }, children: series.genres?.map((genre) => /* @__PURE__ */ jsx(
-              "span",
+            /* @__PURE__ */ jsxs(
+              "div",
               {
-                className: "genre-pill",
-                children: genre.name
-              },
-              genre.id
-            )) }),
-            /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap justify-center md:justify-start gap-4 animate-slide-up", style: { animationDelay: "0.4s" }, children: [
-              /* @__PURE__ */ jsxs(
-                "button",
-                {
-                  onClick: scrollToEpisodes,
-                  className: "btn-primary group",
-                  children: [
-                    /* @__PURE__ */ jsx(PlayIcon, { className: "w-5 h-5 mr-2 group-hover:scale-110 transition-transform" }),
-                    t("Watch Episodes")
-                  ]
-                }
-              ),
-              series.trailer_url && /* @__PURE__ */ jsxs(
-                "button",
-                {
-                  onClick: () => setShowTrailer(true),
-                  className: "btn-secondary group",
-                  children: [
-                    /* @__PURE__ */ jsxs("svg", { className: "w-5 h-5 mr-2 group-hover:scale-110 transition-transform", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: [
-                      /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" }),
-                      /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M21 12a9 9 0 11-18 0 9 9 0 0118 0z" })
+                className: "mb-4 animate-slide-up",
+                style: { animationDelay: "0.1s" },
+                children: [
+                  /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-2 font-serif leading-tight drop-shadow-lg", children: series.title }),
+                  /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap justify-center md:justify-start gap-3 text-lg md:text-xl text-gray-500 dark:text-gray-400 font-serif italic", children: [
+                    /* @__PURE__ */ jsx("span", { children: series.release_year_start }),
+                    series.release_year_end && /* @__PURE__ */ jsxs(Fragment, { children: [
+                      /* @__PURE__ */ jsx("span", { children: "-" }),
+                      /* @__PURE__ */ jsx("span", { children: series.release_year_end })
                     ] }),
-                    t("Trailer")
-                  ]
-                }
-              )
-            ] })
+                    !series.release_year_end && /* @__PURE__ */ jsx("span", { children: "- Present" })
+                  ] })
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxs(
+              "div",
+              {
+                className: "flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 mb-8 text-sm md:text-base font-medium text-gray-600 dark:text-gray-300 animate-slide-up",
+                style: { animationDelay: "0.2s" },
+                children: [
+                  series.rating_average > 0 && /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1 text-yellow-500 dark:text-yellow-400", children: [
+                    /* @__PURE__ */ jsx("span", { children: "★" }),
+                    /* @__PURE__ */ jsx("span", { className: "text-gray-900 dark:text-white", children: series.rating_average })
+                  ] }),
+                  /* @__PURE__ */ jsxs("span", { children: [
+                    series.seasons?.length,
+                    " ",
+                    t("Seasons")
+                  ] }),
+                  series.age_rating && /* @__PURE__ */ jsx("span", { className: "px-2 py-0.5 border border-gray-300 dark:border-white/20 rounded text-xs uppercase tracking-wider bg-gray-200 dark:bg-white/5", children: series.age_rating }),
+                  series.country && /* @__PURE__ */ jsxs(Fragment, { children: [
+                    /* @__PURE__ */ jsx("span", { className: "hidden md:inline", children: "•" }),
+                    /* @__PURE__ */ jsx("span", { children: series.country })
+                  ] }),
+                  series.view_count > 0 && /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs", children: [
+                    /* @__PURE__ */ jsxs(
+                      "svg",
+                      {
+                        className: "w-4 h-4",
+                        fill: "none",
+                        stroke: "currentColor",
+                        viewBox: "0 0 24 24",
+                        children: [
+                          /* @__PURE__ */ jsx(
+                            "path",
+                            {
+                              strokeLinecap: "round",
+                              strokeLinejoin: "round",
+                              strokeWidth: 2,
+                              d: "M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            }
+                          ),
+                          /* @__PURE__ */ jsx(
+                            "path",
+                            {
+                              strokeLinecap: "round",
+                              strokeLinejoin: "round",
+                              strokeWidth: 2,
+                              d: "M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            }
+                          )
+                        ]
+                      }
+                    ),
+                    /* @__PURE__ */ jsx("span", { children: series.view_count })
+                  ] })
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              "div",
+              {
+                className: "flex flex-wrap justify-center md:justify-start gap-2 mb-8 animate-slide-up",
+                style: { animationDelay: "0.3s" },
+                children: series.genres?.map((genre) => /* @__PURE__ */ jsx(
+                  "span",
+                  {
+                    className: "genre-pill",
+                    children: genre.name
+                  },
+                  genre.id
+                ))
+              }
+            ),
+            /* @__PURE__ */ jsxs(
+              "div",
+              {
+                className: "flex flex-wrap justify-center md:justify-start gap-4 animate-slide-up",
+                style: { animationDelay: "0.4s" },
+                children: [
+                  /* @__PURE__ */ jsxs(
+                    "button",
+                    {
+                      onClick: scrollToEpisodes,
+                      className: "btn-primary group",
+                      children: [
+                        /* @__PURE__ */ jsx(PlayIcon, { className: "w-5 h-5 mr-2 group-hover:scale-110 transition-transform" }),
+                        t("Watch Episodes")
+                      ]
+                    }
+                  ),
+                  series.trailer_url && /* @__PURE__ */ jsxs(
+                    "button",
+                    {
+                      onClick: () => setShowTrailer(true),
+                      className: "btn-secondary group",
+                      children: [
+                        /* @__PURE__ */ jsxs(
+                          "svg",
+                          {
+                            className: "w-5 h-5 mr-2 group-hover:scale-110 transition-transform",
+                            fill: "none",
+                            stroke: "currentColor",
+                            viewBox: "0 0 24 24",
+                            children: [
+                              /* @__PURE__ */ jsx(
+                                "path",
+                                {
+                                  strokeLinecap: "round",
+                                  strokeLinejoin: "round",
+                                  strokeWidth: 2,
+                                  d: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                                }
+                              ),
+                              /* @__PURE__ */ jsx(
+                                "path",
+                                {
+                                  strokeLinecap: "round",
+                                  strokeLinejoin: "round",
+                                  strokeWidth: 2,
+                                  d: "M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                }
+                              )
+                            ]
+                          }
+                        ),
+                        t("Trailer")
+                      ]
+                    }
+                  )
+                ]
+              }
+            )
           ] })
         ] }) })
       ] }),
@@ -8330,51 +8439,72 @@ function SeriesDetails({
         /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
             /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2", children: [
-              /* @__PURE__ */ jsx("span", { className: "w-8 h-[2px] bg-blue-500" }),
-              t("Storyline")
+              /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
+              t("Synopsis")
             ] }),
             /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed opacity-90", children: series.description })
           ] }),
-          /* @__PURE__ */ jsxs("div", { id: "episodes-section", className: "mb-16 scroll-mt-24", children: [
-            /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-8", children: [
-              /* @__PURE__ */ jsxs("h3", { className: "text-xl font-serif text-gray-900 dark:text-white flex items-center gap-3", children: [
-                /* @__PURE__ */ jsx(PlayIcon, { className: "w-6 h-6 text-blue-500" }),
-                t("Episode Guide")
-              ] }),
-              series.is_vip_only && /* @__PURE__ */ jsx("span", { className: "badge-vip", children: t("VIP ACCESS") })
-            ] }),
-            series.seasons && series.seasons.length > 0 ? /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive overflow-hidden", children: [
-              /* @__PURE__ */ jsx("div", { className: "flex overflow-x-auto p-4 gap-2 border-b border-gray-200 dark:border-white/5 custom-scrollbar bg-gray-100 dark:bg-black/20", children: series.seasons.slice().reverse().map((season) => /* @__PURE__ */ jsx(
-                "button",
-                {
-                  onClick: () => setActiveSeason(season),
-                  className: `whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all ${activeSeason?.id === season.id ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20" : "bg-gray-200 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white"}`,
-                  children: t("Season {season_number}", { season_number: season.season_number })
-                },
-                season.id
-              )) }),
-              /* @__PURE__ */ jsx("div", { className: "divide-y divide-gray-200 dark:divide-white/5", children: activeSeason?.episodes && activeSeason.episodes.length > 0 ? activeSeason.episodes.slice().reverse().map((episode) => /* @__PURE__ */ jsx(
-                EpisodeRow,
-                {
-                  episode,
-                  isActive: expandedEpisodeId === episode.id,
-                  onClick: () => setExpandedEpisodeId(expandedEpisodeId === episode.id ? null : episode.id),
-                  isVip,
-                  isAuthenticated: !!auth.user
-                },
-                episode.id
-              )) : /* @__PURE__ */ jsx("div", { className: "p-12 text-center text-gray-500 italic", children: t("No episodes available for this season.") }) })
-            ] }) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic p-8 border border-gray-200 dark:border-white/10 rounded-lg text-center", children: t("No seasons available.") })
-          ] }),
+          /* @__PURE__ */ jsxs(
+            "div",
+            {
+              id: "episodes-section",
+              className: "mb-16 scroll-mt-24",
+              children: [
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-8", children: [
+                  /* @__PURE__ */ jsxs("h3", { className: "text-xl font-serif text-gray-900 dark:text-white flex items-center gap-3", children: [
+                    /* @__PURE__ */ jsx(PlayIcon, { className: "w-6 h-6 text-blue-500" }),
+                    t("Episode Guide")
+                  ] }),
+                  series.is_vip_only && /* @__PURE__ */ jsx("span", { className: "badge-vip", children: t("VIP ACCESS") })
+                ] }),
+                series.seasons && series.seasons.length > 0 ? /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive overflow-hidden", children: [
+                  /* @__PURE__ */ jsx("div", { className: "flex overflow-x-auto p-4 gap-2 border-b border-gray-200 dark:border-white/5 custom-scrollbar bg-gray-100 dark:bg-black/20", children: series.seasons.slice().reverse().map((season) => /* @__PURE__ */ jsx(
+                    "button",
+                    {
+                      onClick: () => setActiveSeason(
+                        season
+                      ),
+                      className: `whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all ${activeSeason?.id === season.id ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20" : "bg-gray-200 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white"}`,
+                      children: t(
+                        "Season {season_number}",
+                        {
+                          season_number: season.season_number
+                        }
+                      )
+                    },
+                    season.id
+                  )) }),
+                  /* @__PURE__ */ jsx("div", { className: "divide-y divide-gray-200 dark:divide-white/5", children: activeSeason?.episodes && activeSeason.episodes.length > 0 ? activeSeason.episodes.slice().reverse().map((episode) => /* @__PURE__ */ jsx(
+                    EpisodeRow,
+                    {
+                      episode,
+                      isActive: expandedEpisodeId === episode.id,
+                      onClick: () => setExpandedEpisodeId(
+                        expandedEpisodeId === episode.id ? null : episode.id
+                      ),
+                      isVip,
+                      isAuthenticated: !!auth.user
+                    },
+                    episode.id
+                  )) : /* @__PURE__ */ jsx("div", { className: "p-12 text-center text-gray-500 italic", children: t(
+                    "No episodes available for this season."
+                  ) }) })
+                ] }) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic p-8 border border-gray-200 dark:border-white/10 rounded-lg text-center", children: t("No seasons available.") })
+              ]
+            }
+          ),
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
             /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
-              /* @__PURE__ */ jsx("span", { className: "w-8 h-[2px] bg-blue-500" }),
-              t("Top Cast")
+              /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
+              t("Cast & Crew")
             ] }),
             /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6", children: series.actors?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
               Link,
               {
-                href: route("person.show", actor.person?.id),
+                href: route(
+                  "person.show",
+                  actor.person?.id
+                ),
                 className: "group block",
                 children: [
                   /* @__PURE__ */ jsx("div", { className: "aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-gray-200 dark:bg-gray-800", children: /* @__PURE__ */ jsx(
@@ -8391,6 +8521,17 @@ function SeriesDetails({
               },
               actor.id
             )) })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
+            /* @__PURE__ */ jsx("h1", { children: t("Backdrop") }),
+            /* @__PURE__ */ jsx(
+              "img",
+              {
+                className: "w-full rounded-lg mt-8",
+                src: series.banner_url,
+                alt: `${series.title} Backdrop`
+              }
+            )
           ] })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: "w-full lg:w-80 flex-shrink-0 space-y-12", children: [
@@ -8404,24 +8545,50 @@ function SeriesDetails({
                 userRating,
                 onRate: (rating) => {
                   if (userRating) {
-                    router.put(route("admin.ratings.update", userRating.id), { rating }, { preserveScroll: true });
+                    router.put(
+                      route(
+                        "admin.ratings.update",
+                        userRating.id
+                      ),
+                      { rating },
+                      { preserveScroll: true }
+                    );
                   } else {
-                    router.post(route("admin.ratings.store"), { series_id: series.id, rating }, { preserveScroll: true });
+                    router.post(
+                      route(
+                        "admin.ratings.store"
+                      ),
+                      {
+                        series_id: series.id,
+                        rating
+                      },
+                      { preserveScroll: true }
+                    );
                   }
                 }
               }
             ) : /* @__PURE__ */ jsxs("div", { className: "text-center text-sm text-gray-500", children: [
-              /* @__PURE__ */ jsx("a", { href: route("login"), className: "text-blue-400 hover:underline", children: t("Log in") }),
+              /* @__PURE__ */ jsx(
+                "a",
+                {
+                  href: route("login"),
+                  className: "text-blue-400 hover:underline",
+                  children: t("Log in")
+                }
+              ),
               " ",
               t("to rate.")
             ] })
           ] }),
           relatedSeries && relatedSeries.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
             /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6 border-l-4 border-blue-500 pl-3", children: t("You May Also Like") }),
-            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 gap-4", children: relatedSeries.slice(0, 6).map((rel) => /* @__PURE__ */ jsxs(
+            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-2 gap-4", children: relatedSeries.slice(0, 6).map((rel) => /* @__PURE__ */ jsxs(
               "a",
               {
-                href: route("series.show", rel.slug),
+                href: route(
+                  "series.show",
+                  rel.slug
+                ),
                 className: "group block",
                 children: [
                   /* @__PURE__ */ jsxs("div", { className: "aspect-[2/3] rounded-lg overflow-hidden mb-2 relative", children: [
@@ -8439,7 +8606,8 @@ function SeriesDetails({
                   /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-xs text-gray-500", children: [
                     /* @__PURE__ */ jsx("span", { children: rel.release_year_start }),
                     /* @__PURE__ */ jsxs("span", { className: "text-yellow-500", children: [
-                      "★ ",
+                      "★",
+                      " ",
                       rel.rating_average
                     ] })
                   ] })

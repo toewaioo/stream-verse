@@ -42,8 +42,9 @@ const LinkItem = ({ link, type, isVip }) => {
 
     return (
         <div
-            className={`group flex items-center justify-between py-4 border-b border-white/10 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""
-                }`}
+            className={`group flex items-center justify-between py-4 border-b border-white/10 hover:bg-white/5 transition-colors px-2 ${
+                isLocked ? "opacity-50" : ""
+            }`}
         >
             <div className="flex items-center gap-4">
                 <div className="flex flex-col">
@@ -56,10 +57,11 @@ const LinkItem = ({ link, type, isVip }) => {
                 </div>
             </div>
             <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download"
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border ${
+                    type === "download"
                         ? "border-blue-500 text-blue-500"
                         : "border-red-500 text-red-500"
-                    }`}
+                }`}
             >
                 {link.quality?.replace("p", "") || "HD"}
             </div>
@@ -81,10 +83,11 @@ const LinkItem = ({ link, type, isVip }) => {
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${type === "download"
+                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                                type === "download"
                                     ? "bg-blue-600 hover:bg-blue-500 text-white"
                                     : "bg-red-600 hover:bg-red-500 text-white"
-                                }`}
+                            }`}
                         >
                             <svg
                                 className="w-4 h-4"
@@ -201,9 +204,14 @@ export default function MovieDetails({
                     {/* Background Image */}
                     <div className="absolute inset-0 z-0">
                         <img
-                            src={movie.banner_url || movie.poster_url}
+                            src={movie.banner_url}
                             alt={movie.title}
-                            className="w-full h-full object-cover"
+                            className={`hidden md:block w-full h-full object-cover`}
+                        />
+                        <img
+                            src={movie.poster_url}
+                            alt={movie.title}
+                            className={`block md:hidden w-full h-full object-cover`}
                         />
                         {/* Gradient Overlays */}
                         <div className="absolute inset-0 bg-gradient-to-t from-gray-50 dark:from-[#0a0e17] via-gray-50/60 dark:via-[#0a0e17]/60 to-transparent" />
@@ -369,8 +377,8 @@ export default function MovieDetails({
                             {/* Synopsis */}
                             <div className="mb-16">
                                 <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <span className="w-8 h-[2px] bg-blue-500"></span>
-                                    {t("Storyline")}
+                                    <span className="w-2 h-[2px] bg-blue-500"></span>
+                                    {t("Synopsis")}
                                 </h3>
                                 <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed opacity-90">
                                     {movie.description}
@@ -399,22 +407,23 @@ export default function MovieDetails({
                                         <div className="space-y-8">
                                             {/* Watch Links */}
                                             <div
-                                                className={`${watchLinksByQuality &&
-                                                        Object.keys(
-                                                            watchLinksByQuality
-                                                        ).length > 0
+                                                className={`${
+                                                    watchLinksByQuality &&
+                                                    Object.keys(
+                                                        watchLinksByQuality
+                                                    ).length > 0
                                                         ? ""
                                                         : "hidden"
-                                                    }`}
+                                                }`}
                                             >
                                                 <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">
                                                     {t("Streaming Sources")}
                                                 </h4>
                                                 <div className="grid gap-2">
                                                     {watchLinksByQuality &&
-                                                        Object.keys(
-                                                            watchLinksByQuality
-                                                        ).length > 0 ? (
+                                                    Object.keys(
+                                                        watchLinksByQuality
+                                                    ).length > 0 ? (
                                                         Object.values(
                                                             watchLinksByQuality
                                                         )
@@ -443,22 +452,23 @@ export default function MovieDetails({
 
                                             {/* Download Links */}
                                             <div
-                                                className={`${downloadLinksByQuality &&
-                                                        Object.keys(
-                                                            downloadLinksByQuality
-                                                        ).length > 0
+                                                className={`${
+                                                    downloadLinksByQuality &&
+                                                    Object.keys(
+                                                        downloadLinksByQuality
+                                                    ).length > 0
                                                         ? ""
                                                         : "hidden"
-                                                    }`}
+                                                }`}
                                             >
                                                 <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">
                                                     {t("Download Files")}
                                                 </h4>
                                                 <div className="grid gap-2">
                                                     {downloadLinksByQuality &&
-                                                        Object.keys(
-                                                            downloadLinksByQuality
-                                                        ).length > 0 ? (
+                                                    Object.keys(
+                                                        downloadLinksByQuality
+                                                    ).length > 0 ? (
                                                         Object.values(
                                                             downloadLinksByQuality
                                                         )
@@ -502,14 +512,15 @@ export default function MovieDetails({
                                     )}
                                 </div>
                             </div>
+                            
 
                             {/* Cast */}
                             <div className="mb-16">
                                 <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                                    <span className="w-8 h-[2px] bg-blue-500"></span>
-                                    {t("Top Cast")}
+                                    <span className="w-2 h-[2px] bg-blue-500"></span>
+                                    {t("Cast & Crew")}
                                 </h3>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+                                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6">
                                     {movie.actors?.slice(0, 8).map((actor) => (
                                         <Link
                                             key={actor.id}
@@ -540,7 +551,18 @@ export default function MovieDetails({
                                     ))}
                                 </div>
                             </div>
+                             {/*Backdrop*/}
+                            <div className="w-full">
+                                <h1>{t("Backdrop")}</h1>
+                                <img
+                                    className="w-full rounded-lg mt-8"
+                                    src={movie.banner_url}
+                                    alt={`${movie.title} Backdrop`}
+                                />
+                            </div>
+                           
                         </div>
+                        
 
                         {/* Right Column: Sidebar (Rating, Related) */}
                         <div className="w-full lg:w-80 flex-shrink-0 space-y-12">

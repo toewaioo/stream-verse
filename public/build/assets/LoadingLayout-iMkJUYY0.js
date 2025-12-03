@@ -1,1 +1,0 @@
-import{r as e,d as n,j as t}from"./app-DuVf6tVQ.js";import{L as i}from"./Loader-Dh4bVIOb.js";function f({children:s}){const[r,o]=e.useState(!0),{props:m}=n();return e.useEffect(()=>{const a=setTimeout(()=>{o(!1)},500);return()=>clearTimeout(a)},[]),r?t.jsx(t.Fragment,{children:t.jsx(i,{})}):t.jsx(t.Fragment,{children:s})}export{f as L};

@@ -44,7 +44,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                                 {/* Avatar */}
                                 <div className="flex-shrink-0">
                                     <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-white dark:border-black/50">
-                                        {user?.avatar_url && (
+                                        {user?.avatar_url ? user?.avatar_url && (
                                             <div className="mb-6 flex justify-center">
                                                 <img
                                                     src={user?.avatar_url}
@@ -52,10 +52,11 @@ export default function Edit({ mustVerifyEmail, status }) {
                                                     className="w-28 h-28 md:w-40 md:h-40 rounded-full object-cover border-4 border-white/20"
                                                 />
                                             </div>
+                                        ) : (
+                                            <span className="text-3xl md:text-4xl font-bold text-white tracking-wider">
+                                                {getInitials(user.name)}
+                                            </span>
                                         )}
-                                        <span className="text-3xl md:text-4xl font-bold text-white tracking-wider">
-                                            {getInitials(user.name)}
-                                        </span>
                                     </div>
                                 </div>
 

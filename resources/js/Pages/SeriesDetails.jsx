@@ -42,8 +42,9 @@ const LinkItem = ({ link, type, isVip }) => {
 
     return (
         <div
-            className={`group flex items-center justify-around py-3 border-b border-white/5 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""
-                }`}
+            className={`group flex items-center justify-around py-3 border-b border-white/5 hover:bg-white/5 transition-colors px-2 ${
+                isLocked ? "opacity-50" : ""
+            }`}
         >
             <div className="flex items-center justify-center gap-3 min-w-0">
                 <div className="flex flex-col min-w-0">
@@ -53,10 +54,11 @@ const LinkItem = ({ link, type, isVip }) => {
                 </div>
             </div>
             <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download"
-                    ? "border-blue-500 text-blue-500"
-                    : "border-red-500 text-red-500"
-                    }`}
+                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${
+                    type === "download"
+                        ? "border-blue-500 text-blue-500"
+                        : "border-red-500 text-red-500"
+                }`}
             >
                 {link.quality?.replace("p", "") || "HD"}
             </div>
@@ -64,7 +66,7 @@ const LinkItem = ({ link, type, isVip }) => {
             <div className="flex items-center gap-2">
                 {isLocked ? (
                     <span className="text-[10px] font-bold text-yellow-500 border border-yellow-500 px-1 uppercase">
-                        {t('VIP')}
+                        {t("VIP")}
                     </span>
                 ) : (
                     <>
@@ -78,10 +80,11 @@ const LinkItem = ({ link, type, isVip }) => {
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${type === "download"
-                                ? "bg-blue-600 hover:bg-blue-500 text-white"
-                                : "bg-red-600 hover:bg-red-500 text-white"
-                                }`}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                                type === "download"
+                                    ? "bg-blue-600 hover:bg-blue-500 text-white"
+                                    : "bg-red-600 hover:bg-red-500 text-white"
+                            }`}
                         >
                             <svg
                                 className="w-3 h-3"
@@ -108,8 +111,9 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
         <div className="border-b border-white/10 last:border-0">
             <button
                 onClick={onClick}
-                className={`w-full flex items-center justify-between p-4 text-left transition-colors ${isActive ? "bg-white/10" : "hover:bg-white/5"
-                    }`}
+                className={`w-full flex items-center justify-between p-4 text-left transition-colors ${
+                    isActive ? "bg-white/10" : "hover:bg-white/5"
+                }`}
             >
                 <div className="flex items-center gap-4">
                     <span className="text-gray-500 font-mono text-sm w-6">
@@ -117,23 +121,27 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                     </span>
                     <div>
                         <h4
-                            className={`font-serif text-lg leading-none ${isActive ? "dark:text-white" : "dark:text-gray-300"
-                                }`}
+                            className={`font-serif text-lg leading-none ${
+                                isActive
+                                    ? "dark:text-white"
+                                    : "dark:text-gray-300"
+                            }`}
                         >
                             {episode.title}
                         </h4>
                         <span className="text-xs dark:text-gray-600 mt-1 block">
                             {episode.air_date
                                 ? new Date(
-                                    episode.air_date
-                                ).toLocaleDateString()
+                                      episode.air_date
+                                  ).toLocaleDateString()
                                 : t("Unknown Date")}
                         </span>
                     </div>
                 </div>
                 <div
-                    className={`transform transition-transform ${isActive ? "rotate-180" : ""
-                        }`}
+                    className={`transform transition-transform ${
+                        isActive ? "rotate-180" : ""
+                    }`}
                 >
                     <svg
                         className="w-5 h-5 text-gray-500"
@@ -175,11 +183,12 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <h5 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                    <PlayIcon className="w-3 h-3" /> {t('Stream')}
+                                    <PlayIcon className="w-3 h-3" />{" "}
+                                    {t("Stream")}
                                 </h5>
                                 <div className="space-y-1">
                                     {episode.watch_links &&
-                                        episode.watch_links.length > 0 ? (
+                                    episode.watch_links.length > 0 ? (
                                         episode.watch_links.map((link) => (
                                             <LinkItem
                                                 key={link.id}
@@ -190,25 +199,26 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                                         ))
                                     ) : (
                                         <div className="text-gray-600 text-xs italic">
-                                            {t('No sources.')}
+                                            {t("No sources.")}
                                         </div>
                                     )}
                                 </div>
                             </div>
                             <div
-                                className={`${episode.download_links &&
+                                className={`${
+                                    episode.download_links &&
                                     episode.download_links.length > 0
-                                    ? ""
-                                    : "hidden"
-                                    }`}
+                                        ? ""
+                                        : "hidden"
+                                }`}
                             >
                                 <h5 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                                     <DownloadIcon className="w-3 h-3" />{" "}
-                                    {t('Download')}
+                                    {t("Download")}
                                 </h5>
                                 <div className="space-y-1">
                                     {episode.download_links &&
-                                        episode.download_links.length > 0 ? (
+                                    episode.download_links.length > 0 ? (
                                         episode.download_links.map((link) => (
                                             <LinkItem
                                                 key={link.id}
@@ -219,7 +229,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                                         ))
                                     ) : (
                                         <div className="text-gray-600 text-xs italic">
-                                            {t('No sources.')}
+                                            {t("No sources.")}
                                         </div>
                                     )}
                                 </div>
@@ -228,13 +238,13 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                     ) : (
                         <div className="p-4 border border-white/10 rounded bg-white/5 text-center">
                             <p className="text-gray-400 text-sm mb-2">
-                                {t('Please log in to access episode links.')}
+                                {t("Please log in to access episode links.")}
                             </p>
                             <a
                                 href={route("login")}
                                 className="inline-block px-4 py-1.5 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors"
                             >
-                                {t('Log In')}
+                                {t("Log In")}
                             </a>
                         </div>
                     )}
@@ -327,7 +337,9 @@ export default function SeriesDetails({
     }, [activeSeason]);
 
     const scrollToEpisodes = () => {
-        document.getElementById("episodes-section")?.scrollIntoView({ behavior: "smooth" });
+        document
+            .getElementById("episodes-section")
+            ?.scrollIntoView({ behavior: "smooth" });
     };
 
     return (
@@ -348,9 +360,14 @@ export default function SeriesDetails({
                     {/* Background Image */}
                     <div className="absolute inset-0 z-0">
                         <img
-                            src={series.banner_url || series.poster_url}
+                            src={series.banner_url}
                             alt={series.title}
-                            className="w-full h-full object-cover"
+                            className={`hidden md:block w-full h-full object-cover`}
+                        />
+                        <img
+                            src={series.poster_url}
+                            alt={series.title}
+                            className={`block md:hidden w-full h-full object-cover`}
                         />
                         {/* Gradient Overlays */}
                         <div className="absolute inset-0 bg-gradient-to-t from-gray-50 dark:from-[#0a0e17] via-gray-50/60 dark:via-[#0a0e17]/60 to-transparent" />
@@ -372,7 +389,10 @@ export default function SeriesDetails({
 
                             {/* Text Info */}
                             <div className="flex-1 w-full text-center md:text-left">
-                                <div className="mb-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+                                <div
+                                    className="mb-4 animate-slide-up"
+                                    style={{ animationDelay: "0.1s" }}
+                                >
                                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-2 font-serif leading-tight drop-shadow-lg">
                                         {series.title}
                                     </h1>
@@ -381,23 +401,34 @@ export default function SeriesDetails({
                                         {series.release_year_end && (
                                             <>
                                                 <span>-</span>
-                                                <span>{series.release_year_end}</span>
+                                                <span>
+                                                    {series.release_year_end}
+                                                </span>
                                             </>
                                         )}
-                                        {!series.release_year_end && <span>- Present</span>}
+                                        {!series.release_year_end && (
+                                            <span>- Present</span>
+                                        )}
                                     </div>
                                 </div>
 
                                 {/* Metadata Row */}
-                                <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 mb-8 text-sm md:text-base font-medium text-gray-600 dark:text-gray-300 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+                                <div
+                                    className="flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 mb-8 text-sm md:text-base font-medium text-gray-600 dark:text-gray-300 animate-slide-up"
+                                    style={{ animationDelay: "0.2s" }}
+                                >
                                     {series.rating_average > 0 && (
                                         <div className="flex items-center gap-1 text-yellow-500 dark:text-yellow-400">
                                             <span>★</span>
-                                            <span className="text-gray-900 dark:text-white">{series.rating_average}</span>
+                                            <span className="text-gray-900 dark:text-white">
+                                                {series.rating_average}
+                                            </span>
                                         </div>
                                     )}
 
-                                    <span>{series.seasons?.length} {t('Seasons')}</span>
+                                    <span>
+                                        {series.seasons?.length} {t("Seasons")}
+                                    </span>
 
                                     {series.age_rating && (
                                         <span className="px-2 py-0.5 border border-gray-300 dark:border-white/20 rounded text-xs uppercase tracking-wider bg-gray-200 dark:bg-white/5">
@@ -407,14 +438,43 @@ export default function SeriesDetails({
 
                                     {series.country && (
                                         <>
-                                            <span className="hidden md:inline">•</span>
+                                            <span className="hidden md:inline">
+                                                •
+                                            </span>
                                             <span>{series.country}</span>
                                         </>
+                                    )}
+                                    {series.view_count > 0 && (
+                                        <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs">
+                                            <svg
+                                                className="w-4 h-4"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                                />
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                                />
+                                            </svg>
+                                            <span>{series.view_count}</span>
+                                        </div>
                                     )}
                                 </div>
 
                                 {/* Genres */}
-                                <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-8 animate-slide-up" style={{ animationDelay: '0.3s' }}>
+                                <div
+                                    className="flex flex-wrap justify-center md:justify-start gap-2 mb-8 animate-slide-up"
+                                    style={{ animationDelay: "0.3s" }}
+                                >
                                     {series.genres?.map((genre) => (
                                         <span
                                             key={genre.id}
@@ -426,7 +486,10 @@ export default function SeriesDetails({
                                 </div>
 
                                 {/* Action Buttons */}
-                                <div className="flex flex-wrap justify-center md:justify-start gap-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+                                <div
+                                    className="flex flex-wrap justify-center md:justify-start gap-4 animate-slide-up"
+                                    style={{ animationDelay: "0.4s" }}
+                                >
                                     <button
                                         onClick={scrollToEpisodes}
                                         className="btn-primary group"
@@ -440,7 +503,25 @@ export default function SeriesDetails({
                                             onClick={() => setShowTrailer(true)}
                                             className="btn-secondary group"
                                         >
-                                            <svg className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            <svg
+                                                className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                                                />
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                />
+                                            </svg>
                                             {t("Trailer")}
                                         </button>
                                     )}
@@ -453,15 +534,13 @@ export default function SeriesDetails({
                 {/* --- MAIN CONTENT --- */}
                 <div className="container-custom py-12 md:py-20">
                     <div className="flex flex-col lg:flex-row gap-12">
-
                         {/* Left Column: Synopsis, Episodes, Cast */}
                         <div className="flex-1">
-
                             {/* Synopsis */}
                             <div className="mb-16">
                                 <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <span className="w-8 h-[2px] bg-blue-500"></span>
-                                    {t("Storyline")}
+                                    <span className="w-2 h-[2px] bg-blue-500"></span>
+                                    {t("Synopsis")}
                                 </h3>
                                 <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed opacity-90">
                                     {series.description}
@@ -469,7 +548,10 @@ export default function SeriesDetails({
                             </div>
 
                             {/* Episode Guide */}
-                            <div id="episodes-section" className="mb-16 scroll-mt-24">
+                            <div
+                                id="episodes-section"
+                                className="mb-16 scroll-mt-24"
+                            >
                                 <div className="flex items-center justify-between mb-8">
                                     <h3 className="text-xl font-serif text-gray-900 dark:text-white flex items-center gap-3">
                                         <PlayIcon className="w-6 h-6 text-blue-500" />
@@ -486,43 +568,76 @@ export default function SeriesDetails({
                                     <div className="glass-card-adaptive overflow-hidden">
                                         {/* Season Tabs */}
                                         <div className="flex overflow-x-auto p-4 gap-2 border-b border-gray-200 dark:border-white/5 custom-scrollbar bg-gray-100 dark:bg-black/20">
-                                            {series.seasons.slice().reverse().map((season) => (
-                                                <button
-                                                    key={season.id}
-                                                    onClick={() => setActiveSeason(season)}
-                                                    className={`whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all ${activeSeason?.id === season.id
-                                                            ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
-                                                            : "bg-gray-200 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white"
+                                            {series.seasons
+                                                .slice()
+                                                .reverse()
+                                                .map((season) => (
+                                                    <button
+                                                        key={season.id}
+                                                        onClick={() =>
+                                                            setActiveSeason(
+                                                                season
+                                                            )
+                                                        }
+                                                        className={`whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all ${
+                                                            activeSeason?.id ===
+                                                            season.id
+                                                                ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
+                                                                : "bg-gray-200 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white"
                                                         }`}
-                                                >
-                                                    {t('Season {season_number}', { season_number: season.season_number })}
-                                                </button>
-                                            ))}
+                                                    >
+                                                        {t(
+                                                            "Season {season_number}",
+                                                            {
+                                                                season_number:
+                                                                    season.season_number,
+                                                            }
+                                                        )}
+                                                    </button>
+                                                ))}
                                         </div>
 
                                         {/* Episodes List */}
                                         <div className="divide-y divide-gray-200 dark:divide-white/5">
-                                            {activeSeason?.episodes && activeSeason.episodes.length > 0 ? (
-                                                activeSeason.episodes.slice().reverse().map((episode) => (
-                                                    <EpisodeRow
-                                                        key={episode.id}
-                                                        episode={episode}
-                                                        isActive={expandedEpisodeId === episode.id}
-                                                        onClick={() => setExpandedEpisodeId(expandedEpisodeId === episode.id ? null : episode.id)}
-                                                        isVip={isVip}
-                                                        isAuthenticated={!!auth.user}
-                                                    />
-                                                ))
+                                            {activeSeason?.episodes &&
+                                            activeSeason.episodes.length > 0 ? (
+                                                activeSeason.episodes
+                                                    .slice()
+                                                    .reverse()
+                                                    .map((episode) => (
+                                                        <EpisodeRow
+                                                            key={episode.id}
+                                                            episode={episode}
+                                                            isActive={
+                                                                expandedEpisodeId ===
+                                                                episode.id
+                                                            }
+                                                            onClick={() =>
+                                                                setExpandedEpisodeId(
+                                                                    expandedEpisodeId ===
+                                                                        episode.id
+                                                                        ? null
+                                                                        : episode.id
+                                                                )
+                                                            }
+                                                            isVip={isVip}
+                                                            isAuthenticated={
+                                                                !!auth.user
+                                                            }
+                                                        />
+                                                    ))
                                             ) : (
                                                 <div className="p-12 text-center text-gray-500 italic">
-                                                    {t('No episodes available for this season.')}
+                                                    {t(
+                                                        "No episodes available for this season."
+                                                    )}
                                                 </div>
                                             )}
                                         </div>
                                     </div>
                                 ) : (
                                     <div className="text-gray-500 italic p-8 border border-gray-200 dark:border-white/10 rounded-lg text-center">
-                                        {t('No seasons available.')}
+                                        {t("No seasons available.")}
                                     </div>
                                 )}
                             </div>
@@ -530,19 +645,26 @@ export default function SeriesDetails({
                             {/* Cast */}
                             <div className="mb-16">
                                 <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                                    <span className="w-8 h-[2px] bg-blue-500"></span>
-                                    {t("Top Cast")}
+                                    <span className="w-2 h-[2px] bg-blue-500"></span>
+                                    {t("Cast & Crew")}
                                 </h3>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
                                     {series.actors?.slice(0, 8).map((actor) => (
                                         <Link
                                             key={actor.id}
-                                            href={route("person.show", actor.person?.id)}
+                                            href={route(
+                                                "person.show",
+                                                actor.person?.id
+                                            )}
                                             className="group block"
                                         >
                                             <div className="aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-gray-200 dark:bg-gray-800">
                                                 <img
-                                                    src={actor.person?.avatar_url || "/images/placeholder-avatar.jpg"}
+                                                    src={
+                                                        actor.person
+                                                            ?.avatar_url ||
+                                                        "/images/placeholder-avatar.jpg"
+                                                    }
                                                     alt={actor.person?.name}
                                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                 />
@@ -557,11 +679,19 @@ export default function SeriesDetails({
                                     ))}
                                 </div>
                             </div>
+                            {/*Backdrop*/}
+                            <div className="w-full">
+                                <h1>{t("Backdrop")}</h1>
+                                <img
+                                    className="w-full rounded-lg mt-8"
+                                    src={series.banner_url}
+                                    alt={`${series.title} Backdrop`}
+                                />
+                            </div>
                         </div>
 
                         {/* Right Column: Sidebar (Rating, Related) */}
                         <div className="w-full lg:w-80 flex-shrink-0 space-y-12">
-
                             {/* Rating Widget */}
                             <div className="glass-card-adaptive p-6">
                                 <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 text-center">
@@ -569,20 +699,44 @@ export default function SeriesDetails({
                                 </h3>
                                 {auth.user ? (
                                     <RatingWidget
-                                        ratingAverage={series.rating_average || 0}
+                                        ratingAverage={
+                                            series.rating_average || 0
+                                        }
                                         ratingCount={series.rating_count || 0}
                                         userRating={userRating}
                                         onRate={(rating) => {
                                             if (userRating) {
-                                                router.put(route("admin.ratings.update", userRating.id), { rating }, { preserveScroll: true });
+                                                router.put(
+                                                    route(
+                                                        "admin.ratings.update",
+                                                        userRating.id
+                                                    ),
+                                                    { rating },
+                                                    { preserveScroll: true }
+                                                );
                                             } else {
-                                                router.post(route("admin.ratings.store"), { series_id: series.id, rating }, { preserveScroll: true });
+                                                router.post(
+                                                    route(
+                                                        "admin.ratings.store"
+                                                    ),
+                                                    {
+                                                        series_id: series.id,
+                                                        rating,
+                                                    },
+                                                    { preserveScroll: true }
+                                                );
                                             }
                                         }}
                                     />
                                 ) : (
                                     <div className="text-center text-sm text-gray-500">
-                                        <a href={route("login")} className="text-blue-400 hover:underline">{t("Log in")}</a> {t("to rate.")}
+                                        <a
+                                            href={route("login")}
+                                            className="text-blue-400 hover:underline"
+                                        >
+                                            {t("Log in")}
+                                        </a>{" "}
+                                        {t("to rate.")}
                                     </div>
                                 )}
                             </div>
@@ -593,30 +747,42 @@ export default function SeriesDetails({
                                     <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6 border-l-4 border-blue-500 pl-3">
                                         {t("You May Also Like")}
                                     </h3>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {relatedSeries.slice(0, 6).map((rel) => (
-                                            <a
-                                                href={route("series.show", rel.slug)}
-                                                key={rel.id}
-                                                className="group block"
-                                            >
-                                                <div className="aspect-[2/3] rounded-lg overflow-hidden mb-2 relative">
-                                                    <img
-                                                        src={rel.poster_url}
-                                                        alt={rel.title}
-                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                                    />
-                                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                                                </div>
-                                                <h4 className="text-sm text-gray-600 dark:text-gray-300 font-medium truncate group-hover:text-blue-600 dark:group-hover:text-white transition-colors">
-                                                    {rel.title}
-                                                </h4>
-                                                <div className="flex items-center gap-2 text-xs text-gray-500">
-                                                    <span>{rel.release_year_start}</span>
-                                                    <span className="text-yellow-500">★ {rel.rating_average}</span>
-                                                </div>
-                                            </a>
-                                        ))}
+                                    <div className="grid grid-cols-3 md:grid-cols-2 gap-4">
+                                        {relatedSeries
+                                            .slice(0, 6)
+                                            .map((rel) => (
+                                                <a
+                                                    href={route(
+                                                        "series.show",
+                                                        rel.slug
+                                                    )}
+                                                    key={rel.id}
+                                                    className="group block"
+                                                >
+                                                    <div className="aspect-[2/3] rounded-lg overflow-hidden mb-2 relative">
+                                                        <img
+                                                            src={rel.poster_url}
+                                                            alt={rel.title}
+                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                        />
+                                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                                                    </div>
+                                                    <h4 className="text-sm text-gray-600 dark:text-gray-300 font-medium truncate group-hover:text-blue-600 dark:group-hover:text-white transition-colors">
+                                                        {rel.title}
+                                                    </h4>
+                                                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                        <span>
+                                                            {
+                                                                rel.release_year_start
+                                                            }
+                                                        </span>
+                                                        <span className="text-yellow-500">
+                                                            ★{" "}
+                                                            {rel.rating_average}
+                                                        </span>
+                                                    </div>
+                                                </a>
+                                            ))}
                                     </div>
                                 </div>
                             )}
