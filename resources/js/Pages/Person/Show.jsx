@@ -106,7 +106,7 @@ export default function PersonShow({ person, movies, series, seo }) {
                                     {person.name}
                                 </h1>
                                 <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
-                                    {t('{count} titles featuring this talent', { count: movies.total + series.total })}
+                                    {t(`${movies.total+series.total} titles featuring this talent`, { count: movies.total + series.total })}
                                 </p>
                             </div>
                         </div>

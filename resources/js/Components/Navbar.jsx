@@ -60,8 +60,8 @@ export default function Navbar() {
         <>
             <nav
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                        ? "bg-white/80 dark:bg-black/90 backdrop-blur-md pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] shadow-lg"
-                        : "bg-transparent pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] md:pb-6 md:pt-[calc(1.5rem+env(safe-area-inset-top))]"
+                        ? "hidden bg-white/80 dark:bg-black/90 backdrop-blur-md pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] shadow-lg"
+                        : " bg-transparent pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] md:pb-6 md:pt-[calc(1.5rem+env(safe-area-inset-top))]"
                     }`}
             >
                 <div className="container mx-auto px-2 md:px-12 flex items-center justify-between">
@@ -245,7 +245,7 @@ export default function Navbar() {
 
             {/* Mobile Menu Overlay */}
             <div
-                className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden ${isMobileMenuOpen
+                className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden ${isScrolled ? "" : ""} ${isMobileMenuOpen
                     ? "opacity-100 visible"
                     : "opacity-0 invisible"
                     }`}

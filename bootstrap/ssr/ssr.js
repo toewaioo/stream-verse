@@ -1,7 +1,7 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import { Link, usePage, Head, useForm, router, createInertiaApp } from "@inertiajs/react";
 import React, { createContext, useState, useContext, useEffect, forwardRef, useRef, useImperativeHandle, useMemo, Fragment as Fragment$1 } from "react";
-import { Transition, Dialog, TransitionChild, DialogPanel, Combobox, Menu } from "@headlessui/react";
+import { Transition, Dialog, TransitionChild, DialogPanel, Combobox, Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import { ChevronUpDownIcon, CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import axios$1 from "axios";
@@ -4979,10 +4979,22 @@ function LanguageSwitcher() {
     i18n.changeLanguage(lng);
   };
   return /* @__PURE__ */ jsxs(Menu, { as: "div", className: "relative inline-block text-left", children: [
-    /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs(Menu.Button, { className: "inline-flex w-full items-center justify-center gap-x-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 px-3 py-2.5 text-sm font-semibold text-gray-900 dark:text-white shadow-lg shadow-gray-200/50 dark:shadow-black/20 ring-1 ring-inset ring-gray-300 dark:ring-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-all duration-200", children: [
-      /* @__PURE__ */ jsx(GlobeAltIcon, { className: "h-5 w-5 text-gray-500 dark:text-gray-400", "aria-hidden": "true" }),
+    /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs(MenuButton, { className: "inline-flex w-full items-center justify-center gap-x-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 px-3 py-2.5 text-sm font-semibold text-gray-900 dark:text-white shadow-lg shadow-gray-200/50 dark:shadow-black/20 ring-1 ring-inset ring-gray-300 dark:ring-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-all duration-200", children: [
+      /* @__PURE__ */ jsx(
+        GlobeAltIcon,
+        {
+          className: "h-5 w-5 text-gray-500 dark:text-gray-400",
+          "aria-hidden": "true"
+        }
+      ),
       /* @__PURE__ */ jsx("span", { className: "uppercase", children: currentLanguage.code }),
-      /* @__PURE__ */ jsx(ChevronDownIcon, { className: "-mr-1 h-5 w-5 text-gray-400", "aria-hidden": "true" })
+      /* @__PURE__ */ jsx(
+        ChevronDownIcon,
+        {
+          className: "-mr-1 h-5 w-5 text-gray-400",
+          "aria-hidden": "true"
+        }
+      )
     ] }) }),
     /* @__PURE__ */ jsx(
       Transition,
@@ -4994,7 +5006,7 @@ function LanguageSwitcher() {
         leave: "transition ease-in duration-75",
         leaveFrom: "transform opacity-100 scale-100",
         leaveTo: "transform opacity-0 scale-95",
-        children: /* @__PURE__ */ jsx(Menu.Items, { className: "absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-xl bg-white dark:bg-slate-800 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none divide-y divide-gray-100 dark:divide-slate-700", children: /* @__PURE__ */ jsx("div", { className: "py-1", children: languages.map((language) => /* @__PURE__ */ jsx(Menu.Item, { children: ({ active }) => /* @__PURE__ */ jsxs(
+        children: /* @__PURE__ */ jsx(MenuItems, { className: "absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-xl bg-white dark:bg-slate-800 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none divide-y divide-gray-100 dark:divide-slate-700", children: /* @__PURE__ */ jsx("div", { className: "py-1", children: languages.map((language) => /* @__PURE__ */ jsx(MenuItem, { children: ({ active }) => /* @__PURE__ */ jsxs(
           "button",
           {
             onClick: () => changeLanguage(language.code),
@@ -5005,7 +5017,24 @@ function LanguageSwitcher() {
             children: [
               /* @__PURE__ */ jsx("span", { className: "mr-3 text-lg", children: language.flag }),
               language.name,
-              currentLanguage.code === language.code && /* @__PURE__ */ jsx("span", { className: "ml-auto text-indigo-600 dark:text-indigo-400", children: /* @__PURE__ */ jsx("svg", { className: "h-4 w-4", fill: "none", viewBox: "0 0 24 24", strokeWidth: "3", stroke: "currentColor", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M4.5 12.75l6 6 9-13.5" }) }) })
+              currentLanguage.code === language.code && /* @__PURE__ */ jsx("span", { className: "ml-auto text-indigo-600 dark:text-indigo-400", children: /* @__PURE__ */ jsx(
+                "svg",
+                {
+                  className: "h-4 w-4",
+                  fill: "none",
+                  viewBox: "0 0 24 24",
+                  strokeWidth: "3",
+                  stroke: "currentColor",
+                  children: /* @__PURE__ */ jsx(
+                    "path",
+                    {
+                      strokeLinecap: "round",
+                      strokeLinejoin: "round",
+                      d: "M4.5 12.75l6 6 9-13.5"
+                    }
+                  )
+                }
+              ) })
             ]
           }
         ) }, language.code)) }) })
@@ -5062,7 +5091,7 @@ function Navbar() {
     /* @__PURE__ */ jsx(
       "nav",
       {
-        className: `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/80 dark:bg-black/90 backdrop-blur-md pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] shadow-lg" : "bg-transparent pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] md:pb-6 md:pt-[calc(1.5rem+env(safe-area-inset-top))]"}`,
+        className: `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "hidden bg-white/80 dark:bg-black/90 backdrop-blur-md pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] shadow-lg" : " bg-transparent pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] md:pb-6 md:pt-[calc(1.5rem+env(safe-area-inset-top))]"}`,
         children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12 flex items-center justify-between", children: [
           /* @__PURE__ */ jsxs(
             Link,
@@ -5254,7 +5283,7 @@ function Navbar() {
     /* @__PURE__ */ jsx(
       "div",
       {
-        className: `fixed inset-0 bg-black/80 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden ${isMobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}`,
+        className: `fixed inset-0 bg-black/80 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden ${isScrolled ? "" : ""} ${isMobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}`,
         onClick: closeMobileMenu
       }
     ),
@@ -7390,7 +7419,7 @@ function PersonShow({ person, movies, series, seo }) {
           ) }),
           /* @__PURE__ */ jsx("div", { className: "inline-block px-3 py-1 border border-gray-800/30 dark:border-white/30 text-xs font-bold uppercase tracking-widest text-gray-800 dark:text-white mb-4 backdrop-blur-sm", children: t("Filmography") }),
           /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-serif text-gray-800 dark:text-white leading-tight mb-4", children: person.name }),
-          /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto", children: t("{count} titles featuring this talent", { count: movies.total + series.total }) })
+          /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto", children: t(`${movies.total + series.total} titles featuring this talent`, { count: movies.total + series.total }) })
         ] }) })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 py-2", children: [
@@ -7727,7 +7756,6 @@ function UpdateProfileInformation({
             value: data.name,
             onChange: (e) => setData("name", e.target.value),
             required: true,
-            isFocused: true,
             autoComplete: "name"
           }
         ),
@@ -7803,43 +7831,89 @@ function Edit({ mustVerifyEmail, status }) {
     /* @__PURE__ */ jsx(Head, { title: t("Profile") }),
     /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black", children: [
       /* @__PURE__ */ jsx(Navbar, {}),
-      /* @__PURE__ */ jsx("div", { className: "pt-24 pb-12 md:pt-32 md:pb-16", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12", children: [
-        /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden rounded-3xl bg-white dark:bg-gradient-to-br from-indigo-400/40 via-purple-900/40 to-black border border-gray-200 dark:border-white/10 p-8 md:p-12 dark:backdrop-blur-sm", children: [
-          /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl hidden dark:block" }),
-          /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 -mb-16 -ml-16 w-64 h-64 bg-indigo-100 rounded-full blur-3xl hidden dark:block" }),
-          /* @__PURE__ */ jsxs("div", { className: "relative flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8", children: [
-            /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-white dark:border-black/50", children: user?.avatar_url ? user?.avatar_url && /* @__PURE__ */ jsx("div", { className: "mb-6 flex justify-center", children: /* @__PURE__ */ jsx(
+      /* @__PURE__ */ jsx("div", { className: "pt-24 pb-12 md:pt-32 md:pb-16", children: /* @__PURE__ */ jsxs("div", { className: "container flex-col items-center mx-auto px-6 md:px-12", children: [
+        /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden rounded-3xl md:max-w-5xl bg-white dark:bg-gradient-to-br from-indigo-400/40 via-purple-900/40 to-black border border-gray-200 dark:border-white/10 p-8 md:p-12 dark:backdrop-blur-sm", children: [
+          /* @__PURE__ */ jsx("div", { className: "absolute top-0 left-0 m-2", children: /* @__PURE__ */ jsx(ThemeSwitcher, {}) }),
+          /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-purple-500/2 rounded-full blur-3xl hidden dark:block" }),
+          /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 m-2", children: /* @__PURE__ */ jsx(LanguageSwitcher, {}) }),
+          /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 -mb-16 -ml-16 w-64 h-64 bg-indigo-100/5 rounded-full blur-3xl hidden dark:block" }),
+          /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 right-0 -mb-16 -ml-16 w-64 h-64 bg-indigo-100/5 rounded-full blur-3xl hidden dark:block" }),
+          /* @__PURE__ */ jsxs("div", { className: "relative flex flex-col md:flex-col items-center md:items-center md:justify-center gap-6 md:gap-8", children: [
+            /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600/5 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-white dark:border-black/50", children: user?.avatar_url ? user?.avatar_url && /* @__PURE__ */ jsx("div", { className: "mb-6 flex justify-center", children: /* @__PURE__ */ jsx(
               "img",
               {
                 src: user?.avatar_url,
                 alt: user?.name,
-                className: "w-28 h-28 md:w-40 md:h-40 rounded-full object-cover border-4 border-white/20"
+                className: "w-24 h-24 md:w-40 md:h-40 rounded-full object-cover border-4 border-white/20"
               }
             ) }) : /* @__PURE__ */ jsx("span", { className: "text-3xl md:text-4xl font-bold text-white tracking-wider", children: getInitials(user.name) }) }) }),
-            /* @__PURE__ */ jsxs("div", { className: "flex-1 text-center md:text-left space-y-2", children: [
+            /* @__PURE__ */ jsxs("div", { className: "flex-1 text-center  space-y-2", children: [
               /* @__PURE__ */ jsx("h1", { className: "text-3xl md:text-4xl font-bold text-gray-900 dark:text-white tracking-tight", children: user.name }),
               /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row items-center justify-center md:justify-start md:items-center gap-2 md:gap-4 text-gray-500 dark:text-gray-400", children: [
                 /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
-                  /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "currentColor", className: "w-4 h-4", children: [
-                    /* @__PURE__ */ jsx("path", { d: "M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" }),
-                    /* @__PURE__ */ jsx("path", { d: "M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" })
-                  ] }),
+                  /* @__PURE__ */ jsxs(
+                    "svg",
+                    {
+                      xmlns: "http://www.w3.org/2000/svg",
+                      viewBox: "0 0 24 24",
+                      fill: "currentColor",
+                      className: "w-4 h-4",
+                      children: [
+                        /* @__PURE__ */ jsx("path", { d: "M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" }),
+                        /* @__PURE__ */ jsx("path", { d: "M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" })
+                      ]
+                    }
+                  ),
                   /* @__PURE__ */ jsx("span", { children: user.email })
                 ] }),
                 /* @__PURE__ */ jsx("span", { className: "hidden md:inline text-gray-400 dark:text-gray-600", children: "•" }),
                 /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
-                  /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "currentColor", className: "w-4 h-4", children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z", clipRule: "evenodd" }) }),
+                  /* @__PURE__ */ jsx(
+                    "svg",
+                    {
+                      xmlns: "http://www.w3.org/2000/svg",
+                      viewBox: "0 0 24 24",
+                      fill: "currentColor",
+                      className: "w-4 h-4",
+                      children: /* @__PURE__ */ jsx(
+                        "path",
+                        {
+                          fillRule: "evenodd",
+                          d: "M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z",
+                          clipRule: "evenodd"
+                        }
+                      )
+                    }
+                  ),
                   /* @__PURE__ */ jsxs("span", { children: [
                     t("Member since"),
                     " ",
-                    user.created_at ? formatDate(user.created_at) : t("Recently")
+                    user.created_at ? formatDate(
+                      user.created_at
+                    ) : t("Recently")
                   ] })
                 ] })
               ] }),
-              /* @__PURE__ */ jsxs("div", { className: "pt-4 flex flex-wrap justify-center md:justify-start gap-3", children: [
+              /* @__PURE__ */ jsxs("div", { className: "pt-4 flex flex-wrap justify-center  gap-3", children: [
                 /* @__PURE__ */ jsx("span", { className: "px-3 py-1 rounded-full bg-indigo-100 dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-xs font-medium text-indigo-800 dark:text-indigo-300", children: t("Free Plan") }),
                 user.email_verified_at ? /* @__PURE__ */ jsxs("span", { className: "px-3 py-1 rounded-full bg-green-100 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 text-xs font-medium text-green-800 dark:text-green-400 flex items-center gap-1", children: [
-                  /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", className: "w-3 h-3", children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z", clipRule: "evenodd" }) }),
+                  /* @__PURE__ */ jsx(
+                    "svg",
+                    {
+                      xmlns: "http://www.w3.org/2000/svg",
+                      viewBox: "0 0 20 20",
+                      fill: "currentColor",
+                      className: "w-3 h-3",
+                      children: /* @__PURE__ */ jsx(
+                        "path",
+                        {
+                          fillRule: "evenodd",
+                          d: "M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z",
+                          clipRule: "evenodd"
+                        }
+                      )
+                    }
+                  ),
                   t("Verified")
                 ] }) : /* @__PURE__ */ jsx("span", { className: "px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 text-xs font-medium text-yellow-800 dark:text-yellow-400", children: t("Unverified") })
               ] })
