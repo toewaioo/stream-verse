@@ -82,7 +82,7 @@ class MessageHandler
             "Join our channel for updates and movies!\n\n" .
             "Use deep links provided by admins to access videos.\n\n" .
             "Need help? Contact the administrator.";
-        $imageUrl = "https://iili.io/KZAx9ix.png";
+        $imageUrl = "https://iili.ioo/KZAx9ix.png";
 
         $replyMarkup = [
             'inline_keyboard' => [
@@ -179,7 +179,7 @@ class MessageHandler
                     ]
                 ]
             ];
-            $result = $this->videoService->sendVideoToUser($chatId, $mapping,$keyboard);
+            $result = $this->videoService->sendVideoToUser($chatId, $mapping, $keyboard);
 
             if (isset($result['ok']) && $result['ok'] === true) {
                 if (isset($processingMsg['result']['message_id'])) {
@@ -265,8 +265,10 @@ class MessageHandler
                 'inline_keyboard' => [
                     [
                         [
-                            'text' => 'Vip Key ၀ယ်ယူမည်။',
-                            'url' => 'https://t.me/iqowoq'
+                            'text' => 'Open Mini App',
+                            'web_app' => [
+                                'url' => 'https://stream-verse-mocha.vercel.app'
+                            ],
                         ]
                     ]
                 ]
@@ -299,13 +301,16 @@ class MessageHandler
                 'inline_keyboard' => [
                     [
                         [
-                            'text' => 'Vip Key ၀ယ်ယူမည်။',
-                            'url' => 'https://t.me/iqowoq'
+                            'text' => 'Open Mini App',
+                            'web_app' => [
+                                'url' => 'https://stream-verse-mocha.vercel.app'
+                            ],
+
                         ]
                     ]
                 ]
             ];
-            $this->videoService->sendVideoToUser("-1002395717312", $mapping, $keyboard);
+            $this->videoService->sendVideoToUser("-1003153446702", $mapping, $keyboard);
         } catch (\Exception $e) {
             $this->messageService->sendMessage($chatId, "❌ Error: " . $e->getMessage());
             Log::error("Deep link exception: " . $e->getMessage(), ['chat_id' => $chatId]);
@@ -440,7 +445,7 @@ class MessageHandler
             try {
                 $this->messageService->sendMessage(
                     $user['user_id'],
-                    "📢 *Broadcast Message*\n\n{$message}\n\n— Admin",
+                    "📢 \n{$message}\n",
                     'HTML'
                 );
                 $sent++;

@@ -312,6 +312,13 @@ export default function Navbar() {
                         >
                             {t("Series")}
                         </Link>
+                        <Link
+                            href={route("admin.dashboard")}
+                            onClick={closeMobileMenu}
+                            className="text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg"
+                        >
+                            {t("Dashboard")}
+                        </Link>
                         <div className="flex items-center gap-4 mt-4 px-2">
                             <LanguageSwitcher />
                             <ThemeSwitcher />
