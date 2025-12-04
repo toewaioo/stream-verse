@@ -12,7 +12,7 @@
         },
         { "src": "/public/**", "use": "@vercel/static" },
         { "src": "/public/build/**", "use": "@vercel/static" },
-        { "src": "/public/images/**", "use": "@vercel/static" }
+        { "src": "/public/images/icons/**", "use": "@vercel/static" }
     ],
 
     "routes": [

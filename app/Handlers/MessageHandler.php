@@ -82,7 +82,7 @@ class MessageHandler
             "Join our channel for updates and movies!\n\n" .
             "Use deep links provided by admins to access videos.\n\n" .
             "Need help? Contact the administrator.";
-        $imageUrl = "https://iili.io/KZAx9ix.png";
+        $imageUrl = "https://stream-verse-mocha.vercel.app/images/icons/icon-512x512.png";
 
         $replyMarkup = [
             'inline_keyboard' => [
