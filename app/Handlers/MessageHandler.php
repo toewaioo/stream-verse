@@ -78,11 +78,11 @@ class MessageHandler
 
     public function welcomeMessage(int $chatId): void
     {
-        $welcomeText = "🤖 Welcome to Video Sender Bot!\n\n" .
-            "Join our channel for updates and movies!\n\n" .
-            "Use deep links provided by admins to access videos.\n\n" .
+        $welcomeText = "🤖 Welcome to Cineverse Bot!\n\n" .
+            "Join our channel for updates and movies & series!\n\n" .
+            "Use deep links provided by admins and use miniapp to access videos.\n\n" .
             "Need help? Contact the administrator.";
-        $imageUrl = "https://stream-verse-mocha.vercel.app/images/icons/icon-512x512.png";
+        $imageUrl = "https://stream-verse-mocha.vercel.app/public/images/icons/icon-512x512.png";
 
         $replyMarkup = [
             'inline_keyboard' => [
@@ -101,7 +101,12 @@ class MessageHandler
                     'url' => 'https://t.me/twowt2'
                 ]],
                 [
-                    ['text' => '❓ Help', 'callback_data' => 'help']
+                    [
+                        'text' => 'Open Mini App',
+                        'web_app' => [
+                            'url' => 'https://stream-verse-mocha.vercel.app'
+                        ],
+                    ]
                 ]
             ],
         ];
