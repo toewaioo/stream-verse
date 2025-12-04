@@ -82,7 +82,7 @@ class MessageHandler
             "Join our channel for updates and movies!\n\n" .
             "Use deep links provided by admins to access videos.\n\n" .
             "Need help? Contact the administrator.";
-        $imageUrl = "https://iili.ioo/KZAx9ix.png";
+        $imageUrl = "https://iili.io/KZAx9ix.png";
 
         $replyMarkup = [
             'inline_keyboard' => [
@@ -173,8 +173,10 @@ class MessageHandler
                 'inline_keyboard' => [
                     [
                         [
-                            'text' => 'Vip Key ၀ယ်ယူမည်။',
-                            'url' => 'https://t.me/iqowoq'
+                            'text' => 'Open Mini App',
+                            'web_app' => [
+                                'url' => 'https://stream-verse-mocha.vercel.app'
+                            ],
                         ]
                     ]
                 ]
