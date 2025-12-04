@@ -163,7 +163,7 @@ export default function MovieDetails({
     isVip,
     seo,
 }) {
-    console.log(movie);
+    
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const [showTrailer, setShowTrailer] = useState(false);

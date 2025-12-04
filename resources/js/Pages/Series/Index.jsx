@@ -25,8 +25,8 @@ const Pagination = ({ links }) => {
                     key={index}
                     href={link.url ? link.url : "#"}
                     className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${link.active
-                        ? "bg-white text-black"
-                        : "bg-white/10 text-white hover:bg-white/20"
+                        ? "dark:bg-white text-black"
+                        : "dark:bg-white/10 dark:text-white hover:bg-white/20"
                         } ${!link.url ? "opacity-50 cursor-not-allowed" : ""}`}
                     dangerouslySetInnerHTML={{ __html: link.label }}
                     disabled={!link.url}

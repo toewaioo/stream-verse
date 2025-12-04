@@ -34,7 +34,12 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
         router.get(
             route("admin.movies"),
             { search: searchQuery },
-            { preserveState: true, replace: true }
+            {
+                preserveState: true,
+                preserveScroll: true,
+                only: ["movies"],
+                replace: true,
+            }
         );
     });
     useEffect(() => {

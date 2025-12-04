@@ -10,7 +10,7 @@ export default function AdminSeries({ series, genres, persons, auth }) {
     const [editingSeries, setEditingSeries] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const isFirst = useRef(true);
-
+    console.log(series); // Debugging line
     // Debounced search effect
     const debounceSearch = debounce((value) => {
         router.get(

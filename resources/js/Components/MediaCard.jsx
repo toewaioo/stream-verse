@@ -14,7 +14,7 @@ const StarIcon = ({ className = "w-3 h-3" }) => (
 );
 
 export default function MediaCard({ item, type }) {
-    console.log(item);
+    
     const href =
         type === "movie"
             ? route("movies.show", item.slug)

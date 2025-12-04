@@ -181,7 +181,12 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                     {/* Links */}
                     {isAuthenticated ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
+                            <div className={`${
+                                    episode.watch_links &&
+                                    episode.watch_links.length > 0
+                                        ? ""
+                                        : "hidden"
+                                }`}>
                                 <h5 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                                     <PlayIcon className="w-3 h-3" />{" "}
                                     {t("Stream")}
@@ -587,11 +592,7 @@ export default function SeriesDetails({
                                                         }`}
                                                     >
                                                         {t(
-                                                            "Season {season_number}",
-                                                            {
-                                                                season_number:
-                                                                    season.season_number,
-                                                            }
+                                                            `Season ${season.season_number}`
                                                         )}
                                                     </button>
                                                 ))}

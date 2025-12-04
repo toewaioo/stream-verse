@@ -118,4 +118,8 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    'remember' => [
+        'expire' => env('AUTH_REMEMBER_EXPIRE', 43200), // 1 year in minutes
+    ]
+
 ];

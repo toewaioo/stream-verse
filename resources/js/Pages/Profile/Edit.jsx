@@ -38,24 +38,21 @@ export default function Edit({ mustVerifyEmail, status }) {
                 <div className="pt-24 pb-12 md:pt-32 md:pb-16">
                     <div className="container flex-col items-center mx-auto px-6 md:px-12">
                         {/* Hero Section */}
-                        <div className="relative overflow-hidden rounded-3xl md:max-w-5xl bg-white dark:bg-gradient-to-br from-indigo-400/40 via-purple-900/40 to-black border border-gray-200 dark:border-white/10 p-8 md:p-12 dark:backdrop-blur-sm">
+                        <div className="relative overflow-hidden rounded-3xl md:max-w-5xl bg-white dark:bg-gradient-to-br from-indigo-400/40 via-purple-900 to-black border border-gray-200 dark:border-white/10 p-8 md:p-12 dark:backdrop-blur-sm">
                             <div className="absolute top-0 left-0 m-2">
                                 <ThemeSwitcher />
                             </div>
-                            <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-purple-500/2 rounded-full blur-3xl hidden dark:block"></div>
-                            <div className="absolute top-0 right-0 m-2">
+                           <div className="absolute top-0 right-0 m-2">
                                 <LanguageSwitcher />
                             </div>
-                            <div className="absolute bottom-0 left-0 -mb-16 -ml-16 w-64 h-64 bg-indigo-100/5 rounded-full blur-3xl hidden dark:block"></div>
-                            <div className="absolute bottom-0 right-0 -mb-16 -ml-16 w-64 h-64 bg-indigo-100/5 rounded-full blur-3xl hidden dark:block"></div>
-
+                    
                             <div className="relative flex flex-col md:flex-col items-center md:items-center md:justify-center gap-6 md:gap-8">
                                 {/* Avatar */}
                                 <div className="flex-shrink-0">
                                     <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600/5 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-white dark:border-black/50">
                                         {user?.avatar_url ? (
                                             user?.avatar_url && (
-                                                <div className="mb-6 flex justify-center">
+                                                <div className="flex justify-center">
                                                     <img
                                                         src={user?.avatar_url}
                                                         alt={user?.name}

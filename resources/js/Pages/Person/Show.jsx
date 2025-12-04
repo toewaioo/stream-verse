@@ -192,7 +192,7 @@ export default function PersonShow({ person, movies, series, seo }) {
                             <div>
                                 {series.data.length > 0 ? (
                                     <>
-                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8">
+                                        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8">
                                             {series.data.map((item) => (
                                                 <MediaCard
                                                     key={item.id}

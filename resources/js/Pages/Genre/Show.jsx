@@ -47,8 +47,8 @@ export default function GenreShow({ genre, movies, series, seo }) {
                             onClick={() => handlePageChange(link.url, type)}
                             className={`px-4 py-2 transition-colors ${
                                 link.active
-                                    ? "bg-white text-black font-bold"
-                                    : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+                                    ? "dark:bg-white dark:text-black font-bold"
+                                    : "dark:bg-white/5 dark:text-gray-400 hover:bg-white/10 hover:text-white"
                             }`}
                             dangerouslySetInnerHTML={{ __html: link.label }}
                         />
@@ -159,7 +159,7 @@ export default function GenreShow({ genre, movies, series, seo }) {
                             <div>
                                 {series.data.length > 0 ? (
                                     <>
-                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8">
+                                        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8">
                                             {series.data.map((item) => (
                                                 <MediaCard
                                                     key={item.id}

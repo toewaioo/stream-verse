@@ -35,14 +35,14 @@ export default function Search({ results, query, seo }) {
                         </h1>
                         <p className="text-gray-600 dark:text-gray-400 text-lg">
                             {results.length > 0
-                                ? t('Found {count} results for "{query}"', { count: results.length, query: query })
-                                : t('No results found for "{query}"', { query: query })
+                                ? t(`Found ${results.length} results for ${query}`)
+                                : t(`No results found for "${query}"`)
                             }
                         </p>
                     </div>
 
                     {results.length > 0 ? (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8">
+                        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8">
                             {results.map((item) => (
                                 <MediaCard
                                     key={`${item.type}-${item.id}`}

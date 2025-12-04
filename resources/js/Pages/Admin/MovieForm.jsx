@@ -1177,7 +1177,7 @@ export default function MovieForm({
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                         Search TMDB
                     </h2>
-                    <form onSubmit={searchTmdb} className="flex gap-2 mb-4">
+                    <div className="flex gap-2 mb-4">
                         <TextInput
                             type="text"
                             className="w-full"
@@ -1185,10 +1185,14 @@ export default function MovieForm({
                             value={tmdbQuery}
                             onChange={(e) => setTmdbQuery(e.target.value)}
                         />
-                        <PrimaryButton type="submit" disabled={tmdbLoading}>
+                        <PrimaryButton
+                            key={"submit-btn-1"}
+                            onClick={searchTmdb}
+                            disabled={tmdbLoading}
+                        >
                             {tmdbLoading ? "Searching..." : "Search"}
                         </PrimaryButton>
-                    </form>
+                    </div>
 
                     <div className="space-y-2 max-h-96 overflow-y-auto">
                         {tmdbResults.map((result) => (
