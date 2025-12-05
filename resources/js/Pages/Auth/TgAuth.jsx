@@ -83,7 +83,7 @@ export default function TgAuth({ user }) {
                         // Redirect to home page after successful login
                         setTimeout(() => {
                             router.visit(route("home"));
-                        }, 1000);
+                        }, 500);
                     })
                     .catch((error) => {
                         addLog("Login failed!", "error");

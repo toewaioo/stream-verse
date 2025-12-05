@@ -15,16 +15,16 @@ class ReviewController extends Controller
 {
     public function storeMovieReview(StoreReviewRequest $request, Movie $movie)
     {
-        $movie->reviews()->create($request->validated() + ['user_id' => auth()->id()]);
+        $review = $movie->reviews()->create($request->validated() + ['user_id' => auth()->id()]);
 
-        return redirect()->back();
+        return new ReviewResource($review);
     }
 
     public function storeSeriesReview(StoreReviewRequest $request, Series $series)
     {
-        $series->reviews()->create($request->validated() + ['user_id' => auth()->id()]);
+        $review = $series->reviews()->create($request->validated() + ['user_id' => auth()->id()]);
 
-        return redirect()->back();
+        return new ReviewResource($review);
     }
 
     public function getMovieReviews(Movie $movie)
@@ -43,7 +43,7 @@ class ReviewController extends Controller
 
         $review->update($request->validated());
 
-        return redirect()->back();
+        return new ReviewResource($review);
     }
 
     public function destroy(Review $review)
@@ -52,6 +52,6 @@ class ReviewController extends Controller
 
         $review->delete();
 
-        return redirect()->back();
+        return response()->noContent();
     }
 }

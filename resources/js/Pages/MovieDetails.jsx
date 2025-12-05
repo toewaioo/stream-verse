@@ -166,6 +166,7 @@ export default function MovieDetails({
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const [showTrailer, setShowTrailer] = useState(false);
+    const [editingReviewId, setEditingReviewId] = useState(null);
     useEffect(() => {
         const tg = window.Telegram?.WebApp;
         if (!tg) return;
@@ -184,6 +185,10 @@ export default function MovieDetails({
             .getElementById("watch-section")
             ?.scrollIntoView({ behavior: "smooth" });
     };
+
+    const userHasReviewed = movie.reviews.some(
+        (review) => review.user_id === auth.user?.id
+    );
 
     return (
         <>
@@ -554,12 +559,28 @@ export default function MovieDetails({
                                     <span className="w-2 h-[2px] bg-blue-500"></span>
                                     {t("Reviews")}
                                 </h3>
-                                {auth.user ? (
-                                    <ReviewForm movie={movie} />
-                                ) : (
+                                {auth.user && !userHasReviewed && (
+                                    <ReviewForm
+                                        content={movie}
+                                        contentType="movie"
+                                        onSuccess={() => {
+                                            // maybe show a toast or something
+                                        }}
+                                    />
+                                )}
+                                {auth.user && userHasReviewed && !editingReviewId && (
+                                    <div className="glass-card-adaptive p-6 text-center">
+                                        <p className="text-gray-500 dark:text-gray-400 font-medium">
+                                            You have already reviewed this movie.
+                                        </p>
+                                    </div>
+                                )}
+                                {!auth.user && (
                                     <div className="glass-card-adaptive p-8 text-center">
                                         <p className="text-gray-500 dark:text-gray-400 mb-6 font-medium">
-                                            {t("Please log in to write a review.")}
+                                            {t(
+                                                "Please log in to write a review."
+                                            )}
                                         </p>
                                         <a
                                             href={route("login")}
@@ -571,26 +592,43 @@ export default function MovieDetails({
                                 )}
                                 <div className="mt-8 space-y-4">
                                     {movie.reviews.length > 0 ? (
-                                        movie.reviews.map((review) => (
-                                            <Review
-                                                key={review.id}
-                                                review={review}
-                                                onEdit={() => {
-                                                    // Handle edit
-                                                }}
-                                                onDelete={() => {
-                                                    router.delete(
-                                                        route(
-                                                            "reviews.destroy",
+                                        movie.reviews.map((review) =>
+                                            editingReviewId === review.id ? (
+                                                <ReviewForm
+                                                    key={`editing-${review.id}`}
+                                                    content={movie}
+                                                    contentType="movie"
+                                                    review={review}
+                                                    onSuccess={() =>
+                                                        setEditingReviewId(null)
+                                                    }
+                                                    onCancel={() =>
+                                                        setEditingReviewId(null)
+                                                    }
+                                                />
+                                            ) : (
+                                                <Review
+                                                    key={review.id}
+                                                    review={review}
+                                                    onEdit={() =>
+                                                        setEditingReviewId(
                                                             review.id
-                                                        ),
-                                                        {
-                                                            preserveScroll: true,
-                                                        }
-                                                    );
-                                                }}
-                                            />
-                                        ))
+                                                        )
+                                                    }
+                                                    onDelete={() => {
+                                                        router.delete(
+                                                            route(
+                                                                "reviews.destroy",
+                                                                review.id
+                                                            ),
+                                                            {
+                                                                preserveScroll: true,
+                                                            }
+                                                        );
+                                                    }}
+                                                />
+                                            )
+                                        )
                                     ) : (
                                         <p className="text-gray-500 italic text-center py-8">
                                             {t("No reviews yet.")}
