@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { usePage, router, Link } from "@inertiajs/react";
 import SeoHead from "@/Components/SeoHead";
 import RatingWidget from "@/Components/Movie/RatingWidget";
+import Review from "@/Components/Movie/Review";
+import ReviewForm from "@/Components/Series/ReviewForm";
 import Footer from "@/Components/Footer";
 import { useTranslation } from "react-i18next";
 
@@ -42,9 +44,8 @@ const LinkItem = ({ link, type, isVip }) => {
 
     return (
         <div
-            className={`group flex items-center justify-around py-3 border-b border-white/5 hover:bg-white/5 transition-colors px-2 ${
-                isLocked ? "opacity-50" : ""
-            }`}
+            className={`group flex items-center justify-around py-3 border-b border-white/5 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""
+                }`}
         >
             <div className="flex items-center justify-center gap-3 min-w-0">
                 <div className="flex flex-col min-w-0">
@@ -54,11 +55,10 @@ const LinkItem = ({ link, type, isVip }) => {
                 </div>
             </div>
             <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${
-                    type === "download"
+                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download"
                         ? "border-blue-500 text-blue-500"
                         : "border-red-500 text-red-500"
-                }`}
+                    }`}
             >
                 {link.quality?.replace("p", "") || "HD"}
             </div>
@@ -80,11 +80,10 @@ const LinkItem = ({ link, type, isVip }) => {
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                                type === "download"
+                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${type === "download"
                                     ? "bg-blue-600 hover:bg-blue-500 text-white"
                                     : "bg-red-600 hover:bg-red-500 text-white"
-                            }`}
+                                }`}
                         >
                             <svg
                                 className="w-3 h-3"
@@ -111,9 +110,8 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
         <div className="border-b border-white/10 last:border-0">
             <button
                 onClick={onClick}
-                className={`w-full flex items-center justify-between p-4 text-left transition-colors ${
-                    isActive ? "bg-white/10" : "hover:bg-white/5"
-                }`}
+                className={`w-full flex items-center justify-between p-4 text-left transition-colors ${isActive ? "bg-white/10" : "hover:bg-white/5"
+                    }`}
             >
                 <div className="flex items-center gap-4">
                     <span className="text-gray-500 font-mono text-sm w-6">
@@ -121,27 +119,25 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                     </span>
                     <div>
                         <h4
-                            className={`font-serif text-lg leading-none ${
-                                isActive
+                            className={`font-serif text-lg leading-none ${isActive
                                     ? "dark:text-white"
                                     : "dark:text-gray-300"
-                            }`}
+                                }`}
                         >
                             {episode.title}
                         </h4>
                         <span className="text-xs dark:text-gray-600 mt-1 block">
                             {episode.air_date
                                 ? new Date(
-                                      episode.air_date
-                                  ).toLocaleDateString()
+                                    episode.air_date
+                                ).toLocaleDateString()
                                 : t("Unknown Date")}
                         </span>
                     </div>
                 </div>
                 <div
-                    className={`transform transition-transform ${
-                        isActive ? "rotate-180" : ""
-                    }`}
+                    className={`transform transition-transform ${isActive ? "rotate-180" : ""
+                        }`}
                 >
                     <svg
                         className="w-5 h-5 text-gray-500"
@@ -181,11 +177,10 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                     {/* Links */}
                     {isAuthenticated ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className={`${
-                                    episode.watch_links &&
+                            <div className={`${episode.watch_links &&
                                     episode.watch_links.length > 0
-                                        ? ""
-                                        : "hidden"
+                                    ? ""
+                                    : "hidden"
                                 }`}>
                                 <h5 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                                     <PlayIcon className="w-3 h-3" />{" "}
@@ -193,7 +188,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                                 </h5>
                                 <div className="space-y-1">
                                     {episode.watch_links &&
-                                    episode.watch_links.length > 0 ? (
+                                        episode.watch_links.length > 0 ? (
                                         episode.watch_links.map((link) => (
                                             <LinkItem
                                                 key={link.id}
@@ -210,12 +205,11 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                                 </div>
                             </div>
                             <div
-                                className={`${
-                                    episode.download_links &&
-                                    episode.download_links.length > 0
+                                className={`${episode.download_links &&
+                                        episode.download_links.length > 0
                                         ? ""
                                         : "hidden"
-                                }`}
+                                    }`}
                             >
                                 <h5 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                                     <DownloadIcon className="w-3 h-3" />{" "}
@@ -223,7 +217,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                                 </h5>
                                 <div className="space-y-1">
                                     {episode.download_links &&
-                                    episode.download_links.length > 0 ? (
+                                        episode.download_links.length > 0 ? (
                                         episode.download_links.map((link) => (
                                             <LinkItem
                                                 key={link.id}
@@ -584,12 +578,11 @@ export default function SeriesDetails({
                                                                 season
                                                             )
                                                         }
-                                                        className={`whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all ${
-                                                            activeSeason?.id ===
-                                                            season.id
+                                                        className={`whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all ${activeSeason?.id ===
+                                                                season.id
                                                                 ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
                                                                 : "bg-gray-200 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white"
-                                                        }`}
+                                                            }`}
                                                     >
                                                         {t(
                                                             `Season ${season.season_number}`
@@ -601,7 +594,7 @@ export default function SeriesDetails({
                                         {/* Episodes List */}
                                         <div className="divide-y divide-gray-200 dark:divide-white/5">
                                             {activeSeason?.episodes &&
-                                            activeSeason.episodes.length > 0 ? (
+                                                activeSeason.episodes.length > 0 ? (
                                                 activeSeason.episodes
                                                     .slice()
                                                     .reverse()
@@ -649,7 +642,7 @@ export default function SeriesDetails({
                                     <span className="w-2 h-[2px] bg-blue-500"></span>
                                     {t("Cast & Crew")}
                                 </h3>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+                                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6">
                                     {series.actors?.slice(0, 8).map((actor) => (
                                         <Link
                                             key={actor.id}
@@ -680,6 +673,59 @@ export default function SeriesDetails({
                                     ))}
                                 </div>
                             </div>
+                            {/* Reviews Section */}
+                            <div className="mb-16">
+                                <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                    <span className="w-2 h-[2px] bg-blue-500"></span>
+                                    {t("Reviews")}
+                                </h3>
+                                {auth.user ? (
+                                    <ReviewForm series={series} />
+                                ) : (
+                                    <div className="glass-card-adaptive p-8 text-center">
+                                        <p className="text-gray-500 dark:text-gray-400 mb-6 font-medium">
+                                            {t(
+                                                "Please log in to write a review."
+                                            )}
+                                        </p>
+                                        <a
+                                            href={route("login")}
+                                            className="btn-primary inline-flex"
+                                        >
+                                            {t("Log In to Review")}
+                                        </a>
+                                    </div>
+                                )}
+                                <div className="mt-8 space-y-4">
+                                    {series.reviews.length > 0 ? (
+                                        series.reviews.map((review) => (
+                                            <Review
+                                                key={review.id}
+                                                review={review}
+                                                onEdit={() => {
+                                                    // Handle edit
+                                                }}
+                                                onDelete={() => {
+                                                    router.delete(
+                                                        route(
+                                                            "reviews.destroy",
+                                                            review.id
+                                                        ),
+                                                        {
+                                                            preserveScroll: true,
+                                                        }
+                                                    );
+                                                }}
+                                            />
+                                        ))
+                                    ) : (
+                                        <p className="text-gray-500 italic text-center py-8">
+                                            {t("No reviews yet.")}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
                             {/*Backdrop*/}
                             <div className="w-full">
                                 <h1>{t("Backdrop")}</h1>

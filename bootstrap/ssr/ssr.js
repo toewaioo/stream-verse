@@ -15,7 +15,7 @@ function ApplicationLogo(props) {
     "img",
     {
       ...props,
-      src: "/images/icon-512cx512.png",
+      src: "/images/icon-512x512.png",
       alt: "Application Logo"
     }
   );
@@ -160,7 +160,7 @@ function AdminLayout({ children }) {
     /* @__PURE__ */ jsxs("aside", { className: `fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`, children: [
       /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center h-16 border-b border-gray-200 dark:border-gray-700", children: /* @__PURE__ */ jsxs(Link, { href: "/", className: "flex items-center gap-2", children: [
         /* @__PURE__ */ jsx(ApplicationLogo, { className: "block h-8 w-auto fill-current text-indigo-600 dark:text-indigo-400" }),
-        /* @__PURE__ */ jsx("span", { className: "text-xl font-bold text-gray-800 dark:text-white", children: "Admin" })
+        /* @__PURE__ */ jsx("span", { className: "text-xl font-bold text-gray-800 dark:text-white", children: user?.role.charAt(0).toUpperCase() + user?.role.slice(1) })
       ] }) }),
       /* @__PURE__ */ jsx("nav", { className: "mt-6 px-4 space-y-2 overflow-y-auto max-h-[calc(100vh-4rem)]", children: navigation.map((item) => /* @__PURE__ */ jsxs(
         Link,
@@ -518,6 +518,7 @@ function Genres({ genres }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingGenre, setEditingGenre] = useState(null);
   const { t } = useTranslation();
+  const { auth } = usePage().props;
   const openCreateModal = () => {
     setEditingGenre(null);
     setIsModalOpen(true);
@@ -574,7 +575,7 @@ function Genres({ genres }) {
                     children: t("Edit")
                   }
                 ),
-                /* @__PURE__ */ jsx(
+                auth.user.role === "admin" && /* @__PURE__ */ jsx(
                   "button",
                   {
                     onClick: () => handleDelete(
@@ -2105,7 +2106,7 @@ function AdminMovies({ movies, genres, persons, auth }) {
                     children: "Edit"
                   }
                 ),
-                /* @__PURE__ */ jsx(
+                auth.user.role === "admin" && /* @__PURE__ */ jsx(
                   "button",
                   {
                     onClick: () => handleDelete(movie),
@@ -2392,6 +2393,7 @@ const __vite_glob_0_5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.def
   default: PersonForm
 }, Symbol.toStringTag, { value: "Module" }));
 function Persons({ persons }) {
+  const { auth } = usePage().props;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPerson, setEditingPerson] = useState(null);
   const openCreateModal = () => {
@@ -2435,7 +2437,7 @@ function Persons({ persons }) {
           /* @__PURE__ */ jsx("td", { className: "px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate", children: person.biography || "No biography available" }),
           /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: [
             /* @__PURE__ */ jsx("button", { onClick: () => openEditModal(person), className: "text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4", children: "Edit" }),
-            /* @__PURE__ */ jsx("button", { onClick: () => handleDelete(person.id), className: "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300", children: "Delete" })
+            auth.user.role === "admin" && /* @__PURE__ */ jsx("button", { onClick: () => handleDelete(person.id), className: "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300", children: "Delete" })
           ] })
         ] }, person.id)) })
       ] }) })
@@ -2838,7 +2840,7 @@ function AdminSeasons({ seasons, seriesList, auth }) {
           ] }),
           /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: [
             /* @__PURE__ */ jsx("button", { onClick: () => openEditModal(season), className: "text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4", children: "Edit" }),
-            /* @__PURE__ */ jsx("button", { onClick: () => handleDelete(season.id), className: "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300", children: "Delete" })
+            auth.user.role === "admin" && /* @__PURE__ */ jsx("button", { onClick: () => handleDelete(season.id), className: "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300", children: "Delete" })
           ] })
         ] }, season.id)) })
       ] }) })
@@ -4328,7 +4330,7 @@ function AdminSeries({ series, genres, persons, auth }) {
                     children: "Edit"
                   }
                 ),
-                /* @__PURE__ */ jsx(
+                auth.user.role === "admin" && /* @__PURE__ */ jsx(
                   "button",
                   {
                     onClick: () => handleDelete(
@@ -5060,7 +5062,7 @@ function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useTranslation();
-  const user = usePage().props.auth.user;
+  const user = usePage().props.auth?.user;
   const { data, setData } = useForm({
     q: ""
   });
@@ -5376,7 +5378,7 @@ function Navbar() {
               {
                 href: route("admin.dashboard"),
                 onClick: closeMobileMenu,
-                className: ` ${user.role == "admin" || user.role == "moderator" ? "" : "hidden"}text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg`,
+                className: `${user?.role == "admin" || user?.role == "moderator" ? "" : "hidden"} text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg`,
                 children: t("Dashboard")
               }
             ),
@@ -6082,6 +6084,214 @@ function RatingWidget({
     ] })
   ] });
 }
+const Review = ({ review, onEdit, onDelete }) => {
+  const { auth } = usePage().props;
+  const [showFullContent, setShowFullContent] = React.useState(false);
+  const [showSpoiler, setShowSpoiler] = React.useState(false);
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = /* @__PURE__ */ new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1e3 * 60 * 60 * 24));
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
+    return `${Math.floor(diffDays / 365)} years ago`;
+  };
+  const shouldTruncate = review.content && review.content.length > 300;
+  const displayContent = shouldTruncate && !showFullContent ? review.content.substring(0, 300) + "..." : review.content;
+  return /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-6 transition-all duration-300 hover:shadow-lg hover:scale-[1.01]", children: [
+    /* @__PURE__ */ jsxs("div", { className: "flex items-start justify-between mb-4", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
+        /* @__PURE__ */ jsx(
+          "img",
+          {
+            src: review.user.avatar_url || "/images/placeholder-avatar.jpg",
+            alt: review.user.name,
+            className: "w-12 h-12 rounded-full border-2 border-gray-200 dark:border-gray-700 object-cover"
+          }
+        ),
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("p", { className: "font-bold text-lg text-gray-900 dark:text-white", children: review.user.name }),
+          /* @__PURE__ */ jsx("p", { className: "text-xs text-gray-500 dark:text-gray-400 font-medium", children: formatDate(review.created_at) })
+        ] })
+      ] }),
+      review.rating && /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1 text-yellow-500 dark:text-yellow-400 bg-gray-100 dark:bg-black/20 px-3 py-1 rounded-full border border-gray-200 dark:border-white/5", children: [
+        /* @__PURE__ */ jsx("span", { className: "font-bold text-lg", children: "★" }),
+        /* @__PURE__ */ jsx("span", { className: "text-gray-900 dark:text-white font-semibold", children: review.rating }),
+        /* @__PURE__ */ jsx("span", { className: "text-gray-500 dark:text-gray-400 text-sm", children: "/10" })
+      ] })
+    ] }),
+    review.contains_spoilers && !showSpoiler && /* @__PURE__ */ jsx("div", { className: "mb-4 p-6 bg-yellow-50 dark:bg-yellow-500/5 border border-yellow-200 dark:border-yellow-500/20 rounded-xl backdrop-blur-sm", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center text-center gap-3", children: [
+      /* @__PURE__ */ jsx("div", { className: "p-3 bg-yellow-100 dark:bg-yellow-500/10 rounded-full text-yellow-600 dark:text-yellow-400", children: /* @__PURE__ */ jsx("svg", { className: "w-8 h-8", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z", clipRule: "evenodd" }) }) }),
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("h4", { className: "text-yellow-800 dark:text-yellow-400 font-bold text-lg mb-1", children: "Contains Spoilers" }),
+        /* @__PURE__ */ jsx("p", { className: "text-yellow-700 dark:text-yellow-400/70 text-sm mb-4", children: "This review contains spoilers." }),
+        /* @__PURE__ */ jsx(
+          "button",
+          {
+            onClick: () => setShowSpoiler(true),
+            className: "px-6 py-2 bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-500/20 dark:hover:bg-yellow-500/30 text-yellow-800 dark:text-yellow-400 rounded-lg font-semibold transition-colors border border-yellow-200 dark:border-yellow-500/30",
+            children: "Reveal Review"
+          }
+        )
+      ] })
+    ] }) }),
+    (!review.contains_spoilers || showSpoiler) && /* @__PURE__ */ jsxs("div", { className: "text-gray-700 dark:text-gray-300 leading-relaxed text-base", children: [
+      /* @__PURE__ */ jsx("p", { className: "whitespace-pre-line", children: displayContent }),
+      shouldTruncate && /* @__PURE__ */ jsxs(
+        "button",
+        {
+          onClick: () => setShowFullContent(!showFullContent),
+          className: "text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-sm mt-3 font-medium flex items-center gap-1 hover:gap-2 transition-all",
+          children: [
+            showFullContent ? "Show less" : "Read more",
+            /* @__PURE__ */ jsx("svg", { className: `w-4 h-4 transition-transform ${showFullContent ? "rotate-180" : ""}`, fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 9l-7 7-7-7" }) })
+          ]
+        }
+      )
+    ] }),
+    auth.user && auth.user.id === review.user.id && /* @__PURE__ */ jsxs("div", { className: "flex gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-white/5", children: [
+      /* @__PURE__ */ jsxs("button", { onClick: onEdit, className: "text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors flex items-center gap-2", children: [
+        /* @__PURE__ */ jsx("svg", { className: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" }) }),
+        "Edit"
+      ] }),
+      /* @__PURE__ */ jsxs("button", { onClick: onDelete, className: "text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300 transition-colors flex items-center gap-2", children: [
+        /* @__PURE__ */ jsx("svg", { className: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" }) }),
+        "Delete"
+      ] })
+    ] })
+  ] });
+};
+function StarRatingInput({ value, onChange, error }) {
+  const [hoveredStar, setHoveredStar] = useState(0);
+  const handleStarClick = (rating) => {
+    if (onChange) {
+      onChange(rating);
+    }
+  };
+  const renderStars = () => {
+    return [...Array(5)].map((_, index) => {
+      const starValue = index + 1;
+      const currentRating = hoveredStar > 0 ? hoveredStar : value / 2;
+      const isFilled = starValue <= Math.ceil(currentRating);
+      return /* @__PURE__ */ jsx(
+        "button",
+        {
+          type: "button",
+          className: `star transition-transform hover:scale-110 focus:outline-none ${isFilled ? "text-yellow-500 dark:text-yellow-400" : "text-gray-300 dark:text-gray-600"}`,
+          onMouseEnter: () => setHoveredStar(starValue),
+          onMouseLeave: () => setHoveredStar(0),
+          onClick: () => handleStarClick(starValue * 2),
+          children: /* @__PURE__ */ jsx(
+            "svg",
+            {
+              className: "w-8 h-8",
+              fill: isFilled ? "currentColor" : "none",
+              stroke: "currentColor",
+              strokeWidth: "1.5",
+              viewBox: "0 0 24 24",
+              children: /* @__PURE__ */ jsx(
+                "path",
+                {
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  d: "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                }
+              )
+            }
+          )
+        },
+        index
+      );
+    });
+  };
+  return /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center sm:items-start gap-2", children: [
+    /* @__PURE__ */ jsx("div", { className: "flex items-center gap-1", children: renderStars() }),
+    value > 0 && /* @__PURE__ */ jsxs("span", { className: "text-sm font-medium text-yellow-600 dark:text-yellow-400", children: [
+      value,
+      " / 10"
+    ] }),
+    error && /* @__PURE__ */ jsx("p", { className: "text-red-500 text-xs", children: error })
+  ] });
+}
+const ReviewForm$1 = ({ movie, onSuccess }) => {
+  const { auth } = usePage().props;
+  const { data, setData, post, processing, errors, reset } = useForm({
+    content: "",
+    rating: 0
+  });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    post(route("reviews.store.movie", movie.id), {
+      preserveScroll: true,
+      onSuccess: () => {
+        reset();
+        if (onSuccess) {
+          onSuccess();
+        }
+      }
+    });
+  };
+  return /* @__PURE__ */ jsx("form", { onSubmit: handleSubmit, className: "glass-card-adaptive p-6 mb-8 transition-all duration-300 hover:shadow-lg", children: /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-4", children: [
+    /* @__PURE__ */ jsx(
+      "img",
+      {
+        src: auth.user.avatar_url || "/images/placeholder-avatar.jpg",
+        alt: auth.user.name,
+        className: "w-12 h-12 rounded-full border-2 border-gray-200 dark:border-gray-700 object-cover hidden sm:block"
+      }
+    ),
+    /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
+      /* @__PURE__ */ jsxs("h3", { className: "text-lg font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2", children: [
+        /* @__PURE__ */ jsx("svg", { className: "w-5 h-5 text-blue-500", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" }) }),
+        "Write a review"
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "relative mb-4", children: [
+        /* @__PURE__ */ jsx(
+          "textarea",
+          {
+            value: data.content,
+            onChange: (e) => setData("content", e.target.value),
+            className: "w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 p-4 rounded-xl text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:outline-none transition-all placeholder-gray-400 dark:placeholder-gray-600 resize-y min-h-[120px]",
+            placeholder: `What did you think of ${movie.title}? Share your thoughts...`
+          }
+        ),
+        errors.content && /* @__PURE__ */ jsxs("p", { className: "text-red-500 text-xs mt-2 flex items-center gap-1", children: [
+          /* @__PURE__ */ jsx("svg", { className: "w-3 h-3", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" }) }),
+          errors.content
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row items-center justify-between gap-4", children: [
+        /* @__PURE__ */ jsx("div", { className: "w-full sm:w-auto", children: /* @__PURE__ */ jsx(
+          StarRatingInput,
+          {
+            value: data.rating,
+            onChange: (rating) => setData("rating", rating),
+            error: errors.rating
+          }
+        ) }),
+        /* @__PURE__ */ jsx(
+          "button",
+          {
+            type: "submit",
+            className: "btn-primary w-full sm:w-auto px-8 py-2.5 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40",
+            disabled: processing,
+            children: processing ? /* @__PURE__ */ jsxs("span", { className: "flex items-center gap-2", children: [
+              /* @__PURE__ */ jsxs("svg", { className: "animate-spin h-4 w-4 text-white", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", children: [
+                /* @__PURE__ */ jsx("circle", { className: "opacity-25", cx: "12", cy: "12", r: "10", stroke: "currentColor", strokeWidth: "4" }),
+                /* @__PURE__ */ jsx("path", { className: "opacity-75", fill: "currentColor", d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" })
+              ] }),
+              "Submitting..."
+            ] }) : "Submit Review"
+          }
+        )
+      ] })
+    ] })
+  ] }) });
+};
 const PlayIcon$1 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
 const LinkItem$1 = ({ link, type, isVip }) => {
   const { t } = useTranslation();
@@ -6511,6 +6721,43 @@ function MovieDetails({
               },
               actor.id
             )) })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+            /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
+              /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
+              t("Reviews")
+            ] }),
+            auth.user ? /* @__PURE__ */ jsx(ReviewForm$1, { movie }) : /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-8 text-center", children: [
+              /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 mb-6 font-medium", children: t("Please log in to write a review.") }),
+              /* @__PURE__ */ jsx(
+                "a",
+                {
+                  href: route("login"),
+                  className: "btn-primary inline-flex",
+                  children: t("Log In to Review")
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsx("div", { className: "mt-8 space-y-4", children: movie.reviews.length > 0 ? movie.reviews.map((review) => /* @__PURE__ */ jsx(
+              Review,
+              {
+                review,
+                onEdit: () => {
+                },
+                onDelete: () => {
+                  router.delete(
+                    route(
+                      "reviews.destroy",
+                      review.id
+                    ),
+                    {
+                      preserveScroll: true
+                    }
+                  );
+                }
+              },
+              review.id
+            )) : /* @__PURE__ */ jsx("p", { className: "text-gray-500 italic text-center py-8", children: t("No reviews yet.") }) })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
             /* @__PURE__ */ jsx("h1", { children: t("Backdrop") }),
@@ -8065,6 +8312,81 @@ const __vite_glob_0_33 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: Index
 }, Symbol.toStringTag, { value: "Module" }));
+const ReviewForm = ({ series, onSuccess }) => {
+  const { auth } = usePage().props;
+  const { data, setData, post, processing, errors, reset } = useForm({
+    content: "",
+    rating: 0
+  });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    post(route("reviews.store.series", series.id), {
+      preserveScroll: true,
+      onSuccess: () => {
+        reset();
+        if (onSuccess) {
+          onSuccess();
+        }
+      }
+    });
+  };
+  return /* @__PURE__ */ jsx("form", { onSubmit: handleSubmit, className: "glass-card-adaptive p-6 mb-8 transition-all duration-300 hover:shadow-lg", children: /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-4", children: [
+    /* @__PURE__ */ jsx(
+      "img",
+      {
+        src: auth.user.avatar_url || "/images/placeholder-avatar.jpg",
+        alt: auth.user.name,
+        className: "w-12 h-12 rounded-full border-2 border-gray-200 dark:border-gray-700 object-cover hidden sm:block"
+      }
+    ),
+    /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
+      /* @__PURE__ */ jsxs("h3", { className: "text-lg font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2", children: [
+        /* @__PURE__ */ jsx("svg", { className: "w-5 h-5 text-blue-500", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" }) }),
+        "Write a review"
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "relative mb-4", children: [
+        /* @__PURE__ */ jsx(
+          "textarea",
+          {
+            value: data.content,
+            onChange: (e) => setData("content", e.target.value),
+            className: "w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 p-4 rounded-xl text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:outline-none transition-all placeholder-gray-400 dark:placeholder-gray-600 resize-y min-h-[120px]",
+            placeholder: `What did you think of ${series.title}? Share your thoughts...`
+          }
+        ),
+        errors.content && /* @__PURE__ */ jsxs("p", { className: "text-red-500 text-xs mt-2 flex items-center gap-1", children: [
+          /* @__PURE__ */ jsx("svg", { className: "w-3 h-3", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" }) }),
+          errors.content
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row items-center justify-between gap-4", children: [
+        /* @__PURE__ */ jsx("div", { className: "w-full sm:w-auto", children: /* @__PURE__ */ jsx(
+          StarRatingInput,
+          {
+            value: data.rating,
+            onChange: (rating) => setData("rating", rating),
+            error: errors.rating
+          }
+        ) }),
+        /* @__PURE__ */ jsx(
+          "button",
+          {
+            type: "submit",
+            className: "btn-primary w-full sm:w-auto px-8 py-2.5 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40",
+            disabled: processing,
+            children: processing ? /* @__PURE__ */ jsxs("span", { className: "flex items-center gap-2", children: [
+              /* @__PURE__ */ jsxs("svg", { className: "animate-spin h-4 w-4 text-white", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", children: [
+                /* @__PURE__ */ jsx("circle", { className: "opacity-25", cx: "12", cy: "12", r: "10", stroke: "currentColor", strokeWidth: "4" }),
+                /* @__PURE__ */ jsx("path", { className: "opacity-75", fill: "currentColor", d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" })
+              ] }),
+              "Submitting..."
+            ] }) : "Submit Review"
+          }
+        )
+      ] })
+    ] })
+  ] }) });
+};
 const PlayIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
 const DownloadIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx(
   "svg",
@@ -8586,7 +8908,7 @@ function SeriesDetails({
               /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
               t("Cast & Crew")
             ] }),
-            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6", children: series.actors?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
+            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6", children: series.actors?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
               Link,
               {
                 href: route(
@@ -8609,6 +8931,45 @@ function SeriesDetails({
               },
               actor.id
             )) })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+            /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
+              /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
+              t("Reviews")
+            ] }),
+            auth.user ? /* @__PURE__ */ jsx(ReviewForm, { series }) : /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-8 text-center", children: [
+              /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 mb-6 font-medium", children: t(
+                "Please log in to write a review."
+              ) }),
+              /* @__PURE__ */ jsx(
+                "a",
+                {
+                  href: route("login"),
+                  className: "btn-primary inline-flex",
+                  children: t("Log In to Review")
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsx("div", { className: "mt-8 space-y-4", children: series.reviews.length > 0 ? series.reviews.map((review) => /* @__PURE__ */ jsx(
+              Review,
+              {
+                review,
+                onEdit: () => {
+                },
+                onDelete: () => {
+                  router.delete(
+                    route(
+                      "reviews.destroy",
+                      review.id
+                    ),
+                    {
+                      preserveScroll: true
+                    }
+                  );
+                }
+              },
+              review.id
+            )) : /* @__PURE__ */ jsx("p", { className: "text-gray-500 italic text-center py-8", children: t("No reviews yet.") }) })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
             /* @__PURE__ */ jsx("h1", { children: t("Backdrop") }),

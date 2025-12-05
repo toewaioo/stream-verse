@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { usePage, router, Link } from "@inertiajs/react";
 import RatingWidget from "@/Components/Movie/RatingWidget";
+import Review from "@/Components/Movie/Review";
+import ReviewForm from "@/Components/Movie/ReviewForm";
 import SeoHead from "@/Components/SeoHead";
 import Footer from "@/Components/Footer";
 import { useTranslation } from "react-i18next";
@@ -42,9 +44,8 @@ const LinkItem = ({ link, type, isVip }) => {
 
     return (
         <div
-            className={`group flex items-center justify-between py-4 border-b border-white/10 hover:bg-white/5 transition-colors px-2 ${
-                isLocked ? "opacity-50" : ""
-            }`}
+            className={`group flex items-center justify-between py-4 border-b border-white/10 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""
+                }`}
         >
             <div className="flex items-center gap-4">
                 <div className="flex flex-col">
@@ -57,11 +58,10 @@ const LinkItem = ({ link, type, isVip }) => {
                 </div>
             </div>
             <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border ${
-                    type === "download"
-                        ? "border-blue-500 text-blue-500"
-                        : "border-red-500 text-red-500"
-                }`}
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download"
+                    ? "border-blue-500 text-blue-500"
+                    : "border-red-500 text-red-500"
+                    }`}
             >
                 {link.quality?.replace("p", "") || "HD"}
             </div>
@@ -83,11 +83,10 @@ const LinkItem = ({ link, type, isVip }) => {
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                                type === "download"
-                                    ? "bg-blue-600 hover:bg-blue-500 text-white"
-                                    : "bg-red-600 hover:bg-red-500 text-white"
-                            }`}
+                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${type === "download"
+                                ? "bg-blue-600 hover:bg-blue-500 text-white"
+                                : "bg-red-600 hover:bg-red-500 text-white"
+                                }`}
                         >
                             <svg
                                 className="w-4 h-4"
@@ -163,7 +162,7 @@ export default function MovieDetails({
     isVip,
     seo,
 }) {
-    
+
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const [showTrailer, setShowTrailer] = useState(false);
@@ -407,23 +406,22 @@ export default function MovieDetails({
                                         <div className="space-y-8">
                                             {/* Watch Links */}
                                             <div
-                                                className={`${
-                                                    watchLinksByQuality &&
+                                                className={`${watchLinksByQuality &&
                                                     Object.keys(
                                                         watchLinksByQuality
                                                     ).length > 0
-                                                        ? ""
-                                                        : "hidden"
-                                                }`}
+                                                    ? ""
+                                                    : "hidden"
+                                                    }`}
                                             >
                                                 <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">
                                                     {t("Streaming Sources")}
                                                 </h4>
                                                 <div className="grid gap-2">
                                                     {watchLinksByQuality &&
-                                                    Object.keys(
-                                                        watchLinksByQuality
-                                                    ).length > 0 ? (
+                                                        Object.keys(
+                                                            watchLinksByQuality
+                                                        ).length > 0 ? (
                                                         Object.values(
                                                             watchLinksByQuality
                                                         )
@@ -452,23 +450,22 @@ export default function MovieDetails({
 
                                             {/* Download Links */}
                                             <div
-                                                className={`${
-                                                    downloadLinksByQuality &&
+                                                className={`${downloadLinksByQuality &&
                                                     Object.keys(
                                                         downloadLinksByQuality
                                                     ).length > 0
-                                                        ? ""
-                                                        : "hidden"
-                                                }`}
+                                                    ? ""
+                                                    : "hidden"
+                                                    }`}
                                             >
                                                 <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">
                                                     {t("Download Files")}
                                                 </h4>
                                                 <div className="grid gap-2">
                                                     {downloadLinksByQuality &&
-                                                    Object.keys(
-                                                        downloadLinksByQuality
-                                                    ).length > 0 ? (
+                                                        Object.keys(
+                                                            downloadLinksByQuality
+                                                        ).length > 0 ? (
                                                         Object.values(
                                                             downloadLinksByQuality
                                                         )
@@ -512,7 +509,7 @@ export default function MovieDetails({
                                     )}
                                 </div>
                             </div>
-                            
+
 
                             {/* Cast */}
                             <div className="mb-16">
@@ -551,7 +548,58 @@ export default function MovieDetails({
                                     ))}
                                 </div>
                             </div>
-                             {/*Backdrop*/}
+                            {/* Reviews Section */}
+                            <div className="mb-16">
+                                <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                    <span className="w-2 h-[2px] bg-blue-500"></span>
+                                    {t("Reviews")}
+                                </h3>
+                                {auth.user ? (
+                                    <ReviewForm movie={movie} />
+                                ) : (
+                                    <div className="glass-card-adaptive p-8 text-center">
+                                        <p className="text-gray-500 dark:text-gray-400 mb-6 font-medium">
+                                            {t("Please log in to write a review.")}
+                                        </p>
+                                        <a
+                                            href={route("login")}
+                                            className="btn-primary inline-flex"
+                                        >
+                                            {t("Log In to Review")}
+                                        </a>
+                                    </div>
+                                )}
+                                <div className="mt-8 space-y-4">
+                                    {movie.reviews.length > 0 ? (
+                                        movie.reviews.map((review) => (
+                                            <Review
+                                                key={review.id}
+                                                review={review}
+                                                onEdit={() => {
+                                                    // Handle edit
+                                                }}
+                                                onDelete={() => {
+                                                    router.delete(
+                                                        route(
+                                                            "reviews.destroy",
+                                                            review.id
+                                                        ),
+                                                        {
+                                                            preserveScroll: true,
+                                                        }
+                                                    );
+                                                }}
+                                            />
+                                        ))
+                                    ) : (
+                                        <p className="text-gray-500 italic text-center py-8">
+                                            {t("No reviews yet.")}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/*Backdrop*/}
                             <div className="w-full">
                                 <h1>{t("Backdrop")}</h1>
                                 <img
@@ -560,9 +608,9 @@ export default function MovieDetails({
                                     alt={`${movie.title} Backdrop`}
                                 />
                             </div>
-                           
+
                         </div>
-                        
+
 
                         {/* Right Column: Sidebar (Rating, Related) */}
                         <div className="w-full lg:w-80 flex-shrink-0 space-y-12">
@@ -665,15 +713,17 @@ export default function MovieDetails({
                 </div>
 
                 <Footer />
-            </div>
+            </div >
 
             {/* Trailer Modal */}
-            {showTrailer && (
-                <TrailerModal
-                    url={movie.trailer_url}
-                    onClose={() => setShowTrailer(false)}
-                />
-            )}
+            {
+                showTrailer && (
+                    <TrailerModal
+                        url={movie.trailer_url}
+                        onClose={() => setShowTrailer(false)}
+                    />
+                )
+            }
         </>
     );
 }

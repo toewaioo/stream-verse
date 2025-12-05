@@ -73,7 +73,9 @@ export default function AdminSeasons({ seasons, seriesList, auth }) {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                     <button onClick={() => openEditModal(season)} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4">Edit</button>
-                                                    <button onClick={() => handleDelete(season.id)} className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">Delete</button>
+                                                    {auth.user.role === 'admin' && (
+                                                        <button onClick={() => handleDelete(season.id)} className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">Delete</button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}

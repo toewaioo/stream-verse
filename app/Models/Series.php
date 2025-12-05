@@ -94,6 +94,11 @@ class Series extends Model
         return $this->hasMany(Rating::class);
     }
 
+    public function reviews()
+    {
+        return $this->morphMany(Review::class, 'reviewable');
+    }
+
     public function updateRatingStats(): void
     {
         $this->update([

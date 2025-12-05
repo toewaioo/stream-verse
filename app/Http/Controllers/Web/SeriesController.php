@@ -41,7 +41,8 @@ class SeriesController extends Controller
                 },
                 'seasons.episodes' => function ($query) {
                     $query->orderBy('episode_number');
-                }
+                },
+                'reviews.user'
             ]);
 
         if (Auth::check()) {
@@ -109,6 +110,7 @@ class SeriesController extends Controller
                 'actors' => $actors,
                 'directors' => $directors,
                 'writers' => $writers,
+                'reviews' => $series->reviews,
             ],
             'relatedSeries' => $relatedSeries,
             'userRating' => $userRating,

@@ -127,6 +127,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/ratings/{rating}', [RatingController::class, 'show'])->name('admin.ratings.show');
     Route::post('/ratings', [RatingController::class, 'store'])->name('admin.ratings.store');
     Route::put('/ratings/{rating}', [RatingController::class, 'update'])->name('admin.ratings.update');
+
+    // Review routes
+    Route::get('/movies/{movie}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'getMovieReviews'])->name('reviews.index.movie');
+    Route::get('/series/{series}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'getSeriesReviews'])->name('reviews.index.series');
+
+    Route::post('/movies/{movie}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'storeMovieReview'])->name('reviews.store.movie');
+    Route::post('/series/{series}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'storeSeriesReview'])->name('reviews.store.series');
+    Route::put('/reviews/{review}', [App\Http\Controllers\Api\ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [App\Http\Controllers\Api\ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
+
+// // Public Review Routes
+// Route::get('/movies/{movie}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'getMovieReviews'])->name('reviews.index.movie');
+// Route::get('/series/{series}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'getSeriesReviews'])->name('reviews.index.series');
+
 
 require __DIR__ . '/auth.php';

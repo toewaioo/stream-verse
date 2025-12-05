@@ -1,6 +1,6 @@
 import React from "react";
 import AdminLayout from "@/Layouts/AdminLayout";
-import { Head, router } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -10,6 +10,7 @@ export default function Genres({ genres }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingGenre, setEditingGenre] = useState(null);
     const { t } = useTranslation();
+    const { auth } = usePage().props;
     const openCreateModal = () => {
         setEditingGenre(null);
         setIsModalOpen(true);
@@ -91,16 +92,18 @@ export default function Genres({ genres }) {
                                                     >
                                                         {t("Edit")}
                                                     </button>
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                genre.id
-                                                            )
-                                                        }
-                                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                                    >
-                                                        {t("Delete")}
-                                                    </button>
+                                                    {auth.user.role === 'admin' && (
+                                                        <button
+                                                            onClick={() =>
+                                                                handleDelete(
+                                                                    genre.id
+                                                                )
+                                                            }
+                                                            className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                                        >
+                                                            {t("Delete")}
+                                                        </button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}

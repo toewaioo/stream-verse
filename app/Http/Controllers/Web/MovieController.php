@@ -47,7 +47,8 @@ class MovieController extends Controller
                 'persons.person',
                 'ratings' => function ($query) {
                     $query->latest()->limit(100);
-                }
+                },
+                'reviews.user'
             ]);
 
         if (Auth::check()) {

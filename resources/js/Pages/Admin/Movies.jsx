@@ -159,34 +159,32 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                                                     <div className="text-sm text-gray-900 dark:text-gray-300">
                                                         {movie.release_date
                                                             ? new Date(
-                                                                  movie.release_date
-                                                              ).getFullYear()
+                                                                movie.release_date
+                                                            ).getFullYear()
                                                             : "N/A"}
                                                     </div>
                                                     <div className="text-xs text-gray-500 dark:text-gray-400">
                                                         {movie.runtime
                                                             ? `${Math.floor(
-                                                                  movie.runtime /
-                                                                      60
-                                                              )}h ${
-                                                                  movie.runtime %
-                                                                  60
-                                                              }m`
+                                                                movie.runtime /
+                                                                60
+                                                            )}h ${movie.runtime %
+                                                            60
+                                                            }m`
                                                             : ""}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex flex-col gap-1">
                                                         <span
-                                                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full w-fit ${
-                                                                movie.status ===
-                                                                "released"
+                                                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full w-fit ${movie.status ===
+                                                                    "released"
                                                                     ? "bg-green-100 text-green-800"
                                                                     : movie.status ===
-                                                                      "upcoming"
-                                                                    ? "bg-blue-100 text-blue-800"
-                                                                    : "bg-gray-100 text-gray-800"
-                                                            }`}
+                                                                        "upcoming"
+                                                                        ? "bg-blue-100 text-blue-800"
+                                                                        : "bg-gray-100 text-gray-800"
+                                                                }`}
                                                         >
                                                             {movie.status}
                                                         </span>
@@ -223,14 +221,16 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                                                     >
                                                         Edit
                                                     </button>
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDelete(movie)
-                                                        }
-                                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                                    >
-                                                        Delete
-                                                    </button>
+                                                    {auth.user.role === 'admin' && (
+                                                        <button
+                                                            onClick={() =>
+                                                                handleDelete(movie)
+                                                            }
+                                                            className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}
@@ -253,14 +253,12 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                                                 }
                                             }}
                                             disabled={!link.url}
-                                            className={`px-4 py-2 text-sm rounded-md ${
-                                                link.active
+                                            className={`px-4 py-2 text-sm rounded-md ${link.active
                                                     ? "bg-indigo-600 text-white"
                                                     : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                            } ${
-                                                !link.url &&
+                                                } ${!link.url &&
                                                 "opacity-50 cursor-not-allowed"
-                                            }`}
+                                                }`}
                                             dangerouslySetInnerHTML={{
                                                 __html: link.label,
                                             }}

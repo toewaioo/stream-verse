@@ -10,7 +10,7 @@ export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { t } = useTranslation();
 
-    const user = usePage().props.auth.user;
+    const user = usePage().props.auth?.user;
     const { data, setData } = useForm({
         q: "",
     });
@@ -330,11 +330,12 @@ export default function Navbar() {
                         <Link
                             href={route("admin.dashboard")}
                             onClick={closeMobileMenu}
-                            className={` ${
-                                user.role == "admin" || user.role == "moderator"
+                            className={`${
+                                user?.role == "admin" ||
+                                user?.role == "moderator"
                                     ? ""
                                     : "hidden"
-                            }text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg`}
+                            } text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg`}
                         >
                             {t("Dashboard")}
                         </Link>

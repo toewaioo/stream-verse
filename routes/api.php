@@ -96,6 +96,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/ratings/{rating}', [RatingController::class, 'destroy']);
     Route::get('/ratings/user/{type}/{id}', [RatingController::class, 'userRatingsForContent']);
 
+    // Review routes
+    Route::post('/movies/{movie}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'storeMovieReview']);
+    Route::post('/series/{series}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'storeSeriesReview']);
+    Route::get('/movies/{movie}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'getMovieReviews']);
+    Route::get('/series/{series}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'getSeriesReviews']);
+    Route::put('/reviews/{review}', [App\Http\Controllers\Api\ReviewController::class, 'update']);
+    Route::delete('/reviews/{review}', [App\Http\Controllers\Api\ReviewController::class, 'destroy']);
+
     // Watch history routes
     Route::get('/watch-history', [WatchHistoryController::class, 'index']);
     Route::get('/watch-history/continue-watching', [WatchHistoryController::class, 'continueWatching']);

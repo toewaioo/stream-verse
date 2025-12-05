@@ -46,7 +46,7 @@ export default function AdminLayout({ children }) {
                 <div className="flex items-center justify-center h-16 border-b border-gray-200 dark:border-gray-700">
                     <Link href="/" className="flex items-center gap-2">
                         <ApplicationLogo className="block h-8 w-auto fill-current text-indigo-600 dark:text-indigo-400" />
-                        <span className="text-xl font-bold text-gray-800 dark:text-white">Admin</span>
+                        <span className="text-xl font-bold text-gray-800 dark:text-white">{user?.role.charAt(0).toUpperCase()+user?.role.slice(1)}</span>
                     </Link>
                 </div>
 

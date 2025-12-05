@@ -158,16 +158,18 @@ export default function AdminSeries({ series, genres, persons, auth }) {
                                                     >
                                                         Edit
                                                     </button>
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                item.id
-                                                            )
-                                                        }
-                                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                                    >
-                                                        Delete
-                                                    </button>
+                                                    {auth.user.role === 'admin' && (
+                                                        <button
+                                                            onClick={() =>
+                                                                handleDelete(
+                                                                    item.id
+                                                                )
+                                                            }
+                                                            className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}

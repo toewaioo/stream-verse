@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
 import PrimaryButton from '@/Components/PrimaryButton';
 import PersonForm from './PersonForm';
 
 export default function Persons({ persons }) {
+    const { auth } = usePage().props;
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingPerson, setEditingPerson] = useState(null);
 
@@ -78,7 +79,9 @@ export default function Persons({ persons }) {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                     <button onClick={() => openEditModal(person)} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4">Edit</button>
-                                                    <button onClick={() => handleDelete(person.id)} className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">Delete</button>
+                                                    {auth.user.role === 'admin' && (
+                                                        <button onClick={() => handleDelete(person.id)} className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">Delete</button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}

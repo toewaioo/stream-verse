@@ -24,18 +24,6 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // $this->call([
-
-        //     \Database\Seeders\MovieSeeder::class,
-        //     \Database\Seeders\SeriesSeeder::class,
-        //     \Database\Seeders\GenreSeeder::class,
-        //     \Database\Seeders\WatchLinkSeeder::class,
-        //     \Database\Seeders\DownloadLinkSeeder::class,
-        //     \Database\Seeders\RatingSeeder::class,
-        //     \Database\Seeders\WatchHistorySeeder::class,
-        //     \Database\Seeders\VipKeySeeder::class,
-        //     \Database\Seeders\VipSubscriptionSeeder::class,
-        //     \Database\Seeders\ActorSeeder::class,
-        // ]);
+       
     }
 }
