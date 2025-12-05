@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "@inertiajs/react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const PlayIcon = ({ className = "w-6 h-6" }) => (
     <svg className={className} fill="currentColor" viewBox="0 0 24 24">
@@ -13,8 +15,7 @@ const StarIcon = ({ className = "w-3 h-3" }) => (
     </svg>
 );
 
-export default function MediaCard({ item, type }) {
-    
+const MediaCard = ({ item, type }) => {
     const href =
         type === "movie"
             ? route("movies.show", item.slug)
@@ -39,11 +40,12 @@ export default function MediaCard({ item, type }) {
         <Link href={href} className="group block relative w-full">
             {/* Poster Container */}
             <div className="aspect-[2/3] overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-900 mb-3 relative shadow-lg group-hover:shadow-2xl transition-all duration-500">
-                <img
+                <LazyLoadImage
                     src={item.poster_url}
                     alt={item.title}
-                    loading="lazy"
+                    effect="blur"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                    wrapperClassName="w-full h-full"
                 />
 
                 {/* Gradient Overlay */}
@@ -107,4 +109,6 @@ export default function MediaCard({ item, type }) {
             </div>
         </Link>
     );
-}
+};
+
+export default React.memo(MediaCard);
