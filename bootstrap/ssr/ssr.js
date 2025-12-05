@@ -15,7 +15,7 @@ function ApplicationLogo(props) {
     "img",
     {
       ...props,
-      src: "/path/to/logo.png",
+      src: "/images/icon-512cx512.png",
       alt: "Application Logo"
     }
   );
@@ -5060,6 +5060,7 @@ function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useTranslation();
+  const user = usePage().props.auth.user;
   const { data, setData } = useForm({
     q: ""
   });
@@ -5368,6 +5369,15 @@ function Navbar() {
                 onClick: closeMobileMenu,
                 className: "text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg",
                 children: t("Series")
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              Link,
+              {
+                href: route("admin.dashboard"),
+                onClick: closeMobileMenu,
+                className: ` ${user.role == "admin" || user.role == "moderator" ? "" : "hidden"}text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg`,
+                children: t("Dashboard")
               }
             ),
             /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 mt-4 px-2", children: [
