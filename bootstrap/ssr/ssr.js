@@ -1,6 +1,6 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import { Link, usePage, Head, useForm, router, createInertiaApp } from "@inertiajs/react";
-import React, { createContext, useState, useContext, useEffect, forwardRef, useRef, useImperativeHandle, useMemo, Fragment as Fragment$1 } from "react";
+import React, { createContext, useState, useContext, useEffect, forwardRef, useRef, useImperativeHandle, useMemo, Fragment as Fragment$1, useCallback } from "react";
 import { Transition, Dialog, TransitionChild, DialogPanel, Combobox, Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import { ChevronUpDownIcon, CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
@@ -8,6 +8,7 @@ import axios$1 from "axios";
 import { debounce } from "lodash";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 import createServer from "@inertiajs/react/server";
 import ReactDOMServer from "react-dom/server";
 function ApplicationLogo(props) {
@@ -4835,119 +4836,55 @@ const Loader = ({ title, status }) => {
     /* @__PURE__ */ jsx("p", { className: "dark:text-gray-400", children: status })
   ] });
 };
-function TgAuth({ user }) {
+function TgAuth({ auth }) {
   const loginAttempted = useRef(false);
-  const [logs, setLogs] = useState([]);
   const [status, setStatus] = useState("Initializing...");
-  const addLog = (message, type = "info") => {
-    const timestamp = (/* @__PURE__ */ new Date()).toLocaleTimeString();
-    setLogs((prev) => [...prev, { timestamp, message, type }]);
-    console.log(`[${timestamp}] ${message}`);
-  };
+  const [error, setError] = useState(null);
   useEffect(() => {
-    addLog("TgAuth page mounted", "info");
-    addLog(`User authenticated: ${!!user}`, "info");
-    if (window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp;
-      addLog("Telegram WebApp detected", "success");
-      addLog(`initData present: ${!!tg.initData}`, "info");
-      if (tg.initData) {
-        addLog(`initData: ${tg.initData.substring(0, 50)}...`, "info");
-      }
-      tg.ready();
-      addLog("Telegram WebApp ready", "success");
-      if (user) {
-        addLog(
-          "User already authenticated, redirecting to home...",
-          "success"
-        );
-        setStatus("Already logged in! Redirecting...");
-        setTimeout(() => {
-          router.visit(route("home"));
-        }, 1500);
-        return;
-      }
-      if (!user && tg.initData && !loginAttempted.current) {
-        loginAttempted.current = true;
-        setStatus("Authenticating with Telegram...");
-        addLog("Attempting to login via Mini App...", "info");
-        axios$1.post(route("auth.telegram.mini-app"), {
-          initData: tg.initData
-        }).then((response) => {
-          addLog("Login successful!", "success");
-          addLog(
-            `Response: ${JSON.stringify(response.data)}`,
-            "info"
-          );
-          setStatus("Redirecting to home...");
-          setTimeout(() => {
-            router.visit(route("home"));
-          }, 500);
-        }).catch((error) => {
-          addLog("Login failed!", "error");
-          setStatus("Authentication failed");
-          if (error.response) {
-            addLog(
-              `Error status: ${error.response.status}`,
-              "error"
-            );
-            addLog(
-              `Error data: ${JSON.stringify(
-                error.response.data
-              )}`,
-              "error"
-            );
-          } else if (error.request) {
-            addLog("No response received from server", "error");
-          } else {
-            addLog(`Error: ${error.message}`, "error");
-          }
-          loginAttempted.current = false;
-        });
-      } else {
-        if (!tg.initData) {
-          addLog(
-            "No initData available - cannot authenticate",
-            "warning"
-          );
-          setStatus("Loading ...");
-          setTimeout(() => {
-            addLog("Redirecting to home page...", "info");
-            router.visit(route("home"));
-          }, 1e3);
-        } else if (loginAttempted.current) {
-          addLog("Login already attempted", "info");
-          setStatus("Authenticate success");
-          setTimeout(() => {
-            addLog("Redirecting to home page...", "info");
-            router.visit(route("home"));
-          }, 1e3);
-        }
-      }
-    } else {
-      addLog("Not running in Telegram WebApp environment", "warning");
-      setStatus("Loading ....");
-      setTimeout(() => {
-        addLog("Redirecting to home page...", "info");
-        router.visit(route("home"));
-      }, 1e3);
+    if (auth.user) {
+      setStatus("Already logged in. Redirecting...");
+      router.visit(route("home"), { replace: true });
+      return;
     }
-  }, [user]);
-  return /* @__PURE__ */ jsxs(Fragment, { children: [
-    /* @__PURE__ */ jsx(Loader, { title: "Authentication", status }),
-    user && /* @__PURE__ */ jsxs("div", { className: "text-center text-sm text-green-400", children: [
-      "✓ Logged in as: ",
-      user.name || user.email
-    ] }),
-    /* @__PURE__ */ jsx("div", { className: "mt-6 text-center", children: /* @__PURE__ */ jsx(
-      "button",
-      {
-        onClick: () => router.visit(route("home")),
-        className: "px-6 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors rounded",
-        children: "Go to Home"
-      }
-    ) })
-  ] });
+    const tg = window.Telegram?.WebApp;
+    if (!tg || !tg.initData) {
+      setStatus("Not a Mini App. Redirecting...");
+      router.visit(route("home"), { replace: true });
+      return;
+    }
+    if (!loginAttempted.current) {
+      loginAttempted.current = true;
+      setStatus("Authenticating...");
+      tg.ready();
+      axios$1.post(route("auth.telegram.mini-app"), {
+        initData: tg.initData
+      }).then(() => {
+        setStatus("Success! Redirecting...");
+        router.visit(route("home"), { replace: true });
+      }).catch((err) => {
+        console.error("Telegram authentication failed:", err.response?.data || err.message);
+        setError(
+          `Authentication failed. Please try again or contact support. (Reason: ${err.response?.data?.message || "Unknown Error"})`
+        );
+        setStatus("Authentication Failed");
+      });
+    }
+  }, [auth.user]);
+  if (error) {
+    return /* @__PURE__ */ jsx("div", { className: "flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-[#050505] text-white p-4", children: /* @__PURE__ */ jsxs("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold text-red-500 mb-4", children: "Authentication Error" }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-300 mb-6", children: error }),
+      /* @__PURE__ */ jsx(
+        "button",
+        {
+          onClick: () => router.visit(route("home"), { replace: true }),
+          className: "px-6 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors rounded",
+          children: "Continue to Home"
+        }
+      )
+    ] }) });
+  }
+  return /* @__PURE__ */ jsx(Loader, { title: "Authentication", status });
 }
 const __vite_glob_0_16 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
@@ -5602,7 +5539,7 @@ function Footer() {
 }
 const PlayIcon$2 = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M8 5v14l11-7z" }) });
 const StarIcon = ({ className = "w-3 h-3" }) => /* @__PURE__ */ jsx("svg", { className, fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { d: "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" }) });
-function MediaCard({ item, type }) {
+const MediaCard = ({ item, type }) => {
   const href = type === "movie" ? route("movies.show", item.slug) : route("series.show", item.slug);
   const year = item.release_year || item.release_year_start || (item.release_date ? new Date(item.release_date).getFullYear() : null) || (item.created_at ? new Date(item.created_at).getFullYear() : "N/A");
   const duration = type === "movie" && item.runtime ? `${item.runtime} min` : null;
@@ -5610,12 +5547,13 @@ function MediaCard({ item, type }) {
   return /* @__PURE__ */ jsxs(Link, { href, className: "group block relative w-full", children: [
     /* @__PURE__ */ jsxs("div", { className: "aspect-[2/3] overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-900 mb-3 relative shadow-lg group-hover:shadow-2xl transition-all duration-500", children: [
       /* @__PURE__ */ jsx(
-        "img",
+        LazyLoadImage,
         {
           src: item.poster_url,
           alt: item.title,
-          loading: "lazy",
-          className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+          effect: "blur",
+          className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100",
+          wrapperClassName: "w-full h-full"
         }
       ),
       /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" }),
@@ -5646,7 +5584,8 @@ function MediaCard({ item, type }) {
       item.genres && item.genres.length > 0 && /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-500 truncate", children: item.genres.map((g) => g.name).join(", ") })
     ] })
   ] });
-}
+};
+const MediaCard$1 = React.memo(MediaCard);
 function SeoHead({
   title,
   description,
@@ -5789,7 +5728,7 @@ function GenreShow({ genre, movies, series, seo }) {
         ] }),
         activeTab === "movies" && /* @__PURE__ */ jsx("div", { children: movies.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
           /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
-            MediaCard,
+            MediaCard$1,
             {
               item: movie,
               type: "movie"
@@ -5806,7 +5745,7 @@ function GenreShow({ genre, movies, series, seo }) {
         ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t("No movies found in this genre.") }) }) }),
         activeTab === "series" && /* @__PURE__ */ jsx("div", { children: series.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
           /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
-            MediaCard,
+            MediaCard$1,
             {
               item,
               type: "series"
@@ -5830,7 +5769,7 @@ const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: GenreShow
 }, Symbol.toStringTag, { value: "Module" }));
-const SectionTitle = ({ title, subtitle, href }) => {
+const SectionTitle = React.memo(({ title, subtitle, href }) => {
   const { t } = useTranslation();
   return /* @__PURE__ */ jsxs("div", { className: "mb-8 flex items-end justify-between border-b border-gray-200 dark:border-white/10 pb-4", children: [
     /* @__PURE__ */ jsxs("div", { children: [
@@ -5846,21 +5785,58 @@ const SectionTitle = ({ title, subtitle, href }) => {
       }
     )
   ] });
+});
+const useImagePreloader = (imageUrls) => {
+  useEffect(() => {
+    imageUrls.forEach((url) => {
+      if (url) {
+        const img = new Image();
+        img.src = url;
+      }
+    });
+  }, [imageUrls]);
 };
 function Home({ featured, latestMovies, latestSeries, seo }) {
   const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [isSliding, setIsSliding] = useState(false);
+  const featuredItems = useMemo(() => featured || [], [featured]);
+  const imageUrlsToPreload = useMemo(
+    () => featuredItems.flatMap((item) => [item.poster_url, item.banner_url]).filter(Boolean),
+    [featuredItems]
+  );
+  useImagePreloader(imageUrlsToPreload);
+  const handleSlideChange = useCallback((newIndex) => {
+    if (isSliding) return;
+    setIsSliding(true);
+    setCurrentIndex(newIndex);
+    setTimeout(() => setIsSliding(false), 700);
+  }, [isSliding]);
   useEffect(() => {
-    if (!featured || featured.length === 0) return;
+    if (featuredItems.length === 0) return;
     const interval = setInterval(() => {
-      setCurrentIndex(
-        (prevIndex) => prevIndex === featured.length - 1 ? 0 : prevIndex + 1
-      );
+      const newIndex = (currentIndex + 1) % featuredItems.length;
+      handleSlideChange(newIndex);
     }, 6e3);
     return () => clearInterval(interval);
-  }, [featured]);
+  }, [featuredItems.length, currentIndex, handleSlideChange]);
+  const handleTouchEnd = useCallback(() => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    if (isLeftSwipe) {
+      handleSlideChange((currentIndex + 1) % featuredItems.length);
+    }
+    if (isRightSwipe) {
+      handleSlideChange((currentIndex - 1 + featuredItems.length) % featuredItems.length);
+    }
+    setTouchStart(null);
+    setTouchEnd(null);
+  }, [touchStart, touchEnd, currentIndex, featuredItems.length, handleSlideChange]);
+  const currentItem = useMemo(() => featuredItems[currentIndex], [featuredItems, currentIndex]);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(
       SeoHead,
@@ -5876,52 +5852,35 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
     ),
     /* @__PURE__ */ jsxs("div", { className: "min-h-screen mt-0 bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black", children: [
       /* @__PURE__ */ jsx(Navbar, {}),
-      featured && featured.length > 0 && /* @__PURE__ */ jsxs(
+      currentItem && /* @__PURE__ */ jsxs(
         "div",
         {
           className: "relative h-[85vh] w-full overflow-hidden group",
-          onTouchStart: (e) => {
-            const touch = e.touches[0];
-            setTouchStart(touch.clientX);
-          },
-          onTouchMove: (e) => {
-            const touch = e.touches[0];
-            setTouchEnd(touch.clientX);
-          },
-          onTouchEnd: () => {
-            if (!touchStart || !touchEnd) return;
-            const distance = touchStart - touchEnd;
-            const isLeftSwipe = distance > 50;
-            const isRightSwipe = distance < -50;
-            if (isLeftSwipe) {
-              setCurrentIndex((prev) => prev === featured.length - 1 ? 0 : prev + 1);
-            }
-            if (isRightSwipe) {
-              setCurrentIndex((prev) => prev === 0 ? featured.length - 1 : prev - 1);
-            }
-            setTouchStart(null);
-            setTouchEnd(null);
-          },
+          onTouchStart: (e) => setTouchStart(e.touches[0].clientX),
+          onTouchMove: (e) => setTouchEnd(e.touches[0].clientX),
+          onTouchEnd: handleTouchEnd,
           children: [
-            featured.map((item, index) => /* @__PURE__ */ jsxs(
+            /* @__PURE__ */ jsxs(
               "div",
               {
-                className: `absolute inset-0 transition-opacity duration-1000 ${index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"}`,
+                className: `absolute inset-0 transition-opacity duration-700 ${isSliding ? "opacity-50" : "opacity-100"}`,
                 children: [
                   /* @__PURE__ */ jsx(
                     "img",
                     {
-                      src: item.poster_url,
-                      alt: item.title,
-                      className: "block md:hidden w-full h-full object-cover"
+                      src: currentItem.poster_url,
+                      alt: currentItem.title,
+                      className: "block md:hidden w-full h-full object-cover",
+                      loading: "eager"
                     }
                   ),
                   /* @__PURE__ */ jsx(
                     "img",
                     {
-                      src: item.banner_url,
-                      alt: item.title,
-                      className: "hidden md:block w-full h-full object-cover"
+                      src: currentItem.banner_url,
+                      alt: currentItem.title,
+                      className: "hidden md:block w-full h-full object-cover",
+                      loading: "eager"
                     }
                   ),
                   /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-gray-100 dark:from-[#050505] via-gray-100/40 dark:via-[#050505]/40 to-transparent" }),
@@ -5930,33 +5889,26 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
                     /* @__PURE__ */ jsxs("span", { className: "inline-block px-2 py-1 border border-gray-800/30 dark:border-white/30 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-800 dark:text-white mb-6 backdrop-blur-sm", children: [
                       t("Featured"),
                       " ",
-                      item.type === "series" ? t("Series") : t("Film")
+                      currentItem.type === "series" ? t("Series") : t("Film")
                     ] }),
-                    /* @__PURE__ */ jsx("h1", { className: "text-4xl line-clamp-1  md:text-7xl lg:text-8xl font-serif text-gray-800 dark:text-white leading-[0.9] mb-6", children: item.title }),
-                    /* @__PURE__ */ jsx("p", { className: "text-sm md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl", children: item.description }),
+                    /* @__PURE__ */ jsx("h1", { className: "text-4xl line-clamp-1 md:text-7xl lg:text-8xl font-serif text-gray-800 dark:text-white leading-[0.9] mb-6", children: currentItem.title }),
+                    /* @__PURE__ */ jsx("p", { className: "text-sm md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed mb-8 line-clamp-3 max-w-xl", children: currentItem.description }),
                     /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4", children: /* @__PURE__ */ jsx(
                       Link,
                       {
-                        href: item.type === "series" ? route(
-                          "series.show",
-                          item.slug
-                        ) : route(
-                          "movies.show",
-                          item.slug
-                        ),
+                        href: currentItem.type === "series" ? route("series.show", currentItem.slug) : route("movies.show", currentItem.slug),
                         className: "px-2 md:px-8 text-sm md:text-lg py-3 bg-gray-800 dark:bg-white text-white dark:text-black font-bold uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors",
                         children: t("Watch Now")
                       }
                     ) })
                   ] }) }) })
                 ]
-              },
-              `${item.type}-${item.id}`
-            )),
-            /* @__PURE__ */ jsx("div", { className: "absolute bottom-10 left-0 right-0 z-20 flex justify-center gap-3", children: featured.map((_, index) => /* @__PURE__ */ jsx(
+              }
+            ),
+            /* @__PURE__ */ jsx("div", { className: "absolute bottom-10 left-0 right-0 z-20 flex justify-center gap-3", children: featuredItems.map((_, index) => /* @__PURE__ */ jsx(
               "button",
               {
-                onClick: () => setCurrentIndex(index),
+                onClick: () => handleSlideChange(index),
                 className: `w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex ? "bg-gray-800 dark:bg-white scale-125" : "bg-gray-800/30 dark:bg-white/30 hover:bg-gray-800/50 dark:hover:bg-white/50"}`,
                 "aria-label": `${t("Go to slide")} ${index + 1}`
               },
@@ -5976,12 +5928,12 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
             }
           ),
           /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8", children: latestMovies.map((movie) => /* @__PURE__ */ jsx(
-            MediaCard,
+            MediaCard$1,
             {
               item: movie,
               type: "movie"
             },
-            movie.id
+            `movie-${movie.id}`
           )) })
         ] }),
         /* @__PURE__ */ jsxs("section", { className: "mt-0", children: [
@@ -5994,12 +5946,12 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
             }
           ),
           /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8", children: latestSeries.map((series) => /* @__PURE__ */ jsx(
-            MediaCard,
+            MediaCard$1,
             {
               item: series,
               type: "series"
             },
-            series.id
+            `series-${series.id}`
           )) })
         ] })
       ] }),
@@ -7031,7 +6983,7 @@ function Index$1({ movies }) {
       /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12", children: [
         /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-gray-200 dark:border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-gray-800 dark:text-white", children: t("Movies") }) }),
         /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
-          MediaCard,
+          MediaCard$1,
           {
             item: movie,
             type: "movie"
@@ -7849,7 +7801,7 @@ function PersonShow({ person, movies, series, seo }) {
         ] }),
         activeTab === "movies" && /* @__PURE__ */ jsx("div", { children: movies.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
           /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
-            MediaCard,
+            MediaCard$1,
             {
               item: movie,
               type: "movie"
@@ -7866,7 +7818,7 @@ function PersonShow({ person, movies, series, seo }) {
         ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t("No movies found featuring this person.") }) }) }),
         activeTab === "series" && /* @__PURE__ */ jsx("div", { children: series.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
           /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
-            MediaCard,
+            MediaCard$1,
             {
               item,
               type: "series"
@@ -8367,7 +8319,7 @@ function Search({ results, query, seo }) {
           /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-400 text-lg", children: results.length > 0 ? t(`Found ${results.length} results for ${query}`) : t(`No results found for "${query}"`) })
         ] }),
         results.length > 0 ? /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8", children: results.map((item) => /* @__PURE__ */ jsx(
-          MediaCard,
+          MediaCard$1,
           {
             item,
             type: item.type
@@ -8424,7 +8376,7 @@ function Index({ series }) {
       /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12", children: [
         /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-gray-200 dark:border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-gray-800 dark:text-white", children: t("Series") }) }),
         /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
-          MediaCard,
+          MediaCard$1,
           {
             item,
             type: "series"
