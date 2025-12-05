@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->uuid('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->morphs('reviewable');
+            $table->string('reviewable_type');
+            $table->unsignedBigInteger('reviewable_id');
+            $table->index(['reviewable_type', 'reviewable_id']);
             $table->text('content');
             $table->unsignedTinyInteger('rating')->nullable();
             $table->timestamps();
