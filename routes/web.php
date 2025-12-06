@@ -123,16 +123,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Ratings
-    Route::get('/ratings', [RatingController::class, 'index'])->name('admin.ratings');
-    Route::get('/ratings/{rating}', [RatingController::class, 'show'])->name('admin.ratings.show');
-    Route::post('/ratings', [RatingController::class, 'store'])->name('admin.ratings.store');
-    Route::put('/ratings/{rating}', [RatingController::class, 'update'])->name('admin.ratings.update');
+    // Route::get('/ratings', [RatingController::class, 'index'])->name('admin.ratings');
+    // Route::get('/ratings/{rating}', [RatingController::class, 'show'])->name('admin.ratings.show');
+    // Route::post('/ratings', [RatingController::class, 'store'])->name('admin.ratings.store');
+    // Route::put('/ratings/{rating}', [RatingController::class, 'update'])->name('admin.ratings.update');
 
-    // Review routes
-    Route::post('/movies/{movie}/reviews', [App\Http\Controllers\Web\ReviewController::class, 'storeMovieReview'])->name('reviews.store.movie');
-    Route::post('/series/{series}/reviews', [App\Http\Controllers\Web\ReviewController::class, 'storeSeriesReview'])->name('reviews.store.series');
-    Route::put('/reviews/{review}', [App\Http\Controllers\Web\ReviewController::class, 'update'])->name('reviews.update');
-    Route::delete('/reviews/{review}', [App\Http\Controllers\Web\ReviewController::class, 'destroy'])->name('reviews.destroy');
+    // // Review routes
+    // Route::post('/movies/{movie}/reviews', [App\Http\Controllers\Web\ReviewController::class, 'storeMovieReview'])->name('reviews.store.movie');
+    // Route::post('/series/{series}/reviews', [App\Http\Controllers\Web\ReviewController::class, 'storeSeriesReview'])->name('reviews.store.series');
+    // Route::put('/reviews/{review}', [App\Http\Controllers\Web\ReviewController::class, 'update'])->name('reviews.update');
+    // Route::delete('/reviews/{review}', [App\Http\Controllers\Web\ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 // // Public Review Routes
