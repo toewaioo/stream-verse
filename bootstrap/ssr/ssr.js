@@ -4421,6 +4421,18 @@ function GuestLayout({ children }) {
 }
 function ConfirmPassword() {
   const { t } = useTranslation();
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      window.history.back();
+    });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
+  }, []);
   const { data, setData, post, processing, errors, reset } = useForm({
     password: ""
   });
@@ -4432,7 +4444,9 @@ function ConfirmPassword() {
   };
   return /* @__PURE__ */ jsxs(GuestLayout, { children: [
     /* @__PURE__ */ jsx(Head, { title: t("Confirm Password") }),
-    /* @__PURE__ */ jsx("div", { className: "mb-4 text-sm text-gray-600 dark:text-gray-400", children: t("This is a secure area of the application. Please confirm your password before continuing.") }),
+    /* @__PURE__ */ jsx("div", { className: "mb-4 text-sm text-gray-600 dark:text-gray-400", children: t(
+      "This is a secure area of the application. Please confirm your password before continuing."
+    ) }),
     /* @__PURE__ */ jsxs("form", { onSubmit: submit, children: [
       /* @__PURE__ */ jsxs("div", { className: "mt-4", children: [
         /* @__PURE__ */ jsx(InputLabel, { htmlFor: "password", value: t("Password") }),
@@ -4460,6 +4474,18 @@ const __vite_glob_0_11 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
 }, Symbol.toStringTag, { value: "Module" }));
 function ForgotPassword({ status }) {
   const { t } = useTranslation();
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      window.history.back();
+    });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
+  }, []);
   const { data, setData, post, processing, errors } = useForm({
     email: ""
   });
@@ -4515,6 +4541,18 @@ function TelegramLoginWidget({ botName, buttonSize = "large", cornerRadius = 20,
 }
 function Login({ status, canResetPassword }) {
   const { t } = useTranslation();
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      window.history.back();
+    });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
+  }, []);
   const { data, setData, post, processing, errors, reset } = useForm({
     email: "",
     password: "",
@@ -4597,7 +4635,12 @@ function Login({ status, canResetPassword }) {
           /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center", children: /* @__PURE__ */ jsx("div", { className: "w-full border-t border-gray-300 dark:border-gray-700" }) }),
           /* @__PURE__ */ jsx("div", { className: "relative flex justify-center text-sm", children: /* @__PURE__ */ jsx("span", { className: "bg-white dark:bg-[#1f2937] px-2 text-gray-500", children: t("Or continue with") }) })
         ] }),
-        /* @__PURE__ */ jsx("div", { className: "mt-6", children: /* @__PURE__ */ jsx(TelegramLoginWidget, { botName: usePage().props.telegramBotUsername }) })
+        /* @__PURE__ */ jsx("div", { className: "mt-6", children: /* @__PURE__ */ jsx(
+          TelegramLoginWidget,
+          {
+            botName: usePage().props.telegramBotUsername
+          }
+        ) })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "mt-6 text-center text-sm text-gray-600 dark:text-gray-400", children: [
         t("Don't have an account?"),
@@ -4620,6 +4663,18 @@ const __vite_glob_0_13 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
 }, Symbol.toStringTag, { value: "Module" }));
 function Register() {
   const { t } = useTranslation();
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      window.history.back();
+    });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
+  }, []);
   const { data, setData, post, processing, errors, reset } = useForm({
     name: "",
     email: "",
@@ -4745,6 +4800,18 @@ const __vite_glob_0_14 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
 }, Symbol.toStringTag, { value: "Module" }));
 function ResetPassword({ token, email }) {
   const { t } = useTranslation();
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      window.history.back();
+    });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
+  }, []);
   const { data, setData, post, processing, errors, reset } = useForm({
     token,
     email,
@@ -4892,6 +4959,18 @@ const __vite_glob_0_16 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
 }, Symbol.toStringTag, { value: "Module" }));
 function VerifyEmail({ status }) {
   const { t } = useTranslation();
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      window.history.back();
+    });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
+  }, []);
   const { post, processing } = useForm({});
   const submit = (e) => {
     e.preventDefault();
@@ -5645,6 +5724,18 @@ function LoadingLayout({ children }) {
 function GenreShow({ genre, movies, series, seo }) {
   const [activeTab, setActiveTab] = useState("movies");
   const { t } = useTranslation();
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      window.history.back();
+    });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
+  }, []);
   const handlePageChange = (url, type) => {
     router.get(url, {}, { preserveState: true, preserveScroll: true });
   };
@@ -5698,7 +5789,10 @@ function GenreShow({ genre, movies, series, seo }) {
         /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 text-center", children: [
           /* @__PURE__ */ jsx("div", { className: "inline-block px-3 py-1 border border-gray-800/30 dark:border-white/30 text-xs font-bold uppercase tracking-widest text-gray-800 dark:text-white mb-4 backdrop-blur-sm", children: t("Genre") }),
           /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-serif text-gray-800 dark:text-white leading-tight mb-4", children: genre.name }),
-          /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto", children: t(`Explore ${movies.total + series.total} movies and series in this genre`, { count: movies.total + series.total }) })
+          /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto", children: t(
+            `Explore ${movies.total + series.total} movies and series in this genre`,
+            { count: movies.total + series.total }
+          ) })
         ] }) })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 py-2", children: [
@@ -5709,7 +5803,9 @@ function GenreShow({ genre, movies, series, seo }) {
               onClick: () => setActiveTab("movies"),
               className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "movies" ? "text-gray-800 dark:text-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
               children: [
-                t(`Movies (${movies.total})`, { count: movies.total }),
+                t(`Movies (${movies.total})`, {
+                  count: movies.total
+                }),
                 activeTab === "movies" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-gray-800 dark:bg-white" })
               ]
             }
@@ -5720,7 +5816,9 @@ function GenreShow({ genre, movies, series, seo }) {
               onClick: () => setActiveTab("series"),
               className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "series" ? "text-gray-800 dark:text-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
               children: [
-                t(`Series (${series.total})`, { count: series.total }),
+                t(`Series (${series.total})`, {
+                  count: series.total
+                }),
                 activeTab === "series" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-gray-800 dark:bg-white" })
               ]
             }
@@ -5742,7 +5840,9 @@ function GenreShow({ genre, movies, series, seo }) {
               type: "movies"
             }
           )
-        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t("No movies found in this genre.") }) }) }),
+        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t(
+          "No movies found in this genre."
+        ) }) }) }),
         activeTab === "series" && /* @__PURE__ */ jsx("div", { children: series.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
           /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
             MediaCard$1,
@@ -5759,7 +5859,9 @@ function GenreShow({ genre, movies, series, seo }) {
               type: "series"
             }
           )
-        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t("No series found in this genre.") }) }) })
+        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t(
+          "No series found in this genre."
+        ) }) }) })
       ] }),
       /* @__PURE__ */ jsx(Footer, {})
     ] })
@@ -6171,43 +6273,45 @@ function StarRatingInput({ value, onChange, error }) {
 }
 const ReviewForm = ({
   content,
-  contentType,
   review = null,
   onSuccess,
   onCancel
 }) => {
   const { auth } = usePage().props;
-  const { data, setData, post, put, processing, errors, reset } = useForm({
+  const [formData, setFormData] = useState({
     content: review ? review.content : "",
     rating: review ? review.rating : 0
   });
+  const [processing, setProcessing] = useState(false);
+  const [errors, setErrors] = useState({});
   useEffect(() => {
     if (review) {
-      setData({
+      setFormData({
         content: review.content,
         rating: review.rating
       });
     }
   }, [review]);
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const routeName = contentType === "movie" ? "reviews.store.movie" : "reviews.store.series";
-    if (review) {
-      put(route("reviews.update", review.id), {
-        preserveScroll: true,
-        onSuccess: () => {
-          if (onSuccess) onSuccess();
-        }
-      });
-    } else {
-      post(route(routeName, content.id), {
-        preserveScroll: true,
-        onSuccess: () => {
-          reset();
-          if (onSuccess) onSuccess();
-        }
-      });
+    setProcessing(true);
+    setErrors({});
+    try {
+      await onSuccess({ id: review?.id, ...formData });
+      if (!review) {
+        setFormData({ content: "", rating: 0 });
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 422) {
+        setErrors(error.response.data.errors);
+      }
+      console.error("Submission failed", error);
+    } finally {
+      setProcessing(false);
     }
+  };
+  const handleChange = (key, value) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
   };
   return /* @__PURE__ */ jsx(
     "form",
@@ -6249,8 +6353,8 @@ const ReviewForm = ({
             /* @__PURE__ */ jsx(
               "textarea",
               {
-                value: data?.content,
-                onChange: (e) => setData("content", e.target.value),
+                value: formData.content,
+                onChange: (e) => handleChange("content", e.target.value),
                 className: "w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 p-4 rounded-xl text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:outline-none transition-all placeholder-gray-400 dark:placeholder-gray-600 resize-y min-h-[120px]",
                 placeholder: `What did you think of ${content.title}? Share your thoughts...`
               }
@@ -6274,16 +6378,16 @@ const ReviewForm = ({
                   )
                 }
               ),
-              errors.content
+              errors.content[0]
             ] })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row items-center justify-between gap-4", children: [
             /* @__PURE__ */ jsx("div", { className: "w-full sm:w-auto", children: /* @__PURE__ */ jsx(
               StarRatingInput,
               {
-                value: data.rating,
-                onChange: (rating) => setData("rating", rating),
-                error: errors.rating
+                value: formData.rating,
+                onChange: (rating) => handleChange("rating", rating),
+                error: errors.rating ? errors.rating[0] : null
               }
             ) }),
             /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
@@ -6362,7 +6466,7 @@ const LinkItem$1 = ({ link, type, isVip }) => {
             children: link.quality?.replace("p", "") || "HD"
           }
         ),
-        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-3", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-1 uppercase tracking-widest", children: t("VIP") }) : /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsx(
+        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-3", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-xs font-bold text-yellow-500 border border-yellow-500 px-2 py-1 uppercase tracking-widest", children: t("VIP") }) : /* @__PURE__ */ jsx(
           "a",
           {
             href: link.url,
@@ -6386,7 +6490,7 @@ const LinkItem$1 = ({ link, type, isVip }) => {
               }
             )
           }
-        ) }) })
+        ) })
       ]
     }
   );
@@ -6443,36 +6547,78 @@ const TrailerModal$1 = ({ url, onClose }) => {
   );
 };
 function MovieDetails({
-  movie,
+  movie: initialMovie,
   watchLinksByQuality,
   downloadLinksByQuality,
   relatedMovies,
-  userRating,
+  userRating: initialUserRating,
   isVip,
   seo
 }) {
   const { t } = useTranslation();
   const { auth } = usePage().props;
+  const [movie, setMovie] = useState(initialMovie);
+  const [userRating, setUserRating] = useState(initialUserRating);
   const [showTrailer, setShowTrailer] = useState(false);
   const [editingReviewId, setEditingReviewId] = useState(null);
+  const [userHasReviewed, setUserReviewed] = useState(false);
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
     tg.BackButton.show();
-    tg.onEvent("backButtonClicked", () => {
-      window.history.back();
-    });
+    tg.onEvent("backButtonClicked", () => window.history.back());
     return () => {
       tg.BackButton.hide();
       tg.BackButton.offClick();
     };
   }, []);
+  const handleRate = async (rating) => {
+    const url = userRating ? route("api.ratings.update", userRating.id) : route("api.ratings.store");
+    const method = userRating ? "put" : "post";
+    try {
+      const response = await axios$1[method](url, {
+        rating,
+        movie_id: movie.id
+      });
+      const { rating: newRating, content: updatedMovie } = response.data;
+      setUserRating(newRating);
+      setMovie(updatedMovie);
+    } catch (error) {
+      console.error("Failed to submit rating:", error);
+    }
+  };
+  const handleReviewSubmit = async (reviewData) => {
+    const url = reviewData.id ? route("api.reviews.update", reviewData.id) : route("api.movies.reviews.store", movie.id);
+    const method = reviewData.id ? "put" : "post";
+    try {
+      const response = await axios$1[method](url, reviewData);
+      const { content: updatedMovie } = response.data;
+      setMovie(updatedMovie);
+      setEditingReviewId(null);
+    } catch (error) {
+      console.error("Failed to submit review:", error);
+    }
+  };
+  const handleReviewDelete = async (reviewId) => {
+    try {
+      const response = await axios$1.delete(
+        route("api.reviews.destroy", reviewId)
+      );
+      const { content: updatedMovie } = response.data;
+      setMovie(updatedMovie);
+    } catch (error) {
+      console.error("Failed to delete review:", error);
+    }
+  };
   const scrollToWatch = () => {
     document.getElementById("watch-section")?.scrollIntoView({ behavior: "smooth" });
   };
-  const userHasReviewed = movie.reviews.some(
-    (review) => review.user_id === auth.user?.id
-  );
+  useEffect(() => {
+    const userHasReviewedd = movie?.reviews?.some(
+      (review) => review.user?.id === auth.user?.id
+    );
+    setUserReviewed(userHasReviewedd);
+  }, [movie]);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(
       SeoHead,
@@ -6791,8 +6937,7 @@ function MovieDetails({
               {
                 content: movie,
                 contentType: "movie",
-                onSuccess: () => {
-                }
+                onSuccess: handleReviewSubmit
               }
             ),
             auth.user && userHasReviewed && !editingReviewId && /* @__PURE__ */ jsx("div", { className: "glass-card-adaptive p-6 text-center", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 font-medium", children: "You have already reviewed this movie." }) }),
@@ -6809,14 +6954,14 @@ function MovieDetails({
                 }
               )
             ] }),
-            /* @__PURE__ */ jsx("div", { className: "mt-8 space-y-4", children: movie.reviews.length > 0 ? movie.reviews.map(
+            /* @__PURE__ */ jsx("div", { className: "mt-8 space-y-4", children: movie?.reviews?.length > 0 ? movie.reviews.map(
               (review) => editingReviewId === review.id ? /* @__PURE__ */ jsx(
                 ReviewForm,
                 {
                   content: movie,
                   contentType: "movie",
                   review,
-                  onSuccess: () => setEditingReviewId(null),
+                  onSuccess: handleReviewSubmit,
                   onCancel: () => setEditingReviewId(null)
                 },
                 `editing-${review.id}`
@@ -6827,17 +6972,9 @@ function MovieDetails({
                   onEdit: () => setEditingReviewId(
                     review.id
                   ),
-                  onDelete: () => {
-                    router.delete(
-                      route(
-                        "reviews.destroy",
-                        review.id
-                      ),
-                      {
-                        preserveScroll: true
-                      }
-                    );
-                  }
+                  onDelete: () => handleReviewDelete(
+                    review.id
+                  )
                 },
                 review.id
               )
@@ -6864,29 +7001,7 @@ function MovieDetails({
                 ratingAverage: movie.rating_average || 0,
                 ratingCount: movie.rating_count || 0,
                 userRating,
-                onRate: (rating) => {
-                  if (userRating) {
-                    router.put(
-                      route(
-                        "admin.ratings.update",
-                        userRating.id
-                      ),
-                      { rating },
-                      { preserveScroll: true }
-                    );
-                  } else {
-                    router.post(
-                      route(
-                        "admin.ratings.store"
-                      ),
-                      {
-                        movie_id: movie.id,
-                        rating
-                      },
-                      { preserveScroll: true }
-                    );
-                  }
-                }
+                onRate: handleRate
               }
             ) : /* @__PURE__ */ jsxs("div", { className: "text-center text-sm text-gray-500", children: [
               /* @__PURE__ */ jsx(
@@ -6957,15 +7072,6 @@ const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: MovieDetails
 }, Symbol.toStringTag, { value: "Module" }));
 const Pagination$1 = ({ links }) => {
-  useEffect(() => {
-    const tg = window.Telegram?.WebApp;
-    if (!tg) return;
-    tg.BackButton.show();
-    tg.onEvent("backButtonClicked", () => {
-      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
-      router.visit(prevRoute);
-    });
-  }, []);
   return /* @__PURE__ */ jsx("div", { className: "flex justify-center mt-8 mb-5 gap-2", children: links.map((link, index) => /* @__PURE__ */ jsx(
     Link,
     {
@@ -6979,6 +7085,18 @@ const Pagination$1 = ({ links }) => {
 };
 function Index$1({ movies }) {
   const { t } = useTranslation();
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      window.history.back();
+    });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
+  }, []);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(Head, { title: t("Movies") }),
     /* @__PURE__ */ jsx(Navbar, {}),
@@ -7033,9 +7151,12 @@ function About({ title, description }) {
     if (!tg) return;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", () => {
-      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
-      router.visit(prevRoute);
+      window.history.back();
     });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
   }, []);
   return /* @__PURE__ */ jsx(StaticPageLayout, { title, description, children: /* @__PURE__ */ jsxs("div", { className: "prose prose-invert prose-lg max-w-none", children: [
     /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
@@ -7091,9 +7212,12 @@ function Contact({ title, description }) {
     if (!tg) return;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", () => {
-      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
-      router.visit(prevRoute);
+      window.history.back();
     });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
   }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -7322,9 +7446,12 @@ const FAQItem = ({ question, answer, isOpen, onClick }) => {
     if (!tg) return;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", () => {
-      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
-      router.visit(prevRoute);
+      window.history.back();
     });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
   }, []);
   return /* @__PURE__ */ jsxs("div", { className: "border-b border-white/10", children: [
     /* @__PURE__ */ jsxs(
@@ -7444,9 +7571,12 @@ function Privacy({ title, description }) {
     if (!tg) return;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", () => {
-      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
-      router.visit(prevRoute);
+      window.history.back();
     });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
   }, []);
   return /* @__PURE__ */ jsx(StaticPageLayout, { title, description, children: /* @__PURE__ */ jsxs("div", { className: "prose prose-invert prose-lg max-w-none", children: [
     /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
@@ -7577,9 +7707,12 @@ function Terms({ title, description }) {
     if (!tg) return;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", () => {
-      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
-      router.visit(prevRoute);
+      window.history.back();
     });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
   }, []);
   return /* @__PURE__ */ jsx(StaticPageLayout, { title, description, children: /* @__PURE__ */ jsxs("div", { className: "prose prose-invert prose-lg max-w-none", children: [
     /* @__PURE__ */ jsxs("section", { className: "mb-12", children: [
@@ -7709,6 +7842,18 @@ function PersonShow({ person, movies, series, seo }) {
   const { t } = useTranslation();
   console.log(person);
   const [activeTab, setActiveTab] = useState("movies");
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      window.history.back();
+    });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
+  }, []);
   const handlePageChange = (url, type) => {
     router.get(url, {}, { preserveState: true, preserveScroll: true });
   };
@@ -7770,7 +7915,10 @@ function PersonShow({ person, movies, series, seo }) {
           ) }),
           /* @__PURE__ */ jsx("div", { className: "inline-block px-3 py-1 border border-gray-800/30 dark:border-white/30 text-xs font-bold uppercase tracking-widest text-gray-800 dark:text-white mb-4 backdrop-blur-sm", children: t("Filmography") }),
           /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl lg:text-7xl font-serif text-gray-800 dark:text-white leading-tight mb-4", children: person.name }),
-          /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto", children: t(`${movies.total + series.total} titles featuring this talent`, { count: movies.total + series.total }) })
+          /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto", children: t(
+            `${movies.total + series.total} titles featuring this talent`,
+            { count: movies.total + series.total }
+          ) })
         ] }) })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 py-2", children: [
@@ -7785,7 +7933,9 @@ function PersonShow({ person, movies, series, seo }) {
               onClick: () => setActiveTab("movies"),
               className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "movies" ? "text-gray-800 dark:text-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
               children: [
-                t(`Movies (${movies.total})`, { count: movies.total }),
+                t(`Movies (${movies.total})`, {
+                  count: movies.total
+                }),
                 activeTab === "movies" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-gray-800 dark:bg-white" })
               ]
             }
@@ -7796,7 +7946,9 @@ function PersonShow({ person, movies, series, seo }) {
               onClick: () => setActiveTab("series"),
               className: `px-6 py-4 font-bold uppercase tracking-widest text-sm transition-colors relative ${activeTab === "series" ? "text-gray-800 dark:text-white" : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`,
               children: [
-                t(`Series (${series.total})`, { count: series.total }),
+                t(`Series (${series.total})`, {
+                  count: series.total
+                }),
                 activeTab === "series" && /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-0.5 bg-gray-800 dark:bg-white" })
               ]
             }
@@ -7818,7 +7970,9 @@ function PersonShow({ person, movies, series, seo }) {
               type: "movies"
             }
           )
-        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t("No movies found featuring this person.") }) }) }),
+        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t(
+          "No movies found featuring this person."
+        ) }) }) }),
         activeTab === "series" && /* @__PURE__ */ jsx("div", { children: series.data.length > 0 ? /* @__PURE__ */ jsxs(Fragment, { children: [
           /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
             MediaCard$1,
@@ -7835,7 +7989,9 @@ function PersonShow({ person, movies, series, seo }) {
               type: "series"
             }
           )
-        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t("No series found featuring this person.") }) }) })
+        ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t(
+          "No series found featuring this person."
+        ) }) }) })
       ] }),
       /* @__PURE__ */ jsx(Footer, {})
     ] })
@@ -8168,6 +8324,18 @@ const __vite_glob_0_31 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
 function Edit({ mustVerifyEmail, status }) {
   const { t, i18n } = useTranslation();
   const user = usePage().props.auth.user;
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      window.history.back();
+    });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
+  }, []);
   const getInitials = (name) => {
     return name.split(" ").map((word) => word[0]).join("").toUpperCase().slice(0, 2);
   };
@@ -8350,15 +8518,6 @@ const __vite_glob_0_32 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Search
 }, Symbol.toStringTag, { value: "Module" }));
 const Pagination = ({ links }) => {
-  useEffect(() => {
-    const tg = window.Telegram?.WebApp;
-    if (!tg) return;
-    tg.BackButton.show();
-    tg.onEvent("backButtonClicked", () => {
-      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
-      router.visit(prevRoute);
-    });
-  }, []);
   return /* @__PURE__ */ jsx("div", { className: "flex justify-center mt-10 mb-8 gap-2", children: links.map((link, index) => /* @__PURE__ */ jsx(
     Link,
     {
@@ -8372,6 +8531,18 @@ const Pagination = ({ links }) => {
 };
 function Index({ series }) {
   const { t } = useTranslation();
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+    tg.BackButton.show();
+    tg.onEvent("backButtonClicked", () => {
+      window.history.back();
+    });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
+  }, []);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(Head, { title: t("Series") }),
     /* @__PURE__ */ jsx(Navbar, {}),
@@ -8418,7 +8589,6 @@ const DownloadIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx(
 const LinkItem = ({ link, type, isVip }) => {
   const { t } = useTranslation();
   const isLocked = link.is_vip_only && !isVip;
-  const [copied, setCopied] = useState(false);
   return /* @__PURE__ */ jsxs(
     "div",
     {
@@ -8432,7 +8602,7 @@ const LinkItem = ({ link, type, isVip }) => {
             children: link.quality?.replace("p", "") || "HD"
           }
         ),
-        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-[10px] font-bold text-yellow-500 border border-yellow-500 px-1 uppercase", children: t("VIP") }) : /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsx(
+        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2", children: isLocked ? /* @__PURE__ */ jsx("span", { className: "text-[10px] font-bold text-yellow-500 border border-yellow-500 px-1 uppercase", children: t("VIP") }) : /* @__PURE__ */ jsx(
           "a",
           {
             href: link.url,
@@ -8456,7 +8626,7 @@ const LinkItem = ({ link, type, isVip }) => {
               }
             )
           }
-        ) }) })
+        ) })
       ]
     }
   );
@@ -8525,22 +8695,28 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
         /* @__PURE__ */ jsx("p", { className: "text-sm dark:text-gray-400 leading-relaxed font-serif", children: episode.description || t("No synopsis available for this episode.") })
       ] }),
       isAuthenticated ? /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-8", children: [
-        /* @__PURE__ */ jsxs("div", { className: `${episode.watch_links && episode.watch_links.length > 0 ? "" : "hidden"}`, children: [
-          /* @__PURE__ */ jsxs("h5", { className: "text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2", children: [
-            /* @__PURE__ */ jsx(PlayIcon, { className: "w-3 h-3" }),
-            " ",
-            t("Stream")
-          ] }),
-          /* @__PURE__ */ jsx("div", { className: "space-y-1", children: episode.watch_links && episode.watch_links.length > 0 ? episode.watch_links.map((link) => /* @__PURE__ */ jsx(
-            LinkItem,
-            {
-              link,
-              type: "watch",
-              isVip
-            },
-            link.id
-          )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 text-xs italic", children: t("No sources.") }) })
-        ] }),
+        /* @__PURE__ */ jsxs(
+          "div",
+          {
+            className: `${episode.watch_links && episode.watch_links.length > 0 ? "" : "hidden"}`,
+            children: [
+              /* @__PURE__ */ jsxs("h5", { className: "text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2", children: [
+                /* @__PURE__ */ jsx(PlayIcon, { className: "w-3 h-3" }),
+                " ",
+                t("Stream")
+              ] }),
+              /* @__PURE__ */ jsx("div", { className: "space-y-1", children: episode.watch_links && episode.watch_links.length > 0 ? episode.watch_links.map((link) => /* @__PURE__ */ jsx(
+                LinkItem,
+                {
+                  link,
+                  type: "watch",
+                  isVip
+                },
+                link.id
+              )) : /* @__PURE__ */ jsx("div", { className: "text-gray-600 text-xs italic", children: t("No sources.") }) })
+            ]
+          }
+        ),
         /* @__PURE__ */ jsxs(
           "div",
           {
@@ -8629,14 +8805,16 @@ const TrailerModal = ({ url, onClose }) => {
   );
 };
 function SeriesDetails({
-  series,
+  series: initialSeries,
   relatedSeries,
-  userRating,
+  userRating: initialUserRating,
   isVip,
   seo
 }) {
   const { t } = useTranslation();
   const { auth } = usePage().props;
+  const [series, setSeries] = useState(initialSeries);
+  const [userRating, setUserRating] = useState(initialUserRating);
   const [showTrailer, setShowTrailer] = useState(false);
   const [activeSeason, setActiveSeason] = useState(
     series.seasons?.[series.seasons?.length - 1] || null
@@ -8647,9 +8825,7 @@ function SeriesDetails({
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
     tg.BackButton.show();
-    tg.onEvent("backButtonClicked", () => {
-      window.history.back();
-    });
+    tg.onEvent("backButtonClicked", () => window.history.back());
     return () => {
       tg.BackButton.hide();
       tg.BackButton.offClick();
@@ -8662,6 +8838,42 @@ function SeriesDetails({
       );
     }
   }, [activeSeason]);
+  const handleRate = async (rating) => {
+    const url = userRating ? route("api.ratings.update", userRating.id) : route("api.ratings.store");
+    const method = userRating ? "put" : "post";
+    try {
+      const response = await axios$1[method](url, {
+        rating,
+        series_id: series.id
+      });
+      const { rating: newRating, content: updatedSeries } = response.data;
+      setUserRating(newRating);
+      setSeries(updatedSeries);
+    } catch (error) {
+      console.error("Failed to submit rating:", error);
+    }
+  };
+  const handleReviewSubmit = async (reviewData) => {
+    const url = reviewData.id ? route("api.reviews.update", reviewData.id) : route("api.series.reviews.store", series.id);
+    const method = reviewData.id ? "put" : "post";
+    try {
+      const response = await axios$1[method](url, reviewData);
+      const { content: updatedSeries } = response.data;
+      setSeries(updatedSeries);
+      setEditingReviewId(null);
+    } catch (error) {
+      console.error("Failed to submit review:", error);
+    }
+  };
+  const handleReviewDelete = async (reviewId) => {
+    try {
+      const response = await axios$1.delete(route("api.reviews.destroy", reviewId));
+      const { content: updatedSeries } = response.data;
+      setSeries(updatedSeries);
+    } catch (error) {
+      console.error("Failed to delete review:", error);
+    }
+  };
   const scrollToEpisodes = () => {
     document.getElementById("episodes-section")?.scrollIntoView({ behavior: "smooth" });
   };
@@ -8958,8 +9170,7 @@ function SeriesDetails({
               {
                 content: series,
                 contentType: "series",
-                onSuccess: () => {
-                }
+                onSuccess: handleReviewSubmit
               }
             ),
             auth.user && userHasReviewed && !editingReviewId && /* @__PURE__ */ jsx("div", { className: "glass-card-adaptive p-6 text-center", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 font-medium", children: "You have already reviewed this series." }) }),
@@ -8983,7 +9194,7 @@ function SeriesDetails({
                   content: series,
                   contentType: "series",
                   review,
-                  onSuccess: () => setEditingReviewId(null),
+                  onSuccess: handleReviewSubmit,
                   onCancel: () => setEditingReviewId(null)
                 },
                 `editing-${review.id}`
@@ -8994,17 +9205,9 @@ function SeriesDetails({
                   onEdit: () => setEditingReviewId(
                     review.id
                   ),
-                  onDelete: () => {
-                    router.delete(
-                      route(
-                        "reviews.destroy",
-                        review.id
-                      ),
-                      {
-                        preserveScroll: true
-                      }
-                    );
-                  }
+                  onDelete: () => handleReviewDelete(
+                    review.id
+                  )
                 },
                 review.id
               )
@@ -9031,29 +9234,7 @@ function SeriesDetails({
                 ratingAverage: series.rating_average || 0,
                 ratingCount: series.rating_count || 0,
                 userRating,
-                onRate: (rating) => {
-                  if (userRating) {
-                    router.put(
-                      route(
-                        "admin.ratings.update",
-                        userRating.id
-                      ),
-                      { rating },
-                      { preserveScroll: true }
-                    );
-                  } else {
-                    router.post(
-                      route(
-                        "admin.ratings.store"
-                      ),
-                      {
-                        series_id: series.id,
-                        rating
-                      },
-                      { preserveScroll: true }
-                    );
-                  }
-                }
+                onRate: handleRate
               }
             ) : /* @__PURE__ */ jsxs("div", { className: "text-center text-sm text-gray-500", children: [
               /* @__PURE__ */ jsx(

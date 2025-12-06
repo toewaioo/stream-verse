@@ -1,36 +1,62 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import TelegramLoginWidget from '@/Components/TelegramLoginWidget';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { useTranslation } from 'react-i18next';
+import Checkbox from "@/Components/Checkbox";
+import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
+import PrimaryButton from "@/Components/PrimaryButton";
+import TextInput from "@/Components/TextInput";
+import TelegramLoginWidget from "@/Components/TelegramLoginWidget";
+import GuestLayout from "@/Layouts/GuestLayout";
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 export default function Login({ status, canResetPassword }) {
     const { t } = useTranslation();
+    
+    useEffect(() => {
+        const tg = window.Telegram?.WebApp;
+        if (!tg) return;
+
+        tg.BackButton.show();
+
+        tg.onEvent("backButtonClicked", () => {
+            window.history.back();
+            //const prevRoute =
+            //     sessionStorage.getItem("tgPrevRoute") || route("home");
+            // router.visit(prevRoute, {
+            //     preserveState: true,
+            //     preserveScroll: true,
+            // });
+        });
+        return () => {
+            tg.BackButton.hide();
+            tg.BackButton.offClick();
+        };
+    }, []);
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
-        password: '',
+        email: "",
+        password: "",
         remember: false,
     });
 
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('login'), {
-            onFinish: () => reset('password'),
+        post(route("login"), {
+            onFinish: () => reset("password"),
         });
     };
 
     return (
         <GuestLayout>
-            <Head title={t('Log in')} />
+            <Head title={t("Log in")} />
 
             <div className="mb-8 text-center">
-                <h2 className="text-3xl font-bold text-gray-800 dark:text-white">{t('Welcome Back')}</h2>
-                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{t('Please sign in to your account')}</p>
+                <h2 className="text-3xl font-bold text-gray-800 dark:text-white">
+                    {t("Welcome Back")}
+                </h2>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    {t("Please sign in to your account")}
+                </p>
             </div>
 
             {status && (
@@ -41,7 +67,7 @@ export default function Login({ status, canResetPassword }) {
 
             <form onSubmit={submit} className="space-y-6">
                 <div>
-                    <InputLabel htmlFor="email" value={t('Email')} />
+                    <InputLabel htmlFor="email" value={t("Email")} />
 
                     <TextInput
                         id="email"
@@ -51,15 +77,15 @@ export default function Login({ status, canResetPassword }) {
                         className="mt-1 block w-full"
                         autoComplete="username"
                         isFocused={true}
-                        placeholder={t('Enter your email')}
-                        onChange={(e) => setData('email', e.target.value)}
+                        placeholder={t("Enter your email")}
+                        onChange={(e) => setData("email", e.target.value)}
                     />
 
                     <InputError message={errors.email} className="mt-2" />
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="password" value={t('Password')} />
+                    <InputLabel htmlFor="password" value={t("Password")} />
 
                     <TextInput
                         id="password"
@@ -68,8 +94,8 @@ export default function Login({ status, canResetPassword }) {
                         value={data.password}
                         className="mt-1 block w-full"
                         autoComplete="current-password"
-                        placeholder={t('Enter your password')}
-                        onChange={(e) => setData('password', e.target.value)}
+                        placeholder={t("Enter your password")}
+                        onChange={(e) => setData("password", e.target.value)}
                     />
 
                     <InputError message={errors.password} className="mt-2" />
@@ -81,28 +107,28 @@ export default function Login({ status, canResetPassword }) {
                             name="remember"
                             checked={data.remember}
                             onChange={(e) =>
-                                setData('remember', e.target.checked)
+                                setData("remember", e.target.checked)
                             }
                             className="rounded border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-blue-600 focus:ring-blue-500"
                         />
                         <span className="ms-2 text-sm text-gray-600 dark:text-gray-400">
-                            {t('Remember me')}
+                            {t("Remember me")}
                         </span>
                     </label>
 
                     {canResetPassword && (
                         <Link
-                            href={route('password.request')}
+                            href={route("password.request")}
                             className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
                         >
-                            {t('Forgot password?')}
+                            {t("Forgot password?")}
                         </Link>
                     )}
                 </div>
 
                 <div>
                     <PrimaryButton disabled={processing}>
-                        {t('Sign in')}
+                        {t("Sign in")}
                     </PrimaryButton>
                 </div>
 
@@ -113,23 +139,25 @@ export default function Login({ status, canResetPassword }) {
                         </div>
                         <div className="relative flex justify-center text-sm">
                             <span className="bg-white dark:bg-[#1f2937] px-2 text-gray-500">
-                                {t('Or continue with')}
+                                {t("Or continue with")}
                             </span>
                         </div>
                     </div>
 
                     <div className="mt-6">
-                        <TelegramLoginWidget botName={usePage().props.telegramBotUsername} />
+                        <TelegramLoginWidget
+                            botName={usePage().props.telegramBotUsername}
+                        />
                     </div>
                 </div>
 
                 <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-                    {t("Don't have an account?")}{' '}
+                    {t("Don't have an account?")}{" "}
                     <Link
-                        href={route('register')}
+                        href={route("register")}
                         className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
                     >
-                        {t('Sign up')}
+                        {t("Sign up")}
                     </Link>
                 </div>
             </form>

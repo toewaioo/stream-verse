@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { usePage, router, Link } from "@inertiajs/react";
+import { usePage, Link } from "@inertiajs/react";
 import SeoHead from "@/Components/SeoHead";
 import RatingWidget from "@/Components/Movie/RatingWidget";
 import Review from "@/Components/Movie/Review";
 import ReviewForm from "@/Components/Movie/ReviewForm";
 import Footer from "@/Components/Footer";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
 
 // --- Components ---
 
@@ -34,18 +35,12 @@ const DownloadIcon = ({ className = "w-6 h-6" }) => (
 const LinkItem = ({ link, type, isVip }) => {
     const { t } = useTranslation();
     const isLocked = link.is_vip_only && !isVip;
-    const [copied, setCopied] = useState(false);
-
-    const handleCopy = () => {
-        navigator.clipboard.writeText(link.url);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
 
     return (
         <div
-            className={`group flex items-center justify-around py-3 border-b border-white/5 hover:bg-white/5 transition-colors px-2 ${isLocked ? "opacity-50" : ""
-                }`}
+            className={`group flex items-center justify-around py-3 border-b border-white/5 hover:bg-white/5 transition-colors px-2 ${
+                isLocked ? "opacity-50" : ""
+            }`}
         >
             <div className="flex items-center justify-center gap-3 min-w-0">
                 <div className="flex flex-col min-w-0">
@@ -55,10 +50,11 @@ const LinkItem = ({ link, type, isVip }) => {
                 </div>
             </div>
             <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${type === "download"
+                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${
+                    type === "download"
                         ? "border-blue-500 text-blue-500"
                         : "border-red-500 text-red-500"
-                    }`}
+                }`}
             >
                 {link.quality?.replace("p", "") || "HD"}
             </div>
@@ -69,35 +65,28 @@ const LinkItem = ({ link, type, isVip }) => {
                         {t("VIP")}
                     </span>
                 ) : (
-                    <>
-                        {/* <button
-                            onClick={handleCopy}
-                            className="text-gray-600 hover:text-white text-[10px] uppercase tracking-widest transition-colors"
+                    <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                            type === "download"
+                                ? "bg-blue-600 hover:bg-blue-500 text-white"
+                                : "bg-red-600 hover:bg-red-500 text-white"
+                        }`}
+                    >
+                        <svg
+                            className="w-3 h-3"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
                         >
-                            {copied ? t("Copied") : t("Copy")}
-                        </button> */}
-                        <a
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${type === "download"
-                                    ? "bg-blue-600 hover:bg-blue-500 text-white"
-                                    : "bg-red-600 hover:bg-red-500 text-white"
-                                }`}
-                        >
-                            <svg
-                                className="w-3 h-3"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                                    clipRule="evenodd"
-                                />
-                            </svg>
-                        </a>
-                    </>
+                            <path
+                                fillRule="evenodd"
+                                d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                                clipRule="evenodd"
+                            />
+                        </svg>
+                    </a>
                 )}
             </div>
         </div>
@@ -110,8 +99,9 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
         <div className="border-b border-white/10 last:border-0">
             <button
                 onClick={onClick}
-                className={`w-full flex items-center justify-between p-4 text-left transition-colors ${isActive ? "bg-white/10" : "hover:bg-white/5"
-                    }`}
+                className={`w-full flex items-center justify-between p-4 text-left transition-colors ${
+                    isActive ? "bg-white/10" : "hover:bg-white/5"
+                }`}
             >
                 <div className="flex items-center gap-4">
                     <span className="text-gray-500 font-mono text-sm w-6">
@@ -119,25 +109,27 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                     </span>
                     <div>
                         <h4
-                            className={`font-serif text-lg leading-none ${isActive
+                            className={`font-serif text-lg leading-none ${
+                                isActive
                                     ? "dark:text-white"
                                     : "dark:text-gray-300"
-                                }`}
+                            }`}
                         >
                             {episode.title}
                         </h4>
                         <span className="text-xs dark:text-gray-600 mt-1 block">
                             {episode.air_date
                                 ? new Date(
-                                    episode.air_date
-                                ).toLocaleDateString()
+                                      episode.air_date
+                                  ).toLocaleDateString()
                                 : t("Unknown Date")}
                         </span>
                     </div>
                 </div>
                 <div
-                    className={`transform transition-transform ${isActive ? "rotate-180" : ""
-                        }`}
+                    className={`transform transition-transform ${
+                        isActive ? "rotate-180" : ""
+                    }`}
                 >
                     <svg
                         className="w-5 h-5 text-gray-500"
@@ -157,7 +149,6 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
 
             {isActive && (
                 <div className="p-4 bg-black/20 animate-fade-in">
-                    {/* Episode Poster & Synopsis */}
                     <div className="flex flex-col md:flex-row gap-4 mb-6">
                         {episode.poster_url && (
                             <div className="w-full md:w-32 aspect-video rounded overflow-hidden flex-shrink-0">
@@ -174,21 +165,23 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                         </p>
                     </div>
 
-                    {/* Links */}
                     {isAuthenticated ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className={`${episode.watch_links &&
+                            <div
+                                className={`${
+                                    episode.watch_links &&
                                     episode.watch_links.length > 0
-                                    ? ""
-                                    : "hidden"
-                                }`}>
+                                        ? ""
+                                        : "hidden"
+                                }`}
+                            >
                                 <h5 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                                     <PlayIcon className="w-3 h-3" />{" "}
                                     {t("Stream")}
                                 </h5>
                                 <div className="space-y-1">
                                     {episode.watch_links &&
-                                        episode.watch_links.length > 0 ? (
+                                    episode.watch_links.length > 0 ? (
                                         episode.watch_links.map((link) => (
                                             <LinkItem
                                                 key={link.id}
@@ -205,11 +198,12 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                                 </div>
                             </div>
                             <div
-                                className={`${episode.download_links &&
-                                        episode.download_links.length > 0
+                                className={`${
+                                    episode.download_links &&
+                                    episode.download_links.length > 0
                                         ? ""
                                         : "hidden"
-                                    }`}
+                                }`}
                             >
                                 <h5 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                                     <DownloadIcon className="w-3 h-3" />{" "}
@@ -217,7 +211,7 @@ const EpisodeRow = ({ episode, isActive, onClick, isVip, isAuthenticated }) => {
                                 </h5>
                                 <div className="space-y-1">
                                     {episode.download_links &&
-                                        episode.download_links.length > 0 ? (
+                                    episode.download_links.length > 0 ? (
                                         episode.download_links.map((link) => (
                                             <LinkItem
                                                 key={link.id}
@@ -300,14 +294,16 @@ const TrailerModal = ({ url, onClose }) => {
 };
 
 export default function SeriesDetails({
-    series,
+    series: initialSeries,
     relatedSeries,
-    userRating,
+    userRating: initialUserRating,
     isVip,
     seo,
 }) {
     const { t } = useTranslation();
     const { auth } = usePage().props;
+    const [series, setSeries] = useState(initialSeries);
+    const [userRating, setUserRating] = useState(initialUserRating);
     const [showTrailer, setShowTrailer] = useState(false);
     const [activeSeason, setActiveSeason] = useState(
         series.seasons?.[series.seasons?.length - 1] || null
@@ -318,24 +314,14 @@ export default function SeriesDetails({
     useEffect(() => {
         const tg = window.Telegram?.WebApp;
         if (!tg) return;
-
         tg.BackButton.show();
-
-        tg.onEvent("backButtonClicked", () => {
-            window.history.back();
-            // const prevRoute =
-            //     sessionStorage.getItem("tgPrevRoute") || route("home");
-            // router.visit(prevRoute,{
-            //     preserveState: true,
-            //     preserveScroll: true,
-            // });
-        });
+        tg.onEvent("backButtonClicked", () => window.history.back());
         return () => {
             tg.BackButton.hide();
             tg.BackButton.offClick();
-        }
+        };
     }, []);
-    // Auto-expand first episode of active season
+
     useEffect(() => {
         if (activeSeason && activeSeason.episodes?.length > 0) {
             setExpandedEpisodeId(
@@ -343,6 +329,51 @@ export default function SeriesDetails({
             );
         }
     }, [activeSeason]);
+
+    const handleRate = async (rating) => {
+        const url = userRating
+            ? route("api.ratings.update", userRating.id)
+            : route("api.ratings.store");
+        const method = userRating ? "put" : "post";
+
+        try {
+            const response = await axios[method](url, {
+                rating,
+                series_id: series.id,
+            });
+            const { rating: newRating, content: updatedSeries } = response.data;
+            setUserRating(newRating);
+            setSeries(updatedSeries);
+        } catch (error) {
+            console.error("Failed to submit rating:", error);
+        }
+    };
+
+    const handleReviewSubmit = async (reviewData) => {
+        const url = reviewData.id
+            ? route("api.reviews.update", reviewData.id)
+            : route("api.series.reviews.store", series.id);
+        const method = reviewData.id ? "put" : "post";
+
+        try {
+            const response = await axios[method](url, reviewData);
+            const { content: updatedSeries } = response.data;
+            setSeries(updatedSeries);
+            setEditingReviewId(null);
+        } catch (error) {
+            console.error("Failed to submit review:", error);
+        }
+    };
+
+    const handleReviewDelete = async (reviewId) => {
+        try {
+            const response = await axios.delete(route("api.reviews.destroy", reviewId));
+            const { content: updatedSeries } = response.data;
+            setSeries(updatedSeries);
+        } catch (error) {
+            console.error("Failed to delete review:", error);
+        }
+    };
 
     const scrollToEpisodes = () => {
         document
@@ -367,9 +398,7 @@ export default function SeriesDetails({
             />
 
             <div className="min-h-screen bg-gray-50 dark:bg-[#0a0e17] text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500 selection:text-white transition-colors duration-300">
-                {/* --- HERO SECTION --- */}
                 <div className="relative w-full min-h-[85vh] md:min-h-[100vh] flex items-end pb-12 md:pb-24 overflow-hidden">
-                    {/* Background Image */}
                     <div className="absolute inset-0 z-0">
                         <img
                             src={series.banner_url}
@@ -381,16 +410,13 @@ export default function SeriesDetails({
                             alt={series.title}
                             className={`block md:hidden w-full h-full object-cover`}
                         />
-                        {/* Gradient Overlays */}
                         <div className="absolute inset-0 bg-gradient-to-t from-gray-50 dark:from-[#0a0e17] via-gray-50/60 dark:via-[#0a0e17]/60 to-transparent" />
                         <div className="absolute inset-0 bg-gradient-to-r from-gray-50 dark:from-[#0a0e17] via-gray-50/40 dark:via-[#0a0e17]/40 to-transparent" />
                         <div className="absolute inset-0 bg-white/10 dark:bg-black/20" />
                     </div>
 
-                    {/* Hero Content */}
                     <div className="relative z-10 container-custom w-full">
                         <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-end">
-                            {/* Poster Card (Floating) */}
                             <div className="hidden md:block w-64 lg:w-72 flex-shrink-0 rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.2)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-gray-200 dark:border-white/10 transform hover:scale-105 transition-transform duration-500">
                                 <img
                                     src={series.poster_url}
@@ -399,7 +425,6 @@ export default function SeriesDetails({
                                 />
                             </div>
 
-                            {/* Text Info */}
                             <div className="flex-1 w-full text-center md:text-left">
                                 <div
                                     className="mb-4 animate-slide-up"
@@ -424,7 +449,6 @@ export default function SeriesDetails({
                                     </div>
                                 </div>
 
-                                {/* Metadata Row */}
                                 <div
                                     className="flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 mb-8 text-sm md:text-base font-medium text-gray-600 dark:text-gray-300 animate-slide-up"
                                     style={{ animationDelay: "0.2s" }}
@@ -437,17 +461,14 @@ export default function SeriesDetails({
                                             </span>
                                         </div>
                                     )}
-
                                     <span>
                                         {series.seasons?.length} {t("Seasons")}
                                     </span>
-
                                     {series.age_rating && (
                                         <span className="px-2 py-0.5 border border-gray-300 dark:border-white/20 rounded text-xs uppercase tracking-wider bg-gray-200 dark:bg-white/5">
                                             {series.age_rating}
                                         </span>
                                     )}
-
                                     {series.country && (
                                         <>
                                             <span className="hidden md:inline">
@@ -482,7 +503,6 @@ export default function SeriesDetails({
                                     )}
                                 </div>
 
-                                {/* Genres */}
                                 <div
                                     className="flex flex-wrap justify-center md:justify-start gap-2 mb-8 animate-slide-up"
                                     style={{ animationDelay: "0.3s" }}
@@ -497,7 +517,6 @@ export default function SeriesDetails({
                                     ))}
                                 </div>
 
-                                {/* Action Buttons */}
                                 <div
                                     className="flex flex-wrap justify-center md:justify-start gap-4 animate-slide-up"
                                     style={{ animationDelay: "0.4s" }}
@@ -509,7 +528,6 @@ export default function SeriesDetails({
                                         <PlayIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
                                         {t("Watch Episodes")}
                                     </button>
-
                                     {series.trailer_url && (
                                         <button
                                             onClick={() => setShowTrailer(true)}
@@ -543,12 +561,9 @@ export default function SeriesDetails({
                     </div>
                 </div>
 
-                {/* --- MAIN CONTENT --- */}
                 <div className="container-custom py-12 md:py-20">
                     <div className="flex flex-col lg:flex-row gap-12">
-                        {/* Left Column: Synopsis, Episodes, Cast */}
                         <div className="flex-1">
-                            {/* Synopsis */}
                             <div className="mb-16">
                                 <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <span className="w-2 h-[2px] bg-blue-500"></span>
@@ -559,7 +574,6 @@ export default function SeriesDetails({
                                 </p>
                             </div>
 
-                            {/* Episode Guide */}
                             <div
                                 id="episodes-section"
                                 className="mb-16 scroll-mt-24"
@@ -578,7 +592,6 @@ export default function SeriesDetails({
 
                                 {series.seasons && series.seasons.length > 0 ? (
                                     <div className="glass-card-adaptive overflow-hidden">
-                                        {/* Season Tabs */}
                                         <div className="flex overflow-x-auto p-4 gap-2 border-b border-gray-200 dark:border-white/5 custom-scrollbar bg-gray-100 dark:bg-black/20">
                                             {series.seasons
                                                 .slice()
@@ -591,11 +604,12 @@ export default function SeriesDetails({
                                                                 season
                                                             )
                                                         }
-                                                        className={`whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all ${activeSeason?.id ===
-                                                                season.id
+                                                        className={`whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all ${
+                                                            activeSeason?.id ===
+                                                            season.id
                                                                 ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
                                                                 : "bg-gray-200 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white"
-                                                            }`}
+                                                        }`}
                                                     >
                                                         {t(
                                                             `Season ${season.season_number}`
@@ -604,10 +618,9 @@ export default function SeriesDetails({
                                                 ))}
                                         </div>
 
-                                        {/* Episodes List */}
                                         <div className="divide-y divide-gray-200 dark:divide-white/5">
                                             {activeSeason?.episodes &&
-                                                activeSeason.episodes.length > 0 ? (
+                                            activeSeason.episodes.length > 0 ? (
                                                 activeSeason.episodes
                                                     .slice()
                                                     .reverse()
@@ -649,44 +662,47 @@ export default function SeriesDetails({
                                 )}
                             </div>
 
-                            {/* Cast */}
                             <div className="mb-16">
                                 <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
                                     <span className="w-2 h-[2px] bg-blue-500"></span>
                                     {t("Cast & Crew")}
                                 </h3>
                                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6">
-                                    {series.actors?.slice(0, 8).map((actor) => (
-                                        <Link
-                                            key={actor.id}
-                                            href={route(
-                                                "person.show",
-                                                actor.person?.id
-                                            )}
-                                            className="group block"
-                                        >
-                                            <div className="aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-gray-200 dark:bg-gray-800">
-                                                <img
-                                                    src={
-                                                        actor.person
-                                                            ?.avatar_url ||
-                                                        "/images/placeholder-avatar.jpg"
-                                                    }
-                                                    alt={actor.person?.name}
-                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                                />
-                                            </div>
-                                            <h4 className="text-gray-900 dark:text-white font-medium truncate group-hover:text-blue-400 transition-colors">
-                                                {actor.person?.name}
-                                            </h4>
-                                            <p className="text-sm text-gray-500 truncate">
-                                                {actor.character_name}
-                                            </p>
-                                        </Link>
-                                    ))}
+                                    {series.actors
+                                        ?.slice(0, 8)
+                                        .map((actor) => (
+                                            <Link
+                                                key={actor.id}
+                                                href={route(
+                                                    "person.show",
+                                                    actor.person?.id
+                                                )}
+                                                className="group block"
+                                            >
+                                                <div className="aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-gray-200 dark:bg-gray-800">
+                                                    <img
+                                                        src={
+                                                            actor.person
+                                                                ?.avatar_url ||
+                                                            "/images/placeholder-avatar.jpg"
+                                                        }
+                                                        alt={
+                                                            actor.person?.name
+                                                        }
+                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                    />
+                                                </div>
+                                                <h4 className="text-gray-900 dark:text-white font-medium truncate group-hover:text-blue-400 transition-colors">
+                                                    {actor.person?.name}
+                                                </h4>
+                                                <p className="text-sm text-gray-500 truncate">
+                                                    {actor.character_name}
+                                                </p>
+                                            </Link>
+                                        ))}
                                 </div>
                             </div>
-                            {/* Reviews Section */}
+
                             <div className="mb-16">
                                 <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
                                     <span className="w-2 h-[2px] bg-blue-500"></span>
@@ -696,18 +712,19 @@ export default function SeriesDetails({
                                     <ReviewForm
                                         content={series}
                                         contentType="series"
-                                        onSuccess={() => {
-                                            // maybe show a toast or something
-                                        }}
+                                        onSuccess={handleReviewSubmit}
                                     />
                                 )}
-                                {auth.user && userHasReviewed && !editingReviewId && (
-                                    <div className="glass-card-adaptive p-6 text-center">
-                                        <p className="text-gray-500 dark:text-gray-400 font-medium">
-                                            You have already reviewed this series.
-                                        </p>
-                                    </div>
-                                )}
+                                {auth.user &&
+                                    userHasReviewed &&
+                                    !editingReviewId && (
+                                        <div className="glass-card-adaptive p-6 text-center">
+                                            <p className="text-gray-500 dark:text-gray-400 font-medium">
+                                                You have already reviewed this
+                                                series.
+                                            </p>
+                                        </div>
+                                    )}
                                 {!auth.user && (
                                     <div className="glass-card-adaptive p-8 text-center">
                                         <p className="text-gray-500 dark:text-gray-400 mb-6 font-medium">
@@ -732,8 +749,8 @@ export default function SeriesDetails({
                                                     content={series}
                                                     contentType="series"
                                                     review={review}
-                                                    onSuccess={() =>
-                                                        setEditingReviewId(null)
+                                                    onSuccess={
+                                                        handleReviewSubmit
                                                     }
                                                     onCancel={() =>
                                                         setEditingReviewId(null)
@@ -748,17 +765,11 @@ export default function SeriesDetails({
                                                             review.id
                                                         )
                                                     }
-                                                    onDelete={() => {
-                                                        router.delete(
-                                                            route(
-                                                                "reviews.destroy",
-                                                                review.id
-                                                            ),
-                                                            {
-                                                                preserveScroll: true,
-                                                            }
-                                                        );
-                                                    }}
+                                                    onDelete={() =>
+                                                        handleReviewDelete(
+                                                            review.id
+                                                        )
+                                                    }
                                                 />
                                             )
                                         )
@@ -770,7 +781,6 @@ export default function SeriesDetails({
                                 </div>
                             </div>
 
-                            {/*Backdrop*/}
                             <div className="w-full">
                                 <h1>{t("Backdrop")}</h1>
                                 <img
@@ -781,9 +791,7 @@ export default function SeriesDetails({
                             </div>
                         </div>
 
-                        {/* Right Column: Sidebar (Rating, Related) */}
                         <div className="w-full lg:w-80 flex-shrink-0 space-y-12">
-                            {/* Rating Widget */}
                             <div className="glass-card-adaptive p-6">
                                 <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 text-center">
                                     {t("Rate this Series")}
@@ -795,29 +803,7 @@ export default function SeriesDetails({
                                         }
                                         ratingCount={series.rating_count || 0}
                                         userRating={userRating}
-                                        onRate={(rating) => {
-                                            if (userRating) {
-                                                router.put(
-                                                    route(
-                                                        "admin.ratings.update",
-                                                        userRating.id
-                                                    ),
-                                                    { rating },
-                                                    { preserveScroll: true }
-                                                );
-                                            } else {
-                                                router.post(
-                                                    route(
-                                                        "admin.ratings.store"
-                                                    ),
-                                                    {
-                                                        series_id: series.id,
-                                                        rating,
-                                                    },
-                                                    { preserveScroll: true }
-                                                );
-                                            }
-                                        }}
+                                        onRate={handleRate}
                                     />
                                 ) : (
                                     <div className="text-center text-sm text-gray-500">
@@ -832,7 +818,6 @@ export default function SeriesDetails({
                                 )}
                             </div>
 
-                            {/* Related Series */}
                             {relatedSeries && relatedSeries.length > 0 && (
                                 <div>
                                     <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6 border-l-4 border-blue-500 pl-3">
@@ -884,7 +869,6 @@ export default function SeriesDetails({
                 <Footer />
             </div>
 
-            {/* Trailer Modal */}
             {showTrailer && (
                 <TrailerModal
                     url={series.trailer_url}

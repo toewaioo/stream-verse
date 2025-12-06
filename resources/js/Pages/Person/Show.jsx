@@ -11,6 +11,26 @@ export default function PersonShow({ person, movies, series, seo }) {
     const { t } = useTranslation();
     console.log(person);
     const [activeTab, setActiveTab] = useState("movies");
+    useEffect(() => {
+        const tg = window.Telegram?.WebApp;
+        if (!tg) return;
+
+        tg.BackButton.show();
+
+        tg.onEvent("backButtonClicked", () => {
+            window.history.back();
+            //const prevRoute =
+            //     sessionStorage.getItem("tgPrevRoute") || route("home");
+            // router.visit(prevRoute, {
+            //     preserveState: true,
+            //     preserveScroll: true,
+            // });
+        });
+        return () => {
+            tg.BackButton.hide();
+            tg.BackButton.offClick();
+        };
+    }, []);
 
     const handlePageChange = (url, type) => {
         router.get(url, {}, { preserveState: true, preserveScroll: true });
@@ -100,13 +120,18 @@ export default function PersonShow({ person, movies, series, seo }) {
                                     </div>
                                 )}
                                 <div className="inline-block px-3 py-1 border border-gray-800/30 dark:border-white/30 text-xs font-bold uppercase tracking-widest text-gray-800 dark:text-white mb-4 backdrop-blur-sm">
-                                    {t('Filmography')}
+                                    {t("Filmography")}
                                 </div>
                                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-gray-800 dark:text-white leading-tight mb-4">
                                     {person.name}
                                 </h1>
                                 <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
-                                    {t(`${movies.total+series.total} titles featuring this talent`, { count: movies.total + series.total })}
+                                    {t(
+                                        `${
+                                            movies.total + series.total
+                                        } titles featuring this talent`,
+                                        { count: movies.total + series.total }
+                                    )}
                                 </p>
                             </div>
                         </div>
@@ -119,7 +144,7 @@ export default function PersonShow({ person, movies, series, seo }) {
                             <div className="mb-2 max-w-4xl mx-auto">
                                 <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 md:p-8">
                                     <h2 className="text-2xl font-serif text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-white/10 pb-3">
-                                        {t('Biography')}
+                                        {t("Biography")}
                                     </h2>
                                     <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                                         {person.biography}
@@ -138,7 +163,9 @@ export default function PersonShow({ person, movies, series, seo }) {
                                         : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                                 }`}
                             >
-                                {t(`Movies (${movies.total})`, { count: movies.total })}
+                                {t(`Movies (${movies.total})`, {
+                                    count: movies.total,
+                                })}
                                 {activeTab === "movies" && (
                                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-800 dark:bg-white"></div>
                                 )}
@@ -151,7 +178,9 @@ export default function PersonShow({ person, movies, series, seo }) {
                                         : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                                 }`}
                             >
-                                {t(`Series (${series.total})`, { count: series.total })}
+                                {t(`Series (${series.total})`, {
+                                    count: series.total,
+                                })}
                                 {activeTab === "series" && (
                                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-800 dark:bg-white"></div>
                                 )}
@@ -180,7 +209,9 @@ export default function PersonShow({ person, movies, series, seo }) {
                                 ) : (
                                     <div className="text-center py-20">
                                         <p className="text-gray-500 text-lg">
-                                            {t('No movies found featuring this person.')}
+                                            {t(
+                                                "No movies found featuring this person."
+                                            )}
                                         </p>
                                     </div>
                                 )}
@@ -209,7 +240,9 @@ export default function PersonShow({ person, movies, series, seo }) {
                                 ) : (
                                     <div className="text-center py-20">
                                         <p className="text-gray-500 text-lg">
-                                            {t('No series found featuring this person.')}
+                                            {t(
+                                                "No series found featuring this person."
+                                            )}
                                         </p>
                                     </div>
                                 )}

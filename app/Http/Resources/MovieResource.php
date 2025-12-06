@@ -40,6 +40,7 @@ class MovieResource extends JsonResource
             'watch_links' => WatchLinkResource::collection($this->whenLoaded('watchLinks')),
             'download_links' => DownloadLinkResource::collection($this->whenLoaded('downloadLinks')),
             'ratings' => RatingResource::collection($this->whenLoaded('ratings')),
+            'reviews' => ReviewResource::collection($this->whenLoaded('reviews')),
             'user_rating' => new RatingResource($this->whenLoaded('userRating')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

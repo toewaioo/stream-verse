@@ -1,52 +1,52 @@
-import React, { useEffect } from "react";
-import { useForm, usePage } from "@inertiajs/react";
+import React, { useEffect, useState } from "react";
+import { usePage } from "@inertiajs/react";
 import StarRatingInput from "@/Components/StarRatingInput";
 
 const ReviewForm = ({
     content,
-    contentType,
     review = null,
     onSuccess,
     onCancel,
 }) => {
     const { auth } = usePage().props;
-    const { data, setData, post, put, processing, errors, reset } = useForm({
+    const [formData, setFormData] = useState({
         content: review ? review.content : "",
         rating: review ? review.rating : 0,
     });
+    const [processing, setProcessing] = useState(false);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (review) {
-            setData({
+            setFormData({
                 content: review.content,
                 rating: review.rating,
             });
         }
     }, [review]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const routeName =
-            contentType === "movie"
-                ? "reviews.store.movie"
-                : "reviews.store.series";
+        setProcessing(true);
+        setErrors({});
 
-        if (review) {
-            put(route("reviews.update", review.id), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    if (onSuccess) onSuccess();
-                },
-            });
-        } else {
-            post(route(routeName, content.id), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    reset();
-                    if (onSuccess) onSuccess();
-                },
-            });
+        try {
+            await onSuccess({ id: review?.id, ...formData });
+            if (!review) {
+                setFormData({ content: "", rating: 0 });
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 422) {
+                setErrors(error.response.data.errors);
+            }
+            console.error("Submission failed", error);
+        } finally {
+            setProcessing(false);
         }
+    };
+
+    const handleChange = (key, value) => {
+        setFormData((prev) => ({ ...prev, [key]: value }));
     };
 
     return (
@@ -82,8 +82,8 @@ const ReviewForm = ({
                     </h3>
                     <div className="relative mb-4">
                         <textarea
-                            value={data?.content}
-                            onChange={(e) => setData("content", e.target.value)}
+                            value={formData.content}
+                            onChange={(e) => handleChange("content", e.target.value)}
                             className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 p-4 rounded-xl text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:outline-none transition-all placeholder-gray-400 dark:placeholder-gray-600 resize-y min-h-[120px]"
                             placeholder={`What did you think of ${content.title}? Share your thoughts...`}
                         ></textarea>
@@ -102,7 +102,7 @@ const ReviewForm = ({
                                         d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                     />
                                 </svg>
-                                {errors.content}
+                                {errors.content[0]}
                             </p>
                         )}
                     </div>
@@ -110,9 +110,9 @@ const ReviewForm = ({
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div className="w-full sm:w-auto">
                             <StarRatingInput
-                                value={data.rating}
-                                onChange={(rating) => setData("rating", rating)}
-                                error={errors.rating}
+                                value={formData.rating}
+                                onChange={(rating) => handleChange("rating", rating)}
+                                error={errors.rating ? errors.rating[0] : null}
                             />
                         </div>
                         <div className="flex items-center gap-2">

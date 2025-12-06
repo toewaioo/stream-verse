@@ -7,10 +7,32 @@ import Footer from "@/Components/Footer";
 import { useTranslation } from "react-i18next";
 import ThemeSwitcher from "@/Components/ThemeSwitcher";
 import LanguageSwitcher from "@/Components/LanguageSwitcher";
+import { useEffect } from "react";
 
 export default function Edit({ mustVerifyEmail, status }) {
     const { t, i18n } = useTranslation();
     const user = usePage().props.auth.user;
+
+    useEffect(() => {
+        const tg = window.Telegram?.WebApp;
+        if (!tg) return;
+
+        tg.BackButton.show();
+
+        tg.onEvent("backButtonClicked", () => {
+            window.history.back();
+            //const prevRoute =
+            //     sessionStorage.getItem("tgPrevRoute") || route("home");
+            // router.visit(prevRoute, {
+            //     preserveState: true,
+            //     preserveScroll: true,
+            // });
+        });
+        return () => {
+            tg.BackButton.hide();
+            tg.BackButton.offClick();
+        };
+    }, []);
 
     const getInitials = (name) => {
         return name
@@ -42,10 +64,10 @@ export default function Edit({ mustVerifyEmail, status }) {
                             <div className="absolute top-0 left-0 m-2">
                                 <ThemeSwitcher />
                             </div>
-                           <div className="absolute top-0 right-0 m-2">
+                            <div className="absolute top-0 right-0 m-2">
                                 <LanguageSwitcher />
                             </div>
-                    
+
                             <div className="relative flex flex-col md:flex-col items-center md:items-center md:justify-center gap-6 md:gap-8">
                                 {/* Avatar */}
                                 <div className="flex-shrink-0">

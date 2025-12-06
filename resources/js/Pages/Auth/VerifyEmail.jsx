@@ -1,10 +1,32 @@
 import PrimaryButton from '@/Components/PrimaryButton';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function VerifyEmail({ status }) {
     const { t } = useTranslation();
+    
+     useEffect(() => {
+            const tg = window.Telegram?.WebApp;
+            if (!tg) return;
+    
+            tg.BackButton.show();
+    
+            tg.onEvent("backButtonClicked", () => {
+                window.history.back();
+                //const prevRoute =
+                //     sessionStorage.getItem("tgPrevRoute") || route("home");
+                // router.visit(prevRoute, {
+                //     preserveState: true,
+                //     preserveScroll: true,
+                // });
+            });
+            return () => {
+                tg.BackButton.hide();
+                tg.BackButton.offClick();
+            };
+        }, []);
     const { post, processing } = useForm({});
 
     const submit = (e) => {

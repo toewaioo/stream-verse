@@ -9,10 +9,18 @@ export default function About({ title, description }) {
         tg.BackButton.show();
 
         tg.onEvent("backButtonClicked", () => {
-            const prevRoute =
-                sessionStorage.getItem("tgPrevRoute") || route("home");
-            router.visit(prevRoute);
+            window.history.back();
+            //const prevRoute =
+            //     sessionStorage.getItem("tgPrevRoute") || route("home");
+            // router.visit(prevRoute, {
+            //     preserveState: true,
+            //     preserveScroll: true,
+            // });
         });
+        return () => {
+            tg.BackButton.hide();
+            tg.BackButton.offClick();
+        };
     }, []);
     return (
         <StaticPageLayout title={title} description={description}>

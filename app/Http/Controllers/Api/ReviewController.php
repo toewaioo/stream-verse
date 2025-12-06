@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
+use App\Http\Resources\MovieResource;
 use App\Http\Resources\ReviewResource;
+use App\Http\Resources\SeriesResource;
 use App\Models\Movie;
 use App\Models\Review;
 use App\Models\Series;
@@ -16,15 +18,21 @@ class ReviewController extends Controller
     public function storeMovieReview(StoreReviewRequest $request, Movie $movie)
     {
         $review = $movie->reviews()->create($request->validated() + ['user_id' => auth()->id()]);
-
-        return new ReviewResource($review);
+        $movie->load('reviews.user');
+        return response()->json([
+            'review' => new ReviewResource($review),
+            'content' => new MovieResource($movie),
+        ]);
     }
 
     public function storeSeriesReview(StoreReviewRequest $request, Series $series)
     {
         $review = $series->reviews()->create($request->validated() + ['user_id' => auth()->id()]);
-
-        return new ReviewResource($review);
+        $series->load('reviews.user');
+        return response()->json([
+            'review' => new ReviewResource($review),
+            'content' => new SeriesResource($series),
+        ]);
     }
 
     public function getMovieReviews(Movie $movie)
@@ -39,19 +47,25 @@ class ReviewController extends Controller
 
     public function update(UpdateReviewRequest $request, Review $review)
     {
-        $this->authorize('update', $review);
-
         $review->update($request->validated());
+        $content = $review->reviewable;
+        $content->load('reviews.user');
 
-        return new ReviewResource($review);
+        return response()->json([
+            'review' => new ReviewResource($review),
+            'content' => $content instanceof Movie ? new MovieResource($content) : new SeriesResource($content),
+        ]);
     }
 
     public function destroy(Review $review)
     {
-        $this->authorize('delete', $review);
-
+       
+        $content = $review->reviewable;
         $review->delete();
+        $content->load('reviews.user');
 
-        return response()->noContent();
+        return response()->json([
+            'content' => $content instanceof Movie ? new MovieResource($content) : new SeriesResource($content),
+        ]);
     }
 }

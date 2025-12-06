@@ -33,6 +33,7 @@ class SeriesResource extends JsonResource
             'actors' => PersonRoleResource::collection($this->whenLoaded('actors')),
             'directors' => PersonRoleResource::collection($this->whenLoaded('directors')),
             'latest_episodes' => EpisodeResource::collection($this->whenLoaded('latestEpisodes')),
+            'reviews' => ReviewResource::collection($this->whenLoaded('reviews')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

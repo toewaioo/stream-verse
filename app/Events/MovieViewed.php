@@ -10,5 +10,7 @@ class MovieViewed
 {
     use Dispatchable, SerializesModels;
 
-    public function __construct(public Movie $movie) {}
+    public function __construct(public Movie $movie) {
+        
+    }
 }

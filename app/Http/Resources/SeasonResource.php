@@ -17,6 +17,7 @@ class SeasonResource extends JsonResource
             'episode_count' => $this->episode_count,
             'series' => new SeriesResource($this->whenLoaded('series')),
             'episodes' => EpisodeResource::collection($this->whenLoaded('episodes')),
+            
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

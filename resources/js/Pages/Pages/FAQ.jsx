@@ -10,10 +10,18 @@ const FAQItem = ({ question, answer, isOpen, onClick }) => {
         tg.BackButton.show();
 
         tg.onEvent("backButtonClicked", () => {
-            const prevRoute =
-                sessionStorage.getItem("tgPrevRoute") || route("home");
-            router.visit(prevRoute);
+            window.history.back();
+            //const prevRoute =
+            //     sessionStorage.getItem("tgPrevRoute") || route("home");
+            // router.visit(prevRoute, {
+            //     preserveState: true,
+            //     preserveScroll: true,
+            // });
         });
+        return () => {
+            tg.BackButton.hide();
+            tg.BackButton.offClick();
+        };
     }, []);
     return (
         <div className="border-b border-white/10">

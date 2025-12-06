@@ -8,7 +8,27 @@ import LoadingLayout from "@/Layouts/LoadingLayout";
 import { useTranslation } from "react-i18next";
 export default function GenreShow({ genre, movies, series, seo }) {
     const [activeTab, setActiveTab] = useState("movies");
-    const {t} = useTranslation();
+    const { t } = useTranslation();
+    useEffect(() => {
+        const tg = window.Telegram?.WebApp;
+        if (!tg) return;
+
+        tg.BackButton.show();
+
+        tg.onEvent("backButtonClicked", () => {
+            window.history.back();
+            //const prevRoute =
+            //     sessionStorage.getItem("tgPrevRoute") || route("home");
+            // router.visit(prevRoute, {
+            //     preserveState: true,
+            //     preserveScroll: true,
+            // });
+        });
+        return () => {
+            tg.BackButton.hide();
+            tg.BackButton.offClick();
+        };
+    }, []);
     const handlePageChange = (url, type) => {
         router.get(url, {}, { preserveState: true, preserveScroll: true });
     };
@@ -81,13 +101,18 @@ export default function GenreShow({ genre, movies, series, seo }) {
                         <div className="absolute inset-0 flex items-center justify-center">
                             <div className="container mx-auto px-6 md:px-12 text-center">
                                 <div className="inline-block px-3 py-1 border border-gray-800/30 dark:border-white/30 text-xs font-bold uppercase tracking-widest text-gray-800 dark:text-white mb-4 backdrop-blur-sm">
-                                    {t('Genre')}
+                                    {t("Genre")}
                                 </div>
                                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-gray-800 dark:text-white leading-tight mb-4">
                                     {genre.name}
                                 </h1>
                                 <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
-                                    {t(`Explore ${movies.total + series.total} movies and series in this genre`, { count: movies.total + series.total })}
+                                    {t(
+                                        `Explore ${
+                                            movies.total + series.total
+                                        } movies and series in this genre`,
+                                        { count: movies.total + series.total }
+                                    )}
                                 </p>
                             </div>
                         </div>
@@ -105,7 +130,9 @@ export default function GenreShow({ genre, movies, series, seo }) {
                                         : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                                 }`}
                             >
-                                {t(`Movies (${movies.total})`, { count: movies.total })}
+                                {t(`Movies (${movies.total})`, {
+                                    count: movies.total,
+                                })}
                                 {activeTab === "movies" && (
                                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-800 dark:bg-white"></div>
                                 )}
@@ -118,7 +145,9 @@ export default function GenreShow({ genre, movies, series, seo }) {
                                         : "text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                                 }`}
                             >
-                                {t(`Series (${series.total})`, { count: series.total })}
+                                {t(`Series (${series.total})`, {
+                                    count: series.total,
+                                })}
                                 {activeTab === "series" && (
                                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-800 dark:bg-white"></div>
                                 )}
@@ -147,7 +176,9 @@ export default function GenreShow({ genre, movies, series, seo }) {
                                 ) : (
                                     <div className="text-center py-20">
                                         <p className="text-gray-500 text-lg">
-                                            {t('No movies found in this genre.')}
+                                            {t(
+                                                "No movies found in this genre."
+                                            )}
                                         </p>
                                     </div>
                                 )}
@@ -176,7 +207,9 @@ export default function GenreShow({ genre, movies, series, seo }) {
                                 ) : (
                                     <div className="text-center py-20">
                                         <p className="text-gray-500 text-lg">
-                                            {t('No series found in this genre.')}
+                                            {t(
+                                                "No series found in this genre."
+                                            )}
                                         </p>
                                     </div>
                                 )}

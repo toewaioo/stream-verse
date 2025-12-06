@@ -15,30 +15,44 @@ class ReviewController extends Controller
     {
         $movie->reviews()->create($request->validated() + ['user_id' => auth()->id()]);
 
-        return redirect()->back()->with('success', 'Review submitted successfully.');
+        return redirect()->route('movies.show', $movie->slug)->with('success', 'Review submitted successfully.');
     }
 
     public function storeSeriesReview(StoreReviewRequest $request, Series $series)
     {
         $series->reviews()->create($request->validated() + ['user_id' => auth()->id()]);
 
-        return redirect()->back()->with('success', 'Review submitted successfully.');
+        return redirect()->route('series.show', $series->slug)->with('success', 'Review submitted successfully.');
     }
 
     public function update(UpdateReviewRequest $request, Review $review)
     {
-        
-
         $review->update($request->validated());
+
+        $reviewable = $review->reviewable;
+        if ($reviewable instanceof Movie) {
+            return redirect()->route('movies.show', $reviewable->slug)->with('success', 'Review updated successfully.');
+        }
+        if ($reviewable instanceof Series) {
+            return redirect()->route('series.show', $reviewable->slug)->with('success', 'Review updated successfully.');
+        }
 
         return redirect()->back()->with('success', 'Review updated successfully.');
     }
 
     public function destroy(Review $review)
     {
-       // $this->authorize('delete', $review);
+        // $this->authorize('delete', $review);
 
+        $reviewable = $review->reviewable;
         $review->delete();
+
+        if ($reviewable instanceof Movie) {
+            return redirect()->route('movies.show', $reviewable->slug)->with('success', 'Review deleted successfully.');
+        }
+        if ($reviewable instanceof Series) {
+            return redirect()->route('series.show', $reviewable->slug)->with('success', 'Review deleted successfully.');
+        }
 
         return redirect()->back()->with('success', 'Review deleted successfully.');
     }
