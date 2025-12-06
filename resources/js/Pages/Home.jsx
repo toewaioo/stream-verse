@@ -123,7 +123,7 @@ export default function Home({ featured, latestMovies, latestSeries, seo }) {
                         onTouchEnd={handleTouchEnd}
                     >
                         <div
-                            className={`absolute inset-0 transition-opacity duration-700 ${isSliding ? 'opacity-50' : 'opacity-100'}`}
+                            className={`absolute inset-0 transition-opacity duration-700 `}
                         >
                             <img
                                 src={currentItem.poster_url}

@@ -324,8 +324,15 @@ export default function SeriesDetails({
         tg.onEvent("backButtonClicked", () => {
             const prevRoute =
                 sessionStorage.getItem("tgPrevRoute") || route("home");
-            router.visit(prevRoute);
+            router.visit(prevRoute,{
+                preserveState: true,
+                preserveScroll: true,
+            });
         });
+        return () => {
+            tg.BackButton.hide();
+            tg.BackButton.offClick();
+        }
     }, []);
     // Auto-expand first episode of active season
     useEffect(() => {

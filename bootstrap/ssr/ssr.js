@@ -5863,7 +5863,7 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
             /* @__PURE__ */ jsxs(
               "div",
               {
-                className: `absolute inset-0 transition-opacity duration-700 ${isSliding ? "opacity-50" : "opacity-100"}`,
+                className: `absolute inset-0 transition-opacity duration-700 `,
                 children: [
                   /* @__PURE__ */ jsx(
                     "img",
@@ -6461,8 +6461,15 @@ function MovieDetails({
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", () => {
       const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
-      router.visit(prevRoute);
+      router.visit(prevRoute, {
+        preserveState: true,
+        preserveScroll: true
+      });
     });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
   }, []);
   const scrollToWatch = () => {
     document.getElementById("watch-section")?.scrollIntoView({ behavior: "smooth" });
@@ -8646,8 +8653,15 @@ function SeriesDetails({
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", () => {
       const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
-      router.visit(prevRoute);
+      router.visit(prevRoute, {
+        preserveState: true,
+        preserveScroll: true
+      });
     });
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick();
+    };
   }, []);
   useEffect(() => {
     if (activeSeason && activeSeason.episodes?.length > 0) {
