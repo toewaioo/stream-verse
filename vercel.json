@@ -3,7 +3,7 @@
     "framework": null,
     "builds": [
         {
-            "src": "*.php",
+            "src": "/*.php",
             "use": "vercel-php@0.7.3",
             "config": {
                 "phpVersion": "8.3",
@@ -32,7 +32,7 @@
         },
         {
             "src": "/(.*)",
-            "dest": "/api/index.php"
+            "dest": "/index.php"
         }
     ],
     "outputDirectory": "/public/build",
