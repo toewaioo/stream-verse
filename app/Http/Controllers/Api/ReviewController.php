@@ -18,20 +18,18 @@ class ReviewController extends Controller
     public function storeMovieReview(StoreReviewRequest $request, Movie $movie)
     {
         $review = $movie->reviews()->create($request->validated() + ['user_id' => auth()->id()]);
-        $movie->load('reviews.user');
+        $review->load('user');
         return response()->json([
             'review' => new ReviewResource($review),
-            'content' => new MovieResource($movie),
         ]);
     }
 
     public function storeSeriesReview(StoreReviewRequest $request, Series $series)
     {
         $review = $series->reviews()->create($request->validated() + ['user_id' => auth()->id()]);
-        $series->load('reviews.user');
+        $review->load('user');
         return response()->json([
             'review' => new ReviewResource($review),
-            'content' => new SeriesResource($series),
         ]);
     }
 
@@ -48,24 +46,17 @@ class ReviewController extends Controller
     public function update(UpdateReviewRequest $request, Review $review)
     {
         $review->update($request->validated());
-        $content = $review->reviewable;
-        $content->load('reviews.user');
+        $review->load('user');
 
         return response()->json([
             'review' => new ReviewResource($review),
-            'content' => $content instanceof Movie ? new MovieResource($content) : new SeriesResource($content),
         ]);
     }
 
     public function destroy(Review $review)
     {
-       
-        $content = $review->reviewable;
         $review->delete();
-        $content->load('reviews.user');
 
-        return response()->json([
-            'content' => $content instanceof Movie ? new MovieResource($content) : new SeriesResource($content),
-        ]);
+        return response()->json(null, 204);
     }
 }

@@ -67,7 +67,7 @@ export default function RatingWidget({
             <div className="flex flex-col sm:flex-row items-center sm:items-end justify-center gap-4 w-full">
                 <div className="flex flex-col items-center sm:items-end sm:flex-row gap-2 w-full">
                     <div className="text-4xl sm:text-5xl font-bold gradient-text text-center sm:text-right w-full sm:w-auto">
-                        {ratingAverage.toFixed(1)}
+                        {ratingAverage}
                     </div>
                     <div className="star-rating flex flex-row items-center justify-center sm:justify-start mt-2 sm:mt-0">
                         {renderStars(ratingAverage)}

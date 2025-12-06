@@ -20,38 +20,38 @@ const Review = ({ review, onEdit, onDelete }) => {
         return `${Math.floor(diffDays / 365)} years ago`;
     };
 
-    const shouldTruncate = review.content && review.content.length > 300;
+    const shouldTruncate = review?.content && review?.content.length > 300;
     const displayContent = shouldTruncate && !showFullContent
-        ? review.content.substring(0, 300) + '...'
-        : review.content;
+        ? review?.content.substring(0, 300) + '...'
+        : review?.content;
 
     return (
         <div className="glass-card-adaptive p-6 transition-all duration-300 hover:shadow-lg hover:scale-[1.01]">
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
                     <img
-                        src={review.user.avatar_url || "/images/placeholder-avatar.jpg"}
-                        alt={review.user.name}
+                        src={review?.user?.avatar_url || "/images/placeholder-avatar.jpg"}
+                        alt={review?.user?.name}
                         className="w-12 h-12 rounded-full border-2 border-gray-200 dark:border-gray-700 object-cover"
                     />
                     <div>
-                        <p className="font-bold text-lg text-gray-900 dark:text-white">{review.user.name}</p>
+                        <p className="font-bold text-lg text-gray-900 dark:text-white">{review?.user?.name}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                            {formatDate(review.created_at)}
+                            {formatDate(review?.created_at)}
                         </p>
                     </div>
                 </div>
-                {review.rating && (
+                {review?.rating && (
                     <div className="flex items-center gap-1 text-yellow-500 dark:text-yellow-400 bg-gray-100 dark:bg-black/20 px-3 py-1 rounded-full border border-gray-200 dark:border-white/5">
                         <span className="font-bold text-lg">★</span>
-                        <span className="text-gray-900 dark:text-white font-semibold">{review.rating}</span>
+                        <span className="text-gray-900 dark:text-white font-semibold">{review?.rating}</span>
                         <span className="text-gray-500 dark:text-gray-400 text-sm">/10</span>
                     </div>
                 )}
             </div>
 
             {/* Spoiler Warning */}
-            {review.contains_spoilers && !showSpoiler && (
+            {review?.contains_spoilers && !showSpoiler && (
                 <div className="mb-4 p-6 bg-yellow-50 dark:bg-yellow-500/5 border border-yellow-200 dark:border-yellow-500/20 rounded-xl backdrop-blur-sm">
                     <div className="flex flex-col items-center text-center gap-3">
                         <div className="p-3 bg-yellow-100 dark:bg-yellow-500/10 rounded-full text-yellow-600 dark:text-yellow-400">
@@ -74,7 +74,7 @@ const Review = ({ review, onEdit, onDelete }) => {
             )}
 
             {/* Content */}
-            {(!review.contains_spoilers || showSpoiler) && (
+            {(!review?.contains_spoilers || showSpoiler) && (
                 <div className="text-gray-700 dark:text-gray-300 leading-relaxed text-base">
                     <p className="whitespace-pre-line">{displayContent}</p>
                     {shouldTruncate && (
@@ -91,7 +91,7 @@ const Review = ({ review, onEdit, onDelete }) => {
                 </div>
             )}
 
-            {auth.user && auth.user.id === review.user.id && (
+            {auth.user && auth.user.id === review?.user?.id && (
                 <div className="flex gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-white/5">
                     <button onClick={onEdit} className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors flex items-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

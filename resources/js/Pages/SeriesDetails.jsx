@@ -310,6 +310,7 @@ export default function SeriesDetails({
     );
     const [expandedEpisodeId, setExpandedEpisodeId] = useState(null);
     const [editingReviewId, setEditingReviewId] = useState(null);
+    const [userHasReviewed, setUserReviewed] = useState(false);
 
     useEffect(() => {
         const tg = window.Telegram?.WebApp;
@@ -341,9 +342,13 @@ export default function SeriesDetails({
                 rating,
                 series_id: series.id,
             });
-            const { rating: newRating, content: updatedSeries } = response.data;
+            const { rating: newRating } = response.data;
             setUserRating(newRating);
-            setSeries(updatedSeries);
+            setSeries((prevSeries) => ({
+                ...prevSeries,
+                rating_average: newRating.rating_average,
+                rating_count: newRating.rating_count,
+            }));
         } catch (error) {
             console.error("Failed to submit rating:", error);
         }
@@ -357,8 +362,22 @@ export default function SeriesDetails({
 
         try {
             const response = await axios[method](url, reviewData);
-            const { content: updatedSeries } = response.data;
-            setSeries(updatedSeries);
+            const { review: newReview } = response.data;
+            setSeries((prevSeries) => {
+                const existingReviewIndex = prevSeries.reviews.findIndex(
+                    (review) => review.id === newReview.id
+                );
+                if (existingReviewIndex !== -1) {
+                    const updatedReviews = [...prevSeries.reviews];
+                    updatedReviews[existingReviewIndex] = newReview;
+                    return { ...prevSeries, reviews: updatedReviews };
+                } else {
+                    return {
+                        ...prevSeries,
+                        reviews: [...prevSeries.reviews, newReview],
+                    };
+                }
+            });
             setEditingReviewId(null);
         } catch (error) {
             console.error("Failed to submit review:", error);
@@ -367,9 +386,13 @@ export default function SeriesDetails({
 
     const handleReviewDelete = async (reviewId) => {
         try {
-            const response = await axios.delete(route("api.reviews.destroy", reviewId));
-            const { content: updatedSeries } = response.data;
-            setSeries(updatedSeries);
+            await axios.delete(route("api.reviews.destroy", reviewId));
+            setSeries((prevSeries) => ({
+                ...prevSeries,
+                reviews: prevSeries.reviews.filter(
+                    (review) => review.id !== reviewId
+                ),
+            }));
         } catch (error) {
             console.error("Failed to delete review:", error);
         }
@@ -380,10 +403,12 @@ export default function SeriesDetails({
             .getElementById("episodes-section")
             ?.scrollIntoView({ behavior: "smooth" });
     };
-
-    const userHasReviewed = series.reviews.some(
-        (review) => review.user_id === auth.user?.id
-    );
+    useEffect(() => {
+        const userHasReviewedd = series?.reviews?.some(
+            (review) => review.user.id === auth.user?.id
+        );
+        setUserReviewed(userHasReviewedd);
+    }, [series, auth.user]);
 
     return (
         <>
@@ -668,7 +693,7 @@ export default function SeriesDetails({
                                     {t("Cast & Crew")}
                                 </h3>
                                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6">
-                                    {series.actors
+                                    {series.persons
                                         ?.slice(0, 8)
                                         .map((actor) => (
                                             <Link
@@ -686,9 +711,7 @@ export default function SeriesDetails({
                                                                 ?.avatar_url ||
                                                             "/images/placeholder-avatar.jpg"
                                                         }
-                                                        alt={
-                                                            actor.person?.name
-                                                        }
+                                                        alt={actor.person?.name}
                                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                     />
                                                 </div>
@@ -696,7 +719,9 @@ export default function SeriesDetails({
                                                     {actor.person?.name}
                                                 </h4>
                                                 <p className="text-sm text-gray-500 truncate">
-                                                    {actor.character_name}
+                                                    {actor.character_name
+                                                        ? actor.character_name
+                                                        : actor.role_type}
                                                 </p>
                                             </Link>
                                         ))}

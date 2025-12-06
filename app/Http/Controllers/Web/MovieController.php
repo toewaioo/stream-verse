@@ -80,9 +80,9 @@ class MovieController extends Controller
             ->get();
 
         // Separate actors, directors, and writers
-        $actors = $movie->persons->where('role_type', 'actor')->values();
-        $directors = $movie->persons->where('role_type', 'director')->values();
-        $writers = $movie->persons->where('role_type', 'writer')->values();
+        // $actors = $movie->persons->where('role_type', 'actor')->values();
+        // $directors = $movie->persons->where('role_type', 'director')->values();
+        // $writers = $movie->persons->where('role_type', 'writer')->values();
 
         // Group watch links by quality (only if loaded)
         $watchLinksByQuality = $movie->relationLoaded('watchLinks') ? $movie->watchLinks->groupBy('quality') : [];
@@ -130,10 +130,11 @@ class MovieController extends Controller
                 'status' => $movie->status,
                 'view_count' => $movie->view_count,
                 'genres' => $movie->genres,
-                'actors' => $actors,
-                'directors' => $directors,
-                'writers' => $writers,
+                // 'actors' => $actors,
+                // 'directors' => $directors,
+                // 'writers' => $writers,
                 'reviews' => $movie->reviews,
+                'persons' => $movie->persons
             ],
             'watchLinksByQuality' => $watchLinksByQuality,
             'downloadLinksByQuality' => $downloadLinksByQuality,
@@ -157,14 +158,14 @@ class MovieController extends Controller
                     'image' => $movie->poster_url,
                     'datePublished' => $movie->release_date?->format('Y-m-d'),
                     'genre' => $movie->genres->pluck('name')->toArray(),
-                    'director' => $directors->map(fn($d) => [
+                    'persons' => $movie->persons->map(fn($d) => [
                         '@type' => 'Person',
                         'name' => $d->person?->name
                     ])->filter(fn($d) => $d['name'])->values()->toArray(),
-                    'actor' => $actors->map(fn($a) => [
-                        '@type' => 'Person',
-                        'name' => $a->person?->name
-                    ])->filter(fn($a) => $a['name'])->values()->toArray(),
+                    // 'actor' => $movie->persons->map(fn($a) => [
+                    //     '@type' => 'Person',
+                    //     'name' => $a->person?->name
+                    // ])->filter(fn($a) => $a['name'])->values()->toArray(),
                     'aggregateRating' => $movie->rating_count > 0 ? [
                         '@type' => 'AggregateRating',
                         'ratingValue' => $movie->rating_average,

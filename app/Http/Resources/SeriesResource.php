@@ -28,6 +28,7 @@ class SeriesResource extends JsonResource
             'rating_average' => (float) $this->rating_average,
             'rating_count' => $this->rating_count,
             'total_episodes' => $this->total_episodes,
+            'view_count' => $this->view_count,
             'genres' => GenreResource::collection($this->whenLoaded('genres')),
             'seasons' => SeasonResource::collection($this->whenLoaded('seasons')),
             'actors' => PersonRoleResource::collection($this->whenLoaded('actors')),

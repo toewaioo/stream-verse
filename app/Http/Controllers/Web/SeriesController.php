@@ -73,9 +73,9 @@ class SeriesController extends Controller
             ->get();
 
         // Separate actors, directors, and writers
-        $actors = $series->persons->where('role_type', 'actor')->values();
-        $directors = $series->persons->where('role_type', 'director')->values();
-        $writers = $series->persons->where('role_type', 'writer')->values();
+        // $actors = $series->persons->where('role_type', 'actor')->values();
+        // $directors = $series->persons->where('role_type', 'director')->values();
+        // $writers = $series->persons->where('role_type', 'writer')->values();
 
         // Get user's rating if authenticated
         $userRating = null;
@@ -107,10 +107,11 @@ class SeriesController extends Controller
                 'view_count' => $series->view_count,
                 'genres' => $series->genres,
                 'seasons' => $series->seasons,
-                'actors' => $actors,
-                'directors' => $directors,
-                'writers' => $writers,
+                // 'actors' => $actors,
+                // 'directors' => $directors,
+                // 'writers' => $writers,
                 'reviews' => $series->reviews,
+                'persons' => $series->persons
             ],
             'relatedSeries' => $relatedSeries,
             'userRating' => $userRating,
@@ -133,14 +134,14 @@ class SeriesController extends Controller
                     'genre' => $series->genres->pluck('name')->toArray(),
                     'numberOfSeasons' => $series->seasons->count(),
                     'numberOfEpisodes' => $series->seasons->sum('episode_count'),
-                    'director' => $directors->map(fn($d) => [
+                    'director' => $series->persons->map(fn($d) => [
                         '@type' => 'Person',
                         'name' => $d->person?->name
                     ])->filter(fn($d) => $d['name'])->values()->toArray(),
-                    'actor' => $actors->map(fn($a) => [
-                        '@type' => 'Person',
-                        'name' => $a->person?->name
-                    ])->filter(fn($a) => $a['name'])->values()->toArray(),
+                    // 'actor' => $actors->map(fn($a) => [
+                    //     '@type' => 'Person',
+                    //     'name' => $a->person?->name
+                    // ])->filter(fn($a) => $a['name'])->values()->toArray(),
                     'aggregateRating' => $series->rating_count > 0 ? [
                         '@type' => 'AggregateRating',
                         'ratingValue' => $series->rating_average,

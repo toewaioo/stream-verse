@@ -29,9 +29,9 @@ class RatingService
             // Check if user already rated this content
             $existingRating = $this->getUserRatingForContent($user, $type, $id);
 
-            if ($existingRating) {
-                throw new \Exception('You have already rated this content');
-            }
+            // if ($existingRating) {
+            //     throw new \Exception('You have already rated this content');
+            // }
 
             $rating = Rating::create(array_merge($data, ['user_id' => $user->id]));
 
@@ -106,23 +106,14 @@ class RatingService
 
     private function updateContentRatingStats(Rating $rating): void
     {
+        $rating->load('movie', 'series', 'episode');
+
         if ($rating->movie) {
             $rating->movie->updateRatingStats();
         } elseif ($rating->series) {
             $rating->series->updateRatingStats();
         } elseif ($rating->episode) {
             $rating->episode->updateRatingStats();
-
-            // Also update series rating stats (if we still want to aggregate episode ratings to series, 
-            // but since we now have direct series ratings, we might want to keep them separate or handle differently.
-            // For now, let's assume direct series rating is primary for the series itself).
-            // If the requirement is to have series rating be an aggregate of episodes, we wouldn't need direct series rating.
-            // Since we added direct series rating, we should probably rely on that for the series main rating.
-            // However, the previous code updated series stats from episodes. I will comment that out or leave it if it updates a different metric?
-            // The Series model has `updateRatingStats` which aggregates episodes. I should probably update THAT method in the Series model to use direct ratings.
-            // But here, if I rate an episode, does it affect the series rating?
-            // If the series rating is now direct, episode ratings shouldn't necessarily affect it unless we want a hybrid.
-            // Let's stick to direct ratings for series for now as per the task "rating movies and series".
         }
     }
 

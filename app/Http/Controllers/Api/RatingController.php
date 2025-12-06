@@ -41,17 +41,11 @@ class RatingController extends Controller
     {
         try {
             $rating = $this->ratingService->createRating($request->user(), $request->validated());
-            $content = null;
-            if ($rating->movie_id) {
-                $content = Movie::find($rating->movie_id);
-            } elseif ($rating->series_id) {
-                $content = Series::find($rating->series_id);
-            }
+            $rating->load('movie', 'series');
 
             return response()->json([
                 'message' => 'Rating submitted successfully',
                 'rating' => new RatingResource($rating),
-                'content' => $content ? ($content instanceof Movie ? new MovieResource($content->load('reviews.user')) : new SeriesResource($content->load('reviews.user'))) : null,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
@@ -83,17 +77,11 @@ class RatingController extends Controller
             //$this->authorize('update', $rating);
 
             $updatedRating = $this->ratingService->updateRating($rating, $request->validated());
-            $content = null;
-            if ($updatedRating->movie_id) {
-                $content = Movie::find($updatedRating->movie_id);
-            } elseif ($updatedRating->series_id) {
-                $content = Series::find($updatedRating->series_id);
-            }
+            $updatedRating->load('movie', 'series');
 
             return response()->json([
                 'message' => 'Rating updated successfully',
                 'rating' => new RatingResource($updatedRating),
-                'content' => $content ? ($content instanceof Movie ? new MovieResource($content->load('reviews.user')) : new SeriesResource($content->load('reviews.user'))) : null,
             ]);
         } catch (\Exception $e) {
             return response()->json([

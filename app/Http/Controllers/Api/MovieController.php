@@ -40,7 +40,7 @@ class MovieController extends Controller
             }
 
             // Check authorization
-           // $this->authorize('view', $movie);
+            // $this->authorize('view', $movie);
 
             // Track view
             $this->movieService->trackView($movie);
@@ -48,6 +48,7 @@ class MovieController extends Controller
             return response()->json([
                 'data' => new MovieResource($movie->load([
                     'genres',
+                    'person',
                     'actors.person',
                     'directors.person',
                     'writers.person',

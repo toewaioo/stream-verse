@@ -6118,7 +6118,7 @@ function RatingWidget({
   };
   return /* @__PURE__ */ jsxs("div", { className: "space-y-4 w-full", children: [
     /* @__PURE__ */ jsx("div", { className: "flex flex-col sm:flex-row items-center sm:items-end justify-center gap-4 w-full", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center sm:items-end sm:flex-row gap-2 w-full", children: [
-      /* @__PURE__ */ jsx("div", { className: "text-4xl sm:text-5xl font-bold gradient-text text-center sm:text-right w-full sm:w-auto", children: ratingAverage.toFixed(1) }),
+      /* @__PURE__ */ jsx("div", { className: "text-4xl sm:text-5xl font-bold gradient-text text-center sm:text-right w-full sm:w-auto", children: ratingAverage }),
       /* @__PURE__ */ jsx("div", { className: "star-rating flex flex-row items-center justify-center sm:justify-start mt-2 sm:mt-0", children: renderStars(ratingAverage) }),
       /* @__PURE__ */ jsxs("div", { className: "text-xs sm:text-sm dark:text-gray-400 mt-1 text-center sm:text-left w-full sm:w-auto", children: [
         ratingCount.toLocaleString(),
@@ -6154,31 +6154,31 @@ const Review = ({ review, onEdit, onDelete }) => {
     if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
     return `${Math.floor(diffDays / 365)} years ago`;
   };
-  const shouldTruncate = review.content && review.content.length > 300;
-  const displayContent = shouldTruncate && !showFullContent ? review.content.substring(0, 300) + "..." : review.content;
+  const shouldTruncate = review?.content && review?.content.length > 300;
+  const displayContent = shouldTruncate && !showFullContent ? review?.content.substring(0, 300) + "..." : review?.content;
   return /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-6 transition-all duration-300 hover:shadow-lg hover:scale-[1.01]", children: [
     /* @__PURE__ */ jsxs("div", { className: "flex items-start justify-between mb-4", children: [
       /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
         /* @__PURE__ */ jsx(
           "img",
           {
-            src: review.user.avatar_url || "/images/placeholder-avatar.jpg",
-            alt: review.user.name,
+            src: review?.user?.avatar_url || "/images/placeholder-avatar.jpg",
+            alt: review?.user?.name,
             className: "w-12 h-12 rounded-full border-2 border-gray-200 dark:border-gray-700 object-cover"
           }
         ),
         /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("p", { className: "font-bold text-lg text-gray-900 dark:text-white", children: review.user.name }),
-          /* @__PURE__ */ jsx("p", { className: "text-xs text-gray-500 dark:text-gray-400 font-medium", children: formatDate(review.created_at) })
+          /* @__PURE__ */ jsx("p", { className: "font-bold text-lg text-gray-900 dark:text-white", children: review?.user?.name }),
+          /* @__PURE__ */ jsx("p", { className: "text-xs text-gray-500 dark:text-gray-400 font-medium", children: formatDate(review?.created_at) })
         ] })
       ] }),
-      review.rating && /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1 text-yellow-500 dark:text-yellow-400 bg-gray-100 dark:bg-black/20 px-3 py-1 rounded-full border border-gray-200 dark:border-white/5", children: [
+      review?.rating && /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1 text-yellow-500 dark:text-yellow-400 bg-gray-100 dark:bg-black/20 px-3 py-1 rounded-full border border-gray-200 dark:border-white/5", children: [
         /* @__PURE__ */ jsx("span", { className: "font-bold text-lg", children: "★" }),
-        /* @__PURE__ */ jsx("span", { className: "text-gray-900 dark:text-white font-semibold", children: review.rating }),
+        /* @__PURE__ */ jsx("span", { className: "text-gray-900 dark:text-white font-semibold", children: review?.rating }),
         /* @__PURE__ */ jsx("span", { className: "text-gray-500 dark:text-gray-400 text-sm", children: "/10" })
       ] })
     ] }),
-    review.contains_spoilers && !showSpoiler && /* @__PURE__ */ jsx("div", { className: "mb-4 p-6 bg-yellow-50 dark:bg-yellow-500/5 border border-yellow-200 dark:border-yellow-500/20 rounded-xl backdrop-blur-sm", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center text-center gap-3", children: [
+    review?.contains_spoilers && !showSpoiler && /* @__PURE__ */ jsx("div", { className: "mb-4 p-6 bg-yellow-50 dark:bg-yellow-500/5 border border-yellow-200 dark:border-yellow-500/20 rounded-xl backdrop-blur-sm", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center text-center gap-3", children: [
       /* @__PURE__ */ jsx("div", { className: "p-3 bg-yellow-100 dark:bg-yellow-500/10 rounded-full text-yellow-600 dark:text-yellow-400", children: /* @__PURE__ */ jsx("svg", { className: "w-8 h-8", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z", clipRule: "evenodd" }) }) }),
       /* @__PURE__ */ jsxs("div", { children: [
         /* @__PURE__ */ jsx("h4", { className: "text-yellow-800 dark:text-yellow-400 font-bold text-lg mb-1", children: "Contains Spoilers" }),
@@ -6193,7 +6193,7 @@ const Review = ({ review, onEdit, onDelete }) => {
         )
       ] })
     ] }) }),
-    (!review.contains_spoilers || showSpoiler) && /* @__PURE__ */ jsxs("div", { className: "text-gray-700 dark:text-gray-300 leading-relaxed text-base", children: [
+    (!review?.contains_spoilers || showSpoiler) && /* @__PURE__ */ jsxs("div", { className: "text-gray-700 dark:text-gray-300 leading-relaxed text-base", children: [
       /* @__PURE__ */ jsx("p", { className: "whitespace-pre-line", children: displayContent }),
       shouldTruncate && /* @__PURE__ */ jsxs(
         "button",
@@ -6207,7 +6207,7 @@ const Review = ({ review, onEdit, onDelete }) => {
         }
       )
     ] }),
-    auth.user && auth.user.id === review.user.id && /* @__PURE__ */ jsxs("div", { className: "flex gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-white/5", children: [
+    auth.user && auth.user.id === review?.user?.id && /* @__PURE__ */ jsxs("div", { className: "flex gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-white/5", children: [
       /* @__PURE__ */ jsxs("button", { onClick: onEdit, className: "text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors flex items-center gap-2", children: [
         /* @__PURE__ */ jsx("svg", { className: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" }) }),
         "Edit"
@@ -6580,9 +6580,13 @@ function MovieDetails({
         rating,
         movie_id: movie.id
       });
-      const { rating: newRating, content: updatedMovie } = response.data;
+      const { rating: newRating } = response.data;
       setUserRating(newRating);
-      setMovie(updatedMovie);
+      setMovie((prevMovie) => ({
+        ...prevMovie,
+        rating_average: newRating.rating_average,
+        rating_count: newRating.rating_count
+      }));
     } catch (error) {
       console.error("Failed to submit rating:", error);
     }
@@ -6592,8 +6596,22 @@ function MovieDetails({
     const method = reviewData.id ? "put" : "post";
     try {
       const response = await axios$1[method](url, reviewData);
-      const { content: updatedMovie } = response.data;
-      setMovie(updatedMovie);
+      const { review: newReview } = response.data;
+      setMovie((prevMovie) => {
+        const existingReviewIndex = prevMovie.reviews.findIndex(
+          (review) => review.id === newReview.id
+        );
+        if (existingReviewIndex !== -1) {
+          const updatedReviews = [...prevMovie.reviews];
+          updatedReviews[existingReviewIndex] = newReview;
+          return { ...prevMovie, reviews: updatedReviews };
+        } else {
+          return {
+            ...prevMovie,
+            reviews: [...prevMovie.reviews, newReview]
+          };
+        }
+      });
       setEditingReviewId(null);
     } catch (error) {
       console.error("Failed to submit review:", error);
@@ -6601,11 +6619,13 @@ function MovieDetails({
   };
   const handleReviewDelete = async (reviewId) => {
     try {
-      const response = await axios$1.delete(
-        route("api.reviews.destroy", reviewId)
-      );
-      const { content: updatedMovie } = response.data;
-      setMovie(updatedMovie);
+      await axios$1.delete(route("api.reviews.destroy", reviewId));
+      setMovie((prevMovie) => ({
+        ...prevMovie,
+        reviews: prevMovie.reviews.filter(
+          (review) => review.id !== reviewId
+        )
+      }));
     } catch (error) {
       console.error("Failed to delete review:", error);
     }
@@ -6903,7 +6923,7 @@ function MovieDetails({
               /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
               t("Cast & Crew")
             ] }),
-            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6", children: movie.actors?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
+            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6", children: movie.persons?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
               Link,
               {
                 href: route(
@@ -6921,7 +6941,7 @@ function MovieDetails({
                     }
                   ) }),
                   /* @__PURE__ */ jsx("h4", { className: "text-gray-900 dark:text-white font-medium truncate group-hover:text-blue-400 transition-colors", children: actor.person?.name }),
-                  /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 truncate", children: actor.character_name })
+                  /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 truncate", children: actor.character_name ? actor.character_name : actor.role_type })
                 ]
               },
               actor.id
@@ -8821,6 +8841,7 @@ function SeriesDetails({
   );
   const [expandedEpisodeId, setExpandedEpisodeId] = useState(null);
   const [editingReviewId, setEditingReviewId] = useState(null);
+  const [userHasReviewed, setUserReviewed] = useState(false);
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
@@ -8846,9 +8867,13 @@ function SeriesDetails({
         rating,
         series_id: series.id
       });
-      const { rating: newRating, content: updatedSeries } = response.data;
+      const { rating: newRating } = response.data;
       setUserRating(newRating);
-      setSeries(updatedSeries);
+      setSeries((prevSeries) => ({
+        ...prevSeries,
+        rating_average: newRating.rating_average,
+        rating_count: newRating.rating_count
+      }));
     } catch (error) {
       console.error("Failed to submit rating:", error);
     }
@@ -8858,8 +8883,22 @@ function SeriesDetails({
     const method = reviewData.id ? "put" : "post";
     try {
       const response = await axios$1[method](url, reviewData);
-      const { content: updatedSeries } = response.data;
-      setSeries(updatedSeries);
+      const { review: newReview } = response.data;
+      setSeries((prevSeries) => {
+        const existingReviewIndex = prevSeries.reviews.findIndex(
+          (review) => review.id === newReview.id
+        );
+        if (existingReviewIndex !== -1) {
+          const updatedReviews = [...prevSeries.reviews];
+          updatedReviews[existingReviewIndex] = newReview;
+          return { ...prevSeries, reviews: updatedReviews };
+        } else {
+          return {
+            ...prevSeries,
+            reviews: [...prevSeries.reviews, newReview]
+          };
+        }
+      });
       setEditingReviewId(null);
     } catch (error) {
       console.error("Failed to submit review:", error);
@@ -8867,9 +8906,13 @@ function SeriesDetails({
   };
   const handleReviewDelete = async (reviewId) => {
     try {
-      const response = await axios$1.delete(route("api.reviews.destroy", reviewId));
-      const { content: updatedSeries } = response.data;
-      setSeries(updatedSeries);
+      await axios$1.delete(route("api.reviews.destroy", reviewId));
+      setSeries((prevSeries) => ({
+        ...prevSeries,
+        reviews: prevSeries.reviews.filter(
+          (review) => review.id !== reviewId
+        )
+      }));
     } catch (error) {
       console.error("Failed to delete review:", error);
     }
@@ -8877,9 +8920,12 @@ function SeriesDetails({
   const scrollToEpisodes = () => {
     document.getElementById("episodes-section")?.scrollIntoView({ behavior: "smooth" });
   };
-  const userHasReviewed = series.reviews.some(
-    (review) => review.user_id === auth.user?.id
-  );
+  useEffect(() => {
+    const userHasReviewedd = series?.reviews?.some(
+      (review) => review.user.id === auth.user?.id
+    );
+    setUserReviewed(userHasReviewedd);
+  }, [series, auth.user]);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(
       SeoHead,
@@ -9136,7 +9182,7 @@ function SeriesDetails({
               /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
               t("Cast & Crew")
             ] }),
-            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6", children: series.actors?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
+            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6", children: series.persons?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
               Link,
               {
                 href: route(
@@ -9154,7 +9200,7 @@ function SeriesDetails({
                     }
                   ) }),
                   /* @__PURE__ */ jsx("h4", { className: "text-gray-900 dark:text-white font-medium truncate group-hover:text-blue-400 transition-colors", children: actor.person?.name }),
-                  /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 truncate", children: actor.character_name })
+                  /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 truncate", children: actor.character_name ? actor.character_name : actor.role_type })
                 ]
               },
               actor.id

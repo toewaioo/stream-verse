@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { act, useEffect, useState } from "react";
 import { usePage, Link } from "@inertiajs/react";
 import RatingWidget from "@/Components/Movie/RatingWidget";
 import Review from "@/Components/Movie/Review";
@@ -155,6 +155,7 @@ export default function MovieDetails({
     isVip,
     seo,
 }) {
+   
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const [movie, setMovie] = useState(initialMovie);
@@ -162,7 +163,7 @@ export default function MovieDetails({
     const [showTrailer, setShowTrailer] = useState(false);
     const [editingReviewId, setEditingReviewId] = useState(null);
     const [userHasReviewed, setUserReviewed] = useState(false);
-    
+
     useEffect(() => {
         const tg = window.Telegram?.WebApp;
         if (!tg) return;
@@ -173,6 +174,49 @@ export default function MovieDetails({
             tg.BackButton.offClick();
         };
     }, []);
+
+    // upsertMovies handles arrays and paginated objects
+    const upsertMovies = (newMovie) => {
+        setMovie((prev) => {
+            // If prev is null/undefined -> create array with newMovie
+            if (prev == null) {
+                return [newMovie];
+            }
+
+            // If prev is a paginated object like { data: [...], meta: {...} }
+            if (
+                typeof prev === "object" &&
+                !Array.isArray(prev) &&
+                Array.isArray(prev.data)
+            ) {
+                const data = prev.data;
+                const idx = data.findIndex((m) => m.id === newMovie.id);
+
+                if (idx !== -1) {
+                    const updatedData = [...data];
+                    updatedData[idx] = deepMerge(updatedData[idx], newMovie);
+                    return { ...prev, data: updatedData };
+                }
+
+                // not found -> append
+                return { ...prev, data: [...data, newMovie] };
+            }
+
+            // If prev is already an array
+            if (Array.isArray(prev)) {
+                const idx = prev.findIndex((m) => m.id === newMovie.id);
+                if (idx !== -1) {
+                    const updated = [...prev];
+                    updated[idx] = deepMerge(updated[idx], newMovie);
+                    return updated;
+                }
+                return [...prev, newMovie];
+            }
+
+            // Fallback: unknown structure -> return new array with both prev (if object) and newMovie
+            return [prev, newMovie];
+        });
+    };
 
     const handleRate = async (rating) => {
         const url = userRating
@@ -185,9 +229,13 @@ export default function MovieDetails({
                 rating,
                 movie_id: movie.id,
             });
-            const { rating: newRating, content: updatedMovie } = response.data;
+            const { rating: newRating } = response.data;
             setUserRating(newRating);
-            setMovie(updatedMovie);
+            setMovie((prevMovie) => ({
+                ...prevMovie,
+                rating_average: newRating.rating_average,
+                rating_count: newRating.rating_count,
+            }));
         } catch (error) {
             console.error("Failed to submit rating:", error);
             // Optionally, show an error toast to the user
@@ -202,8 +250,22 @@ export default function MovieDetails({
 
         try {
             const response = await axios[method](url, reviewData);
-            const { content: updatedMovie } = response.data;
-            setMovie(updatedMovie);
+            const { review: newReview } = response.data;
+            setMovie((prevMovie) => {
+                const existingReviewIndex = prevMovie.reviews.findIndex(
+                    (review) => review.id === newReview.id
+                );
+                if (existingReviewIndex !== -1) {
+                    const updatedReviews = [...prevMovie.reviews];
+                    updatedReviews[existingReviewIndex] = newReview;
+                    return { ...prevMovie, reviews: updatedReviews };
+                } else {
+                    return {
+                        ...prevMovie,
+                        reviews: [...prevMovie.reviews, newReview],
+                    };
+                }
+            });
             setEditingReviewId(null);
         } catch (error) {
             console.error("Failed to submit review:", error);
@@ -212,11 +274,13 @@ export default function MovieDetails({
 
     const handleReviewDelete = async (reviewId) => {
         try {
-            const response = await axios.delete(
-                route("api.reviews.destroy", reviewId)
-            );
-            const { content: updatedMovie } = response.data;
-            setMovie(updatedMovie);
+            await axios.delete(route("api.reviews.destroy", reviewId));
+            setMovie((prevMovie) => ({
+                ...prevMovie,
+                reviews: prevMovie.reviews.filter(
+                    (review) => review.id !== reviewId
+                ),
+            }));
         } catch (error) {
             console.error("Failed to delete review:", error);
         }
@@ -546,7 +610,7 @@ export default function MovieDetails({
                                     {t("Cast & Crew")}
                                 </h3>
                                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6">
-                                    {movie.actors?.slice(0, 8).map((actor) => (
+                                    {movie.persons?.slice(0, 8).map((actor) => (
                                         <Link
                                             key={actor.id}
                                             href={route(
@@ -570,7 +634,9 @@ export default function MovieDetails({
                                                 {actor.person?.name}
                                             </h4>
                                             <p className="text-sm text-gray-500 truncate">
-                                                {actor.character_name}
+                                                {actor.character_name
+                                                    ? actor.character_name
+                                                    : actor.role_type}
                                             </p>
                                         </Link>
                                     ))}

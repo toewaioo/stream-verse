@@ -34,6 +34,7 @@ class MovieResource extends JsonResource
             'status' => $this->status,
             'view_count' => $this->view_count,
             'genres' => GenreResource::collection($this->whenLoaded('genres')),
+            'person' => PersonResource::collection($this->whenLoaded('person')),
             'actors' => PersonRoleResource::collection($this->whenLoaded('actors')),
             'directors' => PersonRoleResource::collection($this->whenLoaded('directors')),
             'writers' => PersonRoleResource::collection($this->whenLoaded('writers')),
