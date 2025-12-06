@@ -6460,11 +6460,7 @@ function MovieDetails({
     if (!tg) return;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", () => {
-      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
-      router.visit(prevRoute, {
-        preserveState: true,
-        preserveScroll: true
-      });
+      window.history.back();
     });
     return () => {
       tg.BackButton.hide();
@@ -8652,11 +8648,7 @@ function SeriesDetails({
     if (!tg) return;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", () => {
-      const prevRoute = sessionStorage.getItem("tgPrevRoute") || route("home");
-      router.visit(prevRoute, {
-        preserveState: true,
-        preserveScroll: true
-      });
+      window.history.back();
     });
     return () => {
       tg.BackButton.hide();
