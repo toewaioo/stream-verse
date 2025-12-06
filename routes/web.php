@@ -122,6 +122,23 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Ratings routes
+    Route::get('/ratings', [App\Http\Controllers\Api\RatingController::class, 'index'])->name('api.ratings.index');
+    Route::get('/ratings/{rating}', [App\Http\Controllers\Api\RatingController::class, 'show'])->name('api.ratings.show');
+    Route::post('/ratings', [App\Http\Controllers\Api\RatingController::class, 'store'])->name('api.ratings.store');
+    Route::put('/ratings/{rating}', [App\Http\Controllers\Api\RatingController::class, 'update'])->name('api.ratings.update');
+    Route::delete('/ratings/{rating}', [App\Http\Controllers\Api\RatingController::class, 'destroy'])->name('api.ratings.destroy');
+    Route::get('/ratings/user/{type}/{id}', [App\Http\Controllers\Api\RatingController::class, 'userRatingsForContent'])->name('api.ratings.userForContent');
+
+    // Review routes
+    Route::post('/movies/{movie}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'storeMovieReview'])->name('api.movies.reviews.store');
+    Route::post('/series/{series}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'storeSeriesReview'])->name('api.series.reviews.store');
+    Route::get('/movies/{movie}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'getMovieReviews'])->name('api.movies.reviews.index');
+    Route::get('/series/{series}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'getSeriesReviews'])->name('api.series.reviews.index');
+    Route::put('/reviews/{review}', [App\Http\Controllers\Api\ReviewController::class, 'update'])->name('api.reviews.update');
+    Route::delete('/reviews/{review}', [App\Http\Controllers\Api\ReviewController::class, 'destroy'])->name('api.reviews.destroy');
+
+
     // Ratings
     // Route::get('/ratings', [RatingController::class, 'index'])->name('admin.ratings');
     // Route::get('/ratings/{rating}', [RatingController::class, 'show'])->name('admin.ratings.show');

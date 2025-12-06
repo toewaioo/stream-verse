@@ -88,22 +88,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/links/{linkId}/report', [StreamingController::class, 'reportBrokenLink']);
     Route::get('/links/{linkId}/alternatives', [StreamingController::class, 'getAlternativeLinks']);
 
-    // Ratings routes
-    Route::get('/ratings', [RatingController::class, 'index'])->name('api.ratings.index');
-    Route::get('/ratings/{rating}', [RatingController::class, 'show'])->name('api.ratings.show');
-    Route::post('/ratings', [RatingController::class, 'store'])->name('api.ratings.store');
-    Route::put('/ratings/{rating}', [RatingController::class, 'update'])->name('api.ratings.update');
-    Route::delete('/ratings/{rating}', [RatingController::class, 'destroy'])->name('api.ratings.destroy');
-    Route::get('/ratings/user/{type}/{id}', [RatingController::class, 'userRatingsForContent'])->name('api.ratings.userForContent');
-
-    // Review routes
-    Route::post('/movies/{movie}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'storeMovieReview'])->name('api.movies.reviews.store');
-    Route::post('/series/{series}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'storeSeriesReview'])->name('api.series.reviews.store');
-    Route::get('/movies/{movie}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'getMovieReviews'])->name('api.movies.reviews.index');
-    Route::get('/series/{series}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'getSeriesReviews'])->name('api.series.reviews.index');
-    Route::put('/reviews/{review}', [App\Http\Controllers\Api\ReviewController::class, 'update'])->name('api.reviews.update');
-    Route::delete('/reviews/{review}', [App\Http\Controllers\Api\ReviewController::class, 'destroy'])->name('api.reviews.destroy');
-
+    
     // Watch history routes
     Route::get('/watch-history', [WatchHistoryController::class, 'index']);
     Route::get('/watch-history/continue-watching', [WatchHistoryController::class, 'continueWatching']);
