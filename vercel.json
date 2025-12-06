@@ -3,7 +3,7 @@
     "framework": null,
     "builds": [
         {
-            "src": "api/*.php",
+            "src": "*.php",
             "use": "vercel-php@0.7.3",
             "config": {
                 "phpVersion": "8.3",
