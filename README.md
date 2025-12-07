@@ -1,61 +1,181 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Movie & Series Streaming Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern, full-featured streaming application built with **Laravel 12** and **React 18** (via Inertia.js). This project provides a robust backend API and a dynamic frontend for browsing, searching, and streaming movies and TV series.
 
-## About Laravel
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 🎬 Content Management
+- **Movies & Series:** Comprehensive database of movies and TV shows with detailed metadata.
+- **TMDB Integration:** Automated data fetching from The Movie Database (TMDB) for easy content population.
+- **Genres & Persons:** Categorize content and manage cast/crew information.
+- **Seasons & Episodes:** Full support for episodic content structure.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 👤 User Experience
+- **Authentication:** Secure login/registration via Laravel Sanctum, including Telegram Mini App auto-login.
+- **Watch History:** Track viewing progress and "Continue Watching" functionality.
+- **Ratings & Reviews:** Users can rate content (star rating) and write reviews.
+- **Profile Management:** Update user details, password, and VIP status redemption.
+- **Search & Discovery:** Advanced search, trending lists, and genre filtering.
 
-## Learning Laravel
+### 🛠 Admin Panel
+- **Dashboard:** Overview of platform statistics (Movies, Series, Users, etc.).
+- **Content CRUD:** Full management of all content types.
+- **Link Management:** Manage streaming and download links.
+- **TMDB Tools:** Search and import content directly from the admin interface.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 📡 API & Streaming
+- **RESTful API:** Fully documented API for external clients (Mobile apps, etc.).
+- **Streaming Proxy:** Secure proxying of video streams and downloads.
+- **Swagger UI:** Interactive API documentation available at `/api/documentation`.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🛠 Tech Stack
 
-## Laravel Sponsors
+- **Backend:** Laravel 12, PHP 8.2+
+- **Frontend:** React 18, Inertia.js, Tailwind CSS 3.2+
+- **Build Tool:** Vite 7
+- **Database:** MySQL / Pgsql
+- **Authentication:** Laravel Sanctum
+- **External APIs:** TMDB, Telegram Bot API
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## ⚙️ Prerequisites
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Ensure you have the following installed on your system:
+- **PHP** >= 8.2
+- **Composer**
+- **Node.js** & **NPM**
+- **MySQL** (or use SQLite)
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 📥 Installation
 
-## Code of Conduct
+1.  **Clone the repository**
+    ```bash
+    git clone <repository-url>
+    cd movie-react-api-client
+    ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+2.  **Install PHP dependencies**
+    ```bash
+    composer install
+    ```
 
-## Security Vulnerabilities
+3.  **Install Node.js dependencies**
+    ```bash
+    npm install
+    ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+4.  **Environment Setup**
+    Copy the example environment file and configure your database and API keys.
+    ```bash
+    cp .env.example .env
+    ```
+    *Update `.env` with your DB credentials, TMDB API key, and other settings.*
 
-## License
+5.  **Generate Application Key**
+    ```bash
+    php artisan key:generate
+    ```
+
+6.  **Run Migrations**
+    Set up the database schema.
+    ```bash
+    php artisan migrate
+    ```
+
+7.  **Build Frontend Assets**
+    ```bash
+    npm run build
+    ```
+
+---
+
+## 🚀 Usage
+
+### Development Server
+To run the application locally with hot-reloading:
+
+1.  **Start the Laravel server:**
+    ```bash
+    php artisan serve
+    ```
+
+2.  **Start the Vite development server (in a new terminal):**
+    ```bash
+    npm run dev
+    ```
+
+Access the application at `http://localhost:8000`.
+
+### Admin Access
+Access the admin panel at `http://localhost:8000/admin/dashboard`.
+*(Ensure you have an admin user created in your database)*.
+
+---
+
+## 📚 API Documentation
+
+The project includes auto-generated Swagger documentation.
+
+- **UI URL:** `http://localhost:8000/api/documentation`
+- **JSON Spec:** `http://localhost:8000/docs`
+
+### Key Endpoints
+
+#### Public
+- `GET /api/movies` - List movies
+- `GET /api/movies/trending` - Get trending movies
+- `GET /api/series` - List series
+- `GET /api/search` - Search content
+
+#### Protected (Requires Bearer Token)
+- `GET /api/user` - Get current user
+- `GET /api/watch-history` - Get user watch history
+- `POST /api/watch-history/progress` - Update viewing progress
+- `GET /api/movies/{slug}/stream` - Get streaming links
+
+---
+
+## 📂 Project Structure
+
+```
+├── app/
+│   ├── Http/Controllers/   # API, Web, and Admin Controllers
+│   ├── Models/             # Eloquent Models (Movie, Series, Review, etc.)
+│   └── Services/           # Business logic (TmdbService, etc.)
+├── database/
+│   ├── migrations/         # Database schema definitions
+│   └── seeders/            # Data seeders
+├── resources/
+│   ├── js/
+│   │   ├── Components/     # Reusable React components
+│   │   ├── Layouts/        # Page layouts (Authenticated, Guest)
+│   │   ├── Pages/          # Inertia.js Pages (Admin, Public, User)
+│   │   └── app.jsx         # Main entry point
+│   └── views/              # Blade templates (mostly for root HTML)
+├── routes/
+│   ├── api.php             # API Routes
+│   └── web.php             # Web Routes (Inertia)
+└── tests/                  # Automated tests
+```
+
+## 🤝 Contributing
+
+1.  Fork the repository.
+2.  Create a new feature branch (`git checkout -b feature/amazing-feature`).
+3.  Commit your changes (`git commit -m 'Add some amazing feature'`).
+4.  Push to the branch (`git push origin feature/amazing-feature`).
+5.  Open a Pull Request.
+
+## 📄 License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
