@@ -83,7 +83,8 @@ class SeriesController extends Controller
         ]);
 
         DB::transaction(function () use ($validated) {
-            $series = Series::create($validated);
+            $seriesData = collect($validated)->except('id')->toArray();
+            $series = Series::create($seriesData);
 
             if (isset($validated['genres'])) {
                 $series->genres()->sync($validated['genres']);
@@ -101,8 +102,8 @@ class SeriesController extends Controller
 
             if (isset($validated['episode_links']) || isset($validated['episodes_data'])) {
                 $this->syncEpisodeLinks(
-                    $series, 
-                    $validated['episode_links'] ?? [], 
+                    $series,
+                    $validated['episode_links'] ?? [],
                     $validated['episodes_data'] ?? []
                 );
             }
@@ -177,8 +178,8 @@ class SeriesController extends Controller
 
             if (isset($validated['episode_links']) || isset($validated['episodes_data'])) {
                 $this->syncEpisodeLinks(
-                    $series, 
-                    $validated['episode_links'] ?? [], 
+                    $series,
+                    $validated['episode_links'] ?? [],
                     $validated['episodes_data'] ?? []
                 );
             }
@@ -195,20 +196,17 @@ class SeriesController extends Controller
 
     private function syncEpisodeLinks(Series $series, array $links, array $episodesMetadata = [])
     {
-        // 1. Pre-fetch existing structure to minimize queries
+        // Load existing
         $series->load('seasons.episodes');
         $existingSeasons = $series->seasons;
-        
-        // 2. Collect IDs for cleanup
+
         $submittedWatchIds = [];
         $submittedDownloadIds = [];
 
-        // Group links by season and episode to process efficiently
+        // Group links
         $groupedLinks = [];
         foreach ($links as $link) {
-            $s = $link['season_number'];
-            $e = $link['episode_number'];
-            $groupedLinks[$s][$e][] = $link;
+            $groupedLinks[$link['season_number']][$link['episode_number']][] = $link;
         }
 
         // Group metadata
@@ -217,49 +215,54 @@ class SeriesController extends Controller
             $groupedMetadata[$meta['season_number']][$meta['episode_number']] = $meta;
         }
 
-        // Get all unique season/episode pairs
-        $allSeasons = array_unique(array_merge(array_keys($groupedLinks), array_keys($groupedMetadata)));
+        $allSeasons = array_unique(array_merge(
+            array_keys($groupedLinks),
+            array_keys($groupedMetadata)
+        ));
 
         foreach ($allSeasons as $seasonNum) {
-            // Find or Create Season (In-memory check first)
-            $season = $existingSeasons->firstWhere('season_number', $seasonNum);
-            if (!$season) {
-                $season = $series->seasons()->create([
-                    'season_number' => $seasonNum,
-                    'title' => 'Season ' . $seasonNum
-                ]);
+
+            // --- FIXED: firstOrCreate correct usage ---
+            $season = $series->seasons()->firstOrCreate(
+                ['season_number' => $seasonNum],
+                ['title' => "Season $seasonNum"]
+            );
+
+            // add to in-memory (if new)
+            if (!$existingSeasons->contains('id', $season->id)) {
                 $existingSeasons->push($season);
             }
 
             $linkEpisodes = $groupedLinks[$seasonNum] ?? [];
             $metaEpisodes = $groupedMetadata[$seasonNum] ?? [];
-            $allEpisodes = array_unique(array_merge(array_keys($linkEpisodes), array_keys($metaEpisodes)));
+            $allEpisodes = array_unique(array_merge(
+                array_keys($linkEpisodes),
+                array_keys($metaEpisodes)
+            ));
 
             foreach ($allEpisodes as $episodeNum) {
-                // Find or Create Episode
-                $episode = $season->episodes->firstWhere('episode_number', $episodeNum);
-                if (!$episode) {
-                    $episode = $season->episodes()->create([
-                        'episode_number' => $episodeNum,
-                        'title' => 'Episode ' . $episodeNum
-                    ]);
-                    $season->episodes->push($episode); // Update in-memory relation
-                }
 
-                // Update Metadata
+                // --- FIXED: firstOrCreate correct usage ---
+                $episode = $season->episodes()->firstOrCreate(
+                    ['episode_number' => $episodeNum],
+                    ['title' => "Episode $episodeNum"]
+                );
+
+                // Metadata update
                 if (isset($metaEpisodes[$episodeNum])) {
-                    $meta = $metaEpisodes[$episodeNum];
                     $episode->update([
-                        'description' => $meta['description'] ?? null,
-                        'air_date' => $meta['air_date'] ?? null,
-                        'poster_url' => $meta['poster_url'] ?? null,
+                        'description' => $metaEpisodes[$episodeNum]['description'] ?? null,
+                        'air_date' => $metaEpisodes[$episodeNum]['air_date'] ?? null,
+                        'poster_url' => $metaEpisodes[$episodeNum]['poster_url'] ?? null,
                     ]);
                 }
 
+                // Episode links
                 $episodeLinks = $linkEpisodes[$episodeNum] ?? [];
+
                 foreach ($episodeLinks as $linkData) {
-                    // Handle Watch Links
                     if ($linkData['link_category'] === 'watch') {
+
                         if (empty($linkData['url']) && !empty($linkData['embed_code'])) {
                             $linkData['url'] = 'embed';
                         }
@@ -274,21 +277,18 @@ class SeriesController extends Controller
                             'source_type' => !empty($linkData['embed_code']) ? 'embed' : 'url',
                         ];
 
-                        if (isset($linkData['id']) && $linkData['id']) {
-                            // Direct update query is fine here as we have the ID
+                        if (!empty($linkData['id'])) {
                             WatchLink::where('id', $linkData['id'])->update($data);
                             $submittedWatchIds[] = $linkData['id'];
                         } else {
-                            $newLink = $episode->watchLinks()->create($data);
-                            $submittedWatchIds[] = $newLink->id;
+                            $new = $episode->watchLinks()->create($data);
+                            $submittedWatchIds[] = $new->id;
                         }
-                    } 
-                    // Handle Download Links
-                    else {
+                    } else {
                         if (empty($linkData['url'])) continue;
 
                         $data = [
-                            'server_name' => $linkData['server_name'],
+                            'server_name' => $linkData['server_name'] ?? null,
                             'url' => $linkData['url'],
                             'quality' => $linkData['quality'],
                             'file_size' => $linkData['file_size'] ?? null,
@@ -296,22 +296,19 @@ class SeriesController extends Controller
                             'is_vip_only' => $linkData['is_vip_only'] ?? false,
                         ];
 
-                        if (isset($linkData['id']) && $linkData['id']) {
+                        if (!empty($linkData['id'])) {
                             DownloadLink::where('id', $linkData['id'])->update($data);
                             $submittedDownloadIds[] = $linkData['id'];
                         } else {
-                            $newLink = $episode->downloadLinks()->create($data);
-                            $submittedDownloadIds[] = $newLink->id;
+                            $new = $episode->downloadLinks()->create($data);
+                            $submittedDownloadIds[] = $new->id;
                         }
                     }
                 }
             }
         }
 
-        // 3. Cleanup (Delete removed links)
-        // We only delete links that belong to the current series' episodes
-        // Re-fetch episode IDs to ensure we have all of them (including newly created ones)
-        // Actually, we can just use the IDs from the loaded/created models
+        // Cleanup
         $episodeIds = $existingSeasons->flatMap(fn($s) => $s->episodes->pluck('id'));
 
         if ($episodeIds->isNotEmpty()) {
@@ -323,17 +320,5 @@ class SeriesController extends Controller
                 ->whereNotIn('id', $submittedDownloadIds)
                 ->delete();
         }
-    }
-    public function checkSlug(Request $request)
-    {
-        $slug = $request->input('slug');
-        $id = $request->input('id');
-
-        $query = Series::where('slug', $slug);
-        if ($id) {
-            $query->where('id', '!=', $id);
-        }
-
-        return response()->json(['exists' => $query->exists()]);
     }
 }
