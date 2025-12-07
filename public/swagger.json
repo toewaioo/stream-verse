@@ -1,0 +1,2413 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Movie React API Client",
+        "description": "API documentation for the Movie React API Client",
+        "contact": {
+            "email": "admin@example.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "description": "Returns the registered user",
+                "operationId": "registerUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login a user",
+                "description": "Returns the user and a token",
+                "operationId": "loginUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        },
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout a user",
+                "description": "Logs out the current user",
+                "operationId": "logoutUser",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get the current user",
+                "description": "Returns the current user",
+                "operationId": "getUser",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/refresh": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refresh a token",
+                "description": "Returns a new token",
+                "operationId": "refreshToken",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/vip/redeem": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Redeem a VIP key",
+                "description": "Redeems a VIP key",
+                "operationId": "redeemVip",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VipRedeemRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/password/forgot": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Forgot password",
+                "description": "Sends a password reset link to the user",
+                "operationId": "forgotPassword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/api/password/reset": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Reset password",
+                "description": "Resets the user's password",
+                "operationId": "resetPassword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "token": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/api/movies": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get list of movies",
+                "description": "Returns list of movies",
+                "operationId": "getMoviesList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieCollection"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/movies/{slug}": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get a movie by slug",
+                "description": "Returns a single movie",
+                "operationId": "getMovieBySlug",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Movie slug",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Movie not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/movies/trending": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get trending movies",
+                "description": "Returns a list of trending movies",
+                "operationId": "getTrendingMovies",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MovieResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/movies/search": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Search for movies",
+                "description": "Returns a list of movies matching the search query",
+                "operationId": "searchMovies",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieCollection"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/movies/{slug}/related": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get related movies",
+                "description": "Returns a list of related movies",
+                "operationId": "getRelatedMovies",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Movie slug",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MovieResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Movie not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/movies/genre/{genreSlug}": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get movies by genre",
+                "description": "Returns a list of movies in a specific genre",
+                "operationId": "getMoviesByGenre",
+                "parameters": [
+                    {
+                        "name": "genreSlug",
+                        "in": "path",
+                        "description": "Genre slug",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieCollection"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/series": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get list of series",
+                "description": "Returns list of series",
+                "operationId": "getSeriesList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SeriesCollection"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/series/{slug}": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get a series by slug",
+                "description": "Returns a single series",
+                "operationId": "getSeriesBySlug",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Series slug",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SeriesResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Series not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/series/{seriesSlug}/seasons/{seasonNumber}": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get a season of a series",
+                "description": "Returns a single season",
+                "operationId": "getSeason",
+                "parameters": [
+                    {
+                        "name": "seriesSlug",
+                        "in": "path",
+                        "description": "Series slug",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "seasonNumber",
+                        "in": "path",
+                        "description": "Season number",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SeasonResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Season not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/series/{seriesSlug}/seasons/{seasonNumber}/episodes/{episodeNumber}": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get an episode of a series",
+                "description": "Returns a single episode",
+                "operationId": "getEpisode",
+                "parameters": [
+                    {
+                        "name": "seriesSlug",
+                        "in": "path",
+                        "description": "Series slug",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "seasonNumber",
+                        "in": "path",
+                        "description": "Season number",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "episodeNumber",
+                        "in": "path",
+                        "description": "Episode number",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EpisodeResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Episode not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/series/trending": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Get trending series",
+                "description": "Returns a list of trending series",
+                "operationId": "getTrendingSeries",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SeriesResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/series/search": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Search for series",
+                "description": "Returns a list of series matching the search query",
+                "operationId": "searchSeries",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SeriesCollection"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/movies/{slug}/stream": {
+            "get": {
+                "tags": [
+                    "Streaming"
+                ],
+                "summary": "Get movie streaming links",
+                "description": "Returns a list of streaming links for a movie",
+                "operationId": "getMovieStreamingLinks",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Movie slug",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/WatchLinkResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/series/{seriesSlug}/seasons/{seasonNumber}/episodes/{episodeNumber}/stream": {
+            "get": {
+                "tags": [
+                    "Streaming"
+                ],
+                "summary": "Get episode streaming links",
+                "description": "Returns a list of streaming links for an episode",
+                "operationId": "getEpisodeStreamingLinks",
+                "parameters": [
+                    {
+                        "name": "seriesSlug",
+                        "in": "path",
+                        "description": "Series slug",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "seasonNumber",
+                        "in": "path",
+                        "description": "Season number",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "episodeNumber",
+                        "in": "path",
+                        "description": "Episode number",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/WatchLinkResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/stream/proxy/{linkId}": {
+            "get": {
+                "tags": [
+                    "Streaming"
+                ],
+                "summary": "Proxy a stream",
+                "description": "Proxies a stream to avoid CORS issues",
+                "operationId": "proxyStream",
+                "parameters": [
+                    {
+                        "name": "linkId",
+                        "in": "path",
+                        "description": "Link ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Stream not found"
+                    },
+                    "500": {
+                        "description": "Stream proxy error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/download/{type}/{slug}": {
+            "get": {
+                "tags": [
+                    "Streaming"
+                ],
+                "summary": "Get download links",
+                "description": "Returns a list of download links for a movie or episode",
+                "operationId": "getDownloadLinks",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "description": "Content type (movie or episode)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Content slug",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DownloadLinkResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/links/{linkId}/report": {
+            "post": {
+                "tags": [
+                    "Streaming"
+                ],
+                "summary": "Report a broken link",
+                "description": "Reports a broken link",
+                "operationId": "reportBrokenLink",
+                "parameters": [
+                    {
+                        "name": "linkId",
+                        "in": "path",
+                        "description": "Link ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/links/{linkId}/alternatives": {
+            "get": {
+                "tags": [
+                    "Streaming"
+                ],
+                "summary": "Get alternative links",
+                "description": "Returns a list of alternative links for a broken link",
+                "operationId": "getAlternativeLinks",
+                "parameters": [
+                    {
+                        "name": "linkId",
+                        "in": "path",
+                        "description": "Link ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/WatchLinkResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/watch-history": {
+            "get": {
+                "tags": [
+                    "Watch History"
+                ],
+                "summary": "Get user's watch history",
+                "description": "Returns the user's watch history",
+                "operationId": "getWatchHistory",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/WatchHistoryResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/watch-history/continue-watching": {
+            "get": {
+                "tags": [
+                    "Watch History"
+                ],
+                "summary": "Get user's continue watching list",
+                "description": "Returns the user's continue watching list",
+                "operationId": "getContinueWatching",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/WatchHistoryResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/watch-history/progress": {
+            "post": {
+                "tags": [
+                    "Watch History"
+                ],
+                "summary": "Update watch progress",
+                "description": "Updates the watch progress for a movie or episode",
+                "operationId": "updateProgress",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateWatchHistoryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WatchHistoryResource"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/watch-history/clear": {
+            "post": {
+                "tags": [
+                    "Watch History"
+                ],
+                "summary": "Clear watch history",
+                "description": "Clears the user's watch history",
+                "operationId": "clearHistory",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/watch-history/{id}": {
+            "delete": {
+                "tags": [
+                    "Watch History"
+                ],
+                "summary": "Remove from watch history",
+                "description": "Removes an item from the user's watch history",
+                "operationId": "removeFromHistory",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Watch history ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/watch-history/{id}/complete": {
+            "post": {
+                "tags": [
+                    "Watch History"
+                ],
+                "summary": "Mark as completed",
+                "description": "Marks an item in the watch history as completed",
+                "operationId": "markAsCompleted",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Watch history ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WatchHistoryResource"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "LoginRequest": {
+                "title": "Login Request",
+                "description": "Login request body",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john.doe@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "password"
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterRequest": {
+                "title": "Register Request",
+                "description": "Register request body",
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "password_confirmation"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john.doe@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "password"
+                    },
+                    "password_confirmation": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "password"
+                    }
+                },
+                "type": "object"
+            },
+            "StreamContentRequest": {
+                "title": "Stream Content Request",
+                "description": "Stream content request body",
+                "properties": {
+                    "quality": {
+                        "type": "string",
+                        "example": "720p"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateWatchHistoryRequest": {
+                "title": "Update Watch History Request",
+                "description": "Update watch history request body",
+                "properties": {
+                    "movie_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "episode_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_position_seconds": {
+                        "type": "integer",
+                        "example": 300
+                    },
+                    "duration_seconds": {
+                        "type": "integer",
+                        "example": 3600
+                    }
+                },
+                "type": "object"
+            },
+            "VipRedeemRequest": {
+                "title": "Vip Redeem Request",
+                "description": "Vip redeem request body",
+                "required": [
+                    "key"
+                ],
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "1234567890123456"
+                    }
+                },
+                "type": "object"
+            },
+            "DownloadLinkResource": {
+                "title": "Download Link Resource",
+                "description": "Download link resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "quality": {
+                        "type": "string"
+                    },
+                    "server_name": {
+                        "type": "string"
+                    },
+                    "source_type": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "file_size": {
+                        "type": "integer"
+                    },
+                    "file_format": {
+                        "type": "string"
+                    },
+                    "requires_proxy": {
+                        "type": "boolean"
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "is_vip_only": {
+                        "type": "boolean"
+                    },
+                    "priority": {
+                        "type": "integer"
+                    },
+                    "success_rate": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "last_checked_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "download_url": {
+                        "type": "string"
+                    },
+                    "movie": {
+                        "$ref": "#/components/schemas/MovieResource"
+                    },
+                    "episode": {
+                        "$ref": "#/components/schemas/EpisodeResource"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "EpisodeResource": {
+                "title": "Episode Resource",
+                "description": "Episode resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "episode_number": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "runtime": {
+                        "type": "integer"
+                    },
+                    "air_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "view_count": {
+                        "type": "integer"
+                    },
+                    "poster_url": {
+                        "type": "string"
+                    },
+                    "trailer_url": {
+                        "type": "string"
+                    },
+                    "imdb_id": {
+                        "type": "string"
+                    },
+                    "rating_average": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "rating_count": {
+                        "type": "integer"
+                    },
+                    "full_title": {
+                        "type": "string"
+                    },
+                    "season": {
+                        "$ref": "#/components/schemas/SeasonResource"
+                    },
+                    "series": {
+                        "$ref": "#/components/schemas/SeriesResource"
+                    },
+                    "watch_links": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WatchLinkResource"
+                        }
+                    },
+                    "download_links": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DownloadLinkResource"
+                        }
+                    },
+                    "actors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PersonRoleResource"
+                        }
+                    },
+                    "directors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PersonRoleResource"
+                        }
+                    },
+                    "user_rating": {
+                        "$ref": "#/components/schemas/RatingResource"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "GenreResource": {
+                "title": "Genre Resource",
+                "description": "Genre resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "movie_count": {
+                        "type": "integer"
+                    },
+                    "series_count": {
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "LinkHealthCheckResource": {
+                "title": "Link Health Check Resource",
+                "description": "Link health check resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "is_working": {
+                        "type": "boolean"
+                    },
+                    "response_time_ms": {
+                        "type": "integer"
+                    },
+                    "http_status": {
+                        "type": "integer"
+                    },
+                    "error_message": {
+                        "type": "string"
+                    },
+                    "checked_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "MovieCollection": {
+                "title": "Movie Collection",
+                "description": "Movie collection resource",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MovieResource"
+                        }
+                    },
+                    "meta": {
+                        "properties": {
+                            "current_page": {
+                                "type": "integer"
+                            },
+                            "last_page": {
+                                "type": "integer"
+                            },
+                            "per_page": {
+                                "type": "integer"
+                            },
+                            "total": {
+                                "type": "integer"
+                            },
+                            "from": {
+                                "type": "integer"
+                            },
+                            "to": {
+                                "type": "integer"
+                            },
+                            "path": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "links": {
+                        "properties": {
+                            "first": {
+                                "type": "string"
+                            },
+                            "last": {
+                                "type": "string"
+                            },
+                            "prev": {
+                                "type": "string"
+                            },
+                            "next": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "MovieResource": {
+                "title": "Movie Resource",
+                "description": "Movie resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "original_title": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "release_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "release_year": {
+                        "type": "integer"
+                    },
+                    "runtime": {
+                        "type": "integer"
+                    },
+                    "formatted_runtime": {
+                        "type": "string"
+                    },
+                    "language": {
+                        "type": "string"
+                    },
+                    "country": {
+                        "type": "string"
+                    },
+                    "imdb_id": {
+                        "type": "string"
+                    },
+                    "budget": {
+                        "type": "integer"
+                    },
+                    "revenue": {
+                        "type": "integer"
+                    },
+                    "trailer_url": {
+                        "type": "string"
+                    },
+                    "poster_url": {
+                        "type": "string"
+                    },
+                    "banner_url": {
+                        "type": "string"
+                    },
+                    "rating_average": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "rating_count": {
+                        "type": "integer"
+                    },
+                    "age_rating": {
+                        "type": "string"
+                    },
+                    "is_vip_only": {
+                        "type": "boolean"
+                    },
+                    "visibility_status": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "view_count": {
+                        "type": "integer"
+                    },
+                    "genres": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GenreResource"
+                        }
+                    },
+                    "person": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PersonResource"
+                        }
+                    },
+                    "actors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PersonRoleResource"
+                        }
+                    },
+                    "directors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PersonRoleResource"
+                        }
+                    },
+                    "writers": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PersonRoleResource"
+                        }
+                    },
+                    "watch_links": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WatchLinkResource"
+                        }
+                    },
+                    "download_links": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DownloadLinkResource"
+                        }
+                    },
+                    "ratings": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RatingResource"
+                        }
+                    },
+                    "reviews": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ReviewResource"
+                        }
+                    },
+                    "user_rating": {
+                        "$ref": "#/components/schemas/RatingResource"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "PersonResource": {
+                "title": "Person Resource",
+                "description": "Person resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "biography": {
+                        "type": "string"
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "death_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "gender": {
+                        "type": "string"
+                    },
+                    "avatar_url": {
+                        "type": "string"
+                    },
+                    "country": {
+                        "type": "string"
+                    },
+                    "imdb_id": {
+                        "type": "string"
+                    },
+                    "age": {
+                        "type": "integer"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PersonRoleResource"
+                        }
+                    },
+                    "movie_credits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MovieResource"
+                        }
+                    },
+                    "series_credits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SeriesResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "PersonRoleResource": {
+                "title": "Person Role Resource",
+                "description": "Person role resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "role_type": {
+                        "type": "string"
+                    },
+                    "character_name": {
+                        "type": "string"
+                    },
+                    "order_index": {
+                        "type": "integer"
+                    },
+                    "person": {
+                        "$ref": "#/components/schemas/PersonResource"
+                    },
+                    "movie": {
+                        "$ref": "#/components/schemas/MovieResource"
+                    },
+                    "series": {
+                        "$ref": "#/components/schemas/SeriesResource"
+                    },
+                    "season": {
+                        "$ref": "#/components/schemas/SeasonResource"
+                    },
+                    "episode": {
+                        "$ref": "#/components/schemas/EpisodeResource"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "RatingResource": {
+                "title": "Rating Resource",
+                "description": "Rating resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "rating": {
+                        "type": "integer"
+                    },
+                    "review_text": {
+                        "type": "string"
+                    },
+                    "spoiler_flag": {
+                        "type": "boolean"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "movie": {
+                        "$ref": "#/components/schemas/MovieResource"
+                    },
+                    "series": {
+                        "$ref": "#/components/schemas/SeriesResource"
+                    },
+                    "episode": {
+                        "$ref": "#/components/schemas/EpisodeResource"
+                    },
+                    "content_type": {
+                        "type": "string"
+                    },
+                    "content_title": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "rating_average": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "rating_count": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "ReviewResource": {
+                "title": "Review Resource",
+                "description": "Review resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "content": {
+                        "type": "string"
+                    },
+                    "rating": {
+                        "type": "integer"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "SeasonResource": {
+                "title": "Season Resource",
+                "description": "Season resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "season_number": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "air_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "episode_count": {
+                        "type": "integer"
+                    },
+                    "series": {
+                        "$ref": "#/components/schemas/SeriesResource"
+                    },
+                    "episodes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EpisodeResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "SeriesCollection": {
+                "title": "Series Collection",
+                "description": "Series collection resource",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SeriesResource"
+                        }
+                    },
+                    "meta": {
+                        "properties": {
+                            "current_page": {
+                                "type": "integer"
+                            },
+                            "last_page": {
+                                "type": "integer"
+                            },
+                            "per_page": {
+                                "type": "integer"
+                            },
+                            "total": {
+                                "type": "integer"
+                            },
+                            "from": {
+                                "type": "integer"
+                            },
+                            "to": {
+                                "type": "integer"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "links": {
+                        "properties": {
+                            "first": {
+                                "type": "string"
+                            },
+                            "last": {
+                                "type": "string"
+                            },
+                            "prev": {
+                                "type": "string"
+                            },
+                            "next": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "SeriesResource": {
+                "title": "Series Resource",
+                "description": "Series resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "original_title": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "release_year_start": {
+                        "type": "integer"
+                    },
+                    "release_year_end": {
+                        "type": "integer"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "language": {
+                        "type": "string"
+                    },
+                    "country": {
+                        "type": "string"
+                    },
+                    "imdb_id": {
+                        "type": "string"
+                    },
+                    "poster_url": {
+                        "type": "string"
+                    },
+                    "banner_url": {
+                        "type": "string"
+                    },
+                    "trailer_url": {
+                        "type": "string"
+                    },
+                    "age_rating": {
+                        "type": "string"
+                    },
+                    "is_vip_only": {
+                        "type": "boolean"
+                    },
+                    "rating_average": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "rating_count": {
+                        "type": "integer"
+                    },
+                    "total_episodes": {
+                        "type": "integer"
+                    },
+                    "view_count": {
+                        "type": "integer"
+                    },
+                    "genres": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GenreResource"
+                        }
+                    },
+                    "seasons": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SeasonResource"
+                        }
+                    },
+                    "actors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PersonRoleResource"
+                        }
+                    },
+                    "directors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PersonRoleResource"
+                        }
+                    },
+                    "latest_episodes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EpisodeResource"
+                        }
+                    },
+                    "reviews": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ReviewResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "title": "User Resource",
+                "description": "User resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "avatar_url": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "is_vip": {
+                        "type": "boolean"
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "vip_subscription": {
+                        "$ref": "#/components/schemas/VipSubscriptionResource"
+                    }
+                },
+                "type": "object"
+            },
+            "VipKeyResource": {
+                "title": "Vip Key Resource",
+                "description": "Vip key resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "key": {
+                        "type": "string"
+                    },
+                    "duration_days": {
+                        "type": "integer"
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "max_uses": {
+                        "type": "integer"
+                    },
+                    "uses_count": {
+                        "type": "integer"
+                    },
+                    "expires_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "can_be_used": {
+                        "type": "boolean"
+                    },
+                    "remaining_uses": {
+                        "type": "integer"
+                    },
+                    "subscriptions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VipSubscriptionResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "VipSubscriptionResource": {
+                "title": "Vip Subscription Resource",
+                "description": "Vip subscription resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "days_remaining": {
+                        "type": "integer"
+                    },
+                    "total_duration_days": {
+                        "type": "integer"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "vip_key": {
+                        "$ref": "#/components/schemas/VipKeyResource"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "WatchHistoryResource": {
+                "title": "Watch History Resource",
+                "description": "Watch history resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "last_position_seconds": {
+                        "type": "integer"
+                    },
+                    "duration_seconds": {
+                        "type": "integer"
+                    },
+                    "percent_watched": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "completed": {
+                        "type": "boolean"
+                    },
+                    "content_type": {
+                        "type": "string"
+                    },
+                    "movie": {
+                        "$ref": "#/components/schemas/MovieResource"
+                    },
+                    "episode": {
+                        "$ref": "#/components/schemas/EpisodeResource"
+                    },
+                    "content": {
+                        "type": "object"
+                    },
+                    "resume_time_formatted": {
+                        "type": "string"
+                    },
+                    "time_remaining_formatted": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "WatchLinkResource": {
+                "title": "Watch Link Resource",
+                "description": "Watch link resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "quality": {
+                        "type": "string"
+                    },
+                    "server_name": {
+                        "type": "string"
+                    },
+                    "source_type": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "embed_code": {
+                        "type": "string"
+                    },
+                    "requires_proxy": {
+                        "type": "boolean"
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "is_vip_only": {
+                        "type": "boolean"
+                    },
+                    "priority": {
+                        "type": "integer"
+                    },
+                    "success_rate": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "last_checked_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "stream_url": {
+                        "type": "string"
+                    },
+                    "movie": {
+                        "$ref": "#/components/schemas/MovieResource"
+                    },
+                    "episode": {
+                        "$ref": "#/components/schemas/EpisodeResource"
+                    },
+                    "health_checks": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LinkHealthCheckResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Movies",
+            "description": "Movies"
+        },
+        {
+            "name": "Series",
+            "description": "Series"
+        },
+        {
+            "name": "Streaming",
+            "description": "Streaming"
+        },
+        {
+            "name": "Watch History",
+            "description": "Watch History"
+        }
+    ]
+}

@@ -12,7 +12,7 @@ return [
                 /*
                  * Route for accessing api documentation interface
                  */
-                'api' => 'api/documentation',
+                'api' => '/documentation',
             ],
             'paths' => [
                 /*
@@ -28,7 +28,7 @@ return [
                 /*
                  * File name of the generated json documentation file
                  */
-                'docs_json' => '/swagger.json',
+                'docs_json' => '/storage/api-docs/swagger.json',
 
 
                 /*
