@@ -15,10 +15,22 @@ use App\Http\Controllers\Web\SitemapController;
 use App\Http\Controllers\Web\PageController;
 use App\Http\Controllers\Web\RatingController;
 use App\Http\Controllers\Web\ProfileController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
+
 // Public Routes
+Route::get('/swagger-json', function () {
+    Artisan::call('l5-swagger:generate');
+
+    $file = sys_get_temp_dir() . '/swagger/swagger.json';
+
+    return response()->file($file, [
+        'Content-Type' => 'application/json',
+    ]);
+});
+
 // Public Routes
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/movies', [MovieController::class, 'index'])->name('movies.index');
