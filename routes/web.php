@@ -18,11 +18,41 @@ use App\Http\Controllers\Web\ProfileController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 
 // Public Routes
-Route::get('/swagger.json', function () {
-  
+Route::get('/api/documentation', function () {
+    $swaggerUiHtml = <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Swagger UI</title>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.3.0/swagger-ui.css">
+</head>
+<body>
+<div id="swagger-ui"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.3.0/swagger-ui-bundle.js"></script>
+<script>
+  window.onload = function() {
+    SwaggerUIBundle({
+      url: '/docs',
+      dom_id: '#swagger-ui',
+      presets: [
+        SwaggerUIBundle.presets.apis
+      ],
+      layout: "BaseLayout",
+    });
+  }
+</script>
+</body>
+</html>
+HTML;
+
+    return Response::make($swaggerUiHtml, 200, ['Content-Type' => 'text/html']);
+});
+Route::get('/docs', function () {
 
     $file = base_path('/storage/api-docs/swagger.json');
     if (!file_exists($file)) {

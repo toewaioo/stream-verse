@@ -28,7 +28,7 @@ return [
                 /*
                  * File name of the generated json documentation file
                  */
-                'docs_json' => 'swagger.json',
+                'docs_json' => 'docs',
 
 
                 /*
@@ -68,8 +68,8 @@ return [
             'middleware' => [
                 'api' => [],
                 'asset' => [],
-                'docs' => [],
                 'oauth2_callback' => [],
+                'docs' => []
             ],
 
             /*
@@ -83,7 +83,7 @@ return [
              * Absolute path to location where parsed annotations will be stored
              */
 
-            'docs' => '/storage/api-docs/',
+            'docs' => '/storage/api-docs',
 
             /*
              * Absolute path to directory where to export views
