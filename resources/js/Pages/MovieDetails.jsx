@@ -155,7 +155,6 @@ export default function MovieDetails({
     isVip,
     seo,
 }) {
-   
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const [movie, setMovie] = useState(initialMovie);
@@ -643,84 +642,6 @@ export default function MovieDetails({
                                 </div>
                             </div>
 
-                            <div className="mb-16">
-                                <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                                    <span className="w-2 h-[2px] bg-blue-500"></span>
-                                    {t("Reviews")}
-                                </h3>
-                                {auth.user && !userHasReviewed && (
-                                    <ReviewForm
-                                        content={movie}
-                                        contentType="movie"
-                                        onSuccess={handleReviewSubmit}
-                                    />
-                                )}
-                                {auth.user &&
-                                    userHasReviewed &&
-                                    !editingReviewId && (
-                                        <div className="glass-card-adaptive p-6 text-center">
-                                            <p className="text-gray-500 dark:text-gray-400 font-medium">
-                                                You have already reviewed this
-                                                movie.
-                                            </p>
-                                        </div>
-                                    )}
-                                {!auth.user && (
-                                    <div className="glass-card-adaptive p-8 text-center">
-                                        <p className="text-gray-500 dark:text-gray-400 mb-6 font-medium">
-                                            {t(
-                                                "Please log in to write a review."
-                                            )}
-                                        </p>
-                                        <a
-                                            href={route("login")}
-                                            className="btn-primary inline-flex"
-                                        >
-                                            {t("Log In to Review")}
-                                        </a>
-                                    </div>
-                                )}
-                                <div className="mt-8 space-y-4">
-                                    {movie?.reviews?.length > 0 ? (
-                                        movie.reviews.map((review) =>
-                                            editingReviewId === review.id ? (
-                                                <ReviewForm
-                                                    key={`editing-${review.id}`}
-                                                    content={movie}
-                                                    contentType="movie"
-                                                    review={review}
-                                                    onSuccess={
-                                                        handleReviewSubmit
-                                                    }
-                                                    onCancel={() =>
-                                                        setEditingReviewId(null)
-                                                    }
-                                                />
-                                            ) : (
-                                                <Review
-                                                    key={review.id}
-                                                    review={review}
-                                                    onEdit={() =>
-                                                        setEditingReviewId(
-                                                            review.id
-                                                        )
-                                                    }
-                                                    onDelete={() =>
-                                                        handleReviewDelete(
-                                                            review.id
-                                                        )
-                                                    }
-                                                />
-                                            )
-                                        )
-                                    ) : (
-                                        <p className="text-gray-500 italic text-center py-8">
-                                            {t("No reviews yet.")}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-
                             <div className="w-full">
                                 <h1>{t("Backdrop")}</h1>
                                 <img
@@ -802,6 +723,79 @@ export default function MovieDetails({
                                     </div>
                                 </div>
                             )}
+                        </div>
+                        <div className="mb-16">
+                            <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                <span className="w-2 h-[2px] bg-blue-500"></span>
+                                {t("Reviews")}
+                            </h3>
+                            {auth.user && !userHasReviewed && (
+                                <ReviewForm
+                                    content={movie}
+                                    contentType="movie"
+                                    onSuccess={handleReviewSubmit}
+                                />
+                            )}
+                            {auth.user &&
+                                userHasReviewed &&
+                                !editingReviewId && (
+                                    <div className="glass-card-adaptive p-6 text-center">
+                                        <p className="text-gray-500 dark:text-gray-400 font-medium">
+                                            You have already reviewed this
+                                            movie.
+                                        </p>
+                                    </div>
+                                )}
+                            {!auth.user && (
+                                <div className="glass-card-adaptive p-8 text-center">
+                                    <p className="text-gray-500 dark:text-gray-400 mb-6 font-medium">
+                                        {t("Please log in to write a review.")}
+                                    </p>
+                                    <a
+                                        href={route("login")}
+                                        className="btn-primary inline-flex"
+                                    >
+                                        {t("Log In to Review")}
+                                    </a>
+                                </div>
+                            )}
+                            <div className="mt-8 space-y-4">
+                                {movie?.reviews?.length > 0 ? (
+                                    movie.reviews.map((review) =>
+                                        editingReviewId === review.id ? (
+                                            <ReviewForm
+                                                key={`editing-${review.id}`}
+                                                content={movie}
+                                                contentType="movie"
+                                                review={review}
+                                                onSuccess={handleReviewSubmit}
+                                                onCancel={() =>
+                                                    setEditingReviewId(null)
+                                                }
+                                            />
+                                        ) : (
+                                            <Review
+                                                key={review.id}
+                                                review={review}
+                                                onEdit={() =>
+                                                    setEditingReviewId(
+                                                        review.id
+                                                    )
+                                                }
+                                                onDelete={() =>
+                                                    handleReviewDelete(
+                                                        review.id
+                                                    )
+                                                }
+                                            />
+                                        )
+                                    )
+                                ) : (
+                                    <p className="text-gray-500 italic text-center py-8">
+                                        {t("No reviews yet.")}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>

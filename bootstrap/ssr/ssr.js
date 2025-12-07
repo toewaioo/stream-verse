@@ -6947,59 +6947,6 @@ function MovieDetails({
               actor.id
             )) })
           ] }),
-          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
-            /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
-              /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
-              t("Reviews")
-            ] }),
-            auth.user && !userHasReviewed && /* @__PURE__ */ jsx(
-              ReviewForm,
-              {
-                content: movie,
-                contentType: "movie",
-                onSuccess: handleReviewSubmit
-              }
-            ),
-            auth.user && userHasReviewed && !editingReviewId && /* @__PURE__ */ jsx("div", { className: "glass-card-adaptive p-6 text-center", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 font-medium", children: "You have already reviewed this movie." }) }),
-            !auth.user && /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-8 text-center", children: [
-              /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 mb-6 font-medium", children: t(
-                "Please log in to write a review."
-              ) }),
-              /* @__PURE__ */ jsx(
-                "a",
-                {
-                  href: route("login"),
-                  className: "btn-primary inline-flex",
-                  children: t("Log In to Review")
-                }
-              )
-            ] }),
-            /* @__PURE__ */ jsx("div", { className: "mt-8 space-y-4", children: movie?.reviews?.length > 0 ? movie.reviews.map(
-              (review) => editingReviewId === review.id ? /* @__PURE__ */ jsx(
-                ReviewForm,
-                {
-                  content: movie,
-                  contentType: "movie",
-                  review,
-                  onSuccess: handleReviewSubmit,
-                  onCancel: () => setEditingReviewId(null)
-                },
-                `editing-${review.id}`
-              ) : /* @__PURE__ */ jsx(
-                Review,
-                {
-                  review,
-                  onEdit: () => setEditingReviewId(
-                    review.id
-                  ),
-                  onDelete: () => handleReviewDelete(
-                    review.id
-                  )
-                },
-                review.id
-              )
-            ) : /* @__PURE__ */ jsx("p", { className: "text-gray-500 italic text-center py-8", children: t("No reviews yet.") }) })
-          ] }),
           /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
             /* @__PURE__ */ jsx("h1", { children: t("Backdrop") }),
             /* @__PURE__ */ jsx(
@@ -7074,6 +7021,57 @@ function MovieDetails({
               rel.id
             )) })
           ] })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+          /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
+            /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
+            t("Reviews")
+          ] }),
+          auth.user && !userHasReviewed && /* @__PURE__ */ jsx(
+            ReviewForm,
+            {
+              content: movie,
+              contentType: "movie",
+              onSuccess: handleReviewSubmit
+            }
+          ),
+          auth.user && userHasReviewed && !editingReviewId && /* @__PURE__ */ jsx("div", { className: "glass-card-adaptive p-6 text-center", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 font-medium", children: "You have already reviewed this movie." }) }),
+          !auth.user && /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-8 text-center", children: [
+            /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 mb-6 font-medium", children: t("Please log in to write a review.") }),
+            /* @__PURE__ */ jsx(
+              "a",
+              {
+                href: route("login"),
+                className: "btn-primary inline-flex",
+                children: t("Log In to Review")
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsx("div", { className: "mt-8 space-y-4", children: movie?.reviews?.length > 0 ? movie.reviews.map(
+            (review) => editingReviewId === review.id ? /* @__PURE__ */ jsx(
+              ReviewForm,
+              {
+                content: movie,
+                contentType: "movie",
+                review,
+                onSuccess: handleReviewSubmit,
+                onCancel: () => setEditingReviewId(null)
+              },
+              `editing-${review.id}`
+            ) : /* @__PURE__ */ jsx(
+              Review,
+              {
+                review,
+                onEdit: () => setEditingReviewId(
+                  review.id
+                ),
+                onDelete: () => handleReviewDelete(
+                  review.id
+                )
+              },
+              review.id
+            )
+          ) : /* @__PURE__ */ jsx("p", { className: "text-gray-500 italic text-center py-8", children: t("No reviews yet.") }) })
         ] })
       ] }) }),
       /* @__PURE__ */ jsx(Footer, {})
@@ -9206,59 +9204,6 @@ function SeriesDetails({
               actor.id
             )) })
           ] }),
-          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
-            /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
-              /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
-              t("Reviews")
-            ] }),
-            auth.user && !userHasReviewed && /* @__PURE__ */ jsx(
-              ReviewForm,
-              {
-                content: series,
-                contentType: "series",
-                onSuccess: handleReviewSubmit
-              }
-            ),
-            auth.user && userHasReviewed && !editingReviewId && /* @__PURE__ */ jsx("div", { className: "glass-card-adaptive p-6 text-center", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 font-medium", children: "You have already reviewed this series." }) }),
-            !auth.user && /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-8 text-center", children: [
-              /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 mb-6 font-medium", children: t(
-                "Please log in to write a review."
-              ) }),
-              /* @__PURE__ */ jsx(
-                "a",
-                {
-                  href: route("login"),
-                  className: "btn-primary inline-flex",
-                  children: t("Log In to Review")
-                }
-              )
-            ] }),
-            /* @__PURE__ */ jsx("div", { className: "mt-8 space-y-4", children: series.reviews.length > 0 ? series.reviews.map(
-              (review) => editingReviewId === review.id ? /* @__PURE__ */ jsx(
-                ReviewForm,
-                {
-                  content: series,
-                  contentType: "series",
-                  review,
-                  onSuccess: handleReviewSubmit,
-                  onCancel: () => setEditingReviewId(null)
-                },
-                `editing-${review.id}`
-              ) : /* @__PURE__ */ jsx(
-                Review,
-                {
-                  review,
-                  onEdit: () => setEditingReviewId(
-                    review.id
-                  ),
-                  onDelete: () => handleReviewDelete(
-                    review.id
-                  )
-                },
-                review.id
-              )
-            ) : /* @__PURE__ */ jsx("p", { className: "text-gray-500 italic text-center py-8", children: t("No reviews yet.") }) })
-          ] }),
           /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
             /* @__PURE__ */ jsx("h1", { children: t("Backdrop") }),
             /* @__PURE__ */ jsx(
@@ -9331,6 +9276,57 @@ function SeriesDetails({
               rel.id
             )) })
           ] })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+          /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
+            /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
+            t("Reviews")
+          ] }),
+          auth.user && !userHasReviewed && /* @__PURE__ */ jsx(
+            ReviewForm,
+            {
+              content: series,
+              contentType: "series",
+              onSuccess: handleReviewSubmit
+            }
+          ),
+          auth.user && userHasReviewed && !editingReviewId && /* @__PURE__ */ jsx("div", { className: "glass-card-adaptive p-6 text-center", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 font-medium", children: "You have already reviewed this series." }) }),
+          !auth.user && /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-8 text-center", children: [
+            /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 mb-6 font-medium", children: t("Please log in to write a review.") }),
+            /* @__PURE__ */ jsx(
+              "a",
+              {
+                href: route("login"),
+                className: "btn-primary inline-flex",
+                children: t("Log In to Review")
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsx("div", { className: "mt-8 space-y-4", children: series.reviews.length > 0 ? series.reviews.map(
+            (review) => editingReviewId === review.id ? /* @__PURE__ */ jsx(
+              ReviewForm,
+              {
+                content: series,
+                contentType: "series",
+                review,
+                onSuccess: handleReviewSubmit,
+                onCancel: () => setEditingReviewId(null)
+              },
+              `editing-${review.id}`
+            ) : /* @__PURE__ */ jsx(
+              Review,
+              {
+                review,
+                onEdit: () => setEditingReviewId(
+                  review.id
+                ),
+                onDelete: () => handleReviewDelete(
+                  review.id
+                )
+              },
+              review.id
+            )
+          ) : /* @__PURE__ */ jsx("p", { className: "text-gray-500 italic text-center py-8", children: t("No reviews yet.") }) })
         ] })
       ] }) }),
       /* @__PURE__ */ jsx(Footer, {})
