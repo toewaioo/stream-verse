@@ -22,9 +22,9 @@ use Inertia\Inertia;
 
 // Public Routes
 Route::get('/swagger.json', function () {
-    Artisan::call('l5-swagger:generate');
+  
 
-    $file = base_path('storage/api-docs/swagger.json');
+    $file = base_path('/storage/api-docs/swagger.json');
     if (!file_exists($file)) {
         return response()->json(['message' => 'Swagger JSON not found'], 404);
     }
