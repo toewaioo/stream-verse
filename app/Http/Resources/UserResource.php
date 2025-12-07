@@ -4,6 +4,23 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     schema="UserResource",
+ *     title="User Resource",
+ *     description="User resource",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="email", type="string", format="email"),
+ *     @OA\Property(property="avatar_url", type="string"),
+ *     @OA\Property(property="role", type="string"),
+ *     @OA\Property(property="is_vip", type="boolean"),
+ *     @OA\Property(property="email_verified_at", type="string", format="date-time"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
+ *     @OA\Property(property="vip_subscription", ref="#/components/schemas/VipSubscriptionResource")
+ * )
+ */
 class UserResource extends JsonResource
 {
     public function toArray($request)

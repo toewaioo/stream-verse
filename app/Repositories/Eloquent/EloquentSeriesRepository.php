@@ -13,7 +13,7 @@ class EloquentSeriesRepository implements SeriesRepositoryInterface
 {
     public function all(array $filters = []): LengthAwarePaginator
     {
-        $query = Series::with(['genres', 'seasons.episodes','seasons.episodes.downloadLinks','seasons.episodes.watchLinks',])
+        $query = Series::with(['genres'])->withCount(['seasons', 'episodes'])
             ->public();
 
         $this->applyFilters($query, $filters);

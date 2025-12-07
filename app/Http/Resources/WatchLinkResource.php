@@ -4,6 +4,31 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     schema="WatchLinkResource",
+ *     title="Watch Link Resource",
+ *     description="Watch link resource",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="quality", type="string"),
+ *     @OA\Property(property="server_name", type="string"),
+ *     @OA\Property(property="source_type", type="string"),
+ *     @OA\Property(property="url", type="string"),
+ *     @OA\Property(property="embed_code", type="string"),
+ *     @OA\Property(property="requires_proxy", type="boolean"),
+ *     @OA\Property(property="is_active", type="boolean"),
+ *     @OA\Property(property="is_vip_only", type="boolean"),
+ *     @OA\Property(property="priority", type="integer"),
+ *     @OA\Property(property="success_rate", type="number", format="float"),
+ *     @OA\Property(property="last_checked_at", type="string", format="date-time"),
+ *     @OA\Property(property="stream_url", type="string"),
+ *     @OA\Property(property="movie", ref="#/components/schemas/MovieResource"),
+ *     @OA\Property(property="episode", ref="#/components/schemas/EpisodeResource"),
+ *     @OA\Property(property="health_checks", type="array", @OA\Items(ref="#/components/schemas/LinkHealthCheckResource")),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ */
 class WatchLinkResource extends JsonResource
 {
     public function toArray($request)

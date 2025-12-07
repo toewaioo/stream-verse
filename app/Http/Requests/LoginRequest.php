@@ -4,6 +4,16 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="LoginRequest",
+ *     title="Login Request",
+ *     description="Login request body",
+ *     required={"email", "password"},
+ *     @OA\Property(property="email", type="string", format="email", example="john.doe@example.com"),
+ *     @OA\Property(property="password", type="string", format="password", example="password")
+ * )
+ */
 class LoginRequest extends FormRequest
 {
     public function authorize(): bool

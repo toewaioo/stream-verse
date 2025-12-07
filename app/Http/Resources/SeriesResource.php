@@ -4,6 +4,41 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     schema="SeriesResource",
+ *     title="Series Resource",
+ *     description="Series resource",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="title", type="string"),
+ *     @OA\Property(property="original_title", type="string"),
+ *     @OA\Property(property="slug", type="string"),
+ *     @OA\Property(property="description", type="string"),
+ *     @OA\Property(property="release_year_start", type="integer"),
+ *     @OA\Property(property="release_year_end", type="integer"),
+ *     @OA\Property(property="status", type="string"),
+ *     @OA\Property(property="language", type="string"),
+ *     @OA\Property(property="country", type="string"),
+ *     @OA\Property(property="imdb_id", type="string"),
+ *     @OA\Property(property="poster_url", type="string"),
+ *     @OA\Property(property="banner_url", type="string"),
+ *     @OA\Property(property="trailer_url", type="string"),
+ *     @OA\Property(property="age_rating", type="string"),
+ *     @OA\Property(property="is_vip_only", type="boolean"),
+ *     @OA\Property(property="rating_average", type="number", format="float"),
+ *     @OA\Property(property="rating_count", type="integer"),
+ *     @OA\Property(property="total_episodes", type="integer"),
+ *     @OA\Property(property="view_count", type="integer"),
+ *     @OA\Property(property="genres", type="array", @OA\Items(ref="#/components/schemas/GenreResource")),
+ *     @OA\Property(property="seasons", type="array", @OA\Items(ref="#/components/schemas/SeasonResource")),
+ *     @OA\Property(property="actors", type="array", @OA\Items(ref="#/components/schemas/PersonRoleResource")),
+ *     @OA\Property(property="directors", type="array", @OA\Items(ref="#/components/schemas/PersonRoleResource")),
+ *     @OA\Property(property="latest_episodes", type="array", @OA\Items(ref="#/components/schemas/EpisodeResource")),
+ *     @OA\Property(property="reviews", type="array", @OA\Items(ref="#/components/schemas/ReviewResource")),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ */
 class SeriesResource extends JsonResource
 {
     public function toArray($request)

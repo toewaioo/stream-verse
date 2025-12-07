@@ -4,6 +4,35 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     schema="EpisodeResource",
+ *     title="Episode Resource",
+ *     description="Episode resource",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="episode_number", type="integer"),
+ *     @OA\Property(property="title", type="string"),
+ *     @OA\Property(property="description", type="string"),
+ *     @OA\Property(property="runtime", type="integer"),
+ *     @OA\Property(property="air_date", type="string", format="date"),
+ *     @OA\Property(property="view_count", type="integer"),
+ *     @OA\Property(property="poster_url", type="string"),
+ *     @OA\Property(property="trailer_url", type="string"),
+ *     @OA\Property(property="imdb_id", type="string"),
+ *     @OA\Property(property="rating_average", type="number", format="float"),
+ *     @OA\Property(property="rating_count", type="integer"),
+ *     @OA\Property(property="full_title", type="string"),
+ *     @OA\Property(property="season", ref="#/components/schemas/SeasonResource"),
+ *     @OA\Property(property="series", ref="#/components/schemas/SeriesResource"),
+ *     @OA\Property(property="watch_links", type="array", @OA\Items(ref="#/components/schemas/WatchLinkResource")),
+ *     @OA\Property(property="download_links", type="array", @OA\Items(ref="#/components/schemas/DownloadLinkResource")),
+ *     @OA\Property(property="actors", type="array", @OA\Items(ref="#/components/schemas/PersonRoleResource")),
+ *     @OA\Property(property="directors", type="array", @OA\Items(ref="#/components/schemas/PersonRoleResource")),
+ *     @OA\Property(property="user_rating", ref="#/components/schemas/RatingResource"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ */
 class EpisodeResource extends JsonResource
 {
     public function toArray($request)

@@ -14,6 +14,24 @@ class MovieController extends Controller
 {
     public function __construct(private MovieService $movieService) {}
 
+    /**
+     * @OA\Get(
+     *      path="/api/movies",
+     *      operationId="getMoviesList",
+     *      tags={"Movies"},
+     *      summary="Get list of movies",
+     *      description="Returns list of movies",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/MovieCollection")
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     *     )
+     */
     public function index(Request $request): JsonResponse
     {
         try {
@@ -28,6 +46,37 @@ class MovieController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/movies/{slug}",
+     *      operationId="getMovieBySlug",
+     *      tags={"Movies"},
+     *      summary="Get a movie by slug",
+     *      description="Returns a single movie",
+     *      @OA\Parameter(
+     *          name="slug",
+     *          description="Movie slug",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/MovieResource")
+     *       ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Movie not found"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function show(string $slug): JsonResponse
     {
         try {
@@ -65,6 +114,27 @@ class MovieController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/movies/trending",
+     *      operationId="getTrendingMovies",
+     *      tags={"Movies"},
+     *      summary="Get trending movies",
+     *      description="Returns a list of trending movies",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(ref="#/components/schemas/MovieResource")
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function trending(): JsonResponse
     {
         try {
@@ -81,6 +151,37 @@ class MovieController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/movies/search",
+     *      operationId="searchMovies",
+     *      tags={"Movies"},
+     *      summary="Search for movies",
+     *      description="Returns a list of movies matching the search query",
+     *      @OA\Parameter(
+     *          name="q",
+     *          description="Search query",
+     *          required=true,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/MovieCollection")
+     *       ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Validation error"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function search(Request $request): JsonResponse
     {
         try {
@@ -103,6 +204,40 @@ class MovieController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/movies/{slug}/related",
+     *      operationId="getRelatedMovies",
+     *      tags={"Movies"},
+     *      summary="Get related movies",
+     *      description="Returns a list of related movies",
+     *      @OA\Parameter(
+     *          name="slug",
+     *          description="Movie slug",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(ref="#/components/schemas/MovieResource")
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Movie not found"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function related(string $slug): JsonResponse
     {
         try {
@@ -127,6 +262,33 @@ class MovieController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/movies/genre/{genreSlug}",
+     *      operationId="getMoviesByGenre",
+     *      tags={"Movies"},
+     *      summary="Get movies by genre",
+     *      description="Returns a list of movies in a specific genre",
+     *      @OA\Parameter(
+     *          name="genreSlug",
+     *          description="Genre slug",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/MovieCollection")
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function byGenre(string $genreSlug, Request $request): JsonResponse
     {
         try {

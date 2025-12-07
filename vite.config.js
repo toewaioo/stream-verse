@@ -20,7 +20,7 @@ export default defineConfig({
                 "favicon.ico",
                 "apple-touch-icon.png",
                 "masked-icon.svg",
-                "offline.html" // Ensure offline page is cached
+                "/offline.html" // Ensure offline page is cached
             ],
             manifest: {
                 name: "Cineverse",
@@ -66,7 +66,7 @@ export default defineConfig({
                 navigateFallback: '/offline.html',
                 // Ensure that only navigation requests (e.g., for pages) use the fallback.
                 // It prevents assets like images or CSS from being redirected to the HTML page.
-                navigateFallbackAllowlist: [/^\/$/] // Adjust this regex if you have other top-level pages
+                navigateFallbackAllowlist: [/^\/[^.]*$/] // Adjust this regex if you have other top-level pages
             }
         }),
     ],

@@ -20,6 +20,37 @@ class StreamingController extends Controller
         private StreamProxyService $proxyService
     ) {}
 
+    /**
+     * @OA\Get(
+     *      path="/api/movies/{slug}/stream",
+     *      operationId="getMovieStreamingLinks",
+     *      tags={"Streaming"},
+     *      summary="Get movie streaming links",
+     *      description="Returns a list of streaming links for a movie",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Parameter(
+     *          name="slug",
+     *          description="Movie slug",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(ref="#/components/schemas/WatchLinkResource")
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function getMovieStreamingLinks(StreamContentRequest $request, string $movieSlug): JsonResponse
     {
         try {
@@ -49,6 +80,55 @@ class StreamingController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/series/{seriesSlug}/seasons/{seasonNumber}/episodes/{episodeNumber}/stream",
+     *      operationId="getEpisodeStreamingLinks",
+     *      tags={"Streaming"},
+     *      summary="Get episode streaming links",
+     *      description="Returns a list of streaming links for an episode",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Parameter(
+     *          name="seriesSlug",
+     *          description="Series slug",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="seasonNumber",
+     *          description="Season number",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="episodeNumber",
+     *          description="Episode number",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(ref="#/components/schemas/WatchLinkResource")
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function getEpisodeStreamingLinks(Request $request, string $seriesSlug, int $seasonNumber, int $episodeNumber): JsonResponse
     {
         try {
@@ -88,6 +168,37 @@ class StreamingController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/stream/proxy/{linkId}",
+     *      operationId="proxyStream",
+     *      tags={"Streaming"},
+     *      summary="Proxy a stream",
+     *      description="Proxies a stream to avoid CORS issues",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Parameter(
+     *          name="linkId",
+     *          description="Link ID",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation"
+     *       ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Stream not found"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Stream proxy error"
+     *      )
+     * )
+     */
     public function proxyStream(Request $request, int $linkId): ?StreamedResponse
     {
         try {
@@ -105,6 +216,46 @@ class StreamingController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/download/{type}/{slug}",
+     *      operationId="getDownloadLinks",
+     *      tags={"Streaming"},
+     *      summary="Get download links",
+     *      description="Returns a list of download links for a movie or episode",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Parameter(
+     *          name="type",
+     *          description="Content type (movie or episode)",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="slug",
+     *          description="Content slug",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(ref="#/components/schemas/DownloadLinkResource")
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function getDownloadLinks(Request $request, string $type, string $slug): JsonResponse
     {
         try {
@@ -144,6 +295,33 @@ class StreamingController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/links/{linkId}/report",
+     *      operationId="reportBrokenLink",
+     *      tags={"Streaming"},
+     *      summary="Report a broken link",
+     *      description="Reports a broken link",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Parameter(
+     *          name="linkId",
+     *          description="Link ID",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation"
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function reportBrokenLink(Request $request, int $linkId): JsonResponse
     {
         try {
@@ -170,6 +348,37 @@ class StreamingController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/links/{linkId}/alternatives",
+     *      operationId="getAlternativeLinks",
+     *      tags={"Streaming"},
+     *      summary="Get alternative links",
+     *      description="Returns a list of alternative links for a broken link",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Parameter(
+     *          name="linkId",
+     *          description="Link ID",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(ref="#/components/schemas/WatchLinkResource")
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function getAlternativeLinks(Request $request, int $linkId): JsonResponse
     {
         try {

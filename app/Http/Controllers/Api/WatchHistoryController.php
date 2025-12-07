@@ -14,6 +14,28 @@ class WatchHistoryController extends Controller
 {
     public function __construct(private WatchHistoryService $watchHistoryService) {}
 
+    /**
+     * @OA\Get(
+     *      path="/api/watch-history",
+     *      operationId="getWatchHistory",
+     *      tags={"Watch History"},
+     *      summary="Get user's watch history",
+     *      description="Returns the user's watch history",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(ref="#/components/schemas/WatchHistoryResource")
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function index(Request $request): JsonResponse
     {
         try {
@@ -30,6 +52,28 @@ class WatchHistoryController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/watch-history/continue-watching",
+     *      operationId="getContinueWatching",
+     *      tags={"Watch History"},
+     *      summary="Get user's continue watching list",
+     *      description="Returns the user's continue watching list",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(ref="#/components/schemas/WatchHistoryResource")
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function continueWatching(Request $request): JsonResponse
     {
         try {
@@ -46,6 +90,29 @@ class WatchHistoryController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/watch-history/progress",
+     *      operationId="updateProgress",
+     *      tags={"Watch History"},
+     *      summary="Update watch progress",
+     *      description="Updates the watch progress for a movie or episode",
+     *      security={ {"sanctum": {} } },
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/UpdateWatchHistoryRequest")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/WatchHistoryResource")
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function updateProgress(UpdateWatchHistoryRequest $request): JsonResponse
     {
         try {
@@ -66,6 +133,24 @@ class WatchHistoryController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/watch-history/clear",
+     *      operationId="clearHistory",
+     *      tags={"Watch History"},
+     *      summary="Clear watch history",
+     *      description="Clears the user's watch history",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation"
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function clearHistory(Request $request): JsonResponse
     {
         try {
@@ -82,6 +167,33 @@ class WatchHistoryController extends Controller
         }
     }
 
+    /**
+     * @OA\Delete(
+     *      path="/api/watch-history/{id}",
+     *      operationId="removeFromHistory",
+     *      tags={"Watch History"},
+     *      summary="Remove from watch history",
+     *      description="Removes an item from the user's watch history",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Watch history ID",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation"
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function removeFromHistory(Request $request, int $id): JsonResponse
     {
         try {
@@ -101,6 +213,34 @@ class WatchHistoryController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/watch-history/{id}/complete",
+     *      operationId="markAsCompleted",
+     *      tags={"Watch History"},
+     *      summary="Mark as completed",
+     *      description="Marks an item in the watch history as completed",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Watch history ID",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/WatchHistoryResource")
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function markAsCompleted(Request $request, int $id): JsonResponse
     {
         try {

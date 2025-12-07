@@ -4,6 +4,21 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     schema="LinkHealthCheckResource",
+ *     title="Link Health Check Resource",
+ *     description="Link health check resource",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="is_working", type="boolean"),
+ *     @OA\Property(property="response_time_ms", type="integer"),
+ *     @OA\Property(property="http_status", type="integer"),
+ *     @OA\Property(property="error_message", type="string"),
+ *     @OA\Property(property="checked_at", type="string", format="date-time"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ */
 class LinkHealthCheckResource extends JsonResource
 {
     public function toArray($request)

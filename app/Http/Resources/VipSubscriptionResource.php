@@ -4,6 +4,23 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     schema="VipSubscriptionResource",
+ *     title="Vip Subscription Resource",
+ *     description="Vip subscription resource",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="start_date", type="string", format="date-time"),
+ *     @OA\Property(property="end_date", type="string", format="date-time"),
+ *     @OA\Property(property="is_active", type="boolean"),
+ *     @OA\Property(property="days_remaining", type="integer"),
+ *     @OA\Property(property="total_duration_days", type="integer"),
+ *     @OA\Property(property="user", ref="#/components/schemas/UserResource"),
+ *     @OA\Property(property="vip_key", ref="#/components/schemas/VipKeyResource"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ */
 class VipSubscriptionResource extends JsonResource
 {
     public function toArray($request)

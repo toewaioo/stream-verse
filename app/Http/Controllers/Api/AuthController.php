@@ -19,6 +19,28 @@ class AuthController extends Controller
 {
     public function __construct(private AuthService $authService) {}
 
+    /**
+     * @OA\Post(
+     *      path="/api/register",
+     *      operationId="registerUser",
+     *      tags={"Auth"},
+     *      summary="Register a new user",
+     *      description="Returns the registered user",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/RegisterRequest")
+     *      ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function register(RegisterRequest $request): JsonResponse
     {
         try {
@@ -36,6 +58,35 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/login",
+     *      operationId="loginUser",
+     *      tags={"Auth"},
+     *      summary="Login a user",
+     *      description="Returns the user and a token",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/LoginRequest")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="user", ref="#/components/schemas/UserResource"),
+     *              @OA\Property(property="token", type="string")
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Invalid credentials"
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
     public function login(LoginRequest $request): JsonResponse
     {
         try {
@@ -59,6 +110,24 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/logout",
+     *      operationId="logoutUser",
+     *      tags={"Auth"},
+     *      summary="Logout a user",
+     *      description="Logs out the current user",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation"
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function logout(Request $request): JsonResponse
     {
         try {
@@ -74,6 +143,21 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/user",
+     *      operationId="getUser",
+     *      tags={"Auth"},
+     *      summary="Get the current user",
+     *      description="Returns the current user",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *       )
+     * )
+     */
     public function user(Request $request): JsonResponse
     {
         return response()->json([
@@ -81,6 +165,24 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/refresh",
+     *      operationId="refreshToken",
+     *      tags={"Auth"},
+     *      summary="Refresh a token",
+     *      description="Returns a new token",
+     *      security={ {"sanctum": {} } },
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="token", type="string"),
+     *              @OA\Property(property="user", ref="#/components/schemas/UserResource")
+     *          )
+     *       )
+     * )
+     */
     public function refresh(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -93,6 +195,28 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/vip/redeem",
+     *      operationId="redeemVip",
+     *      tags={"Auth"},
+     *      summary="Redeem a VIP key",
+     *      description="Redeems a VIP key",
+     *      security={ {"sanctum": {} } },
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/VipRedeemRequest")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation"
+     *       ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request"
+     *      )
+     * )
+     */
     public function redeemVip(VipRedeemRequest $request): JsonResponse
     {
         try {
@@ -108,6 +232,29 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/password/forgot",
+     *      operationId="forgotPassword",
+     *      tags={"Auth"},
+     *      summary="Forgot password",
+     *      description="Sends a password reset link to the user",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              @OA\Property(property="email", type="string", format="email")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation"
+     *       ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request"
+     *      )
+     * )
+     */
     public function forgotPassword(Request $request): JsonResponse
     {
         $request->validate(['email' => 'required|email']);
@@ -121,6 +268,32 @@ class AuthController extends Controller
             : response()->json(['message' => __($status)], 400);
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/password/reset",
+     *      operationId="resetPassword",
+     *      tags={"Auth"},
+     *      summary="Reset password",
+     *      description="Resets the user's password",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              @OA\Property(property="token", type="string"),
+     *              @OA\Property(property="email", type="string", format="email"),
+     *              @OA\Property(property="password", type="string", format="password"),
+     *              @OA\Property(property="password_confirmation", type="string", format="password")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation"
+     *       ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request"
+     *      )
+     * )
+     */
     public function resetPassword(Request $request): JsonResponse
     {
         $request->validate([

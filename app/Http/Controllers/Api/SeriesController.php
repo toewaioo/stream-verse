@@ -18,6 +18,24 @@ class SeriesController extends Controller
 {
     public function __construct(private SeriesService $seriesService) {}
 
+    /**
+     * @OA\Get(
+     *      path="/api/series",
+     *      operationId="getSeriesList",
+     *      tags={"Series"},
+     *      summary="Get list of series",
+     *      description="Returns list of series",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/SeriesCollection")
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function index(Request $request): JsonResponse
     {
         try {
@@ -32,6 +50,37 @@ class SeriesController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/series/{slug}",
+     *      operationId="getSeriesBySlug",
+     *      tags={"Series"},
+     *      summary="Get a series by slug",
+     *      description="Returns a single series",
+     *      @OA\Parameter(
+     *          name="slug",
+     *          description="Series slug",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/SeriesResource")
+     *       ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Series not found"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function show(string $slug): JsonResponse
     {
         try {
@@ -61,6 +110,46 @@ class SeriesController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/series/{seriesSlug}/seasons/{seasonNumber}",
+     *      operationId="getSeason",
+     *      tags={"Series"},
+     *      summary="Get a season of a series",
+     *      description="Returns a single season",
+     *      @OA\Parameter(
+     *          name="seriesSlug",
+     *          description="Series slug",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="seasonNumber",
+     *          description="Season number",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/SeasonResource")
+     *       ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Season not found"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function season(string $seriesSlug, int $seasonNumber): JsonResponse
     {
         try {
@@ -85,6 +174,55 @@ class SeriesController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/series/{seriesSlug}/seasons/{seasonNumber}/episodes/{episodeNumber}",
+     *      operationId="getEpisode",
+     *      tags={"Series"},
+     *      summary="Get an episode of a series",
+     *      description="Returns a single episode",
+     *      @OA\Parameter(
+     *          name="seriesSlug",
+     *          description="Series slug",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="seasonNumber",
+     *          description="Season number",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="episodeNumber",
+     *          description="Episode number",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/EpisodeResource")
+     *       ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Episode not found"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function episode(string $seriesSlug, int $seasonNumber, int $episodeNumber): JsonResponse
     {
         try {
@@ -117,6 +255,27 @@ class SeriesController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/series/trending",
+     *      operationId="getTrendingSeries",
+     *      tags={"Series"},
+     *      summary="Get trending series",
+     *      description="Returns a list of trending series",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(ref="#/components/schemas/SeriesResource")
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function trending(): JsonResponse
     {
         try {
@@ -133,6 +292,37 @@ class SeriesController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/series/search",
+     *      operationId="searchSeries",
+     *      tags={"Series"},
+     *      summary="Search for series",
+     *      description="Returns a list of series matching the search query",
+     *      @OA\Parameter(
+     *          name="q",
+     *          description="Search query",
+     *          required=true,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/SeriesCollection")
+     *       ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Validation error"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error"
+     *      )
+     * )
+     */
     public function search(Request $request): JsonResponse
     {
         try {

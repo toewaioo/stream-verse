@@ -4,6 +4,26 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     schema="WatchHistoryResource",
+ *     title="Watch History Resource",
+ *     description="Watch history resource",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="last_position_seconds", type="integer"),
+ *     @OA\Property(property="duration_seconds", type="integer"),
+ *     @OA\Property(property="percent_watched", type="number", format="float"),
+ *     @OA\Property(property="completed", type="boolean"),
+ *     @OA\Property(property="content_type", type="string"),
+ *     @OA\Property(property="movie", ref="#/components/schemas/MovieResource"),
+ *     @OA\Property(property="episode", ref="#/components/schemas/EpisodeResource"),
+ *     @OA\Property(property="content", type="object"),
+ *     @OA\Property(property="resume_time_formatted", type="string"),
+ *     @OA\Property(property="time_remaining_formatted", type="string"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ */
 class WatchHistoryResource extends JsonResource
 {
     public function toArray($request)

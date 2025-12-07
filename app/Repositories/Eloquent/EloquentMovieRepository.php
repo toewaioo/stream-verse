@@ -12,7 +12,7 @@ class EloquentMovieRepository implements MovieRepositoryInterface
 {
     public function all(array $filters = []): LengthAwarePaginator
     {
-        $query = Movie::with(['genres', 'actors.person', 'downloadLinks', 'watchLinks'])
+        $query = Movie::with(['genres'])
             ->public()
             ->released();
 

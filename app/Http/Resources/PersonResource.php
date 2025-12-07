@@ -4,6 +4,28 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     schema="PersonResource",
+ *     title="Person Resource",
+ *     description="Person resource",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="biography", type="string"),
+ *     @OA\Property(property="birth_date", type="string", format="date"),
+ *     @OA\Property(property="death_date", type="string", format="date"),
+ *     @OA\Property(property="gender", type="string"),
+ *     @OA\Property(property="avatar_url", type="string"),
+ *     @OA\Property(property="country", type="string"),
+ *     @OA\Property(property="imdb_id", type="string"),
+ *     @OA\Property(property="age", type="integer"),
+ *     @OA\Property(property="roles", type="array", @OA\Items(ref="#/components/schemas/PersonRoleResource")),
+ *     @OA\Property(property="movie_credits", type="array", @OA\Items(ref="#/components/schemas/MovieResource")),
+ *     @OA\Property(property="series_credits", type="array", @OA\Items(ref="#/components/schemas/SeriesResource")),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ */
 class PersonResource extends JsonResource
 {
     public function toArray($request)

@@ -4,6 +4,17 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="UpdateWatchHistoryRequest",
+ *     title="Update Watch History Request",
+ *     description="Update watch history request body",
+ *     @OA\Property(property="movie_id", type="integer", example=1),
+ *     @OA\Property(property="episode_id", type="integer", example=1),
+ *     @OA\Property(property="last_position_seconds", type="integer", example=300),
+ *     @OA\Property(property="duration_seconds", type="integer", example=3600)
+ * )
+ */
 class UpdateWatchHistoryRequest extends FormRequest
 {
     public function authorize(): bool
