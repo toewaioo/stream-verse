@@ -22,7 +22,7 @@ use App\Http\Controllers\Admin as Admin;
 */
 
 // --- PUBLIC ROUTES ---
-Route::redirect('/', '/documentation');
+Route::redirect('/', '/api/documentation');
 
 // External services
 Route::post('/telegram/webhook', [TelegramController::class, 'webhook']);

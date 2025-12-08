@@ -1,7 +1,6 @@
 import React from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Trash2, Play, Clock, XCircle } from "lucide-react";
+import {  Play, Clock, XCircle } from "lucide-react";
 import Navbar from "@/Components/Navbar";
 
 export default function WatchHistory({ auth, history }) {

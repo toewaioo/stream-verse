@@ -122,7 +122,7 @@ export default function Subscription({ auth, subscription }) {
                     </div>
 
                     {/* Benefits Section */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
                         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
                             <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg flex items-center justify-center mb-4">
                                 <Play className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />

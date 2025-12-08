@@ -586,8 +586,8 @@ export default function SeriesDetails({
                     </div>
                 </div>
 
-                <div className="container-custom py-12 md:py-20">
-                    <div className="flex flex-col lg:flex-row gap-12">
+                <div className="container-custom py-8 md:py-12">
+                      <div className="flex flex-col lg:flex-row gap-12">
                         <div className="flex-1">
                             <div className="mb-16">
                                 <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -737,81 +737,7 @@ export default function SeriesDetails({
                                 />
                             </div>
                         </div>
-
-                        <div className="w-full lg:w-80 flex-shrink-0 space-y-12">
-                            <div className="glass-card-adaptive p-6">
-                                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 text-center">
-                                    {t("Rate this Series")}
-                                </h3>
-                                {auth.user ? (
-                                    <RatingWidget
-                                        ratingAverage={
-                                            series.rating_average || 0
-                                        }
-                                        ratingCount={series.rating_count || 0}
-                                        userRating={userRating}
-                                        onRate={handleRate}
-                                    />
-                                ) : (
-                                    <div className="text-center text-sm text-gray-500">
-                                        <a
-                                            href={route("login")}
-                                            className="text-blue-400 hover:underline"
-                                        >
-                                            {t("Log in")}
-                                        </a>{" "}
-                                        {t("to rate.")}
-                                    </div>
-                                )}
-                            </div>
-
-                            {relatedSeries && relatedSeries.length > 0 && (
-                                <div>
-                                    <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6 border-l-4 border-blue-500 pl-3">
-                                        {t("You May Also Like")}
-                                    </h3>
-                                    <div className="grid grid-cols-3 md:grid-cols-2 gap-4">
-                                        {relatedSeries
-                                            .slice(0, 6)
-                                            .map((rel) => (
-                                                <a
-                                                    href={route(
-                                                        "series.show",
-                                                        rel.slug
-                                                    )}
-                                                    key={rel.id}
-                                                    className="group block"
-                                                >
-                                                    <div className="aspect-[2/3] rounded-lg overflow-hidden mb-2 relative">
-                                                        <img
-                                                            src={rel.poster_url}
-                                                            alt={rel.title}
-                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                                        />
-                                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                                                    </div>
-                                                    <h4 className="text-sm text-gray-600 dark:text-gray-300 font-medium truncate group-hover:text-blue-600 dark:group-hover:text-white transition-colors">
-                                                        {rel.title}
-                                                    </h4>
-                                                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                                                        <span>
-                                                            {
-                                                                rel.release_year_start
-                                                            }
-                                                        </span>
-                                                        <span className="text-yellow-500">
-                                                            ★{" "}
-                                                            {rel.rating_average}
-                                                        </span>
-                                                    </div>
-                                                </a>
-                                            ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="mb-16">
+                        <div className="mb-16 ">
                             <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
                                 <span className="w-2 h-[2px] bg-blue-500"></span>
                                 {t("Reviews")}
@@ -884,7 +810,84 @@ export default function SeriesDetails({
                                 )}
                             </div>
                         </div>
+
+                        
+
+                        
                     </div>
+                    <div className="mt-6 w-full lg:w-1/2 flex-shrink-0 space-y-12">
+                            <div className="glass-card-adaptive p-6">
+                                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 text-center">
+                                    {t("Rate this Series")}
+                                </h3>
+                                {auth.user ? (
+                                    <RatingWidget
+                                        ratingAverage={
+                                            series.rating_average || 0
+                                        }
+                                        ratingCount={series.rating_count || 0}
+                                        userRating={userRating}
+                                        onRate={handleRate}
+                                    />
+                                ) : (
+                                    <div className="text-center text-sm text-gray-500">
+                                        <a
+                                            href={route("login")}
+                                            className="text-blue-400 hover:underline"
+                                        >
+                                            {t("Log in")}
+                                        </a>{" "}
+                                        {t("to rate.")}
+                                    </div>
+                                )}
+                            </div>
+
+                            {relatedSeries && relatedSeries.length > 0 && (
+                                <div>
+                                    <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6 border-l-4 border-blue-500 pl-3">
+                                        {t("You May Also Like")}
+                                    </h3>
+                                    <div className="grid grid-cols-3 md:grid-cols-2 gap-4">
+                                        {relatedSeries
+                                            .slice(0, 6)
+                                            .map((rel) => (
+                                                <a
+                                                    href={route(
+                                                        "series.show",
+                                                        rel.slug
+                                                    )}
+                                                    key={rel.id}
+                                                    className="group block"
+                                                >
+                                                    <div className="aspect-[2/3] rounded-lg overflow-hidden mb-2 relative">
+                                                        <img
+                                                            src={rel.poster_url}
+                                                            alt={rel.title}
+                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                        />
+                                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                                                    </div>
+                                                    <h4 className="text-sm text-gray-600 dark:text-gray-300 font-medium truncate group-hover:text-blue-600 dark:group-hover:text-white transition-colors">
+                                                        {rel.title}
+                                                    </h4>
+                                                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                        <span>
+                                                            {
+                                                                rel.release_year_start
+                                                            }
+                                                        </span>
+                                                        <span className="text-yellow-500">
+                                                            ★{" "}
+                                                            {rel.rating_average}
+                                                        </span>
+                                                    </div>
+                                                </a>
+                                            ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    
                 </div>
 
                 <Footer />

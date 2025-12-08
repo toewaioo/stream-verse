@@ -6860,139 +6860,192 @@ function MovieDetails({
           ] })
         ] }) })
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "container-custom py-12 md:py-20", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col lg:flex-row gap-12", children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
-          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
-            /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2", children: [
-              /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
-              t("Synopsis")
+      /* @__PURE__ */ jsxs("div", { className: "container-custom py-12 md:py-20", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex flex-col lg:flex-row gap-12", children: [
+          /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
+            /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+              /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2", children: [
+                /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
+                t("Synopsis")
+              ] }),
+              /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed opacity-90", children: movie.description })
             ] }),
-            /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed opacity-90", children: movie.description })
-          ] }),
-          /* @__PURE__ */ jsx(
-            "div",
-            {
-              id: "watch-section",
-              className: "mb-16 scroll-mt-24",
-              children: /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-6 md:p-8", children: [
-                /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-8", children: [
-                  /* @__PURE__ */ jsxs("h3", { className: "text-xl font-serif text-gray-900 dark:text-white flex items-center gap-3", children: [
-                    /* @__PURE__ */ jsx(PlayIcon$1, { className: "w-6 h-6 text-blue-500" }),
-                    t("Watch & Download")
+            /* @__PURE__ */ jsx(
+              "div",
+              {
+                id: "watch-section",
+                className: "mb-16 scroll-mt-24",
+                children: /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-6 md:p-8", children: [
+                  /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-8", children: [
+                    /* @__PURE__ */ jsxs("h3", { className: "text-xl font-serif text-gray-900 dark:text-white flex items-center gap-3", children: [
+                      /* @__PURE__ */ jsx(PlayIcon$1, { className: "w-6 h-6 text-blue-500" }),
+                      t("Watch & Download")
+                    ] }),
+                    movie.is_vip_only && /* @__PURE__ */ jsx("span", { className: "badge-vip", children: t("VIP ACCESS") })
                   ] }),
-                  movie.is_vip_only && /* @__PURE__ */ jsx("span", { className: "badge-vip", children: t("VIP ACCESS") })
-                ] }),
-                auth.user ? /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
-                  /* @__PURE__ */ jsxs(
-                    "div",
-                    {
-                      className: `${watchLinksByQuality && Object.keys(
-                        watchLinksByQuality
-                      ).length > 0 ? "" : "hidden"}`,
-                      children: [
-                        /* @__PURE__ */ jsx("h4", { className: "text-sm font-bold text-gray-500 uppercase tracking-widest mb-4", children: t("Streaming Sources") }),
-                        /* @__PURE__ */ jsx("div", { className: "grid gap-2", children: watchLinksByQuality && Object.keys(
+                  auth.user ? /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
+                    /* @__PURE__ */ jsxs(
+                      "div",
+                      {
+                        className: `${watchLinksByQuality && Object.keys(
                           watchLinksByQuality
-                        ).length > 0 ? Object.values(
-                          watchLinksByQuality
-                        ).flat().map((link) => /* @__PURE__ */ jsx(
-                          LinkItem$1,
-                          {
-                            link,
-                            type: "watch",
-                            isVip
-                          },
-                          link.id
-                        )) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic", children: t(
-                          "No streaming links available."
-                        ) }) })
-                      ]
-                    }
-                  ),
-                  /* @__PURE__ */ jsxs(
-                    "div",
-                    {
-                      className: `${downloadLinksByQuality && Object.keys(
-                        downloadLinksByQuality
-                      ).length > 0 ? "" : "hidden"}`,
-                      children: [
-                        /* @__PURE__ */ jsx("h4", { className: "text-sm font-bold text-gray-500 uppercase tracking-widest mb-4", children: t("Download Files") }),
-                        /* @__PURE__ */ jsx("div", { className: "grid gap-2", children: downloadLinksByQuality && Object.keys(
+                        ).length > 0 ? "" : "hidden"}`,
+                        children: [
+                          /* @__PURE__ */ jsx("h4", { className: "text-sm font-bold text-gray-500 uppercase tracking-widest mb-4", children: t("Streaming Sources") }),
+                          /* @__PURE__ */ jsx("div", { className: "grid gap-2", children: watchLinksByQuality && Object.keys(
+                            watchLinksByQuality
+                          ).length > 0 ? Object.values(
+                            watchLinksByQuality
+                          ).flat().map((link) => /* @__PURE__ */ jsx(
+                            LinkItem$1,
+                            {
+                              link,
+                              type: "watch",
+                              isVip
+                            },
+                            link.id
+                          )) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic", children: t(
+                            "No streaming links available."
+                          ) }) })
+                        ]
+                      }
+                    ),
+                    /* @__PURE__ */ jsxs(
+                      "div",
+                      {
+                        className: `${downloadLinksByQuality && Object.keys(
                           downloadLinksByQuality
-                        ).length > 0 ? Object.values(
-                          downloadLinksByQuality
-                        ).flat().map((link) => /* @__PURE__ */ jsx(
-                          LinkItem$1,
-                          {
-                            link,
-                            type: "download",
-                            isVip
-                          },
-                          link.id
-                        )) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic", children: t(
-                          "No download links available."
-                        ) }) })
-                      ]
-                    }
-                  )
-                ] }) : /* @__PURE__ */ jsxs("div", { className: "text-center py-8", children: [
-                  /* @__PURE__ */ jsx("p", { className: "text-gray-400 mb-6", children: t(
-                    "Please log in to access streaming and download links."
-                  ) }),
-                  /* @__PURE__ */ jsx(
-                    "a",
-                    {
-                      href: route("login"),
-                      className: "btn-primary",
-                      children: t("Log In to Watch")
-                    }
-                  )
+                        ).length > 0 ? "" : "hidden"}`,
+                        children: [
+                          /* @__PURE__ */ jsx("h4", { className: "text-sm font-bold text-gray-500 uppercase tracking-widest mb-4", children: t("Download Files") }),
+                          /* @__PURE__ */ jsx("div", { className: "grid gap-2", children: downloadLinksByQuality && Object.keys(
+                            downloadLinksByQuality
+                          ).length > 0 ? Object.values(
+                            downloadLinksByQuality
+                          ).flat().map((link) => /* @__PURE__ */ jsx(
+                            LinkItem$1,
+                            {
+                              link,
+                              type: "download",
+                              isVip
+                            },
+                            link.id
+                          )) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic", children: t(
+                            "No download links available."
+                          ) }) })
+                        ]
+                      }
+                    )
+                  ] }) : /* @__PURE__ */ jsxs("div", { className: "text-center py-8", children: [
+                    /* @__PURE__ */ jsx("p", { className: "text-gray-400 mb-6", children: t(
+                      "Please log in to access streaming and download links."
+                    ) }),
+                    /* @__PURE__ */ jsx(
+                      "a",
+                      {
+                        href: route("login"),
+                        className: "btn-primary",
+                        children: t("Log In to Watch")
+                      }
+                    )
+                  ] })
                 ] })
-              ] })
-            }
-          ),
+              }
+            ),
+            /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+              /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
+                /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
+                t("Cast & Crew")
+              ] }),
+              /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6", children: movie.persons?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
+                Link,
+                {
+                  href: route(
+                    "person.show",
+                    actor.person?.id
+                  ),
+                  className: "group block",
+                  children: [
+                    /* @__PURE__ */ jsx("div", { className: "aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-gray-200 dark:bg-gray-800", children: /* @__PURE__ */ jsx(
+                      "img",
+                      {
+                        src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg",
+                        alt: actor.person?.name,
+                        className: "w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      }
+                    ) }),
+                    /* @__PURE__ */ jsx("h4", { className: "text-gray-900 dark:text-white font-medium truncate group-hover:text-blue-400 transition-colors", children: actor.person?.name }),
+                    /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 truncate", children: actor.character_name ? actor.character_name : actor.role_type })
+                  ]
+                },
+                actor.id
+              )) })
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
+              /* @__PURE__ */ jsx("h1", { children: t("Backdrop") }),
+              /* @__PURE__ */ jsx(
+                "img",
+                {
+                  className: "w-full rounded-lg mt-8",
+                  src: movie.banner_url,
+                  alt: `${movie.title} Backdrop`
+                }
+              )
+            ] })
+          ] }),
           /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
             /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
               /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
-              t("Cast & Crew")
+              t("Reviews")
             ] }),
-            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6", children: movie.persons?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
-              Link,
+            auth.user && !userHasReviewed && /* @__PURE__ */ jsx(
+              ReviewForm,
               {
-                href: route(
-                  "person.show",
-                  actor.person?.id
-                ),
-                className: "group block",
-                children: [
-                  /* @__PURE__ */ jsx("div", { className: "aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-gray-200 dark:bg-gray-800", children: /* @__PURE__ */ jsx(
-                    "img",
-                    {
-                      src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg",
-                      alt: actor.person?.name,
-                      className: "w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    }
-                  ) }),
-                  /* @__PURE__ */ jsx("h4", { className: "text-gray-900 dark:text-white font-medium truncate group-hover:text-blue-400 transition-colors", children: actor.person?.name }),
-                  /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 truncate", children: actor.character_name ? actor.character_name : actor.role_type })
-                ]
-              },
-              actor.id
-            )) })
-          ] }),
-          /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
-            /* @__PURE__ */ jsx("h1", { children: t("Backdrop") }),
-            /* @__PURE__ */ jsx(
-              "img",
-              {
-                className: "w-full rounded-lg mt-8",
-                src: movie.banner_url,
-                alt: `${movie.title} Backdrop`
+                content: movie,
+                contentType: "movie",
+                onSuccess: handleReviewSubmit
               }
-            )
+            ),
+            auth.user && userHasReviewed && !editingReviewId && /* @__PURE__ */ jsx("div", { className: "glass-card-adaptive p-6 text-center", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 font-medium", children: "You have already reviewed this movie." }) }),
+            !auth.user && /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-8 text-center", children: [
+              /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 mb-6 font-medium", children: t("Please log in to write a review.") }),
+              /* @__PURE__ */ jsx(
+                "a",
+                {
+                  href: route("login"),
+                  className: "btn-primary inline-flex",
+                  children: t("Log In to Review")
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsx("div", { className: "mt-8 space-y-4", children: movie?.reviews?.length > 0 ? movie.reviews.map(
+              (review) => editingReviewId === review.id ? /* @__PURE__ */ jsx(
+                ReviewForm,
+                {
+                  content: movie,
+                  contentType: "movie",
+                  review,
+                  onSuccess: handleReviewSubmit,
+                  onCancel: () => setEditingReviewId(null)
+                },
+                `editing-${review.id}`
+              ) : /* @__PURE__ */ jsx(
+                Review,
+                {
+                  review,
+                  onEdit: () => setEditingReviewId(
+                    review.id
+                  ),
+                  onDelete: () => handleReviewDelete(
+                    review.id
+                  )
+                },
+                review.id
+              )
+            ) : /* @__PURE__ */ jsx("p", { className: "text-gray-500 italic text-center py-8", children: t("No reviews yet.") }) })
           ] })
         ] }),
-        /* @__PURE__ */ jsxs("div", { className: "w-full lg:w-80 flex-shrink-0 space-y-12", children: [
+        /* @__PURE__ */ jsxs("div", { className: "w-full mt-6 lg:w-1/2 flex-shrink-0 space-y-12", children: [
           /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-6", children: [
             /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 text-center", children: t("Rate this Movie") }),
             auth.user ? /* @__PURE__ */ jsx(
@@ -7054,59 +7107,8 @@ function MovieDetails({
               rel.id
             )) })
           ] })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
-          /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
-            /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
-            t("Reviews")
-          ] }),
-          auth.user && !userHasReviewed && /* @__PURE__ */ jsx(
-            ReviewForm,
-            {
-              content: movie,
-              contentType: "movie",
-              onSuccess: handleReviewSubmit
-            }
-          ),
-          auth.user && userHasReviewed && !editingReviewId && /* @__PURE__ */ jsx("div", { className: "glass-card-adaptive p-6 text-center", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 font-medium", children: "You have already reviewed this movie." }) }),
-          !auth.user && /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-8 text-center", children: [
-            /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 mb-6 font-medium", children: t("Please log in to write a review.") }),
-            /* @__PURE__ */ jsx(
-              "a",
-              {
-                href: route("login"),
-                className: "btn-primary inline-flex",
-                children: t("Log In to Review")
-              }
-            )
-          ] }),
-          /* @__PURE__ */ jsx("div", { className: "mt-8 space-y-4", children: movie?.reviews?.length > 0 ? movie.reviews.map(
-            (review) => editingReviewId === review.id ? /* @__PURE__ */ jsx(
-              ReviewForm,
-              {
-                content: movie,
-                contentType: "movie",
-                review,
-                onSuccess: handleReviewSubmit,
-                onCancel: () => setEditingReviewId(null)
-              },
-              `editing-${review.id}`
-            ) : /* @__PURE__ */ jsx(
-              Review,
-              {
-                review,
-                onEdit: () => setEditingReviewId(
-                  review.id
-                ),
-                onDelete: () => handleReviewDelete(
-                  review.id
-                )
-              },
-              review.id
-            )
-          ) : /* @__PURE__ */ jsx("p", { className: "text-gray-500 italic text-center py-8", children: t("No reviews yet.") }) })
         ] })
-      ] }) }),
+      ] }),
       /* @__PURE__ */ jsx(Footer, {})
     ] }),
     showTrailer && /* @__PURE__ */ jsx(
@@ -7152,7 +7154,7 @@ function Index$1({ movies }) {
     /* @__PURE__ */ jsx(Head, { title: t("Movies") }),
     /* @__PURE__ */ jsx(Navbar, {}),
     /* @__PURE__ */ jsxs("div", { className: "min-h-screen py-16  bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black pb-12", children: [
-      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12", children: [
+      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12 py-4", children: [
         /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-gray-200 dark:border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-gray-800 dark:text-white", children: t("Movies") }) }),
         /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
           MediaCard$1,
@@ -8597,8 +8599,8 @@ function Index({ series }) {
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(Head, { title: t("Series") }),
     /* @__PURE__ */ jsx(Navbar, {}),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen py-16 bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black pb-12", children: [
-      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12", children: [
+    /* @__PURE__ */ jsxs("div", { className: "min-h-screen py-16  bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black pb-12", children: [
+      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12 py-4", children: [
         /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-gray-200 dark:border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-gray-800 dark:text-white", children: t("Series") }) }),
         /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
           MediaCard$1,
@@ -9153,103 +9155,156 @@ function SeriesDetails({
           ] })
         ] }) })
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "container-custom py-12 md:py-20", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col lg:flex-row gap-12", children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
-          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
-            /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2", children: [
-              /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
-              t("Synopsis")
+      /* @__PURE__ */ jsxs("div", { className: "container-custom py-8 md:py-12", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex flex-col lg:flex-row gap-12", children: [
+          /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
+            /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+              /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2", children: [
+                /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
+                t("Synopsis")
+              ] }),
+              /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed opacity-90", children: series.description })
             ] }),
-            /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-gray-600 dark:text-gray-300 font-serif leading-relaxed opacity-90", children: series.description })
-          ] }),
-          /* @__PURE__ */ jsxs(
-            "div",
-            {
-              id: "episodes-section",
-              className: "mb-16 scroll-mt-24",
-              children: [
-                /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-8", children: [
-                  /* @__PURE__ */ jsxs("h3", { className: "text-xl font-serif text-gray-900 dark:text-white flex items-center gap-3", children: [
-                    /* @__PURE__ */ jsx(PlayIcon, { className: "w-6 h-6 text-blue-500" }),
-                    t("Episode Guide")
+            /* @__PURE__ */ jsxs(
+              "div",
+              {
+                id: "episodes-section",
+                className: "mb-16 scroll-mt-24",
+                children: [
+                  /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-8", children: [
+                    /* @__PURE__ */ jsxs("h3", { className: "text-xl font-serif text-gray-900 dark:text-white flex items-center gap-3", children: [
+                      /* @__PURE__ */ jsx(PlayIcon, { className: "w-6 h-6 text-blue-500" }),
+                      t("Episode Guide")
+                    ] }),
+                    series.is_vip_only && /* @__PURE__ */ jsx("span", { className: "badge-vip", children: t("VIP ACCESS") })
                   ] }),
-                  series.is_vip_only && /* @__PURE__ */ jsx("span", { className: "badge-vip", children: t("VIP ACCESS") })
-                ] }),
-                series.seasons && series.seasons.length > 0 ? /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive overflow-hidden", children: [
-                  /* @__PURE__ */ jsx("div", { className: "flex overflow-x-auto p-4 gap-2 border-b border-gray-200 dark:border-white/5 custom-scrollbar bg-gray-100 dark:bg-black/20", children: series.seasons.slice().reverse().map((season) => /* @__PURE__ */ jsx(
-                    "button",
-                    {
-                      onClick: () => setActiveSeason(
-                        season
-                      ),
-                      className: `whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all ${activeSeason?.id === season.id ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20" : "bg-gray-200 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white"}`,
-                      children: t(
-                        `Season ${season.season_number}`
-                      )
-                    },
-                    season.id
-                  )) }),
-                  /* @__PURE__ */ jsx("div", { className: "divide-y divide-gray-200 dark:divide-white/5", children: activeSeason?.episodes && activeSeason.episodes.length > 0 ? activeSeason.episodes.slice().reverse().map((episode) => /* @__PURE__ */ jsx(
-                    EpisodeRow,
-                    {
-                      episode,
-                      isActive: expandedEpisodeId === episode.id,
-                      onClick: () => setExpandedEpisodeId(
-                        expandedEpisodeId === episode.id ? null : episode.id
-                      ),
-                      isVip,
-                      isAuthenticated: !!auth.user
-                    },
-                    episode.id
-                  )) : /* @__PURE__ */ jsx("div", { className: "p-12 text-center text-gray-500 italic", children: t(
-                    "No episodes available for this season."
-                  ) }) })
-                ] }) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic p-8 border border-gray-200 dark:border-white/10 rounded-lg text-center", children: t("No seasons available.") })
-              ]
-            }
-          ),
-          /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+                  series.seasons && series.seasons.length > 0 ? /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive overflow-hidden", children: [
+                    /* @__PURE__ */ jsx("div", { className: "flex overflow-x-auto p-4 gap-2 border-b border-gray-200 dark:border-white/5 custom-scrollbar bg-gray-100 dark:bg-black/20", children: series.seasons.slice().reverse().map((season) => /* @__PURE__ */ jsx(
+                      "button",
+                      {
+                        onClick: () => setActiveSeason(
+                          season
+                        ),
+                        className: `whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all ${activeSeason?.id === season.id ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20" : "bg-gray-200 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white"}`,
+                        children: t(
+                          `Season ${season.season_number}`
+                        )
+                      },
+                      season.id
+                    )) }),
+                    /* @__PURE__ */ jsx("div", { className: "divide-y divide-gray-200 dark:divide-white/5", children: activeSeason?.episodes && activeSeason.episodes.length > 0 ? activeSeason.episodes.slice().reverse().map((episode) => /* @__PURE__ */ jsx(
+                      EpisodeRow,
+                      {
+                        episode,
+                        isActive: expandedEpisodeId === episode.id,
+                        onClick: () => setExpandedEpisodeId(
+                          expandedEpisodeId === episode.id ? null : episode.id
+                        ),
+                        isVip,
+                        isAuthenticated: !!auth.user
+                      },
+                      episode.id
+                    )) : /* @__PURE__ */ jsx("div", { className: "p-12 text-center text-gray-500 italic", children: t(
+                      "No episodes available for this season."
+                    ) }) })
+                  ] }) : /* @__PURE__ */ jsx("div", { className: "text-gray-500 italic p-8 border border-gray-200 dark:border-white/10 rounded-lg text-center", children: t("No seasons available.") })
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
+              /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
+                /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
+                t("Cast & Crew")
+              ] }),
+              /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6", children: series.persons?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
+                Link,
+                {
+                  href: route(
+                    "person.show",
+                    actor.person?.id
+                  ),
+                  className: "group block",
+                  children: [
+                    /* @__PURE__ */ jsx("div", { className: "aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-gray-200 dark:bg-gray-800", children: /* @__PURE__ */ jsx(
+                      "img",
+                      {
+                        src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg",
+                        alt: actor.person?.name,
+                        className: "w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      }
+                    ) }),
+                    /* @__PURE__ */ jsx("h4", { className: "text-gray-900 dark:text-white font-medium truncate group-hover:text-blue-400 transition-colors", children: actor.person?.name }),
+                    /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 truncate", children: actor.character_name ? actor.character_name : actor.role_type })
+                  ]
+                },
+                actor.id
+              )) })
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
+              /* @__PURE__ */ jsx("h1", { children: t("Backdrop") }),
+              /* @__PURE__ */ jsx(
+                "img",
+                {
+                  className: "w-full rounded-lg mt-8",
+                  src: series.banner_url,
+                  alt: `${series.title} Backdrop`
+                }
+              )
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "mb-16 ", children: [
             /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
               /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
-              t("Cast & Crew")
+              t("Reviews")
             ] }),
-            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6", children: series.persons?.slice(0, 8).map((actor) => /* @__PURE__ */ jsxs(
-              Link,
+            auth.user && !userHasReviewed && /* @__PURE__ */ jsx(
+              ReviewForm,
               {
-                href: route(
-                  "person.show",
-                  actor.person?.id
-                ),
-                className: "group block",
-                children: [
-                  /* @__PURE__ */ jsx("div", { className: "aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-gray-200 dark:bg-gray-800", children: /* @__PURE__ */ jsx(
-                    "img",
-                    {
-                      src: actor.person?.avatar_url || "/images/placeholder-avatar.jpg",
-                      alt: actor.person?.name,
-                      className: "w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    }
-                  ) }),
-                  /* @__PURE__ */ jsx("h4", { className: "text-gray-900 dark:text-white font-medium truncate group-hover:text-blue-400 transition-colors", children: actor.person?.name }),
-                  /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 truncate", children: actor.character_name ? actor.character_name : actor.role_type })
-                ]
-              },
-              actor.id
-            )) })
-          ] }),
-          /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
-            /* @__PURE__ */ jsx("h1", { children: t("Backdrop") }),
-            /* @__PURE__ */ jsx(
-              "img",
-              {
-                className: "w-full rounded-lg mt-8",
-                src: series.banner_url,
-                alt: `${series.title} Backdrop`
+                content: series,
+                contentType: "series",
+                onSuccess: handleReviewSubmit
               }
-            )
+            ),
+            auth.user && userHasReviewed && !editingReviewId && /* @__PURE__ */ jsx("div", { className: "glass-card-adaptive p-6 text-center", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 font-medium", children: "You have already reviewed this series." }) }),
+            !auth.user && /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-8 text-center", children: [
+              /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 mb-6 font-medium", children: t("Please log in to write a review.") }),
+              /* @__PURE__ */ jsx(
+                "a",
+                {
+                  href: route("login"),
+                  className: "btn-primary inline-flex",
+                  children: t("Log In to Review")
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsx("div", { className: "mt-8 space-y-4", children: series.reviews.length > 0 ? series.reviews.map(
+              (review) => editingReviewId === review.id ? /* @__PURE__ */ jsx(
+                ReviewForm,
+                {
+                  content: series,
+                  contentType: "series",
+                  review,
+                  onSuccess: handleReviewSubmit,
+                  onCancel: () => setEditingReviewId(null)
+                },
+                `editing-${review.id}`
+              ) : /* @__PURE__ */ jsx(
+                Review,
+                {
+                  review,
+                  onEdit: () => setEditingReviewId(
+                    review.id
+                  ),
+                  onDelete: () => handleReviewDelete(
+                    review.id
+                  )
+                },
+                review.id
+              )
+            ) : /* @__PURE__ */ jsx("p", { className: "text-gray-500 italic text-center py-8", children: t("No reviews yet.") }) })
           ] })
         ] }),
-        /* @__PURE__ */ jsxs("div", { className: "w-full lg:w-80 flex-shrink-0 space-y-12", children: [
+        /* @__PURE__ */ jsxs("div", { className: "mt-6 w-full lg:w-1/2 flex-shrink-0 space-y-12", children: [
           /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-6", children: [
             /* @__PURE__ */ jsx("h3", { className: "text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 text-center", children: t("Rate this Series") }),
             auth.user ? /* @__PURE__ */ jsx(
@@ -9309,59 +9364,8 @@ function SeriesDetails({
               rel.id
             )) })
           ] })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "mb-16", children: [
-          /* @__PURE__ */ jsxs("h3", { className: "text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2", children: [
-            /* @__PURE__ */ jsx("span", { className: "w-2 h-[2px] bg-blue-500" }),
-            t("Reviews")
-          ] }),
-          auth.user && !userHasReviewed && /* @__PURE__ */ jsx(
-            ReviewForm,
-            {
-              content: series,
-              contentType: "series",
-              onSuccess: handleReviewSubmit
-            }
-          ),
-          auth.user && userHasReviewed && !editingReviewId && /* @__PURE__ */ jsx("div", { className: "glass-card-adaptive p-6 text-center", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 font-medium", children: "You have already reviewed this series." }) }),
-          !auth.user && /* @__PURE__ */ jsxs("div", { className: "glass-card-adaptive p-8 text-center", children: [
-            /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 mb-6 font-medium", children: t("Please log in to write a review.") }),
-            /* @__PURE__ */ jsx(
-              "a",
-              {
-                href: route("login"),
-                className: "btn-primary inline-flex",
-                children: t("Log In to Review")
-              }
-            )
-          ] }),
-          /* @__PURE__ */ jsx("div", { className: "mt-8 space-y-4", children: series.reviews.length > 0 ? series.reviews.map(
-            (review) => editingReviewId === review.id ? /* @__PURE__ */ jsx(
-              ReviewForm,
-              {
-                content: series,
-                contentType: "series",
-                review,
-                onSuccess: handleReviewSubmit,
-                onCancel: () => setEditingReviewId(null)
-              },
-              `editing-${review.id}`
-            ) : /* @__PURE__ */ jsx(
-              Review,
-              {
-                review,
-                onEdit: () => setEditingReviewId(
-                  review.id
-                ),
-                onDelete: () => handleReviewDelete(
-                  review.id
-                )
-              },
-              review.id
-            )
-          ) : /* @__PURE__ */ jsx("p", { className: "text-gray-500 italic text-center py-8", children: t("No reviews yet.") }) })
         ] })
-      ] }) }),
+      ] }),
       /* @__PURE__ */ jsx(Footer, {})
     ] }),
     showTrailer && /* @__PURE__ */ jsx(
@@ -9467,7 +9471,7 @@ function Subscription({ auth, subscription }) {
           /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: "VIP keys can be purchased from our official resellers or obtained through special promotions." })
         ] })
       ] }) }),
-      /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-6", children: [
+      /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-6 gap-6", children: [
         /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm", children: [
           /* @__PURE__ */ jsx("div", { className: "w-10 h-10 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg flex items-center justify-center mb-4", children: /* @__PURE__ */ jsx(PlayCircle, { className: "w-5 h-5 text-indigo-600 dark:text-indigo-400" }) }),
           /* @__PURE__ */ jsx("h4", { className: "font-medium text-gray-900 dark:text-white mb-2", children: "Ad-Free Experience" }),

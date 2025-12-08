@@ -51,8 +51,8 @@ export default function Index({ series }) {
         <>
             <Head title={t("Series")} />
             <Navbar />
-            <div className="min-h-screen py-16 bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black pb-12">
-                <div className="container mx-auto px-2 md:px-12">
+            <div className="min-h-screen py-16  bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black pb-12">
+                <div className="container mx-auto px-2 md:px-12 py-4">
                     <div className="mb-4 border-b border-gray-200 dark:border-white/10 pt-2">
                         <h1 className="text-4xl md:text-5xl font-serif text-gray-800 dark:text-white">
                             {t("Series")}
