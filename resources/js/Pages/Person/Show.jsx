@@ -6,6 +6,7 @@ import MediaCard from "@/Components/MediaCard";
 import SeoHead from "@/Components/SeoHead";
 import LoadingLayout from "@/Layouts/LoadingLayout";
 import { useTranslation } from "react-i18next";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 export default function PersonShow({ person, movies, series, seo }) {
     const { t } = useTranslation();
@@ -90,10 +91,7 @@ export default function PersonShow({ person, movies, series, seo }) {
                     keywords={seo?.keywords}
                     type="profile"
                 />
-
-                <div className="min-h-screen bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black">
-                    <Navbar />
-
+                <AuthenticatedLayout>
                     {/* Hero Section */}
                     <div className="relative h-[45vh] md:h-[60vh] w-full overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-br from-orange-200 via-white to-red-200 dark:from-orange-900/30 dark:via-black dark:to-red-900/30">
@@ -249,9 +247,7 @@ export default function PersonShow({ person, movies, series, seo }) {
                             </div>
                         )}
                     </div>
-
-                    <Footer />
-                </div>
+                </AuthenticatedLayout>
             </>
         </LoadingLayout>
     );

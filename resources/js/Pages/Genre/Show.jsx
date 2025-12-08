@@ -6,6 +6,7 @@ import MediaCard from "@/Components/MediaCard";
 import SeoHead from "@/Components/SeoHead";
 import LoadingLayout from "@/Layouts/LoadingLayout";
 import { useTranslation } from "react-i18next";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 export default function GenreShow({ genre, movies, series, seo }) {
     const [activeTab, setActiveTab] = useState("movies");
     const { t } = useTranslation();
@@ -87,9 +88,9 @@ export default function GenreShow({ genre, movies, series, seo }) {
                     keywords={seo?.keywords}
                     type="website"
                 />
-
-                <div className="min-h-screen bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black">
-                    <Navbar />
+                <AuthenticatedLayout>
+                {/* <div className="min-h-screen bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black">
+                    <Navbar /> */}
 
                     {/* Hero Section */}
                     <div className="relative h-[30vh] md:h-[40vh] w-full overflow-hidden">
@@ -216,9 +217,7 @@ export default function GenreShow({ genre, movies, series, seo }) {
                             </div>
                         )}
                     </div>
-
-                    <Footer />
-                </div>
+                </AuthenticatedLayout>
             </>
         </LoadingLayout>
     );

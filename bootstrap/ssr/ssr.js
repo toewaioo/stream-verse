@@ -7,8 +7,8 @@ import { ChevronUpDownIcon, CheckIcon, ChevronDownIcon } from "@heroicons/react/
 import axios$1 from "axios";
 import { debounce } from "lodash";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
-import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import { Crown, CheckCircle, AlertCircle, Calendar, Key, PlayCircle, Clock, Play, XCircle } from "lucide-react";
 import createServer from "@inertiajs/react/server";
 import ReactDOMServer from "react-dom/server";
@@ -142,41 +142,136 @@ function AdminLayout({ children }) {
     { name: "Movies", href: route("admin.movies"), icon: "FilmIcon" },
     { name: "Series", href: route("admin.series"), icon: "TvIcon" },
     { name: "Genres", href: route("admin.genres"), icon: "TagIcon" },
-    { name: "Persons", href: route("admin.persons"), icon: "UserGroupIcon" }
+    {
+      name: "Persons",
+      href: route("admin.persons"),
+      icon: "UserGroupIcon"
+    }
   ];
   const Icon = ({ name, className }) => {
     const icons = {
-      HomeIcon: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" }),
-      FilmIcon: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" }),
-      TvIcon: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" }),
-      TagIcon: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 011 12V7a4 4 0 014-4z" }),
-      UserGroupIcon: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" }),
-      DownloadIcon: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" }),
-      PlayIcon: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" }),
-      CollectionIcon: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" }),
-      VideoCameraIcon: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" })
+      HomeIcon: /* @__PURE__ */ jsx(
+        "path",
+        {
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: 2,
+          d: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+        }
+      ),
+      FilmIcon: /* @__PURE__ */ jsx(
+        "path",
+        {
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: 2,
+          d: "M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"
+        }
+      ),
+      TvIcon: /* @__PURE__ */ jsx(
+        "path",
+        {
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: 2,
+          d: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+        }
+      ),
+      TagIcon: /* @__PURE__ */ jsx(
+        "path",
+        {
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: 2,
+          d: "M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 011 12V7a4 4 0 014-4z"
+        }
+      ),
+      UserGroupIcon: /* @__PURE__ */ jsx(
+        "path",
+        {
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: 2,
+          d: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+        }
+      ),
+      DownloadIcon: /* @__PURE__ */ jsx(
+        "path",
+        {
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: 2,
+          d: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+        }
+      ),
+      PlayIcon: /* @__PURE__ */ jsx(
+        "path",
+        {
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: 2,
+          d: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+        }
+      ),
+      CollectionIcon: /* @__PURE__ */ jsx(
+        "path",
+        {
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: 2,
+          d: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+        }
+      ),
+      VideoCameraIcon: /* @__PURE__ */ jsx(
+        "path",
+        {
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: 2,
+          d: "M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+        }
+      )
     };
-    return /* @__PURE__ */ jsx("svg", { className, fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", children: icons[name] });
+    return /* @__PURE__ */ jsx(
+      "svg",
+      {
+        className,
+        fill: "none",
+        viewBox: "0 0 24 24",
+        stroke: "currentColor",
+        children: icons[name]
+      }
+    );
   };
   return /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200", children: [
-    /* @__PURE__ */ jsxs("aside", { className: `fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`, children: [
-      /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center h-16 border-b border-gray-200 dark:border-gray-700", children: /* @__PURE__ */ jsxs(Link, { href: "/", className: "flex items-center gap-2", children: [
-        /* @__PURE__ */ jsx(ApplicationLogo, { className: "block h-8 w-auto fill-current text-indigo-600 dark:text-indigo-400" }),
-        /* @__PURE__ */ jsx("span", { className: "text-xl font-bold text-gray-800 dark:text-white", children: user?.role.charAt(0).toUpperCase() + user?.role.slice(1) })
-      ] }) }),
-      /* @__PURE__ */ jsx("nav", { className: "mt-6 px-4 space-y-2 overflow-y-auto max-h-[calc(100vh-4rem)]", children: navigation.map((item) => /* @__PURE__ */ jsxs(
-        Link,
-        {
-          href: item.href,
-          className: `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${route().current(item.href.split(".").pop() === "dashboard" ? "admin.dashboard" : item.href.split("/").pop()) || window.location.href.includes(item.href) ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"}`,
-          children: [
-            /* @__PURE__ */ jsx(Icon, { name: item.icon, className: "w-5 h-5 mr-3" }),
+    /* @__PURE__ */ jsxs(
+      "aside",
+      {
+        className: `fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`,
+        children: [
+          /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center h-16 border-b border-gray-200 dark:border-gray-700", children: /* @__PURE__ */ jsxs(Link, { href: "/", className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsx(ApplicationLogo, { className: "block h-8 w-auto fill-current text-indigo-600 dark:text-indigo-400" }),
+            /* @__PURE__ */ jsx("span", { className: "text-xl font-bold text-gray-800 dark:text-white", children: user?.role.charAt(0).toUpperCase() + user?.role.slice(1) })
+          ] }) }),
+          /* @__PURE__ */ jsx("nav", { className: "mt-6 px-4 space-y-2 overflow-y-auto max-h-[calc(100vh-4rem)]", children: navigation.map((item) => /* @__PURE__ */ jsxs(
+            Link,
+            {
+              preserveState: true,
+              href: item.href,
+              className: `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${route().current(
+                item.href.split(".").pop() === "dashboard" ? "admin.dashboard" : item.href.split("/").pop()
+              ) || // Simple active check logic, can be improved
+              window.location.href.includes(item.href) ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"}`,
+              children: [
+                /* @__PURE__ */ jsx(Icon, { name: item.icon, className: "w-5 h-5 mr-3" }),
+                item.name
+              ]
+            },
             item.name
-          ]
-        },
-        item.name
-      )) })
-    ] }),
+          )) })
+        ]
+      }
+    ),
     isSidebarOpen && /* @__PURE__ */ jsx(
       "div",
       {
@@ -193,7 +288,24 @@ function AdminLayout({ children }) {
             className: "p-2 rounded-md text-gray-500 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden",
             children: [
               /* @__PURE__ */ jsx("span", { className: "sr-only", children: "Open sidebar" }),
-              /* @__PURE__ */ jsx("svg", { className: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M4 6h16M4 12h16M4 18h16" }) })
+              /* @__PURE__ */ jsx(
+                "svg",
+                {
+                  className: "h-6 w-6",
+                  fill: "none",
+                  viewBox: "0 0 24 24",
+                  stroke: "currentColor",
+                  children: /* @__PURE__ */ jsx(
+                    "path",
+                    {
+                      strokeLinecap: "round",
+                      strokeLinejoin: "round",
+                      strokeWidth: 2,
+                      d: "M4 6h16M4 12h16M4 18h16"
+                    }
+                  )
+                }
+              )
             ]
           }
         ),
@@ -203,11 +315,35 @@ function AdminLayout({ children }) {
             /* @__PURE__ */ jsx(Dropdown.Trigger, { children: /* @__PURE__ */ jsxs("button", { className: "flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none transition duration-150 ease-in-out", children: [
               /* @__PURE__ */ jsx("div", { className: "w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold mr-2", children: user.name.charAt(0) }),
               /* @__PURE__ */ jsx("span", { className: "hidden sm:block", children: user.name }),
-              /* @__PURE__ */ jsx("svg", { className: "ml-2 -mr-0.5 h-4 w-4", xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z", clipRule: "evenodd" }) })
+              /* @__PURE__ */ jsx(
+                "svg",
+                {
+                  className: "ml-2 -mr-0.5 h-4 w-4",
+                  xmlns: "http://www.w3.org/2000/svg",
+                  viewBox: "0 0 20 20",
+                  fill: "currentColor",
+                  children: /* @__PURE__ */ jsx(
+                    "path",
+                    {
+                      fillRule: "evenodd",
+                      d: "M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z",
+                      clipRule: "evenodd"
+                    }
+                  )
+                }
+              )
             ] }) }),
             /* @__PURE__ */ jsxs(Dropdown.Content, { children: [
               /* @__PURE__ */ jsx(Dropdown.Link, { href: route("profile.edit"), children: "Profile" }),
-              /* @__PURE__ */ jsx(Dropdown.Link, { href: route("logout"), method: "post", as: "button", children: "Log Out" })
+              /* @__PURE__ */ jsx(
+                Dropdown.Link,
+                {
+                  href: route("logout"),
+                  method: "post",
+                  as: "button",
+                  children: "Log Out"
+                }
+              )
             ] })
           ] })
         ] })
@@ -4898,7 +5034,7 @@ const __vite_glob_0_15 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: ResetPassword
 }, Symbol.toStringTag, { value: "Module" }));
 const Loader = ({ title, status }) => {
-  return /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-center flex-col text-center w-full h-[100vh]", children: [
+  return /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-center flex-col text-center w-full h-[100vh] dark:bg-black", children: [
     /* @__PURE__ */ jsx("div", { className: "flex w-16 h-16 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto" }),
     /* @__PURE__ */ jsx("h1", { className: "text-3xl font-bold dark:text-gray-400 text-center mb-4", children: title }),
     /* @__PURE__ */ jsx("p", { className: "dark:text-gray-400", children: status })
@@ -5141,6 +5277,7 @@ function Navbar() {
             /* @__PURE__ */ jsx(
               Link,
               {
+                preserveState: true,
                 href: route("home"),
                 className: "text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors",
                 children: t("Home")
@@ -5149,6 +5286,7 @@ function Navbar() {
             /* @__PURE__ */ jsx(
               Link,
               {
+                preserveState: true,
                 href: route("movies.index"),
                 className: "text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors",
                 children: t("Movies")
@@ -5157,6 +5295,7 @@ function Navbar() {
             /* @__PURE__ */ jsx(
               Link,
               {
+                preserveState: true,
                 href: route("series.index"),
                 className: "text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors",
                 children: t("Series")
@@ -5165,14 +5304,16 @@ function Navbar() {
             /* @__PURE__ */ jsx(
               Link,
               {
+                preserveState: true,
                 href: route("watch-history.index"),
-                className: "text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors",
+                className: "text-sm text-  font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors",
                 children: t("Watch History")
               }
             ),
             /* @__PURE__ */ jsx(
               Link,
               {
+                preserveState: true,
                 href: route("subscription.index"),
                 className: "text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors",
                 children: t("VIP Subscription")
@@ -5754,6 +5895,17 @@ function LoadingLayout({ children }) {
   }
   return /* @__PURE__ */ jsx(Fragment, { children });
 }
+function AuthenticatedLayout({ header, children }) {
+  usePage().props.auth.user;
+  const { t } = useTranslation();
+  const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+  return /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-black", children: [
+    /* @__PURE__ */ jsx(Navbar, {}),
+    header && /* @__PURE__ */ jsx("header", { className: "bg-white dark:bg-gray-800 shadow", children: /* @__PURE__ */ jsx("div", { className: "mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8", children: header }) }),
+    /* @__PURE__ */ jsx("main", { children }),
+    /* @__PURE__ */ jsx(Footer, {})
+  ] });
+}
 function GenreShow({ genre, movies, series, seo }) {
   const [activeTab, setActiveTab] = useState("movies");
   const { t } = useTranslation();
@@ -5815,8 +5967,7 @@ function GenreShow({ genre, movies, series, seo }) {
         type: "website"
       }
     ),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black", children: [
-      /* @__PURE__ */ jsx(Navbar, {}),
+    /* @__PURE__ */ jsxs(AuthenticatedLayout, { children: [
       /* @__PURE__ */ jsxs("div", { className: "relative h-[30vh] md:h-[40vh] w-full overflow-hidden", children: [
         /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-purple-200 via-white to-blue-200 dark:from-purple-900/30 dark:via-black dark:to-blue-900/30", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-10", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.1),transparent)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]" }) }) }),
         /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 text-center", children: [
@@ -5895,8 +6046,7 @@ function GenreShow({ genre, movies, series, seo }) {
         ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t(
           "No series found in this genre."
         ) }) }) })
-      ] }),
-      /* @__PURE__ */ jsx(Footer, {})
+      ] })
     ] })
   ] }) });
 }
@@ -5943,12 +6093,15 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
     [featuredItems]
   );
   useImagePreloader(imageUrlsToPreload);
-  const handleSlideChange = useCallback((newIndex) => {
-    if (isSliding) return;
-    setIsSliding(true);
-    setCurrentIndex(newIndex);
-    setTimeout(() => setIsSliding(false), 700);
-  }, [isSliding]);
+  const handleSlideChange = useCallback(
+    (newIndex) => {
+      if (isSliding) return;
+      setIsSliding(true);
+      setCurrentIndex(newIndex);
+      setTimeout(() => setIsSliding(false), 700);
+    },
+    [isSliding]
+  );
   useEffect(() => {
     if (featuredItems.length === 0) return;
     const interval = setInterval(() => {
@@ -5966,12 +6119,23 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
       handleSlideChange((currentIndex + 1) % featuredItems.length);
     }
     if (isRightSwipe) {
-      handleSlideChange((currentIndex - 1 + featuredItems.length) % featuredItems.length);
+      handleSlideChange(
+        (currentIndex - 1 + featuredItems.length) % featuredItems.length
+      );
     }
     setTouchStart(null);
     setTouchEnd(null);
-  }, [touchStart, touchEnd, currentIndex, featuredItems.length, handleSlideChange]);
-  const currentItem = useMemo(() => featuredItems[currentIndex], [featuredItems, currentIndex]);
+  }, [
+    touchStart,
+    touchEnd,
+    currentIndex,
+    featuredItems.length,
+    handleSlideChange
+  ]);
+  const currentItem = useMemo(
+    () => featuredItems[currentIndex],
+    [featuredItems, currentIndex]
+  );
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(
       SeoHead,
@@ -5985,12 +6149,11 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
         structuredData: seo?.structuredData
       }
     ),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen mt-0 bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black", children: [
-      /* @__PURE__ */ jsx(Navbar, {}),
+    /* @__PURE__ */ jsxs(AuthenticatedLayout, { children: [
       currentItem && /* @__PURE__ */ jsxs(
         "div",
         {
-          className: "relative h-[85vh] w-full overflow-hidden group",
+          className: "relative h-[90vh] w-full overflow-hidden group ",
           onTouchStart: (e) => setTouchStart(e.touches[0].clientX),
           onTouchMove: (e) => setTouchEnd(e.touches[0].clientX),
           onTouchEnd: handleTouchEnd,
@@ -6031,7 +6194,13 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
                     /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4", children: /* @__PURE__ */ jsx(
                       Link,
                       {
-                        href: currentItem.type === "series" ? route("series.show", currentItem.slug) : route("movies.show", currentItem.slug),
+                        href: currentItem.type === "series" ? route(
+                          "series.show",
+                          currentItem.slug
+                        ) : route(
+                          "movies.show",
+                          currentItem.slug
+                        ),
                         className: "px-2 md:px-8 text-sm md:text-lg py-3 bg-gray-800 dark:bg-white text-white dark:text-black font-bold uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors",
                         children: t("Watch Now")
                       }
@@ -6089,8 +6258,7 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
             `series-${series.id}`
           )) })
         ] })
-      ] }),
-      /* @__PURE__ */ jsx(Footer, {})
+      ] })
     ] })
   ] });
 }
@@ -7150,24 +7318,20 @@ function Index$1({ movies }) {
       tg.BackButton.offClick();
     };
   }, []);
-  return /* @__PURE__ */ jsxs(Fragment, { children: [
+  return /* @__PURE__ */ jsxs(AuthenticatedLayout, { children: [
     /* @__PURE__ */ jsx(Head, { title: t("Movies") }),
-    /* @__PURE__ */ jsx(Navbar, {}),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen py-16  bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black pb-12", children: [
-      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12 py-4", children: [
-        /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-gray-200 dark:border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-gray-800 dark:text-white", children: t("Movies") }) }),
-        /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
-          MediaCard$1,
-          {
-            item: movie,
-            type: "movie"
-          },
-          movie.id
-        )) }),
-        movies.links && movies.links.length > 3 && /* @__PURE__ */ jsx(Pagination$1, { links: movies.links })
-      ] }),
-      /* @__PURE__ */ jsx(Footer, {})
-    ] })
+    /* @__PURE__ */ jsx("div", { className: "min-h-screen py-16  bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black pb-12", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12 py-4", children: [
+      /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-gray-200 dark:border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-gray-800 dark:text-white", children: t("Movies") }) }),
+      /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:gap-x-4 gap-y-8", children: movies.data.map((movie) => /* @__PURE__ */ jsx(
+        MediaCard$1,
+        {
+          item: movie,
+          type: "movie"
+        },
+        movie.id
+      )) }),
+      movies.links && movies.links.length > 3 && /* @__PURE__ */ jsx(Pagination$1, { links: movies.links })
+    ] }) })
   ] });
 }
 const __vite_glob_0_21 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -7953,8 +8117,7 @@ function PersonShow({ person, movies, series, seo }) {
         type: "profile"
       }
     ),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black", children: [
-      /* @__PURE__ */ jsx(Navbar, {}),
+    /* @__PURE__ */ jsxs(AuthenticatedLayout, { children: [
       /* @__PURE__ */ jsxs("div", { className: "relative h-[45vh] md:h-[60vh] w-full overflow-hidden", children: [
         /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-orange-200 via-white to-red-200 dark:from-orange-900/30 dark:via-black dark:to-red-900/30", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-10", children: /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.1),transparent)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]" }) }) }),
         /* @__PURE__ */ jsx("div", { className: "absolute inset-0 flex items-center justify-center pt-24", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-6 md:px-12 text-center", children: [
@@ -8045,8 +8208,7 @@ function PersonShow({ person, movies, series, seo }) {
         ] }) : /* @__PURE__ */ jsx("div", { className: "text-center py-20", children: /* @__PURE__ */ jsx("p", { className: "text-gray-500 text-lg", children: t(
           "No series found featuring this person."
         ) }) }) })
-      ] }),
-      /* @__PURE__ */ jsx(Footer, {})
+      ] })
     ] })
   ] }) });
 }
@@ -8401,115 +8563,111 @@ function Edit({ mustVerifyEmail, status }) {
   };
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(Head, { title: t("Profile") }),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black", children: [
-      /* @__PURE__ */ jsx(Navbar, {}),
-      /* @__PURE__ */ jsx("div", { className: "pt-24 pb-12 md:pt-32 md:pb-16", children: /* @__PURE__ */ jsxs("div", { className: "container flex-col items-center mx-auto px-6 md:px-12", children: [
-        /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden rounded-3xl md:max-w-5xl bg-white dark:bg-gradient-to-br from-indigo-400/40 via-purple-900 to-black border border-gray-200 dark:border-white/10 p-8 md:p-12 dark:backdrop-blur-sm", children: [
-          /* @__PURE__ */ jsx("div", { className: "absolute top-0 left-0 m-2", children: /* @__PURE__ */ jsx(ThemeSwitcher, {}) }),
-          /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 m-2", children: /* @__PURE__ */ jsx(LanguageSwitcher, {}) }),
-          /* @__PURE__ */ jsxs("div", { className: "relative flex flex-col md:flex-col items-center md:items-center md:justify-center gap-6 md:gap-8", children: [
-            /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600/5 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-white dark:border-black/50", children: user?.avatar_url ? user?.avatar_url && /* @__PURE__ */ jsx("div", { className: "flex justify-center", children: /* @__PURE__ */ jsx(
-              "img",
-              {
-                src: user?.avatar_url,
-                alt: user?.name,
-                className: "w-24 h-24 md:w-40 md:h-40 rounded-full object-cover border-4 border-white/20"
-              }
-            ) }) : /* @__PURE__ */ jsx("span", { className: "text-3xl md:text-4xl font-bold text-white tracking-wider", children: getInitials(user.name) }) }) }),
-            /* @__PURE__ */ jsxs("div", { className: "flex-1 text-center  space-y-2", children: [
-              /* @__PURE__ */ jsx("h1", { className: "text-3xl md:text-4xl font-bold text-gray-900 dark:text-white tracking-tight", children: user.name }),
-              /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row items-center justify-center md:justify-start md:items-center gap-2 md:gap-4 text-gray-500 dark:text-gray-400", children: [
-                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
-                  /* @__PURE__ */ jsxs(
-                    "svg",
-                    {
-                      xmlns: "http://www.w3.org/2000/svg",
-                      viewBox: "0 0 24 24",
-                      fill: "currentColor",
-                      className: "w-4 h-4",
-                      children: [
-                        /* @__PURE__ */ jsx("path", { d: "M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" }),
-                        /* @__PURE__ */ jsx("path", { d: "M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" })
-                      ]
-                    }
-                  ),
-                  /* @__PURE__ */ jsx("span", { children: user.email })
-                ] }),
-                /* @__PURE__ */ jsx("span", { className: "hidden md:inline text-gray-400 dark:text-gray-600", children: "•" }),
-                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
-                  /* @__PURE__ */ jsx(
-                    "svg",
-                    {
-                      xmlns: "http://www.w3.org/2000/svg",
-                      viewBox: "0 0 24 24",
-                      fill: "currentColor",
-                      className: "w-4 h-4",
-                      children: /* @__PURE__ */ jsx(
-                        "path",
-                        {
-                          fillRule: "evenodd",
-                          d: "M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z",
-                          clipRule: "evenodd"
-                        }
-                      )
-                    }
-                  ),
-                  /* @__PURE__ */ jsxs("span", { children: [
-                    t("Member since"),
-                    " ",
-                    user.created_at ? formatDate(
-                      user.created_at
-                    ) : t("Recently")
-                  ] })
-                ] })
+    /* @__PURE__ */ jsx(AuthenticatedLayout, { children: /* @__PURE__ */ jsx("div", { className: "pt-24 pb-12 md:pt-32 md:pb-16", children: /* @__PURE__ */ jsxs("div", { className: "container flex-col items-center mx-auto px-6 md:px-12", children: [
+      /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden rounded-3xl md:max-w-5xl bg-white dark:bg-gradient-to-br from-indigo-400/40 via-purple-900 to-black border border-gray-200 dark:border-white/10 p-8 md:p-12 dark:backdrop-blur-sm", children: [
+        /* @__PURE__ */ jsx("div", { className: "absolute top-0 left-0 m-2", children: /* @__PURE__ */ jsx(ThemeSwitcher, {}) }),
+        /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 m-2", children: /* @__PURE__ */ jsx(LanguageSwitcher, {}) }),
+        /* @__PURE__ */ jsxs("div", { className: "relative flex flex-col md:flex-col items-center md:items-center md:justify-center gap-6 md:gap-8", children: [
+          /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600/5 flex items-center justify-center shadow-lg shadow-purple-500/20 border-4 border-white dark:border-black/50", children: user?.avatar_url ? user?.avatar_url && /* @__PURE__ */ jsx("div", { className: "flex justify-center", children: /* @__PURE__ */ jsx(
+            "img",
+            {
+              src: user?.avatar_url,
+              alt: user?.name,
+              className: "w-24 h-24 md:w-40 md:h-40 rounded-full object-cover border-4 border-white/20"
+            }
+          ) }) : /* @__PURE__ */ jsx("span", { className: "text-3xl md:text-4xl font-bold text-white tracking-wider", children: getInitials(user.name) }) }) }),
+          /* @__PURE__ */ jsxs("div", { className: "flex-1 text-center  space-y-2", children: [
+            /* @__PURE__ */ jsx("h1", { className: "text-3xl md:text-4xl font-bold text-gray-900 dark:text-white tracking-tight", children: user.name }),
+            /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row items-center justify-center md:justify-start md:items-center gap-2 md:gap-4 text-gray-500 dark:text-gray-400", children: [
+              /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxs(
+                  "svg",
+                  {
+                    xmlns: "http://www.w3.org/2000/svg",
+                    viewBox: "0 0 24 24",
+                    fill: "currentColor",
+                    className: "w-4 h-4",
+                    children: [
+                      /* @__PURE__ */ jsx("path", { d: "M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" }),
+                      /* @__PURE__ */ jsx("path", { d: "M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" })
+                    ]
+                  }
+                ),
+                /* @__PURE__ */ jsx("span", { children: user.email })
               ] }),
-              /* @__PURE__ */ jsxs("div", { className: "pt-4 flex flex-wrap justify-center  gap-3", children: [
-                /* @__PURE__ */ jsx("span", { className: "px-3 py-1 rounded-full bg-indigo-100 dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-xs font-medium text-indigo-800 dark:text-indigo-300", children: t("Free Plan") }),
-                user.email_verified_at ? /* @__PURE__ */ jsxs("span", { className: "px-3 py-1 rounded-full bg-green-100 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 text-xs font-medium text-green-800 dark:text-green-400 flex items-center gap-1", children: [
-                  /* @__PURE__ */ jsx(
-                    "svg",
-                    {
-                      xmlns: "http://www.w3.org/2000/svg",
-                      viewBox: "0 0 20 20",
-                      fill: "currentColor",
-                      className: "w-3 h-3",
-                      children: /* @__PURE__ */ jsx(
-                        "path",
-                        {
-                          fillRule: "evenodd",
-                          d: "M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z",
-                          clipRule: "evenodd"
-                        }
-                      )
-                    }
-                  ),
-                  t("Verified")
-                ] }) : /* @__PURE__ */ jsx("span", { className: "px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 text-xs font-medium text-yellow-800 dark:text-yellow-400", children: t("Unverified") })
+              /* @__PURE__ */ jsx("span", { className: "hidden md:inline text-gray-400 dark:text-gray-600", children: "•" }),
+              /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsx(
+                  "svg",
+                  {
+                    xmlns: "http://www.w3.org/2000/svg",
+                    viewBox: "0 0 24 24",
+                    fill: "currentColor",
+                    className: "w-4 h-4",
+                    children: /* @__PURE__ */ jsx(
+                      "path",
+                      {
+                        fillRule: "evenodd",
+                        d: "M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z",
+                        clipRule: "evenodd"
+                      }
+                    )
+                  }
+                ),
+                /* @__PURE__ */ jsxs("span", { children: [
+                  t("Member since"),
+                  " ",
+                  user.created_at ? formatDate(
+                    user.created_at
+                  ) : t("Recently")
+                ] })
               ] })
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "pt-4 flex flex-wrap justify-center  gap-3", children: [
+              /* @__PURE__ */ jsx("span", { className: "px-3 py-1 rounded-full bg-indigo-100 dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-xs font-medium text-indigo-800 dark:text-indigo-300", children: t("Free Plan") }),
+              user.email_verified_at ? /* @__PURE__ */ jsxs("span", { className: "px-3 py-1 rounded-full bg-green-100 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 text-xs font-medium text-green-800 dark:text-green-400 flex items-center gap-1", children: [
+                /* @__PURE__ */ jsx(
+                  "svg",
+                  {
+                    xmlns: "http://www.w3.org/2000/svg",
+                    viewBox: "0 0 20 20",
+                    fill: "currentColor",
+                    className: "w-3 h-3",
+                    children: /* @__PURE__ */ jsx(
+                      "path",
+                      {
+                        fillRule: "evenodd",
+                        d: "M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z",
+                        clipRule: "evenodd"
+                      }
+                    )
+                  }
+                ),
+                t("Verified")
+              ] }) : /* @__PURE__ */ jsx("span", { className: "px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 text-xs font-medium text-yellow-800 dark:text-yellow-400", children: t("Unverified") })
             ] })
           ] })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "mt-12 border-b border-gray-200 dark:border-white/10 pb-6", children: [
-          /* @__PURE__ */ jsx("h2", { className: "text-2xl font-serif text-gray-900 dark:text-white", children: t("Account Settings") }),
-          /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-500 text-sm mt-1", children: t("Manage your profile details and security") })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8", children: [
-          /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
-            /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 md:p-8 rounded-2xl dark:backdrop-blur-sm", children: /* @__PURE__ */ jsx(
-              UpdateProfileInformation,
-              {
-                mustVerifyEmail,
-                status,
-                className: "max-w-xl"
-              }
-            ) }),
-            /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 md:p-8 rounded-2xl dark:backdrop-blur-sm", children: /* @__PURE__ */ jsx(UpdatePasswordForm, { className: "max-w-xl" }) })
-          ] }),
-          /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("div", { className: "bg-red-100 dark:bg-red-500/5 border border-red-200 dark:border-red-500/20 p-6 md:p-8 rounded-2xl dark:backdrop-blur-sm", children: /* @__PURE__ */ jsx(DeleteUserForm, { className: "max-w-xl" }) }) })
         ] })
-      ] }) }),
-      /* @__PURE__ */ jsx(Footer, {})
-    ] })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "mt-12 border-b border-gray-200 dark:border-white/10 pb-6", children: [
+        /* @__PURE__ */ jsx("h2", { className: "text-2xl font-serif text-gray-900 dark:text-white", children: t("Account Settings") }),
+        /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-500 text-sm mt-1", children: t("Manage your profile details and security") })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8", children: [
+        /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
+          /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 md:p-8 rounded-2xl dark:backdrop-blur-sm", children: /* @__PURE__ */ jsx(
+            UpdateProfileInformation,
+            {
+              mustVerifyEmail,
+              status,
+              className: "max-w-xl"
+            }
+          ) }),
+          /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 md:p-8 rounded-2xl dark:backdrop-blur-sm", children: /* @__PURE__ */ jsx(UpdatePasswordForm, { className: "max-w-xl" }) })
+        ] }),
+        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("div", { className: "bg-red-100 dark:bg-red-500/5 border border-red-200 dark:border-red-500/20 p-6 md:p-8 rounded-2xl dark:backdrop-blur-sm", children: /* @__PURE__ */ jsx(DeleteUserForm, { className: "max-w-xl" }) }) })
+      ] })
+    ] }) }) })
   ] });
 }
 const __vite_glob_0_28 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -8596,24 +8754,20 @@ function Index({ series }) {
       tg.BackButton.offClick();
     };
   }, []);
-  return /* @__PURE__ */ jsxs(Fragment, { children: [
+  return /* @__PURE__ */ jsxs(AuthenticatedLayout, { children: [
     /* @__PURE__ */ jsx(Head, { title: t("Series") }),
-    /* @__PURE__ */ jsx(Navbar, {}),
-    /* @__PURE__ */ jsxs("div", { className: "min-h-screen py-16  bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black pb-12", children: [
-      /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12 py-4", children: [
-        /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-gray-200 dark:border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-gray-800 dark:text-white", children: t("Series") }) }),
-        /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
-          MediaCard$1,
-          {
-            item,
-            type: "series"
-          },
-          item.id
-        )) }),
-        series.links && series.links.length > 3 && /* @__PURE__ */ jsx(Pagination, { links: series.links })
-      ] }),
-      /* @__PURE__ */ jsx(Footer, {})
-    ] })
+    /* @__PURE__ */ jsx("div", { className: "min-h-screen py-16  bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black pb-12", children: /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-2 md:px-12 py-4", children: [
+      /* @__PURE__ */ jsx("div", { className: "mb-4 border-b border-gray-200 dark:border-white/10 pt-2", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-serif text-gray-800 dark:text-white", children: t("Series") }) }),
+      /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:gap-x-4 gap-y-8", children: series.data.map((item) => /* @__PURE__ */ jsx(
+        MediaCard$1,
+        {
+          item,
+          type: "series"
+        },
+        item.id
+      )) }),
+      series.links && series.links.length > 3 && /* @__PURE__ */ jsx(Pagination, { links: series.links })
+    ] }) })
   ] });
 }
 const __vite_glob_0_33 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -9399,8 +9553,7 @@ function Subscription({ auth, subscription }) {
     });
   };
   const isVip = subscription && new Date(subscription.end_date) > /* @__PURE__ */ new Date();
-  return /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-black", children: [
-    /* @__PURE__ */ jsx(Navbar, {}),
+  return /* @__PURE__ */ jsxs(AuthenticatedLayout, { children: [
     /* @__PURE__ */ jsx(Head, { title: "VIP Subscription" }),
     /* @__PURE__ */ jsx("div", { className: "py-24", children: /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6", children: [
       /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg", children: /* @__PURE__ */ jsxs("div", { className: "p-6", children: [
@@ -9424,8 +9577,11 @@ function Subscription({ auth, subscription }) {
             /* @__PURE__ */ jsxs("div", { className: "flex items-center text-indigo-100", children: [
               /* @__PURE__ */ jsx(Calendar, { className: "w-4 h-4 mr-2" }),
               /* @__PURE__ */ jsxs("span", { children: [
-                "Expires on ",
-                formatDate(subscription.end_date)
+                "Expires on",
+                " ",
+                formatDate(
+                  subscription.end_date
+                )
               ] })
             ] })
           ] }),
@@ -9443,7 +9599,14 @@ function Subscription({ auth, subscription }) {
         ] }),
         /* @__PURE__ */ jsxs("form", { onSubmit: handleRedeem, className: "max-w-xl", children: [
           /* @__PURE__ */ jsxs("div", { className: "mb-4", children: [
-            /* @__PURE__ */ jsx("label", { htmlFor: "key", className: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1", children: "Enter your activation key" }),
+            /* @__PURE__ */ jsx(
+              "label",
+              {
+                htmlFor: "key",
+                className: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1",
+                children: "Enter your activation key"
+              }
+            ),
             /* @__PURE__ */ jsxs("div", { className: "flex gap-2", children: [
               /* @__PURE__ */ jsx(
                 "input",
@@ -9502,8 +9665,7 @@ function WatchHistory({ auth, history }) {
       destroy(route("watch-history.destroy", id));
     }
   };
-  return /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-black", children: [
-    /* @__PURE__ */ jsx(Navbar, {}),
+  return /* @__PURE__ */ jsxs(AuthenticatedLayout, { children: [
     /* @__PURE__ */ jsx(Head, { title: "Watch History" }),
     /* @__PURE__ */ jsx("div", { className: "py-24", children: /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto sm:px-6 lg:px-8", children: [
       history.data.length === 0 ? /* @__PURE__ */ jsxs("div", { className: "text-center py-20 bg-white dark:bg-gray-800 rounded-xl shadow-sm", children: [
@@ -9523,10 +9685,7 @@ function WatchHistory({ auth, history }) {
         const title = item.movie ? item.movie.title : item.series?.title;
         const subtitle = item.episode ? `S${item.episode.season_number} E${item.episode.episode_number} - ${item.episode.title}` : null;
         const posterPath = item.movie ? item.movie.poster_url : item.series?.poster_url;
-        const link = item.movie ? route("movies.show", item.movie.slug) : item.episode?.series ? route(
-          "series.show",
-          item.series.slug
-        ) : "#";
+        const link = item.movie ? route("movies.show", item.movie.slug) : item.episode?.series ? route("series.show", item.series.slug) : "#";
         if (!content) return null;
         return /* @__PURE__ */ jsxs(
           "div",

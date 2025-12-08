@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import ThemeSwitcher from "@/Components/ThemeSwitcher";
 import LanguageSwitcher from "@/Components/LanguageSwitcher";
 import { useEffect } from "react";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 export default function Edit({ mustVerifyEmail, status }) {
     const { t, i18n } = useTranslation();
@@ -54,9 +55,7 @@ export default function Edit({ mustVerifyEmail, status }) {
     return (
         <>
             <Head title={t("Profile")} />
-            <div className="min-h-screen bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black">
-                <Navbar />
-
+            <AuthenticatedLayout>
                 <div className="pt-24 pb-12 md:pt-32 md:pb-16">
                     <div className="container flex-col items-center mx-auto px-6 md:px-12">
                         {/* Hero Section */}
@@ -197,9 +196,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                         </div>
                     </div>
                 </div>
-
-                <Footer />
-            </div>
+            </AuthenticatedLayout>
         </>
     );
 }

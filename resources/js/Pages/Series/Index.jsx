@@ -4,6 +4,7 @@ import MediaCard from "@/Components/MediaCard";
 import Footer from "@/Components/Footer";
 import Navbar from "@/Components/Navbar";
 import { useTranslation } from "react-i18next";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const Pagination = ({ links }) => {
     return (
@@ -48,9 +49,9 @@ export default function Index({ series }) {
         };
     }, []);
     return (
-        <>
+        <AuthenticatedLayout>
             <Head title={t("Series")} />
-            <Navbar />
+            {/* <Navbar /> */}
             <div className="min-h-screen py-16  bg-gray-100 dark:bg-[#050505] text-gray-800 dark:text-white font-sans selection:bg-gray-800 selection:text-white dark:selection:bg-white dark:selection:text-black pb-12">
                 <div className="container mx-auto px-2 md:px-12 py-4">
                     <div className="mb-4 border-b border-gray-200 dark:border-white/10 pt-2">
@@ -76,8 +77,7 @@ export default function Index({ series }) {
                         <Pagination links={series.links} />
                     )}
                 </div>
-                <Footer />
             </div>
-        </>
+        </AuthenticatedLayout>
     );
 }

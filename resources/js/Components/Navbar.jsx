@@ -83,31 +83,36 @@ export default function Navbar() {
                     {/* Desktop Menu */}
                     <div className="hidden md:flex items-center gap-8">
                         <Link
+                            preserveState
                             href={route("home")}
                             className="text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                         >
                             {t("Home")}
                         </Link>
                         <Link
+                            preserveState
                             href={route("movies.index")}
                             className="text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                         >
                             {t("Movies")}
                         </Link>
                         <Link
+                            preserveState
                             href={route("series.index")}
                             className="text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                         >
                             {t("Series")}
                         </Link>
                         <Link
+                            preserveState
                             href={route("watch-history.index")}
-                            className="text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                            className="text-sm text-  font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                         >
                             {t("Watch History")}
                         </Link>
 
                         <Link
+                            preserveState
                             href={route("subscription.index")}
                             className="text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                         >

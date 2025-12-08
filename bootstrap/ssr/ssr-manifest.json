@@ -26,6 +26,7 @@
   "resources/js/Components/ThemeSwitcher.jsx": [],
   "resources/js/Hooks/useFormPersistence.js": [],
   "resources/js/Layouts/AdminLayout.jsx": [],
+  "resources/js/Layouts/AuthenticatedLayout.jsx": [],
   "resources/js/Layouts/GuestLayout.jsx": [],
   "resources/js/Layouts/LoadingLayout.jsx": [],
   "resources/js/Layouts/StaticPageLayout.jsx": [],

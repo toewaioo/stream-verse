@@ -1,7 +1,8 @@
 import React from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
-import {  Play, Clock, XCircle } from "lucide-react";
+import { Play, Clock, XCircle } from "lucide-react";
 import Navbar from "@/Components/Navbar";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 export default function WatchHistory({ auth, history }) {
     const { delete: destroy, post, processing } = useForm();
@@ -32,9 +33,7 @@ export default function WatchHistory({ auth, history }) {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-black">
-            <Navbar/>
-           
+        <AuthenticatedLayout>
             <Head title="Watch History" />
 
             <div className="py-24">
@@ -75,8 +74,7 @@ export default function WatchHistory({ auth, history }) {
                     ) : (
                         <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {history.data.map((item) => {
-                                const content =
-                                    item.movie || item.series;
+                                const content = item.movie || item.series;
                                 const title = item.movie
                                     ? item.movie.title
                                     : item.series?.title;
@@ -89,10 +87,7 @@ export default function WatchHistory({ auth, history }) {
                                 const link = item.movie
                                     ? route("movies.show", item.movie.slug)
                                     : item.episode?.series
-                                    ? route(
-                                          "series.show",
-                                          item.series.slug
-                                      )
+                                    ? route("series.show", item.series.slug)
                                     : "#";
 
                                 if (!content) return null;
@@ -212,6 +207,6 @@ export default function WatchHistory({ auth, history }) {
                     )}
                 </div>
             </div>
-        </div>
+        </AuthenticatedLayout>
     );
 }
