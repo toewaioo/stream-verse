@@ -64,6 +64,8 @@
   "resources/js/Pages/Search.jsx": [],
   "resources/js/Pages/Series/Index.jsx": [],
   "resources/js/Pages/SeriesDetails.jsx": [],
+  "resources/js/Pages/User/Subscription.jsx": [],
+  "resources/js/Pages/User/WatchHistory.jsx": [],
   "resources/js/Pages/Welcome.jsx": [],
   "resources/js/contexts/ThemeContext.jsx": [],
   "resources/js/ssr.jsx": []

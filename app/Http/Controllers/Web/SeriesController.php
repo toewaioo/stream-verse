@@ -60,6 +60,14 @@ class SeriesController extends Controller
 
         // Increment view count
         $series->incrementViewCount();
+        if (Auth::check()) {
+            \App\Models\WatchHistory::firstOrCreate(
+                [
+                    'user_id' => Auth::id(),
+                    'series_id' => $series->id,
+                ],
+            );
+        }
 
         // Get related series based on shared genres
         $relatedSeries = Series::whereHas('genres', function ($query) use ($series) {

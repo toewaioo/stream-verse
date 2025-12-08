@@ -3,6 +3,7 @@ import { Link, useForm, router, usePage } from "@inertiajs/react";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import ThemeSwitcher from "./ThemeSwitcher";
+import ResponsiveNavLink from "./ResponsiveNavLink";
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -99,6 +100,20 @@ export default function Navbar() {
                         >
                             {t("Series")}
                         </Link>
+                        <Link
+                            href={route("watch-history.index")}
+                            className="text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                        >
+                            {t("Watch History")}
+                        </Link>
+
+                        <Link
+                            href={route("subscription.index")}
+                            className="text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                        >
+                            {t("VIP Subscription")}
+                        </Link>
+
                         <LanguageSwitcher />
                         <ThemeSwitcher />
                     </div>
@@ -326,6 +341,19 @@ export default function Navbar() {
                         >
                             {t("Series")}
                         </Link>
+                        <Link
+                            href={route("watch-history.index")}
+                            className="text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg"
+                        >
+                            {t("Watch History")}
+                        </Link>
+
+                        <Link
+                            href={route("subscription.index")}
+                            className="text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg"
+                        >
+                            {t("VIP Subscription")}
+                        </Link>
 
                         <Link
                             href={route("admin.dashboard")}
@@ -339,6 +367,7 @@ export default function Navbar() {
                         >
                             {t("Dashboard")}
                         </Link>
+
                         <div className="flex items-center gap-4 mt-4 px-2">
                             <LanguageSwitcher />
                             <ThemeSwitcher />

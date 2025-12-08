@@ -113,15 +113,15 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->uuid('user_id');
             $table->unsignedBigInteger('movie_id')->nullable();
-            $table->unsignedBigInteger('episode_id')->nullable();
+            $table->unsignedBigInteger('series_id')->nullable();
             $table->bigInteger('last_position_seconds')->default(0);
             $table->boolean('completed')->default(false);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('movie_id')->references('id')->on('movies')->onDelete('cascade');
-            $table->foreign('episode_id')->references('id')->on('episodes')->onDelete('cascade');
-            $table->unique(['user_id', 'movie_id', 'episode_id'], 'watch_history_unique');
+            $table->foreign('series_id')->references('id')->on('series')->onDelete('cascade');
+            $table->unique(['user_id', 'movie_id', 'series_id'], 'watch_history_unique');
         });
 
         Schema::create('vip_keys', function (Blueprint $table) {

@@ -15,7 +15,7 @@ class WatchHistoryService
     {
         return WatchHistory::with([
             'movie',
-            'episode.season.series'
+            'series'
         ])
             ->where('user_id', $user->id)
             ->latest()
@@ -26,7 +26,7 @@ class WatchHistoryService
     {
         return WatchHistory::with([
             'movie',
-            'episode.season.series'
+            'series'
         ])
             ->where('user_id', $user->id)
             ->where('completed', false)
@@ -50,7 +50,7 @@ class WatchHistoryService
                 $data['duration_seconds']
             );
 
-            return $watchHistory->fresh(['movie', 'episode.season.series']);
+            return $watchHistory->fresh(['movie', 'series']);
         });
     }
 
@@ -82,7 +82,7 @@ class WatchHistoryService
             ->where('completed', true)
             ->sum('duration_seconds');
 
-        $recentlyWatched = WatchHistory::with(['movie', 'episode.season.series'])
+        $recentlyWatched = WatchHistory::with(['movie', 'series'])
             ->where('user_id', $user->id)
             ->where('completed', true)
             ->latest()

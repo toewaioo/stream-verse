@@ -67,6 +67,16 @@ class MovieController extends Controller
         // Increment view count
         $movie->incrementViewCount();
 
+        // Record Watch History
+        if (Auth::check()) {
+            \App\Models\WatchHistory::firstOrCreate(
+                [
+                    'user_id' => Auth::id(),
+                    'movie_id' => $movie->id,
+                ],
+            );
+        }
+
         // Get related movies based on shared genres
         $relatedMovies = Movie::whereHas('genres', function ($query) use ($movie) {
             $query->whereIn('genres.id', $movie->genres->pluck('id'));

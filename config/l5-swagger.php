@@ -28,7 +28,7 @@ return [
                 /*
                  * File name of the generated json documentation file
                  */
-                'docs_json' => 'docs',
+                'docs_json' => 'api-docs.json',
 
 
                 /*
@@ -83,7 +83,7 @@ return [
              * Absolute path to location where parsed annotations will be stored
              */
 
-            'docs' => '/storage/api-docs',
+            'docs' => storage_path('api-docs'),
 
             /*
              * Absolute path to directory where to export views

@@ -15,6 +15,8 @@ use App\Http\Controllers\Web\SitemapController;
 use App\Http\Controllers\Web\PageController;
 use App\Http\Controllers\Web\RatingController;
 use App\Http\Controllers\Web\ProfileController;
+use App\Http\Controllers\Web\WatchHistoryController;
+use App\Http\Controllers\Web\VipSubscriptionController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -37,7 +39,7 @@ Route::get('/api/documentation', function () {
 <script>
   window.onload = function() {
     SwaggerUIBundle({
-      url: '/docs',
+      url: '/swagger.json',
       dom_id: '#swagger-ui',
       presets: [
         SwaggerUIBundle.presets.apis
@@ -52,7 +54,7 @@ HTML;
 
     return Response::make($swaggerUiHtml, 200, ['Content-Type' => 'text/html']);
 });
-Route::get('/docs', function () {
+Route::get('/swagger.json', function () {
 
     $file = base_path('/storage/api-docs/swagger.json');
     if (!file_exists($file)) {
@@ -190,11 +192,21 @@ Route::middleware('auth')->group(function () {
     // Route::post('/ratings', [RatingController::class, 'store'])->name('admin.ratings.store');
     // Route::put('/ratings/{rating}', [RatingController::class, 'update'])->name('admin.ratings.update');
 
-    // // Review routes
+    // Review routes
     // Route::post('/movies/{movie}/reviews', [App\Http\Controllers\Web\ReviewController::class, 'storeMovieReview'])->name('reviews.store.movie');
     // Route::post('/series/{series}/reviews', [App\Http\Controllers\Web\ReviewController::class, 'storeSeriesReview'])->name('reviews.store.series');
     // Route::put('/reviews/{review}', [App\Http\Controllers\Web\ReviewController::class, 'update'])->name('reviews.update');
     // Route::delete('/reviews/{review}', [App\Http\Controllers\Web\ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    // Watch History
+    Route::get('/watch-history', [WatchHistoryController::class, 'index'])->name('watch-history.index');
+    Route::post('/watch-history', [WatchHistoryController::class, 'store'])->name('watch-history.store');
+    Route::delete('/watch-history/{id}', [WatchHistoryController::class, 'destroy'])->name('watch-history.destroy');
+    Route::post('/watch-history/clear', [WatchHistoryController::class, 'clear'])->name('watch-history.clear');
+
+    // VIP Subscription
+    Route::get('/subscription', [VipSubscriptionController::class, 'index'])->name('subscription.index');
+    Route::post('/subscription/redeem', [VipSubscriptionController::class, 'redeem'])->name('subscription.redeem');
 });
 
 // // Public Review Routes

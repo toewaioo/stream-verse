@@ -7,12 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class WatchHistory extends Model
 {
+    protected $table='watch_history';
     use HasFactory;
 
     protected $fillable = [
         'user_id',
         'movie_id',
-        'episode_id',
+        'series_id',
         'last_position_seconds',
         'completed',
         'duration_seconds',
@@ -37,9 +38,9 @@ class WatchHistory extends Model
         return $this->belongsTo(Movie::class);
     }
 
-    public function episode()
+    public function series()
     {
-        return $this->belongsTo(Episode::class);
+        return $this->belongsTo(Series::class);
     }
 
     // Methods

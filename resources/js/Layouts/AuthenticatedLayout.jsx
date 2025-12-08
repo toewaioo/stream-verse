@@ -28,13 +28,8 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route("dashboard")}
-                                    active={route().current("dashboard")}
-                                >
-                                    {t('Dashboard')}
-                                </NavLink>
-                                <NavLink
+                                
+                                {/* <NavLink
                                     href={route("admin.dashboard")}
                                     active={route().current("admin.dashboard")}
                                 >
@@ -89,7 +84,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     active={route().current("admin.episodes")}
                                 >
                                     {t('Episodes')}
-                                </NavLink>
+                                </NavLink> */}
                             </div>
                         </div>
 
@@ -129,6 +124,16 @@ export default function AuthenticatedLayout({ header, children }) {
                                             href={route("profile.edit")}
                                         >
                                             {t('Profile')}
+                                        </Dropdown.Link>
+                                        <Dropdown.Link
+                                            href={route("watch-history.index")}
+                                        >
+                                            {t('Watch History')}
+                                        </Dropdown.Link>
+                                        <Dropdown.Link
+                                            href={route("subscription.index")}
+                                        >
+                                            {t('VIP Subscription')}
                                         </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route("logout")}
@@ -192,12 +197,12 @@ export default function AuthenticatedLayout({ header, children }) {
                     }
                 >
                     <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
+                        {/* <ResponsiveNavLink
                             href={route("dashboard")}
                             active={route().current("dashboard")}
                         >
                             {t('Dashboard')}
-                        </ResponsiveNavLink>
+                        </ResponsiveNavLink> */}
                     </div>
 
                     <div className="border-t border-gray-200 dark:border-gray-600 pb-1 pt-4">
@@ -213,6 +218,12 @@ export default function AuthenticatedLayout({ header, children }) {
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route("profile.edit")}>
                                 {t('Profile')}
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink href={route("watch-history.index")}>
+                                {t('Watch History')}
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink href={route("subscription.index")}>
+                                {t('VIP Subscription')}
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"

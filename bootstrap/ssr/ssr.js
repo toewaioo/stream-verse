@@ -9,6 +9,7 @@ import { debounce } from "lodash";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { Crown, CheckCircle, AlertCircle, Calendar, Key, PlayCircle, Clock, Play, XCircle } from "lucide-react";
 import createServer from "@inertiajs/react/server";
 import ReactDOMServer from "react-dom/server";
 function ApplicationLogo(props) {
@@ -5161,6 +5162,22 @@ function Navbar() {
                 children: t("Series")
               }
             ),
+            /* @__PURE__ */ jsx(
+              Link,
+              {
+                href: route("watch-history.index"),
+                className: "text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors",
+                children: t("Watch History")
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              Link,
+              {
+                href: route("subscription.index"),
+                className: "text-sm font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors",
+                children: t("VIP Subscription")
+              }
+            ),
             /* @__PURE__ */ jsx(LanguageSwitcher, {}),
             /* @__PURE__ */ jsx(ThemeSwitcher, {})
           ] }),
@@ -5387,6 +5404,22 @@ function Navbar() {
                 onClick: closeMobileMenu,
                 className: "text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg",
                 children: t("Series")
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              Link,
+              {
+                href: route("watch-history.index"),
+                className: "text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg",
+                children: t("Watch History")
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              Link,
+              {
+                href: route("subscription.index"),
+                className: "text-lg font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all py-4 px-4 rounded-lg",
+                children: t("VIP Subscription")
               }
             ),
             /* @__PURE__ */ jsx(
@@ -9344,6 +9377,230 @@ const __vite_glob_0_34 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: SeriesDetails
 }, Symbol.toStringTag, { value: "Module" }));
+function Subscription({ auth, subscription }) {
+  const { data, setData, post, processing, errors, reset } = useForm({
+    key: ""
+  });
+  const handleRedeem = (e) => {
+    e.preventDefault();
+    post(route("subscription.redeem"), {
+      onSuccess: () => reset("key")
+    });
+  };
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+  };
+  const isVip = subscription && new Date(subscription.end_date) > /* @__PURE__ */ new Date();
+  return /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-black", children: [
+    /* @__PURE__ */ jsx(Navbar, {}),
+    /* @__PURE__ */ jsx(Head, { title: "VIP Subscription" }),
+    /* @__PURE__ */ jsx("div", { className: "py-24", children: /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6", children: [
+      /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg", children: /* @__PURE__ */ jsxs("div", { className: "p-6", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-6", children: [
+          /* @__PURE__ */ jsxs("h3", { className: "text-lg font-medium text-gray-900 dark:text-white flex items-center", children: [
+            /* @__PURE__ */ jsx(Crown, { className: "w-5 h-5 mr-2 text-yellow-500" }),
+            "Subscription Status"
+          ] }),
+          isVip ? /* @__PURE__ */ jsxs("span", { className: "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200", children: [
+            /* @__PURE__ */ jsx(CheckCircle, { className: "w-4 h-4 mr-1" }),
+            "Active"
+          ] }) : /* @__PURE__ */ jsxs("span", { className: "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300", children: [
+            /* @__PURE__ */ jsx(AlertCircle, { className: "w-4 h-4 mr-1" }),
+            "Inactive"
+          ] })
+        ] }),
+        isVip ? /* @__PURE__ */ jsx("div", { className: "bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-6 text-white shadow-lg", children: /* @__PURE__ */ jsxs("div", { className: "flex items-start justify-between", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("p", { className: "text-indigo-100 font-medium mb-1", children: "Current Plan" }),
+            /* @__PURE__ */ jsx("h4", { className: "text-3xl font-bold mb-4", children: "VIP Member" }),
+            /* @__PURE__ */ jsxs("div", { className: "flex items-center text-indigo-100", children: [
+              /* @__PURE__ */ jsx(Calendar, { className: "w-4 h-4 mr-2" }),
+              /* @__PURE__ */ jsxs("span", { children: [
+                "Expires on ",
+                formatDate(subscription.end_date)
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ jsx(Crown, { className: "w-16 h-16 text-white/20" })
+        ] }) }) : /* @__PURE__ */ jsxs("div", { className: "bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6 border border-gray-200 dark:border-gray-700 text-center", children: [
+          /* @__PURE__ */ jsx(Crown, { className: "w-12 h-12 mx-auto text-gray-400 mb-3" }),
+          /* @__PURE__ */ jsx("h4", { className: "text-lg font-medium text-gray-900 dark:text-white mb-2", children: "No Active Subscription" }),
+          /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 max-w-md mx-auto", children: "Upgrade to VIP to unlock exclusive content, ad-free viewing, and higher quality streams." })
+        ] })
+      ] }) }),
+      /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg", children: /* @__PURE__ */ jsxs("div", { className: "p-6", children: [
+        /* @__PURE__ */ jsxs("h3", { className: "text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center", children: [
+          /* @__PURE__ */ jsx(Key, { className: "w-5 h-5 mr-2 text-indigo-500" }),
+          "Redeem VIP Key"
+        ] }),
+        /* @__PURE__ */ jsxs("form", { onSubmit: handleRedeem, className: "max-w-xl", children: [
+          /* @__PURE__ */ jsxs("div", { className: "mb-4", children: [
+            /* @__PURE__ */ jsx("label", { htmlFor: "key", className: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1", children: "Enter your activation key" }),
+            /* @__PURE__ */ jsxs("div", { className: "flex gap-2", children: [
+              /* @__PURE__ */ jsx(
+                "input",
+                {
+                  id: "key",
+                  type: "text",
+                  value: data.key,
+                  onChange: (e) => setData("key", e.target.value),
+                  className: "flex-1 rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white focus:border-indigo-500 focus:ring-indigo-500",
+                  placeholder: "XXXX-XXXX-XXXX-XXXX"
+                }
+              ),
+              /* @__PURE__ */ jsx(
+                "button",
+                {
+                  type: "submit",
+                  disabled: processing,
+                  className: "px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors disabled:opacity-50",
+                  children: processing ? "Redeeming..." : "Redeem"
+                }
+              )
+            ] }),
+            errors.key && /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-red-600 dark:text-red-400", children: errors.key })
+          ] }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: "VIP keys can be purchased from our official resellers or obtained through special promotions." })
+        ] })
+      ] }) }),
+      /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-6", children: [
+        /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm", children: [
+          /* @__PURE__ */ jsx("div", { className: "w-10 h-10 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg flex items-center justify-center mb-4", children: /* @__PURE__ */ jsx(PlayCircle, { className: "w-5 h-5 text-indigo-600 dark:text-indigo-400" }) }),
+          /* @__PURE__ */ jsx("h4", { className: "font-medium text-gray-900 dark:text-white mb-2", children: "Ad-Free Experience" }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: "Enjoy your favorite movies and shows without any interruptions." })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm", children: [
+          /* @__PURE__ */ jsx("div", { className: "w-10 h-10 bg-purple-100 dark:bg-purple-900/50 rounded-lg flex items-center justify-center mb-4", children: /* @__PURE__ */ jsx(Crown, { className: "w-5 h-5 text-purple-600 dark:text-purple-400" }) }),
+          /* @__PURE__ */ jsx("h4", { className: "font-medium text-gray-900 dark:text-white mb-2", children: "Exclusive Content" }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: "Access to VIP-only movies, series, and early releases." })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm", children: [
+          /* @__PURE__ */ jsx("div", { className: "w-10 h-10 bg-pink-100 dark:bg-pink-900/50 rounded-lg flex items-center justify-center mb-4", children: /* @__PURE__ */ jsx(CheckCircle, { className: "w-5 h-5 text-pink-600 dark:text-pink-400" }) }),
+          /* @__PURE__ */ jsx("h4", { className: "font-medium text-gray-900 dark:text-white mb-2", children: "Highest Quality" }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: "Stream in 4K Ultra HD and enjoy crystal clear audio." })
+        ] })
+      ] })
+    ] }) })
+  ] });
+}
+const __vite_glob_0_35 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: Subscription
+}, Symbol.toStringTag, { value: "Module" }));
+function WatchHistory({ auth, history }) {
+  const { delete: destroy, post, processing } = useForm();
+  const handleRemove = (id) => {
+    if (confirm("Are you sure you want to remove this from your history?")) {
+      destroy(route("watch-history.destroy", id));
+    }
+  };
+  return /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-black", children: [
+    /* @__PURE__ */ jsx(Navbar, {}),
+    /* @__PURE__ */ jsx(Head, { title: "Watch History" }),
+    /* @__PURE__ */ jsx("div", { className: "py-24", children: /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto sm:px-6 lg:px-8", children: [
+      history.data.length === 0 ? /* @__PURE__ */ jsxs("div", { className: "text-center py-20 bg-white dark:bg-gray-800 rounded-xl shadow-sm", children: [
+        /* @__PURE__ */ jsx(Clock, { className: "w-16 h-16 mx-auto text-gray-400 mb-4" }),
+        /* @__PURE__ */ jsx("h3", { className: "text-xl font-medium text-gray-900 dark:text-white mb-2", children: "No watch history yet" }),
+        /* @__PURE__ */ jsx("p", { className: "text-gray-500 dark:text-gray-400 mb-6", children: "Start watching movies and series to see them here." }),
+        /* @__PURE__ */ jsx(
+          Link,
+          {
+            href: route("movies.index"),
+            className: "inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors",
+            children: "Browse Movies"
+          }
+        )
+      ] }) : /* @__PURE__ */ jsx("div", { className: "grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-6", children: history.data.map((item) => {
+        const content = item.movie || item.series;
+        const title = item.movie ? item.movie.title : item.series?.title;
+        const subtitle = item.episode ? `S${item.episode.season_number} E${item.episode.episode_number} - ${item.episode.title}` : null;
+        const posterPath = item.movie ? item.movie.poster_url : item.series?.poster_url;
+        const link = item.movie ? route("movies.show", item.movie.slug) : item.episode?.series ? route(
+          "series.show",
+          item.series.slug
+        ) : "#";
+        if (!content) return null;
+        return /* @__PURE__ */ jsxs(
+          "div",
+          {
+            className: "group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow",
+            children: [
+              /* @__PURE__ */ jsxs("div", { className: "aspect-[2/3] relative overflow-hidden bg-gray-900", children: [
+                /* @__PURE__ */ jsx(
+                  "img",
+                  {
+                    src: posterPath,
+                    alt: title,
+                    className: "w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity"
+                  }
+                ),
+                /* @__PURE__ */ jsx(
+                  Link,
+                  {
+                    href: link,
+                    className: "absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity",
+                    children: /* @__PURE__ */ jsx("div", { className: "w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors", children: /* @__PURE__ */ jsx(Play, { className: "w-6 h-6 text-white fill-current" }) })
+                  }
+                ),
+                /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 h-1 bg-gray-700", children: /* @__PURE__ */ jsx(
+                  "div",
+                  {
+                    className: "h-full bg-indigo-500",
+                    style: {
+                      width: `${item.percent_watched}%`
+                    }
+                  }
+                ) })
+              ] }),
+              /* @__PURE__ */ jsx("div", { className: "p-4", children: /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-start", children: [
+                /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
+                  /* @__PURE__ */ jsx(
+                    Link,
+                    {
+                      href: link,
+                      className: "block truncate text-lg font-semibold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors",
+                      children: title
+                    }
+                  ),
+                  subtitle && /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400 truncate mt-1", children: subtitle })
+                ] }),
+                /* @__PURE__ */ jsx(
+                  "button",
+                  {
+                    onClick: () => handleRemove(item.id),
+                    className: "ml-2 text-gray-400 hover:text-red-500 transition-colors p-1",
+                    title: "Remove from history",
+                    children: /* @__PURE__ */ jsx(XCircle, { className: "w-5 h-5" })
+                  }
+                )
+              ] }) })
+            ]
+          },
+          item.id
+        );
+      }) }),
+      history.links && history.links.length > 3 && /* @__PURE__ */ jsx("div", { className: "mt-8 flex justify-center", children: /* @__PURE__ */ jsx("div", { className: "flex gap-1", children: history.links.map((link, i) => /* @__PURE__ */ jsx(
+        Link,
+        {
+          href: link.url,
+          className: `px-4 py-2 rounded-lg text-sm font-medium transition-colors ${link.active ? "bg-indigo-600 text-white" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"} ${!link.url && "opacity-50 cursor-not-allowed"}`,
+          dangerouslySetInnerHTML: {
+            __html: link.label
+          }
+        },
+        i
+      )) }) })
+    ] }) })
+  ] });
+}
+const __vite_glob_0_36 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: WatchHistory
+}, Symbol.toStringTag, { value: "Module" }));
 function Welcome({ auth, laravelVersion, phpVersion }) {
   const handleImageError = () => {
     document.getElementById("screenshot-container")?.classList.add("!hidden");
@@ -9729,7 +9986,7 @@ function Welcome({ auth, laravelVersion, phpVersion }) {
     ] })
   ] });
 }
-const __vite_glob_0_35 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_37 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Welcome
 }, Symbol.toStringTag, { value: "Module" }));
@@ -9774,7 +10031,9 @@ createServer(
         "./Pages/Search.jsx": __vite_glob_0_32,
         "./Pages/Series/Index.jsx": __vite_glob_0_33,
         "./Pages/SeriesDetails.jsx": __vite_glob_0_34,
-        "./Pages/Welcome.jsx": __vite_glob_0_35
+        "./Pages/User/Subscription.jsx": __vite_glob_0_35,
+        "./Pages/User/WatchHistory.jsx": __vite_glob_0_36,
+        "./Pages/Welcome.jsx": __vite_glob_0_37
       });
       return pages[`./Pages/${name}.jsx`];
     },
