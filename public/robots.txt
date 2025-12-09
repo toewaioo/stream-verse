@@ -9,4 +9,4 @@ Disallow: /profile/
 Allow: /
 
 # Sitemap location
-Sitemap: https://yourdomain.com/sitemap.xml
+Sitemap: https://stream-verser.laravel.cloud/sitemap.xml
