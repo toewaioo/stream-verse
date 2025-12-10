@@ -23,14 +23,7 @@
                 "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"
             }
         },
-        {
-            "src": "/(.*)",
-            "has": [
-                { "type": "host", "value": "stream-verse-mocha.vercel.app" }
-            ],
-            "dest": "https://stream-verse-mocha.vercel.app/$1",
-            "status": 308
-        },
+        
         {
             "src": "/build/(.*)",
             "headers": {
