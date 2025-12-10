@@ -16,6 +16,14 @@
         { "src": "/storage/api-docs/**", "use": "@vercel/static" }
     ],
 
+    "redirects": [
+        {
+            "source": "/(.*)",
+            "destination": "https://stream-verse-mocha.vercel.app/$1",
+            "permanent": true
+        }
+    ],
+
     "routes": [
         {
             "src": "/build/(.*)",
