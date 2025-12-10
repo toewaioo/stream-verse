@@ -41,6 +41,7 @@
   "resources/js/Pages/Admin/Seasons.jsx": [],
   "resources/js/Pages/Admin/Series.jsx": [],
   "resources/js/Pages/Admin/SeriesForm.jsx": [],
+  "resources/js/Pages/Admin/VipKeys.jsx": [],
   "resources/js/Pages/Auth/ConfirmPassword.jsx": [],
   "resources/js/Pages/Auth/ForgotPassword.jsx": [],
   "resources/js/Pages/Auth/Login.jsx": [],

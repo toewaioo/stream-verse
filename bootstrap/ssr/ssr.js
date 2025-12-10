@@ -1,14 +1,15 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
-import { Link, usePage, Head, useForm, router, createInertiaApp } from "@inertiajs/react";
+import { Link, usePage, Head, router, useForm, createInertiaApp } from "@inertiajs/react";
 import React, { createContext, useState, useContext, useEffect, forwardRef, useRef, useImperativeHandle, useMemo, Fragment as Fragment$1, useCallback } from "react";
 import { Transition, Dialog, TransitionChild, DialogPanel, Combobox, Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
+import { HomeIcon, FilmIcon as FilmIcon$1, TvIcon, TagIcon, UserGroupIcon, KeyIcon, XMarkIcon, Bars3Icon, ChevronDownIcon, UserIcon, ArrowRightOnRectangleIcon, UsersIcon, EyeIcon, CreditCardIcon, StarIcon as StarIcon$1, ArrowTrendingUpIcon, ArrowTrendingDownIcon, MinusIcon, PlusIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon, CheckCircleIcon, ClipboardDocumentIcon, GlobeAltIcon } from "@heroicons/react/24/outline";
 import { useTranslation } from "react-i18next";
-import { ChevronUpDownIcon, CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
+import { ResponsiveContainer, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, Area, PieChart, Pie, Cell, Legend, BarChart, Bar } from "recharts";
+import { ChevronUpDownIcon, CheckIcon, ChevronDownIcon as ChevronDownIcon$1 } from "@heroicons/react/20/solid";
 import axios$1 from "axios";
 import { debounce } from "lodash";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import { Crown, CheckCircle, AlertCircle, Calendar, Key, PlayCircle, Clock, Play, XCircle } from "lucide-react";
 import createServer from "@inertiajs/react/server";
 import ReactDOMServer from "react-dom/server";
@@ -137,276 +138,421 @@ function DarkModeToggle() {
 function AdminLayout({ children }) {
   const user = usePage().props.auth.user;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   const navigation = [
-    { name: "Dashboard", href: route("admin.dashboard"), icon: "HomeIcon" },
-    { name: "Movies", href: route("admin.movies"), icon: "FilmIcon" },
-    { name: "Series", href: route("admin.series"), icon: "TvIcon" },
-    { name: "Genres", href: route("admin.genres"), icon: "TagIcon" },
+    { name: "Dashboard", href: route("admin.dashboard"), icon: HomeIcon },
+    { name: "Movies", href: route("admin.movies"), icon: FilmIcon$1 },
+    { name: "Series", href: route("admin.series"), icon: TvIcon },
+    { name: "Genres", href: route("admin.genres"), icon: TagIcon },
+    { name: "Persons", href: route("admin.persons"), icon: UserGroupIcon },
     {
-      name: "Persons",
-      href: route("admin.persons"),
-      icon: "UserGroupIcon"
+      name: "VIP Keys",
+      href: route("admin.vip-keys.index"),
+      icon: KeyIcon
     }
   ];
-  const Icon = ({ name, className }) => {
-    const icons = {
-      HomeIcon: /* @__PURE__ */ jsx(
-        "path",
-        {
-          strokeLinecap: "round",
-          strokeLinejoin: "round",
-          strokeWidth: 2,
-          d: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-        }
-      ),
-      FilmIcon: /* @__PURE__ */ jsx(
-        "path",
-        {
-          strokeLinecap: "round",
-          strokeLinejoin: "round",
-          strokeWidth: 2,
-          d: "M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"
-        }
-      ),
-      TvIcon: /* @__PURE__ */ jsx(
-        "path",
-        {
-          strokeLinecap: "round",
-          strokeLinejoin: "round",
-          strokeWidth: 2,
-          d: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-        }
-      ),
-      TagIcon: /* @__PURE__ */ jsx(
-        "path",
-        {
-          strokeLinecap: "round",
-          strokeLinejoin: "round",
-          strokeWidth: 2,
-          d: "M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 011 12V7a4 4 0 014-4z"
-        }
-      ),
-      UserGroupIcon: /* @__PURE__ */ jsx(
-        "path",
-        {
-          strokeLinecap: "round",
-          strokeLinejoin: "round",
-          strokeWidth: 2,
-          d: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-        }
-      ),
-      DownloadIcon: /* @__PURE__ */ jsx(
-        "path",
-        {
-          strokeLinecap: "round",
-          strokeLinejoin: "round",
-          strokeWidth: 2,
-          d: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-        }
-      ),
-      PlayIcon: /* @__PURE__ */ jsx(
-        "path",
-        {
-          strokeLinecap: "round",
-          strokeLinejoin: "round",
-          strokeWidth: 2,
-          d: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-        }
-      ),
-      CollectionIcon: /* @__PURE__ */ jsx(
-        "path",
-        {
-          strokeLinecap: "round",
-          strokeLinejoin: "round",
-          strokeWidth: 2,
-          d: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-        }
-      ),
-      VideoCameraIcon: /* @__PURE__ */ jsx(
-        "path",
-        {
-          strokeLinecap: "round",
-          strokeLinejoin: "round",
-          strokeWidth: 2,
-          d: "M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-        }
-      )
-    };
-    return /* @__PURE__ */ jsx(
-      "svg",
-      {
-        className,
-        fill: "none",
-        viewBox: "0 0 24 24",
-        stroke: "currentColor",
-        children: icons[name]
-      }
-    );
-  };
-  return /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200", children: [
-    /* @__PURE__ */ jsxs(
-      "aside",
-      {
-        className: `fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`,
-        children: [
-          /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center h-16 border-b border-gray-200 dark:border-gray-700", children: /* @__PURE__ */ jsxs(Link, { href: "/", className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ jsx(ApplicationLogo, { className: "block h-8 w-auto fill-current text-indigo-600 dark:text-indigo-400" }),
-            /* @__PURE__ */ jsx("span", { className: "text-xl font-bold text-gray-800 dark:text-white", children: user?.role.charAt(0).toUpperCase() + user?.role.slice(1) })
-          ] }) }),
-          /* @__PURE__ */ jsx("nav", { className: "mt-6 px-4 space-y-2 overflow-y-auto max-h-[calc(100vh-4rem)]", children: navigation.map((item) => /* @__PURE__ */ jsxs(
-            Link,
-            {
-              preserveState: true,
-              href: item.href,
-              className: `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${route().current(
-                item.href.split(".").pop() === "dashboard" ? "admin.dashboard" : item.href.split("/").pop()
-              ) || // Simple active check logic, can be improved
-              window.location.href.includes(item.href) ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"}`,
-              children: [
-                /* @__PURE__ */ jsx(Icon, { name: item.icon, className: "w-5 h-5 mr-3" }),
-                item.name
-              ]
-            },
-            item.name
-          )) })
-        ]
-      }
-    ),
+  return /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 font-sans", children: [
     isSidebarOpen && /* @__PURE__ */ jsx(
       "div",
       {
-        className: "fixed inset-0 z-40 bg-black/50 md:hidden backdrop-blur-sm",
+        className: "fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm md:hidden transition-opacity duration-300",
         onClick: () => setIsSidebarOpen(false)
       }
     ),
-    /* @__PURE__ */ jsxs("div", { className: "md:ml-64 min-h-screen flex flex-col", children: [
-      /* @__PURE__ */ jsx("header", { className: "bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-30", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8", children: [
-        /* @__PURE__ */ jsxs(
-          "button",
-          {
-            onClick: () => setIsSidebarOpen(!isSidebarOpen),
-            className: "p-2 rounded-md text-gray-500 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden",
-            children: [
-              /* @__PURE__ */ jsx("span", { className: "sr-only", children: "Open sidebar" }),
-              /* @__PURE__ */ jsx(
-                "svg",
+    /* @__PURE__ */ jsxs(
+      "aside",
+      {
+        className: `fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-800 shadow-xl transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 border-r border-gray-100 dark:border-gray-700/50`,
+        children: [
+          /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between h-20 px-6 border-b border-gray-100 dark:border-gray-700/50", children: [
+            /* @__PURE__ */ jsxs(Link, { href: "/", className: "flex items-center gap-3 group", children: [
+              /* @__PURE__ */ jsx("div", { className: "p-2 bg-indigo-600 rounded-lg shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform duration-300", children: /* @__PURE__ */ jsx(ApplicationLogo, { className: "h-6 w-auto fill-current text-white" }) }),
+              /* @__PURE__ */ jsxs("span", { className: "text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400", children: [
+                "Admin",
+                /* @__PURE__ */ jsx("span", { className: "text-indigo-600", children: "Panel" })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsx(
+              "button",
+              {
+                onClick: () => setIsSidebarOpen(false),
+                className: "md:hidden p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white transition-colors",
+                children: /* @__PURE__ */ jsx(XMarkIcon, { className: "w-6 h-6" })
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsx("nav", { className: "p-4 space-y-1 overflow-y-auto max-h-[calc(100vh-5rem)] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600", children: /* @__PURE__ */ jsxs("div", { className: "mb-6 px-4", children: [
+            /* @__PURE__ */ jsx("p", { className: "text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4", children: "Menu" }),
+            /* @__PURE__ */ jsx("div", { className: "space-y-1", children: navigation.map((item) => {
+              const isActive = route().current(
+                item.href.split(".").pop() === "dashboard" ? "admin.dashboard" : item.href.split("/").pop()
+              ) || window.location.href.includes(item.href);
+              return /* @__PURE__ */ jsxs(
+                Link,
                 {
-                  className: "h-6 w-6",
-                  fill: "none",
-                  viewBox: "0 0 24 24",
-                  stroke: "currentColor",
-                  children: /* @__PURE__ */ jsx(
-                    "path",
+                  href: item.href,
+                  className: `flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group relative overflow-hidden ${isActive ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/30" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"}`,
+                  children: [
+                    /* @__PURE__ */ jsx(
+                      item.icon,
+                      {
+                        className: `w-5 h-5 mr-3 transition-colors ${isActive ? "text-white" : "text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"}`
+                      }
+                    ),
+                    item.name,
+                    isActive && /* @__PURE__ */ jsx("div", { className: "absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white/20 rounded-l-full" })
+                  ]
+                },
+                item.name
+              );
+            }) })
+          ] }) }),
+          /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100 dark:border-gray-700/50 bg-gray-50/50 dark:bg-gray-800/50 backdrop-blur-sm", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 px-2", children: [
+            /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-md", children: user.name.charAt(0) }),
+            /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
+              /* @__PURE__ */ jsx("p", { className: "text-sm font-medium text-gray-900 dark:text-white truncate", children: user.name }),
+              /* @__PURE__ */ jsx("p", { className: "text-xs text-gray-500 dark:text-gray-400 truncate", children: user.email })
+            ] })
+          ] }) })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxs("div", { className: "md:ml-72 min-h-screen flex flex-col transition-all duration-300", children: [
+      /* @__PURE__ */ jsx(
+        "header",
+        {
+          className: `sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 transition-all duration-300 ${scrolled ? "shadow-sm" : ""}`,
+          children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between h-20 px-4 sm:px-6 lg:px-8", children: [
+            /* @__PURE__ */ jsx(
+              "button",
+              {
+                onClick: () => setIsSidebarOpen(!isSidebarOpen),
+                className: "p-2 -ml-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 md:hidden transition-colors",
+                children: /* @__PURE__ */ jsx(Bars3Icon, { className: "w-6 h-6" })
+              }
+            ),
+            /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 ml-auto", children: [
+              /* @__PURE__ */ jsx(DarkModeToggle, {}),
+              /* @__PURE__ */ jsx("div", { className: "h-8 w-px bg-gray-200 dark:bg-gray-700 mx-2" }),
+              /* @__PURE__ */ jsxs(Dropdown, { children: [
+                /* @__PURE__ */ jsx(Dropdown.Trigger, { children: /* @__PURE__ */ jsxs("button", { className: "flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors focus:outline-none", children: [
+                  /* @__PURE__ */ jsx("span", { className: "hidden sm:block", children: "Account" }),
+                  /* @__PURE__ */ jsx(ChevronDownIcon, { className: "w-4 h-4" })
+                ] }) }),
+                /* @__PURE__ */ jsxs(Dropdown.Content, { width: "48", contentClasses: "py-1 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-xl rounded-xl", children: [
+                  /* @__PURE__ */ jsxs("div", { className: "px-4 py-3 border-b border-gray-100 dark:border-gray-700", children: [
+                    /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: "Signed in as" }),
+                    /* @__PURE__ */ jsx("p", { className: "text-sm font-medium text-gray-900 dark:text-white truncate", children: user.email })
+                  ] }),
+                  /* @__PURE__ */ jsxs(Dropdown.Link, { href: route("profile.edit"), className: "flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50", children: [
+                    /* @__PURE__ */ jsx(UserIcon, { className: "w-4 h-4 mr-2" }),
+                    "Profile"
+                  ] }),
+                  /* @__PURE__ */ jsx("div", { className: "border-t border-gray-100 dark:border-gray-700 my-1" }),
+                  /* @__PURE__ */ jsxs(
+                    Dropdown.Link,
                     {
-                      strokeLinecap: "round",
-                      strokeLinejoin: "round",
-                      strokeWidth: 2,
-                      d: "M4 6h16M4 12h16M4 18h16"
+                      href: route("logout"),
+                      method: "post",
+                      as: "button",
+                      className: "flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left",
+                      children: [
+                        /* @__PURE__ */ jsx(ArrowRightOnRectangleIcon, { className: "w-4 h-4 mr-2" }),
+                        "Log Out"
+                      ]
                     }
                   )
-                }
-              )
-            ]
-          }
-        ),
-        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 ml-auto", children: [
-          /* @__PURE__ */ jsx(DarkModeToggle, {}),
-          /* @__PURE__ */ jsxs(Dropdown, { children: [
-            /* @__PURE__ */ jsx(Dropdown.Trigger, { children: /* @__PURE__ */ jsxs("button", { className: "flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none transition duration-150 ease-in-out", children: [
-              /* @__PURE__ */ jsx("div", { className: "w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold mr-2", children: user.name.charAt(0) }),
-              /* @__PURE__ */ jsx("span", { className: "hidden sm:block", children: user.name }),
-              /* @__PURE__ */ jsx(
-                "svg",
-                {
-                  className: "ml-2 -mr-0.5 h-4 w-4",
-                  xmlns: "http://www.w3.org/2000/svg",
-                  viewBox: "0 0 20 20",
-                  fill: "currentColor",
-                  children: /* @__PURE__ */ jsx(
-                    "path",
-                    {
-                      fillRule: "evenodd",
-                      d: "M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z",
-                      clipRule: "evenodd"
-                    }
-                  )
-                }
-              )
-            ] }) }),
-            /* @__PURE__ */ jsxs(Dropdown.Content, { children: [
-              /* @__PURE__ */ jsx(Dropdown.Link, { href: route("profile.edit"), children: "Profile" }),
-              /* @__PURE__ */ jsx(
-                Dropdown.Link,
-                {
-                  href: route("logout"),
-                  method: "post",
-                  as: "button",
-                  children: "Log Out"
-                }
-              )
+                ] })
+              ] })
             ] })
           ] })
-        ] })
-      ] }) }),
-      /* @__PURE__ */ jsx("main", { className: "flex-1 overflow-x-hidden", children })
+        }
+      ),
+      /* @__PURE__ */ jsx("main", { className: "flex-1 p-4 sm:p-6 lg:p-8 overflow-x-hidden", children: /* @__PURE__ */ jsx("div", { className: "max-w-7xl mx-auto animate-fade-in-up", children }) })
     ] })
   ] });
 }
-function AdminDashboard({ auth, stats }) {
+const StatsCard = ({ title, value, icon: Icon, color, growth, trend, description }) => /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700/50 hover:shadow-md transition-shadow duration-300", children: [
+  /* @__PURE__ */ jsxs("div", { className: "flex items-start justify-between", children: [
+    /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsx("p", { className: "text-sm font-medium text-gray-500 dark:text-gray-400", children: title }),
+      /* @__PURE__ */ jsx("h3", { className: "text-3xl font-bold text-gray-900 dark:text-white mt-2", children: value })
+    ] }),
+    /* @__PURE__ */ jsx("div", { className: `p-3 rounded-xl ${color} bg-opacity-10 dark:bg-opacity-20`, children: /* @__PURE__ */ jsx(Icon, { className: `w-6 h-6 ${color.replace("bg-", "text-")}` }) })
+  ] }),
+  /* @__PURE__ */ jsxs("div", { className: "mt-4 flex items-center justify-between text-sm", children: [
+    /* @__PURE__ */ jsx("span", { className: "text-gray-500 dark:text-gray-400", children: description }),
+    growth !== void 0 && /* @__PURE__ */ jsxs("div", { className: `flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${trend === "up" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : trend === "down" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"}`, children: [
+      trend === "up" && /* @__PURE__ */ jsx(ArrowTrendingUpIcon, { className: "w-3 h-3" }),
+      trend === "down" && /* @__PURE__ */ jsx(ArrowTrendingDownIcon, { className: "w-3 h-3" }),
+      trend === "neutral" && /* @__PURE__ */ jsx(MinusIcon, { className: "w-3 h-3" }),
+      growth,
+      "%"
+    ] })
+  ] })
+] });
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+function AdminDashboard({ auth, stats, charts, filters }) {
   const { t } = useTranslation();
+  const handleRangeChange = (range) => {
+    router.visit(route("admin.dashboard"), {
+      data: { range },
+      preserveState: true,
+      preserveScroll: true,
+      only: ["stats", "charts", "filters"]
+    });
+  };
+  const statItems = [
+    {
+      title: t("Total Movies"),
+      value: stats?.movies?.value ?? 0,
+      growth: stats?.movies?.growth,
+      trend: stats?.movies?.trend,
+      icon: FilmIcon$1,
+      color: "bg-blue-500",
+      description: t("Movies in database")
+    },
+    {
+      title: t("Total Series"),
+      value: stats?.series?.value ?? 0,
+      growth: stats?.series?.growth,
+      trend: stats?.series?.trend,
+      icon: TvIcon,
+      color: "bg-green-500",
+      description: t("Series in database")
+    },
+    {
+      title: t("Total Users"),
+      value: stats?.users?.value ?? 0,
+      growth: stats?.users?.growth,
+      trend: stats?.users?.trend,
+      icon: UsersIcon,
+      color: "bg-indigo-500",
+      description: t("Registered users")
+    },
+    {
+      title: t("Total Views"),
+      value: stats?.total_views?.value ?? 0,
+      growth: stats?.total_views?.growth,
+      trend: stats?.total_views?.trend,
+      icon: EyeIcon,
+      color: "bg-purple-500",
+      description: t("Across all content")
+    },
+    {
+      title: t("Active VIP"),
+      value: stats?.active_vip?.value ?? 0,
+      growth: stats?.active_vip?.growth,
+      trend: stats?.active_vip?.trend,
+      icon: CreditCardIcon,
+      color: "bg-amber-500",
+      description: t("Premium subscribers")
+    },
+    {
+      title: t("Total Reviews"),
+      value: stats?.reviews?.value ?? 0,
+      growth: stats?.reviews?.growth,
+      trend: stats?.reviews?.trend,
+      icon: StarIcon$1,
+      color: "bg-pink-500",
+      description: t("User reviews")
+    },
+    {
+      title: t("Genres"),
+      value: stats?.genres?.value ?? 0,
+      growth: stats?.genres?.growth,
+      trend: stats?.genres?.trend,
+      icon: TagIcon,
+      color: "bg-teal-500",
+      description: t("Content categories")
+    },
+    {
+      title: t("Persons"),
+      value: stats?.persons?.value ?? 0,
+      growth: stats?.persons?.growth,
+      trend: stats?.persons?.trend,
+      icon: UserGroupIcon,
+      color: "bg-cyan-500",
+      description: t("Cast & Crew")
+    }
+  ];
+  const ranges = [
+    { label: "7 Days", value: "7d" },
+    { label: "30 Days", value: "30d" },
+    { label: "90 Days", value: "90d" },
+    { label: "1 Year", value: "1y" }
+  ];
   return /* @__PURE__ */ jsxs(AdminLayout, { children: [
     /* @__PURE__ */ jsx(Head, { title: t("Admin Dashboard") }),
-    /* @__PURE__ */ jsxs("div", { className: "p-6 bg-white dark:bg-slate-900 rounded shadow-md", children: [
-      /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold mb-6 text-black dark:text-white ", children: t("Admin Dashboard") }),
-      /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8", children: [
-        /* @__PURE__ */ jsxs(
-          Link,
+    /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row md:items-center justify-between gap-4", children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold text-gray-900 dark:text-white", children: t("Dashboard Overview") }),
+          /* @__PURE__ */ jsxs("p", { className: "mt-1 text-sm text-gray-500 dark:text-gray-400", children: [
+            t("Welcome back"),
+            ", ",
+            auth.user.name,
+            ". ",
+            t("Here's what's happening today.")
+          ] })
+        ] }),
+        /* @__PURE__ */ jsx("div", { className: "flex bg-white dark:bg-gray-800 rounded-lg p-1 shadow-sm border border-gray-100 dark:border-gray-700/50", children: ranges.map((range) => /* @__PURE__ */ jsx(
+          "button",
           {
-            href: route("admin.movies"),
-            className: "bg-blue-600 text-white p-6 rounded shadow hover:bg-blue-700 transition",
-            children: [
-              /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-2", children: t("Movies") }),
-              /* @__PURE__ */ jsx("div", { className: "text-3xl font-bold", children: stats?.movies ?? "-" }),
-              /* @__PURE__ */ jsx("div", { className: "text-sm mt-2", children: t("Manage all movies") })
-            ]
-          }
-        ),
-        /* @__PURE__ */ jsxs(
-          Link,
-          {
-            href: route("admin.series"),
-            className: "bg-green-600 text-white p-6 rounded shadow hover:bg-green-700 transition",
-            children: [
-              /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-2", children: t("Series") }),
-              /* @__PURE__ */ jsx("div", { className: "text-3xl font-bold", children: stats?.series ?? "-" }),
-              /* @__PURE__ */ jsx("div", { className: "text-sm mt-2", children: t("Manage all series") })
-            ]
-          }
-        ),
-        /* @__PURE__ */ jsxs(
-          Link,
-          {
-            href: route("admin.genres"),
-            className: "bg-yellow-500 text-white p-6 rounded shadow hover:bg-yellow-600 transition",
-            children: [
-              /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-2", children: t("Genres") }),
-              /* @__PURE__ */ jsx("div", { className: "text-3xl font-bold", children: stats?.genres ?? "-" }),
-              /* @__PURE__ */ jsx("div", { className: "text-sm mt-2", children: t("Manage genres") })
-            ]
-          }
-        ),
-        /* @__PURE__ */ jsxs(
-          Link,
-          {
-            href: route("admin.persons"),
-            className: "bg-purple-600 text-white p-6 rounded shadow hover:bg-purple-700 transition",
-            children: [
-              /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-2", children: t("Persons") }),
-              /* @__PURE__ */ jsx("div", { className: "text-3xl font-bold", children: stats?.persons ?? "-" }),
-              /* @__PURE__ */ jsx("div", { className: "text-sm mt-2", children: t("Manage persons") })
-            ]
-          }
-        )
+            onClick: () => handleRangeChange(range.value),
+            className: `px-4 py-2 text-sm font-medium rounded-md transition-colors ${filters?.range === range.value ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"}`,
+            children: range.label
+          },
+          range.value
+        )) })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6", children: statItems.map((item, index) => /* @__PURE__ */ jsx(StatsCard, { ...item }, index)) }),
+      charts && /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8", children: [
+        /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 p-6 xl:col-span-2", children: [
+          /* @__PURE__ */ jsx("h2", { className: "text-lg font-bold text-gray-900 dark:text-white mb-6", children: t("User Growth") }),
+          /* @__PURE__ */ jsx("div", { className: "h-80", children: /* @__PURE__ */ jsx(ResponsiveContainer, { width: "100%", height: "100%", children: /* @__PURE__ */ jsxs(AreaChart, { data: charts.userGrowth, children: [
+            /* @__PURE__ */ jsx("defs", { children: /* @__PURE__ */ jsxs("linearGradient", { id: "colorUsers", x1: "0", y1: "0", x2: "0", y2: "1", children: [
+              /* @__PURE__ */ jsx("stop", { offset: "5%", stopColor: "#6366f1", stopOpacity: 0.8 }),
+              /* @__PURE__ */ jsx("stop", { offset: "95%", stopColor: "#6366f1", stopOpacity: 0 })
+            ] }) }),
+            /* @__PURE__ */ jsx(CartesianGrid, { strokeDasharray: "3 3", vertical: false, stroke: "#374151", opacity: 0.1 }),
+            /* @__PURE__ */ jsx(XAxis, { dataKey: "name", stroke: "#9ca3af", fontSize: 12, tickLine: false, axisLine: false }),
+            /* @__PURE__ */ jsx(YAxis, { stroke: "#9ca3af", fontSize: 12, tickLine: false, axisLine: false }),
+            /* @__PURE__ */ jsx(
+              Tooltip,
+              {
+                contentStyle: { backgroundColor: "#1f2937", border: "none", borderRadius: "8px", color: "#fff" },
+                itemStyle: { color: "#fff" }
+              }
+            ),
+            /* @__PURE__ */ jsx(Area, { type: "monotone", dataKey: "users", stroke: "#6366f1", fillOpacity: 1, fill: "url(#colorUsers)" })
+          ] }) }) })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 p-6", children: [
+          /* @__PURE__ */ jsx("h2", { className: "text-lg font-bold text-gray-900 dark:text-white mb-6", children: t("Content Distribution") }),
+          /* @__PURE__ */ jsx("div", { className: "h-80", children: /* @__PURE__ */ jsx(ResponsiveContainer, { width: "100%", height: "100%", children: /* @__PURE__ */ jsxs(PieChart, { children: [
+            /* @__PURE__ */ jsx(
+              Pie,
+              {
+                data: charts.contentDistribution,
+                cx: "50%",
+                cy: "50%",
+                innerRadius: 60,
+                outerRadius: 80,
+                fill: "#8884d8",
+                paddingAngle: 5,
+                dataKey: "value",
+                children: charts.contentDistribution.map((entry, index) => /* @__PURE__ */ jsx(Cell, { fill: COLORS[index % COLORS.length] }, `cell-${index}`))
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              Tooltip,
+              {
+                contentStyle: { backgroundColor: "#1f2937", border: "none", borderRadius: "8px", color: "#fff" },
+                itemStyle: { color: "#fff" }
+              }
+            ),
+            /* @__PURE__ */ jsx(Legend, {})
+          ] }) }) })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 p-6 xl:col-span-3", children: [
+          /* @__PURE__ */ jsx("h2", { className: "text-lg font-bold text-gray-900 dark:text-white mb-6", children: t("Top Genres") }),
+          /* @__PURE__ */ jsx("div", { className: "h-80", children: /* @__PURE__ */ jsx(ResponsiveContainer, { width: "100%", height: "100%", children: /* @__PURE__ */ jsxs(BarChart, { data: charts.topGenres, children: [
+            /* @__PURE__ */ jsx(CartesianGrid, { strokeDasharray: "3 3", vertical: false, stroke: "#374151", opacity: 0.1 }),
+            /* @__PURE__ */ jsx(XAxis, { dataKey: "name", stroke: "#9ca3af", fontSize: 12, tickLine: false, axisLine: false }),
+            /* @__PURE__ */ jsx(YAxis, { stroke: "#9ca3af", fontSize: 12, tickLine: false, axisLine: false }),
+            /* @__PURE__ */ jsx(
+              Tooltip,
+              {
+                contentStyle: { backgroundColor: "#1f2937", border: "none", borderRadius: "8px", color: "#fff" },
+                itemStyle: { color: "#fff" },
+                cursor: { fill: "rgba(255, 255, 255, 0.05)" }
+              }
+            ),
+            /* @__PURE__ */ jsx(Bar, { dataKey: "count", fill: "#8b5cf6", radius: [4, 4, 0, 0] })
+          ] }) }) })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 xl:grid-cols-3 gap-8", children: [
+        /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden", children: [
+          /* @__PURE__ */ jsxs("div", { className: "p-6 border-b border-gray-100 dark:border-gray-700/50 flex items-center justify-between", children: [
+            /* @__PURE__ */ jsx("h2", { className: "text-lg font-bold text-gray-900 dark:text-white", children: t("Recent Users") }),
+            /* @__PURE__ */ jsx(Link, { href: "#", className: "text-sm text-indigo-600 dark:text-indigo-400 hover:underline", children: t("View All") })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "divide-y divide-gray-100 dark:divide-gray-700/50", children: [
+            stats?.recent_users?.map((user) => /* @__PURE__ */ jsxs("div", { className: "p-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-colors", children: [
+              /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm", children: user.name.charAt(0) }),
+              /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
+                /* @__PURE__ */ jsx("p", { className: "text-sm font-medium text-gray-900 dark:text-white truncate", children: user.name }),
+                /* @__PURE__ */ jsx("p", { className: "text-xs text-gray-500 dark:text-gray-400 truncate", children: user.email })
+              ] }),
+              /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-400", children: new Date(user.created_at).toLocaleDateString() })
+            ] }, user.id)),
+            (!stats?.recent_users || stats.recent_users.length === 0) && /* @__PURE__ */ jsx("div", { className: "p-8 text-center text-gray-500 dark:text-gray-400", children: t("No recent users found") })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden", children: [
+          /* @__PURE__ */ jsxs("div", { className: "p-6 border-b border-gray-100 dark:border-gray-700/50 flex items-center justify-between", children: [
+            /* @__PURE__ */ jsx("h2", { className: "text-lg font-bold text-gray-900 dark:text-white", children: t("Popular Movies") }),
+            /* @__PURE__ */ jsx(Link, { href: route("admin.movies"), className: "text-sm text-indigo-600 dark:text-indigo-400 hover:underline", children: t("View All") })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "divide-y divide-gray-100 dark:divide-gray-700/50", children: [
+            stats?.popular_movies?.map((movie) => /* @__PURE__ */ jsxs("div", { className: "p-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-colors", children: [
+              /* @__PURE__ */ jsx("div", { className: "w-12 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden flex-shrink-0", children: movie.poster_url ? /* @__PURE__ */ jsx("img", { src: movie.poster_url, alt: movie.title, className: "w-full h-full object-cover" }) : /* @__PURE__ */ jsx("div", { className: "w-full h-full flex items-center justify-center text-gray-400", children: /* @__PURE__ */ jsx(FilmIcon$1, { className: "w-6 h-6" }) }) }),
+              /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
+                /* @__PURE__ */ jsx("p", { className: "text-sm font-medium text-gray-900 dark:text-white truncate", children: movie.title }),
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mt-1", children: [
+                  /* @__PURE__ */ jsxs("span", { className: "text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400", children: [
+                    movie.rating_average,
+                    " ★"
+                  ] }),
+                  /* @__PURE__ */ jsx("span", { className: "text-xs text-gray-500 dark:text-gray-400", children: movie.release_date ? new Date(movie.release_date).getFullYear() : "-" })
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxs("div", { className: "text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-1", children: [
+                /* @__PURE__ */ jsx(EyeIcon, { className: "w-4 h-4 text-gray-400" }),
+                movie.view_count
+              ] })
+            ] }, movie.id)),
+            (!stats?.popular_movies || stats.popular_movies.length === 0) && /* @__PURE__ */ jsx("div", { className: "p-8 text-center text-gray-500 dark:text-gray-400", children: t("No popular movies found") })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden", children: [
+          /* @__PURE__ */ jsxs("div", { className: "p-6 border-b border-gray-100 dark:border-gray-700/50 flex items-center justify-between", children: [
+            /* @__PURE__ */ jsx("h2", { className: "text-lg font-bold text-gray-900 dark:text-white", children: t("Popular Series") }),
+            /* @__PURE__ */ jsx(Link, { href: route("admin.series"), className: "text-sm text-indigo-600 dark:text-indigo-400 hover:underline", children: t("View All") })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "divide-y divide-gray-100 dark:divide-gray-700/50", children: [
+            stats?.popular_series?.map((series) => /* @__PURE__ */ jsxs("div", { className: "p-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-colors", children: [
+              /* @__PURE__ */ jsx("div", { className: "w-12 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden flex-shrink-0", children: series.poster_url ? /* @__PURE__ */ jsx("img", { src: series.poster_url, alt: series.title, className: "w-full h-full object-cover" }) : /* @__PURE__ */ jsx("div", { className: "w-full h-full flex items-center justify-center text-gray-400", children: /* @__PURE__ */ jsx(TvIcon, { className: "w-6 h-6" }) }) }),
+              /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
+                /* @__PURE__ */ jsx("p", { className: "text-sm font-medium text-gray-900 dark:text-white truncate", children: series.title }),
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mt-1", children: [
+                  /* @__PURE__ */ jsxs("span", { className: "text-xs px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400", children: [
+                    series.rating_average,
+                    " ★"
+                  ] }),
+                  /* @__PURE__ */ jsxs("span", { className: "text-xs text-gray-500 dark:text-gray-400", children: [
+                    series.seasons_count,
+                    " Seasons"
+                  ] })
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxs("div", { className: "text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-1", children: [
+                /* @__PURE__ */ jsx(EyeIcon, { className: "w-4 h-4 text-gray-400" }),
+                series.view_count
+              ] })
+            ] }, series.id)),
+            (!stats?.popular_series || stats.popular_series.length === 0) && /* @__PURE__ */ jsx("div", { className: "p-8 text-center text-gray-500 dark:text-gray-400", children: t("No popular series found") })
+          ] })
+        ] })
       ] })
     ] })
   ] });
@@ -655,6 +801,7 @@ function Modal({
 function Genres({ genres }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingGenre, setEditingGenre] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const { t } = useTranslation();
   const { auth } = usePage().props;
   const openCreateModal = () => {
@@ -674,64 +821,85 @@ function Genres({ genres }) {
       router.delete(route("admin.genres.destroy", id));
     }
   };
+  const filteredGenres = useMemo(() => {
+    if (!searchQuery) return genres;
+    return genres.filter(
+      (genre) => genre.name.toLowerCase().includes(searchQuery.toLowerCase()) || genre.slug.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [genres, searchQuery]);
   return /* @__PURE__ */ jsxs(AdminLayout, { children: [
     /* @__PURE__ */ jsx(Head, { title: "Manage Genres" }),
-    /* @__PURE__ */ jsx("div", { className: "", children: /* @__PURE__ */ jsx("div", { className: "max-w-7xl mx-auto", children: /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg", children: /* @__PURE__ */ jsxs("div", { className: "p-6 text-gray-900 dark:text-gray-100", children: [
-      /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-6", children: [
-        /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold", children: t("Genres") }),
-        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 w-full md:w-auto", children: [
-          /* @__PURE__ */ jsx(
-            "input",
-            {
-              type: "text",
-              placeholder: t("Search genres..."),
-              className: "border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full md:w-64"
-            }
-          ),
-          /* @__PURE__ */ jsx(PrimaryButton, { onClick: openCreateModal, children: t("Add Genre") })
+    /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4", children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold text-gray-900 dark:text-white", children: t("Genres") }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400 mt-1", children: "Manage movie and series genres." })
+        ] }),
+        /* @__PURE__ */ jsxs(PrimaryButton, { onClick: openCreateModal, className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsx(PlusIcon, { className: "w-5 h-5" }),
+          t("Add Genre")
         ] })
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "min-w-full divide-y divide-gray-200 dark:divide-gray-700", children: [
-        /* @__PURE__ */ jsx("thead", { className: "bg-gray-50 dark:bg-gray-700", children: /* @__PURE__ */ jsxs("tr", { children: [
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: t("Name") }),
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: t("Slug") }),
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: t("Actions") })
+      /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 flex flex-col sm:flex-row gap-4", children: /* @__PURE__ */ jsxs("div", { className: "relative flex-1", children: [
+        /* @__PURE__ */ jsx(MagnifyingGlassIcon, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" }),
+        /* @__PURE__ */ jsx(
+          TextInput,
+          {
+            type: "text",
+            placeholder: t("Search genres..."),
+            className: "w-full pl-10",
+            value: searchQuery,
+            onChange: (e) => setSearchQuery(e.target.value)
+          }
+        )
+      ] }) }),
+      /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden", children: /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "min-w-full divide-y divide-gray-200 dark:divide-gray-700", children: [
+        /* @__PURE__ */ jsx("thead", { className: "bg-gray-50 dark:bg-gray-700/50", children: /* @__PURE__ */ jsxs("tr", { children: [
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: t("Name") }),
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: t("Slug") }),
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: t("Actions") })
         ] }) }),
-        /* @__PURE__ */ jsx("tbody", { className: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700", children: genres.map((genre) => /* @__PURE__ */ jsxs(
+        /* @__PURE__ */ jsx("tbody", { className: "divide-y divide-gray-200 dark:divide-gray-700", children: filteredGenres.length > 0 ? filteredGenres.map((genre) => /* @__PURE__ */ jsxs(
           "tr",
           {
             className: "hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors",
             children: [
-              /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white", children: genre.name }),
-              /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400", children: genre.slug }),
-              /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: [
+              /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
+                /* @__PURE__ */ jsx("div", { className: "p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-indigo-600 dark:text-indigo-400", children: /* @__PURE__ */ jsx(TagIcon, { className: "w-5 h-5" }) }),
+                /* @__PURE__ */ jsx("span", { className: "text-sm font-medium text-gray-900 dark:text-white", children: genre.name })
+              ] }) }),
+              /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400", children: /* @__PURE__ */ jsx("span", { className: "px-2.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-mono", children: genre.slug }) }),
+              /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-end gap-2", children: [
                 /* @__PURE__ */ jsx(
                   "button",
                   {
                     onClick: () => openEditModal(genre),
-                    className: "text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4",
-                    children: t("Edit")
+                    className: "p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg dark:text-indigo-400 dark:hover:bg-indigo-900/20 transition-colors",
+                    title: t("Edit"),
+                    children: /* @__PURE__ */ jsx(PencilSquareIcon, { className: "w-5 h-5" })
                   }
                 ),
                 auth.user.role === "admin" && /* @__PURE__ */ jsx(
                   "button",
                   {
-                    onClick: () => handleDelete(
-                      genre.id
-                    ),
-                    className: "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300",
-                    children: t("Delete")
+                    onClick: () => handleDelete(genre.id),
+                    className: "p-2 text-red-600 hover:bg-red-50 rounded-lg dark:text-red-400 dark:hover:bg-red-900/20 transition-colors",
+                    title: t("Delete"),
+                    children: /* @__PURE__ */ jsx(TrashIcon, { className: "w-5 h-5" })
                   }
                 )
-              ] })
+              ] }) })
             ]
           },
           genre.id
-        )) })
-      ] }) })
-    ] }) }) }) }),
-    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "md", children: /* @__PURE__ */ jsxs("div", { className: "p-4 sm:p-6 bg-white dark:bg-gray-800", children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-gray-100 mb-4", children: editingGenre ? `${t("Edit Genre")}: ${editingGenre.name}` : t("Create New Genre") }),
+        )) : /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx("td", { colSpan: "3", className: "px-6 py-12 text-center text-gray-500 dark:text-gray-400", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center justify-center gap-2", children: [
+          /* @__PURE__ */ jsx(TagIcon, { className: "w-8 h-8 text-gray-300 dark:text-gray-600" }),
+          /* @__PURE__ */ jsx("p", { children: t("No genres found") })
+        ] }) }) }) })
+      ] }) }) })
+    ] }),
+    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "md", children: /* @__PURE__ */ jsxs("div", { className: "p-6 bg-white dark:bg-gray-800", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-xl font-bold text-gray-900 dark:text-white mb-6", children: editingGenre ? `${t("Edit Genre")}: ${editingGenre.name}` : t("Create New Genre") }),
       /* @__PURE__ */ jsx(
         GenreForm,
         {
@@ -2095,7 +2263,6 @@ function AdminMovies({ movies, genres, persons, auth }) {
   const [editingMovie, setEditingMovie] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const isFirst = useRef(true);
-  console.log(movies);
   const openCreateModal = () => {
     setEditingMovie(null);
     setIsModalOpen(true);
@@ -2111,7 +2278,7 @@ function AdminMovies({ movies, genres, persons, auth }) {
   const debounceSearch = debounce((value) => {
     router.get(
       route("admin.movies"),
-      { search: searchQuery },
+      { search: value },
       {
         preserveState: true,
         preserveScroll: true,
@@ -2119,7 +2286,7 @@ function AdminMovies({ movies, genres, persons, auth }) {
         replace: true
       }
     );
-  });
+  }, 300);
   useEffect(() => {
     if (isFirst.current) {
       isFirst.current = false;
@@ -2134,152 +2301,147 @@ function AdminMovies({ movies, genres, persons, auth }) {
   };
   return /* @__PURE__ */ jsxs(AdminLayout, { children: [
     /* @__PURE__ */ jsx(Head, { title: "Manage Movies" }),
-    /* @__PURE__ */ jsx("div", { className: "", children: /* @__PURE__ */ jsx("div", { className: "max-w-7xl mx-auto", children: /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg", children: /* @__PURE__ */ jsxs("div", { className: "p-6 text-gray-900 dark:text-gray-100", children: [
-      /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row justify-between items-center mb-6 gap-4", children: [
-        /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold", children: "Movies" }),
-        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 w-full md:w-auto", children: [
-          /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4 w-full md:w-auto", children: /* @__PURE__ */ jsx(
-            TextInput,
-            {
-              type: "text",
-              placeholder: "Search movies...",
-              className: "w-full",
-              value: searchQuery,
-              onChange: (e) => setSearchQuery(e.target.value)
-            }
-          ) }),
-          /* @__PURE__ */ jsxs(PrimaryButton, { onClick: openCreateModal, children: [
-            /* @__PURE__ */ jsx(
-              "svg",
-              {
-                className: "w-5 h-5 mr-2",
-                fill: "none",
-                stroke: "currentColor",
-                viewBox: "0 0 24 24",
-                children: /* @__PURE__ */ jsx(
-                  "path",
-                  {
-                    strokeLinecap: "round",
-                    strokeLinejoin: "round",
-                    strokeWidth: 2,
-                    d: "M12 4v16m8-8H4"
-                  }
-                )
-              }
-            ),
-            "Add Movie"
-          ] })
+    /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4", children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold text-gray-900 dark:text-white", children: "Movies" }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400 mt-1", children: "Manage your movie catalog, details, and media." })
+        ] }),
+        /* @__PURE__ */ jsxs(PrimaryButton, { onClick: openCreateModal, className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsx(PlusIcon, { className: "w-5 h-5" }),
+          "Add Movie"
         ] })
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "min-w-full divide-y divide-gray-200 dark:divide-gray-700", children: [
-        /* @__PURE__ */ jsx("thead", { className: "bg-gray-50 dark:bg-gray-700", children: /* @__PURE__ */ jsxs("tr", { children: [
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Movie" }),
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Release Info" }),
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Status" }),
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Stats" }),
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Actions" })
-        ] }) }),
-        /* @__PURE__ */ jsx("tbody", { className: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700", children: movies.data.map((movie) => /* @__PURE__ */ jsxs(
-          "tr",
+      /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 flex flex-col sm:flex-row gap-4", children: /* @__PURE__ */ jsxs("div", { className: "relative flex-1", children: [
+        /* @__PURE__ */ jsx(MagnifyingGlassIcon, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" }),
+        /* @__PURE__ */ jsx(
+          TextInput,
           {
-            className: "hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors",
-            children: [
-              /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center", children: [
-                /* @__PURE__ */ jsx("div", { className: "flex-shrink-0 h-16 w-12 bg-gray-200 rounded overflow-hidden", children: movie.poster_url ? /* @__PURE__ */ jsx(
-                  "img",
-                  {
-                    className: "h-16 w-12 object-cover",
-                    src: movie.poster_url,
-                    alt: ""
-                  }
-                ) : /* @__PURE__ */ jsx("div", { className: "h-full w-full flex items-center justify-center text-gray-400 text-xs", children: "N/A" }) }),
-                /* @__PURE__ */ jsxs("div", { className: "ml-4", children: [
-                  /* @__PURE__ */ jsx("div", { className: "text-sm font-medium text-gray-900 dark:text-white", children: movie.title }),
-                  /* @__PURE__ */ jsx("div", { className: "text-sm text-gray-500 dark:text-gray-400", children: movie.original_title })
-                ] })
-              ] }) }),
-              /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap", children: [
-                /* @__PURE__ */ jsx("div", { className: "text-sm text-gray-900 dark:text-gray-300", children: movie.release_date ? new Date(
-                  movie.release_date
-                ).getFullYear() : "N/A" }),
-                /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-500 dark:text-gray-400", children: movie.runtime ? `${Math.floor(
-                  movie.runtime / 60
-                )}h ${movie.runtime % 60}m` : "" })
-              ] }),
-              /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col gap-1", children: [
-                /* @__PURE__ */ jsx(
-                  "span",
-                  {
-                    className: `px-2 inline-flex text-xs leading-5 font-semibold rounded-full w-fit ${movie.status === "released" ? "bg-green-100 text-green-800" : movie.status === "upcoming" ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-800"}`,
-                    children: movie.status
-                  }
-                ),
-                movie.is_vip_only && /* @__PURE__ */ jsx("span", { className: "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 w-fit", children: "VIP Only" })
-              ] }) }),
-              /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400", children: [
-                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1", children: [
-                  /* @__PURE__ */ jsx(
-                    "svg",
+            type: "text",
+            placeholder: "Search movies by title...",
+            className: "w-full pl-10",
+            value: searchQuery,
+            onChange: (e) => setSearchQuery(e.target.value)
+          }
+        )
+      ] }) }),
+      /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden", children: [
+        /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "min-w-full divide-y divide-gray-200 dark:divide-gray-700", children: [
+          /* @__PURE__ */ jsx("thead", { className: "bg-gray-50 dark:bg-gray-700/50", children: /* @__PURE__ */ jsxs("tr", { children: [
+            /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: "Movie" }),
+            /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: "Release Info" }),
+            /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: "Status" }),
+            /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: "Stats" }),
+            /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: "Actions" })
+          ] }) }),
+          /* @__PURE__ */ jsx("tbody", { className: "divide-y divide-gray-200 dark:divide-gray-700", children: movies.data.map((movie) => /* @__PURE__ */ jsxs(
+            "tr",
+            {
+              className: "hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors",
+              children: [
+                /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center", children: [
+                  /* @__PURE__ */ jsx("div", { className: "flex-shrink-0 h-16 w-12 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden shadow-sm", children: movie.poster_url ? /* @__PURE__ */ jsx(
+                    "img",
                     {
-                      className: "w-4 h-4 text-yellow-400",
-                      fill: "currentColor",
-                      viewBox: "0 0 20 20",
-                      children: /* @__PURE__ */ jsx("path", { d: "M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" })
+                      className: "h-full w-full object-cover",
+                      src: movie.poster_url,
+                      alt: ""
+                    }
+                  ) : /* @__PURE__ */ jsx("div", { className: "h-full w-full flex items-center justify-center text-gray-400", children: /* @__PURE__ */ jsx(FilmIcon, { className: "w-6 h-6" }) }) }),
+                  /* @__PURE__ */ jsxs("div", { className: "ml-4", children: [
+                    /* @__PURE__ */ jsx("div", { className: "text-sm font-medium text-gray-900 dark:text-white", children: movie.title }),
+                    /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-500 dark:text-gray-400 mt-0.5", children: movie.original_title })
+                  ] })
+                ] }) }),
+                /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap", children: [
+                  /* @__PURE__ */ jsx("div", { className: "text-sm text-gray-900 dark:text-gray-300", children: movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A" }),
+                  /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-500 dark:text-gray-400 mt-0.5", children: movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : "-" })
+                ] }),
+                /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col gap-1 items-start", children: [
+                  /* @__PURE__ */ jsx(
+                    "span",
+                    {
+                      className: `px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full ${movie.status === "released" ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" : movie.status === "upcoming" ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400" : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"}`,
+                      children: movie.status
                     }
                   ),
-                  movie.rating_average || "0.0"
-                ] }),
-                /* @__PURE__ */ jsxs("div", { className: "text-xs mt-1", children: [
-                  movie.view_count?.toLocaleString(),
-                  " ",
-                  "views"
-                ] })
-              ] }),
-              /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: [
-                /* @__PURE__ */ jsx(
-                  "button",
-                  {
-                    onClick: () => openEditModal(movie),
-                    className: "text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4",
-                    children: "Edit"
+                  movie.is_vip_only && /* @__PURE__ */ jsx("span", { className: "px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400", children: "VIP Only" })
+                ] }) }),
+                /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400", children: [
+                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1.5", title: "Rating", children: [
+                    /* @__PURE__ */ jsx(StarIcon$1, { className: "w-4 h-4 text-amber-400" }),
+                    /* @__PURE__ */ jsx("span", { className: "font-medium text-gray-900 dark:text-white", children: movie.rating_average || "0.0" })
+                  ] }),
+                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1.5", title: "Views", children: [
+                    /* @__PURE__ */ jsx(EyeIcon, { className: "w-4 h-4 text-gray-400" }),
+                    /* @__PURE__ */ jsx("span", { children: movie.view_count?.toLocaleString() })
+                  ] })
+                ] }) }),
+                /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-end gap-2", children: [
+                  /* @__PURE__ */ jsx(
+                    "button",
+                    {
+                      onClick: () => openEditModal(movie),
+                      className: "p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg dark:text-indigo-400 dark:hover:bg-indigo-900/20 transition-colors",
+                      title: "Edit",
+                      children: /* @__PURE__ */ jsx(PencilSquareIcon, { className: "w-5 h-5" })
+                    }
+                  ),
+                  auth.user.role === "admin" && /* @__PURE__ */ jsx(
+                    "button",
+                    {
+                      onClick: () => handleDelete(movie),
+                      className: "p-2 text-red-600 hover:bg-red-50 rounded-lg dark:text-red-400 dark:hover:bg-red-900/20 transition-colors",
+                      title: "Delete",
+                      children: /* @__PURE__ */ jsx(TrashIcon, { className: "w-5 h-5" })
+                    }
+                  )
+                ] }) })
+              ]
+            },
+            movie.id
+          )) })
+        ] }) }),
+        /* @__PURE__ */ jsxs("div", { className: "px-6 py-4 border-t border-gray-200 dark:border-gray-700/50 flex items-center justify-between", children: [
+          /* @__PURE__ */ jsx("div", { className: "flex-1 flex justify-between sm:hidden" }),
+          /* @__PURE__ */ jsxs("div", { className: "hidden sm:flex-1 sm:flex sm:items-center sm:justify-between", children: [
+            /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs("p", { className: "text-sm text-gray-700 dark:text-gray-300", children: [
+              "Showing ",
+              /* @__PURE__ */ jsx("span", { className: "font-medium", children: movies.from }),
+              " to ",
+              /* @__PURE__ */ jsx("span", { className: "font-medium", children: movies.to }),
+              " of ",
+              /* @__PURE__ */ jsx("span", { className: "font-medium", children: movies.total }),
+              " results"
+            ] }) }),
+            /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("nav", { className: "relative z-0 inline-flex rounded-md shadow-sm -space-x-px", "aria-label": "Pagination", children: movies.links.map((link, index) => /* @__PURE__ */ jsx(
+              "button",
+              {
+                onClick: () => {
+                  if (link.url) {
+                    router.visit(link.url, {
+                      preserveState: true,
+                      preserveScroll: true
+                    });
                   }
-                ),
-                auth.user.role === "admin" && /* @__PURE__ */ jsx(
-                  "button",
-                  {
-                    onClick: () => handleDelete(movie),
-                    className: "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300",
-                    children: "Delete"
-                  }
-                )
-              ] })
-            ]
-          },
-          movie.id
-        )) })
-      ] }) }),
-      /* @__PURE__ */ jsx("div", { className: "mt-6 flex justify-center", children: /* @__PURE__ */ jsx("div", { className: "flex gap-1 flex-wrap", children: movies.links.map((link, index) => /* @__PURE__ */ jsx(
-        "button",
-        {
-          onClick: () => {
-            if (link.url) {
-              router.visit(link.url, {
-                preserveState: true,
-                preserveScroll: true
-              });
-            }
-          },
-          disabled: !link.url,
-          className: `px-4 py-2 text-sm rounded-md ${link.active ? "bg-indigo-600 text-white" : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"} ${!link.url && "opacity-50 cursor-not-allowed"}`,
-          dangerouslySetInnerHTML: {
-            __html: link.label
-          }
-        },
-        index
-      )) }) })
-    ] }) }) }) }),
-    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "5xl", children: /* @__PURE__ */ jsxs("div", { className: "p-4 sm:p-6 dark:bg-gray-800", children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-gray-100 mb-4", children: editingMovie ? `Edit Movie: ${editingMovie.title}` : "Create New Movie" }),
+                },
+                disabled: !link.url,
+                className: `relative inline-flex items-center px-4 py-2 border text-sm font-medium
+                                                ${link.active ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 dark:bg-indigo-900/20 dark:border-indigo-500 dark:text-indigo-400" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"}
+                                                ${!link.url && "opacity-50 cursor-not-allowed"}
+                                                ${index === 0 ? "rounded-l-md" : ""}
+                                                ${index === movies.links.length - 1 ? "rounded-r-md" : ""}
+                                            `,
+                dangerouslySetInnerHTML: { __html: link.label }
+              },
+              index
+            )) }) })
+          ] })
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "5xl", children: /* @__PURE__ */ jsxs("div", { className: "p-6 dark:bg-gray-800", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-xl font-bold text-gray-900 dark:text-white mb-6", children: editingMovie ? `Edit Movie: ${editingMovie.title}` : "Create New Movie" }),
       /* @__PURE__ */ jsx(
         MovieForm,
         {
@@ -2534,6 +2696,7 @@ function Persons({ persons }) {
   const { auth } = usePage().props;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPerson, setEditingPerson] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const openCreateModal = () => {
     setEditingPerson(null);
     setIsModalOpen(true);
@@ -2551,37 +2714,78 @@ function Persons({ persons }) {
       router.delete(route("admin.persons.destroy", id));
     }
   };
+  const filteredPersons = useMemo(() => {
+    if (!searchQuery) return persons;
+    return persons.filter(
+      (person) => person.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [persons, searchQuery]);
   return /* @__PURE__ */ jsxs(AdminLayout, { children: [
     /* @__PURE__ */ jsx(Head, { title: "Manage Persons" }),
-    /* @__PURE__ */ jsx("div", { className: "", children: /* @__PURE__ */ jsx("div", { className: "max-w-7xl mx-auto", children: /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg", children: /* @__PURE__ */ jsxs("div", { className: "p-6 text-gray-900 dark:text-gray-100", children: [
-      /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-6", children: [
-        /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold", children: "Persons" }),
-        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 w-full md:w-auto", children: [
-          /* @__PURE__ */ jsx("input", { type: "text", placeholder: "Search persons...", className: "border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full md:w-64" }),
-          /* @__PURE__ */ jsx(PrimaryButton, { onClick: openCreateModal, children: "Add Person" })
+    /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4", children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold text-gray-900 dark:text-white", children: "Persons" }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400 mt-1", children: "Manage actors, directors, and other crew members." })
+        ] }),
+        /* @__PURE__ */ jsxs(PrimaryButton, { onClick: openCreateModal, className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsx(PlusIcon, { className: "w-5 h-5" }),
+          "Add Person"
         ] })
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "min-w-full divide-y divide-gray-200 dark:divide-gray-700", children: [
-        /* @__PURE__ */ jsx("thead", { className: "bg-gray-50 dark:bg-gray-700", children: /* @__PURE__ */ jsxs("tr", { children: [
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Name" }),
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Bio" }),
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Actions" })
+      /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 flex flex-col sm:flex-row gap-4", children: /* @__PURE__ */ jsxs("div", { className: "relative flex-1", children: [
+        /* @__PURE__ */ jsx(MagnifyingGlassIcon, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" }),
+        /* @__PURE__ */ jsx(
+          TextInput,
+          {
+            type: "text",
+            placeholder: "Search persons...",
+            className: "w-full pl-10",
+            value: searchQuery,
+            onChange: (e) => setSearchQuery(e.target.value)
+          }
+        )
+      ] }) }),
+      /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden", children: /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "min-w-full divide-y divide-gray-200 dark:divide-gray-700", children: [
+        /* @__PURE__ */ jsx("thead", { className: "bg-gray-50 dark:bg-gray-700/50", children: /* @__PURE__ */ jsxs("tr", { children: [
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: "Name" }),
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: "Bio" }),
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: "Actions" })
         ] }) }),
-        /* @__PURE__ */ jsx("tbody", { className: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700", children: persons.map((person) => /* @__PURE__ */ jsxs("tr", { className: "hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors", children: [
+        /* @__PURE__ */ jsx("tbody", { className: "divide-y divide-gray-200 dark:divide-gray-700", children: filteredPersons.length > 0 ? filteredPersons.map((person) => /* @__PURE__ */ jsxs("tr", { className: "hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors", children: [
           /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center", children: [
-            /* @__PURE__ */ jsx("div", { className: "flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full overflow-hidden", children: person.avatar_url ? /* @__PURE__ */ jsx("img", { className: "h-10 w-10 object-cover", src: person.avatar_url, alt: "" }) : /* @__PURE__ */ jsx("div", { className: "h-full w-full flex items-center justify-center text-gray-400 text-xs", children: "N/A" }) }),
+            /* @__PURE__ */ jsx("div", { className: "flex-shrink-0 h-12 w-12 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-sm", children: person.avatar_url ? /* @__PURE__ */ jsx("img", { className: "h-full w-full object-cover", src: person.avatar_url, alt: "" }) : /* @__PURE__ */ jsx("div", { className: "h-full w-full flex items-center justify-center text-gray-400", children: /* @__PURE__ */ jsx(UserIcon, { className: "w-6 h-6" }) }) }),
             /* @__PURE__ */ jsx("div", { className: "ml-4", children: /* @__PURE__ */ jsx("div", { className: "text-sm font-medium text-gray-900 dark:text-white", children: person.name }) })
           ] }) }),
           /* @__PURE__ */ jsx("td", { className: "px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate", children: person.biography || "No biography available" }),
-          /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: [
-            /* @__PURE__ */ jsx("button", { onClick: () => openEditModal(person), className: "text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4", children: "Edit" }),
-            auth.user.role === "admin" && /* @__PURE__ */ jsx("button", { onClick: () => handleDelete(person.id), className: "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300", children: "Delete" })
-          ] })
-        ] }, person.id)) })
-      ] }) })
-    ] }) }) }) }),
-    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "2xl", children: /* @__PURE__ */ jsxs("div", { className: "p-4 sm:p-6", children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-gray-100 mb-4", children: editingPerson ? `Edit Person: ${editingPerson.name}` : "Create New Person" }),
+          /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-end gap-2", children: [
+            /* @__PURE__ */ jsx(
+              "button",
+              {
+                onClick: () => openEditModal(person),
+                className: "p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg dark:text-indigo-400 dark:hover:bg-indigo-900/20 transition-colors",
+                title: "Edit",
+                children: /* @__PURE__ */ jsx(PencilSquareIcon, { className: "w-5 h-5" })
+              }
+            ),
+            auth.user.role === "admin" && /* @__PURE__ */ jsx(
+              "button",
+              {
+                onClick: () => handleDelete(person.id),
+                className: "p-2 text-red-600 hover:bg-red-50 rounded-lg dark:text-red-400 dark:hover:bg-red-900/20 transition-colors",
+                title: "Delete",
+                children: /* @__PURE__ */ jsx(TrashIcon, { className: "w-5 h-5" })
+              }
+            )
+          ] }) })
+        ] }, person.id)) : /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx("td", { colSpan: "3", className: "px-6 py-12 text-center text-gray-500 dark:text-gray-400", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center justify-center gap-2", children: [
+          /* @__PURE__ */ jsx(UserIcon, { className: "w-8 h-8 text-gray-300 dark:text-gray-600" }),
+          /* @__PURE__ */ jsx("p", { children: "No persons found" })
+        ] }) }) }) })
+      ] }) }) })
+    ] }),
+    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "2xl", children: /* @__PURE__ */ jsxs("div", { className: "p-6 dark:bg-gray-800", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-xl font-bold text-gray-900 dark:text-white mb-6", children: editingPerson ? `Edit Person: ${editingPerson.name}` : "Create New Person" }),
       /* @__PURE__ */ jsx(
         PersonForm,
         {
@@ -4365,14 +4569,13 @@ function AdminSeries({ series, genres, persons, auth }) {
   const [editingSeries, setEditingSeries] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const isFirst = useRef(true);
-  console.log(series);
   const debounceSearch = debounce((value) => {
     router.get(
       route("admin.series"),
-      { search: searchQuery },
+      { search: value },
       { preserveState: true, replace: true }
     );
-  });
+  }, 300);
   useEffect(() => {
     if (isFirst.current) {
       isFirst.current = false;
@@ -4404,108 +4607,147 @@ function AdminSeries({ series, genres, persons, auth }) {
   };
   return /* @__PURE__ */ jsxs(AdminLayout, { children: [
     /* @__PURE__ */ jsx(Head, { title: "Manage Series" }),
-    /* @__PURE__ */ jsx("div", { className: "", children: /* @__PURE__ */ jsx("div", { className: "max-w-7xl mx-auto", children: /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg", children: /* @__PURE__ */ jsxs("div", { className: "p-6 text-gray-900 dark:text-gray-100", children: [
-      /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row justify-between items-center mb-6 gap-4", children: [
-        /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold", children: "Series" }),
-        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 w-full md:w-auto", children: [
-          /* @__PURE__ */ jsx(
-            "input",
-            {
-              type: "text",
-              placeholder: "Search series...",
-              className: "border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full md:w-64",
-              value: searchQuery,
-              onChange: (e) => setSearchQuery(e.target.value)
-            }
-          ),
-          /* @__PURE__ */ jsx(PrimaryButton, { onClick: openCreateModal, children: "Add Series" })
+    /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4", children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold text-gray-900 dark:text-white", children: "Series" }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400 mt-1", children: "Manage TV shows, seasons, and episodes." })
+        ] }),
+        /* @__PURE__ */ jsxs(PrimaryButton, { onClick: openCreateModal, className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsx(PlusIcon, { className: "w-5 h-5" }),
+          "Add Series"
         ] })
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "min-w-full divide-y divide-gray-200 dark:divide-gray-700", children: [
-        /* @__PURE__ */ jsx("thead", { className: "bg-gray-50 dark:bg-gray-700", children: /* @__PURE__ */ jsxs("tr", { children: [
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Title" }),
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Seasons" }),
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Status" }),
-          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider", children: "Actions" })
-        ] }) }),
-        /* @__PURE__ */ jsx("tbody", { className: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700", children: series.data.map((item) => /* @__PURE__ */ jsxs(
-          "tr",
+      /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 flex flex-col sm:flex-row gap-4", children: /* @__PURE__ */ jsxs("div", { className: "relative flex-1", children: [
+        /* @__PURE__ */ jsx(MagnifyingGlassIcon, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" }),
+        /* @__PURE__ */ jsx(
+          TextInput,
           {
-            className: "hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors",
-            children: [
-              /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center", children: [
-                /* @__PURE__ */ jsx("div", { className: "flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full overflow-hidden", children: item.poster_url ? /* @__PURE__ */ jsx(
-                  "img",
-                  {
-                    className: "h-10 w-10 object-cover",
-                    src: item.poster_url,
-                    alt: ""
-                  }
-                ) : /* @__PURE__ */ jsx("div", { className: "h-full w-full flex items-center justify-center text-gray-400 text-xs", children: "N/A" }) }),
-                /* @__PURE__ */ jsxs("div", { className: "ml-4", children: [
-                  /* @__PURE__ */ jsx("div", { className: "text-sm font-medium text-gray-900 dark:text-white", children: item.title }),
-                  /* @__PURE__ */ jsx("div", { className: "text-sm text-gray-500 dark:text-gray-400", children: item.original_title })
-                ] })
-              ] }) }),
-              /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400", children: [
-                item.seasons_count || 0,
-                " ",
-                "Seasons"
-              ] }),
-              /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsx(
-                "span",
-                {
-                  className: `px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${item.status === "ongoing" ? "bg-green-100 text-green-800" : item.status === "ended" ? "bg-gray-100 text-gray-800" : "bg-yellow-100 text-yellow-800"}`,
-                  children: item.status
-                }
-              ) }),
-              /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: [
-                /* @__PURE__ */ jsx(
-                  "button",
-                  {
-                    onClick: () => openEditModal(item),
-                    className: "text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4",
-                    children: "Edit"
-                  }
-                ),
-                auth.user.role === "admin" && /* @__PURE__ */ jsx(
-                  "button",
-                  {
-                    onClick: () => handleDelete(
-                      item.id
-                    ),
-                    className: "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300",
-                    children: "Delete"
-                  }
-                )
-              ] })
-            ]
-          },
-          item.id
-        )) })
-      ] }) }),
-      /* @__PURE__ */ jsx("div", { className: "mt-6 flex justify-center", children: /* @__PURE__ */ jsx("div", { className: "flex gap-1 flex-wrap", children: series.links.map((link, index) => /* @__PURE__ */ jsx(
-        "button",
-        {
-          onClick: () => {
-            if (link.url) {
-              router.visit(link.url, {
-                preserveState: true,
-                preserveScroll: true
-              });
-            }
-          },
-          disabled: !link.url,
-          className: `px-4 py-2 text-sm rounded-md ${link.active ? "bg-indigo-600 text-white" : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"} ${!link.url && "opacity-50 cursor-not-allowed"}`,
-          dangerouslySetInnerHTML: {
-            __html: link.label
+            type: "text",
+            placeholder: "Search series by title...",
+            className: "w-full pl-10",
+            value: searchQuery,
+            onChange: (e) => setSearchQuery(e.target.value)
           }
-        },
-        index
-      )) }) })
-    ] }) }) }) }),
-    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "4xl", children: /* @__PURE__ */ jsxs("div", { className: "p-4 sm:p-6 dark:bg-gray-800", children: [
-      /* @__PURE__ */ jsx("h2", { className: "text-lg font-medium text-gray-900 dark:text-gray-100 mb-4", children: editingSeries ? `Edit Series: ${editingSeries.title}` : "Create New Series" }),
+        )
+      ] }) }),
+      /* @__PURE__ */ jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden", children: [
+        /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "min-w-full divide-y divide-gray-200 dark:divide-gray-700", children: [
+          /* @__PURE__ */ jsx("thead", { className: "bg-gray-50 dark:bg-gray-700/50", children: /* @__PURE__ */ jsxs("tr", { children: [
+            /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: "Series" }),
+            /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: "Seasons" }),
+            /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: "Status" }),
+            /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: "Stats" }),
+            /* @__PURE__ */ jsx("th", { className: "px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: "Actions" })
+          ] }) }),
+          /* @__PURE__ */ jsx("tbody", { className: "divide-y divide-gray-200 dark:divide-gray-700", children: series.data.map((item) => /* @__PURE__ */ jsxs(
+            "tr",
+            {
+              className: "hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors",
+              children: [
+                /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center", children: [
+                  /* @__PURE__ */ jsx("div", { className: "flex-shrink-0 h-16 w-12 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden shadow-sm", children: item.poster_url ? /* @__PURE__ */ jsx(
+                    "img",
+                    {
+                      className: "h-full w-full object-cover",
+                      src: item.poster_url,
+                      alt: ""
+                    }
+                  ) : /* @__PURE__ */ jsx("div", { className: "h-full w-full flex items-center justify-center text-gray-400", children: /* @__PURE__ */ jsx(TvIcon, { className: "w-6 h-6" }) }) }),
+                  /* @__PURE__ */ jsxs("div", { className: "ml-4", children: [
+                    /* @__PURE__ */ jsx("div", { className: "text-sm font-medium text-gray-900 dark:text-white", children: item.title }),
+                    /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-500 dark:text-gray-400 mt-0.5", children: item.original_title })
+                  ] })
+                ] }) }),
+                /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "text-sm text-gray-900 dark:text-gray-300", children: [
+                  item.seasons_count || 0,
+                  " Seasons"
+                ] }) }),
+                /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col gap-1 items-start", children: [
+                  /* @__PURE__ */ jsx(
+                    "span",
+                    {
+                      className: `px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full ${item.status === "ongoing" ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" : item.status === "ended" ? "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300" : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"}`,
+                      children: item.status
+                    }
+                  ),
+                  item.is_vip_only && /* @__PURE__ */ jsx("span", { className: "px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400", children: "VIP Only" })
+                ] }) }),
+                /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400", children: [
+                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1.5", title: "Rating", children: [
+                    /* @__PURE__ */ jsx(StarIcon$1, { className: "w-4 h-4 text-amber-400" }),
+                    /* @__PURE__ */ jsx("span", { className: "font-medium text-gray-900 dark:text-white", children: item.rating_average || "0.0" })
+                  ] }),
+                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1.5", title: "Views", children: [
+                    /* @__PURE__ */ jsx(EyeIcon, { className: "w-4 h-4 text-gray-400" }),
+                    /* @__PURE__ */ jsx("span", { children: item.view_count?.toLocaleString() })
+                  ] })
+                ] }) }),
+                /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-end gap-2", children: [
+                  /* @__PURE__ */ jsx(
+                    "button",
+                    {
+                      onClick: () => openEditModal(item),
+                      className: "p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg dark:text-indigo-400 dark:hover:bg-indigo-900/20 transition-colors",
+                      title: "Edit",
+                      children: /* @__PURE__ */ jsx(PencilSquareIcon, { className: "w-5 h-5" })
+                    }
+                  ),
+                  auth.user.role === "admin" && /* @__PURE__ */ jsx(
+                    "button",
+                    {
+                      onClick: () => handleDelete(item.id),
+                      className: "p-2 text-red-600 hover:bg-red-50 rounded-lg dark:text-red-400 dark:hover:bg-red-900/20 transition-colors",
+                      title: "Delete",
+                      children: /* @__PURE__ */ jsx(TrashIcon, { className: "w-5 h-5" })
+                    }
+                  )
+                ] }) })
+              ]
+            },
+            item.id
+          )) })
+        ] }) }),
+        /* @__PURE__ */ jsxs("div", { className: "px-6 py-4 border-t border-gray-200 dark:border-gray-700/50 flex items-center justify-between", children: [
+          /* @__PURE__ */ jsx("div", { className: "flex-1 flex justify-between sm:hidden" }),
+          /* @__PURE__ */ jsxs("div", { className: "hidden sm:flex-1 sm:flex sm:items-center sm:justify-between", children: [
+            /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs("p", { className: "text-sm text-gray-700 dark:text-gray-300", children: [
+              "Showing ",
+              /* @__PURE__ */ jsx("span", { className: "font-medium", children: series.from }),
+              " to ",
+              /* @__PURE__ */ jsx("span", { className: "font-medium", children: series.to }),
+              " of ",
+              /* @__PURE__ */ jsx("span", { className: "font-medium", children: series.total }),
+              " results"
+            ] }) }),
+            /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("nav", { className: "relative z-0 inline-flex rounded-md shadow-sm -space-x-px", "aria-label": "Pagination", children: series.links.map((link, index) => /* @__PURE__ */ jsx(
+              "button",
+              {
+                onClick: () => {
+                  if (link.url) {
+                    router.visit(link.url, {
+                      preserveState: true,
+                      preserveScroll: true
+                    });
+                  }
+                },
+                disabled: !link.url,
+                className: `relative inline-flex items-center px-4 py-2 border text-sm font-medium
+                                                ${link.active ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 dark:bg-indigo-900/20 dark:border-indigo-500 dark:text-indigo-400" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"}
+                                                ${!link.url && "opacity-50 cursor-not-allowed"}
+                                                ${index === 0 ? "rounded-l-md" : ""}
+                                                ${index === series.links.length - 1 ? "rounded-r-md" : ""}
+                                            `,
+                dangerouslySetInnerHTML: { __html: link.label }
+              },
+              index
+            )) }) })
+          ] })
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, maxWidth: "4xl", children: /* @__PURE__ */ jsxs("div", { className: "p-6 dark:bg-gray-800", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-xl font-bold text-gray-900 dark:text-white mb-6", children: editingSeries ? `Edit Series: ${editingSeries.title}` : "Create New Series" }),
       /* @__PURE__ */ jsx(
         SeriesForm,
         {
@@ -4523,6 +4765,307 @@ function AdminSeries({ series, genres, persons, auth }) {
 const __vite_glob_0_9 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: AdminSeries
+}, Symbol.toStringTag, { value: "Module" }));
+function DangerButton({
+  className = "",
+  disabled,
+  children,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx(
+    "button",
+    {
+      ...props,
+      className: `inline-flex items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700 ${disabled && "opacity-25"} ` + className,
+      disabled,
+      children
+    }
+  );
+}
+function VipKeys({ auth, vipKeys, filters }) {
+  const { t } = useTranslation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [editingKey, setEditingKey] = useState(null);
+  const [keyToDelete, setKeyToDelete] = useState(null);
+  const [search, setSearch] = useState(filters.search || "");
+  const [copiedKeyId, setCopiedKeyId] = useState(null);
+  const { data, setData, post, put, delete: destroy, processing, errors, reset } = useForm({
+    key: "",
+    duration_days: 30,
+    max_uses: "",
+    expires_at: "",
+    is_active: true
+  });
+  const openModal = (key = null) => {
+    if (key) {
+      setEditingKey(key);
+      setData({
+        key: key.key,
+        duration_days: key.duration_days,
+        max_uses: key.max_uses || "",
+        expires_at: key.expires_at ? key.expires_at.split("T")[0] : "",
+        is_active: Boolean(key.is_active)
+      });
+    } else {
+      setEditingKey(null);
+      reset();
+    }
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+    reset();
+    setEditingKey(null);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (editingKey) {
+      put(route("admin.vip-keys.update", editingKey.id), {
+        onSuccess: closeModal
+      });
+    } else {
+      post(route("admin.vip-keys.store"), {
+        onSuccess: closeModal
+      });
+    }
+  };
+  const openDeleteModal = (key) => {
+    setKeyToDelete(key);
+    setIsDeleteModalOpen(true);
+  };
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setKeyToDelete(null);
+  };
+  const handleDelete = () => {
+    if (keyToDelete) {
+      destroy(route("admin.vip-keys.destroy", keyToDelete.id), {
+        onSuccess: closeDeleteModal
+      });
+    }
+  };
+  const handleSearch = useMemo(
+    () => debounce((query) => {
+      router.get(
+        route("admin.vip-keys.index"),
+        { search: query },
+        { preserveState: true, replace: true }
+      );
+    }, 300),
+    []
+  );
+  const onSearchChange = (e) => {
+    setSearch(e.target.value);
+    handleSearch(e.target.value);
+  };
+  const copyToClipboard = (key, id) => {
+    navigator.clipboard.writeText(key);
+    setCopiedKeyId(id);
+    setTimeout(() => setCopiedKeyId(null), 2e3);
+  };
+  const getStatusBadge = (key) => {
+    if (!key.is_active) {
+      return /* @__PURE__ */ jsx("span", { className: "px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400", children: t("Inactive") });
+    }
+    if (key.expires_at && new Date(key.expires_at) < /* @__PURE__ */ new Date()) {
+      return /* @__PURE__ */ jsx("span", { className: "px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400", children: t("Expired") });
+    }
+    if (key.max_uses && key.uses_count >= key.max_uses) {
+      return /* @__PURE__ */ jsx("span", { className: "px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300", children: t("Depleted") });
+    }
+    return /* @__PURE__ */ jsx("span", { className: "px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400", children: t("Active") });
+  };
+  return /* @__PURE__ */ jsxs(AdminLayout, { children: [
+    /* @__PURE__ */ jsx(Head, { title: t("VIP Keys") }),
+    /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4", children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsxs("h1", { className: "text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2", children: [
+            /* @__PURE__ */ jsx(KeyIcon, { className: "w-8 h-8 text-amber-500" }),
+            t("VIP Keys")
+          ] }),
+          /* @__PURE__ */ jsx("p", { className: "mt-1 text-sm text-gray-500 dark:text-gray-400", children: t("Manage access keys for VIP subscriptions.") })
+        ] }),
+        /* @__PURE__ */ jsxs(PrimaryButton, { onClick: () => openModal(), className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsx(PlusIcon, { className: "w-5 h-5" }),
+          t("Generate Key")
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50", children: /* @__PURE__ */ jsxs("div", { className: "relative max-w-md", children: [
+        /* @__PURE__ */ jsx("div", { className: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none", children: /* @__PURE__ */ jsx(MagnifyingGlassIcon, { className: "h-5 w-5 text-gray-400" }) }),
+        /* @__PURE__ */ jsx(
+          TextInput,
+          {
+            type: "text",
+            placeholder: t("Search keys..."),
+            value: search,
+            onChange: onSearchChange,
+            className: "pl-10 w-full"
+          }
+        )
+      ] }) }),
+      /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden", children: /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "min-w-full divide-y divide-gray-200 dark:divide-gray-700", children: [
+        /* @__PURE__ */ jsx("thead", { className: "bg-gray-50 dark:bg-gray-700/50", children: /* @__PURE__ */ jsxs("tr", { children: [
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: t("Key") }),
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: t("Duration") }),
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: t("Status") }),
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: t("Usage") }),
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: t("Expires At") }),
+          /* @__PURE__ */ jsx("th", { className: "px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider", children: t("Actions") })
+        ] }) }),
+        /* @__PURE__ */ jsx("tbody", { className: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700", children: vipKeys.data.length > 0 ? vipKeys.data.map((key) => /* @__PURE__ */ jsxs("tr", { className: "hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors", children: [
+          /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsx("code", { className: "text-sm font-mono bg-gray-100 dark:bg-gray-900 px-2 py-1 rounded text-gray-800 dark:text-gray-200", children: key.key }),
+            /* @__PURE__ */ jsx(
+              "button",
+              {
+                onClick: () => copyToClipboard(key.key, key.id),
+                className: "text-gray-400 hover:text-indigo-500 transition-colors",
+                title: t("Copy to clipboard"),
+                children: copiedKeyId === key.id ? /* @__PURE__ */ jsx(CheckCircleIcon, { className: "w-5 h-5 text-green-500" }) : /* @__PURE__ */ jsx(ClipboardDocumentIcon, { className: "w-5 h-5" })
+              }
+            )
+          ] }) }),
+          /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400", children: [
+            key.duration_days,
+            " ",
+            t("Days")
+          ] }),
+          /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: getStatusBadge(key) }),
+          /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400", children: [
+            key.uses_count,
+            " / ",
+            key.max_uses ? key.max_uses : "∞"
+          ] }),
+          /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400", children: key.expires_at ? new Date(key.expires_at).toLocaleDateString() : "-" }),
+          /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-end gap-2", children: [
+            /* @__PURE__ */ jsx(
+              "button",
+              {
+                onClick: () => openModal(key),
+                className: "p-1 rounded-full text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30 transition-colors",
+                title: t("Edit"),
+                children: /* @__PURE__ */ jsx(PencilSquareIcon, { className: "w-5 h-5" })
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              "button",
+              {
+                onClick: () => openDeleteModal(key),
+                className: "p-1 rounded-full text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30 transition-colors",
+                title: t("Delete"),
+                children: /* @__PURE__ */ jsx(TrashIcon, { className: "w-5 h-5" })
+              }
+            )
+          ] }) })
+        ] }, key.id)) : /* @__PURE__ */ jsx("tr", { children: /* @__PURE__ */ jsx("td", { colSpan: "6", className: "px-6 py-12 text-center text-gray-500 dark:text-gray-400", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center justify-center", children: [
+          /* @__PURE__ */ jsx(KeyIcon, { className: "w-12 h-12 mb-4 text-gray-300 dark:text-gray-600" }),
+          /* @__PURE__ */ jsx("p", { className: "text-lg font-medium", children: t("No VIP keys found") }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm mt-1", children: t("Try adjusting your search or generate a new key.") })
+        ] }) }) }) })
+      ] }) }) })
+    ] }),
+    /* @__PURE__ */ jsx(Modal, { show: isModalOpen, onClose: closeModal, children: /* @__PURE__ */ jsxs("div", { className: "p-6", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-xl font-bold text-gray-900 dark:text-white mb-6", children: editingKey ? t("Edit VIP Key") : t("Generate VIP Key") }),
+      /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, className: "space-y-6", children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "key", value: t("Key Code") }),
+          /* @__PURE__ */ jsx(
+            TextInput,
+            {
+              id: "key",
+              type: "text",
+              className: "mt-1 block w-full font-mono",
+              value: data.key,
+              onChange: (e) => setData("key", e.target.value),
+              placeholder: t("Leave empty to auto-generate")
+            }
+          ),
+          /* @__PURE__ */ jsx("p", { className: "mt-1 text-xs text-gray-500 dark:text-gray-400", children: t("A random 16-character string will be generated if left blank.") }),
+          errors.key && /* @__PURE__ */ jsx("div", { className: "text-red-500 text-sm mt-1", children: errors.key })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx(InputLabel, { htmlFor: "duration_days", value: t("Duration (Days)") }),
+            /* @__PURE__ */ jsx(
+              TextInput,
+              {
+                id: "duration_days",
+                type: "number",
+                className: "mt-1 block w-full",
+                value: data.duration_days,
+                onChange: (e) => setData("duration_days", e.target.value),
+                required: true,
+                min: "1"
+              }
+            ),
+            errors.duration_days && /* @__PURE__ */ jsx("div", { className: "text-red-500 text-sm mt-1", children: errors.duration_days })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx(InputLabel, { htmlFor: "max_uses", value: t("Max Uses") }),
+            /* @__PURE__ */ jsx(
+              TextInput,
+              {
+                id: "max_uses",
+                type: "number",
+                className: "mt-1 block w-full",
+                value: data.max_uses,
+                onChange: (e) => setData("max_uses", e.target.value),
+                placeholder: t("Leave empty for unlimited"),
+                min: "1"
+              }
+            ),
+            errors.max_uses && /* @__PURE__ */ jsx("div", { className: "text-red-500 text-sm mt-1", children: errors.max_uses })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx(InputLabel, { htmlFor: "expires_at", value: t("Expiration Date") }),
+          /* @__PURE__ */ jsx(
+            TextInput,
+            {
+              id: "expires_at",
+              type: "date",
+              className: "mt-1 block w-full",
+              value: data.expires_at,
+              onChange: (e) => setData("expires_at", e.target.value)
+            }
+          ),
+          /* @__PURE__ */ jsx("p", { className: "mt-1 text-xs text-gray-500 dark:text-gray-400", children: t("Optional. The key will stop working after this date.") }),
+          errors.expires_at && /* @__PURE__ */ jsx("div", { className: "text-red-500 text-sm mt-1", children: errors.expires_at })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center", children: [
+          /* @__PURE__ */ jsx(
+            "input",
+            {
+              id: "is_active",
+              type: "checkbox",
+              className: "rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800",
+              checked: data.is_active,
+              onChange: (e) => setData("is_active", e.target.checked)
+            }
+          ),
+          /* @__PURE__ */ jsx("label", { htmlFor: "is_active", className: "ml-2 block text-sm text-gray-900 dark:text-gray-300", children: t("Active") })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "flex justify-end gap-4 mt-6", children: [
+          /* @__PURE__ */ jsx(SecondaryButton, { onClick: closeModal, disabled: processing, children: t("Cancel") }),
+          /* @__PURE__ */ jsx(PrimaryButton, { type: "submit", disabled: processing, children: editingKey ? t("Update Key") : t("Generate Key") })
+        ] })
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsx(Modal, { show: isDeleteModalOpen, onClose: closeDeleteModal, children: /* @__PURE__ */ jsxs("div", { className: "p-6", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-xl font-bold text-gray-900 dark:text-white mb-4", children: t("Delete VIP Key") }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-600 dark:text-gray-300 mb-6", children: t("Are you sure you want to delete this VIP key? This action cannot be undone.") }),
+      /* @__PURE__ */ jsxs("div", { className: "flex justify-end gap-4", children: [
+        /* @__PURE__ */ jsx(SecondaryButton, { onClick: closeDeleteModal, disabled: processing, children: t("Cancel") }),
+        /* @__PURE__ */ jsx(DangerButton, { onClick: handleDelete, disabled: processing, children: t("Delete Key") })
+      ] })
+    ] }) })
+  ] });
+}
+const __vite_glob_0_11 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: VipKeys
 }, Symbol.toStringTag, { value: "Module" }));
 const ThemeContext = createContext();
 const useTheme = () => useContext(ThemeContext);
@@ -4605,7 +5148,7 @@ function ConfirmPassword() {
     ] })
   ] });
 }
-const __vite_glob_0_11 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_12 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: ConfirmPassword
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4653,7 +5196,7 @@ function ForgotPassword({ status }) {
     ] })
   ] });
 }
-const __vite_glob_0_12 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_13 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: ForgotPassword
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4794,7 +5337,7 @@ function Login({ status, canResetPassword }) {
     ] })
   ] });
 }
-const __vite_glob_0_13 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_14 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Login
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4931,7 +5474,7 @@ function Register() {
     ] })
   ] });
 }
-const __vite_glob_0_14 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_15 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Register
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5029,7 +5572,7 @@ function ResetPassword({ token, email }) {
     ] })
   ] });
 }
-const __vite_glob_0_15 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_16 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: ResetPassword
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5090,7 +5633,7 @@ function TgAuth({ auth }) {
   }
   return /* @__PURE__ */ jsx(Loader, { title: "Authentication", status });
 }
-const __vite_glob_0_16 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_17 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: TgAuth
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5132,7 +5675,7 @@ function VerifyEmail({ status }) {
     ] }) })
   ] });
 }
-const __vite_glob_0_17 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: VerifyEmail
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5157,7 +5700,7 @@ function LanguageSwitcher() {
       ),
       /* @__PURE__ */ jsx("span", { className: "uppercase", children: currentLanguage.code }),
       /* @__PURE__ */ jsx(
-        ChevronDownIcon,
+        ChevronDownIcon$1,
         {
           className: "-mr-1 h-5 w-5 text-gray-400",
           "aria-hidden": "true"
@@ -6050,7 +6593,7 @@ function GenreShow({ genre, movies, series, seo }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: GenreShow
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6262,7 +6805,7 @@ function Home({ featured, latestMovies, latestSeries, seo }) {
     ] })
   ] });
 }
-const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Home
 }, Symbol.toStringTag, { value: "Module" }));
@@ -7288,7 +7831,7 @@ function MovieDetails({
     )
   ] });
 }
-const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_21 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: MovieDetails
 }, Symbol.toStringTag, { value: "Module" }));
@@ -7334,7 +7877,7 @@ function Index$1({ movies }) {
     ] }) })
   ] });
 }
-const __vite_glob_0_21 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_22 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Index$1
 }, Symbol.toStringTag, { value: "Module" }));
@@ -7413,7 +7956,7 @@ function About({ title, description }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_22 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: About
 }, Symbol.toStringTag, { value: "Module" }));
@@ -7653,7 +8196,7 @@ function Contact({ title, description }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Contact
 }, Symbol.toStringTag, { value: "Module" }));
@@ -7778,7 +8321,7 @@ function FAQ({ title, description }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_25 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: FAQ
 }, Symbol.toStringTag, { value: "Module" }));
@@ -7914,7 +8457,7 @@ function Privacy({ title, description }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_25 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Privacy
 }, Symbol.toStringTag, { value: "Module" }));
@@ -8051,7 +8594,7 @@ function Terms({ title, description }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_27 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Terms
 }, Symbol.toStringTag, { value: "Module" }));
@@ -8212,26 +8755,10 @@ function PersonShow({ person, movies, series, seo }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_27 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_28 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: PersonShow
 }, Symbol.toStringTag, { value: "Module" }));
-function DangerButton({
-  className = "",
-  disabled,
-  children,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx(
-    "button",
-    {
-      ...props,
-      className: `inline-flex items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700 ${disabled && "opacity-25"} ` + className,
-      disabled,
-      children
-    }
-  );
-}
 function DeleteUserForm({ className = "" }) {
   const { t } = useTranslation();
   const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
@@ -8311,7 +8838,7 @@ function DeleteUserForm({ className = "" }) {
     ] }) })
   ] });
 }
-const __vite_glob_0_29 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_30 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: DeleteUserForm
 }, Symbol.toStringTag, { value: "Module" }));
@@ -8443,7 +8970,7 @@ function UpdatePasswordForm({ className = "" }) {
     ] })
   ] });
 }
-const __vite_glob_0_30 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_31 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: UpdatePasswordForm
 }, Symbol.toStringTag, { value: "Module" }));
@@ -8532,7 +9059,7 @@ function UpdateProfileInformation({
     ] })
   ] });
 }
-const __vite_glob_0_31 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_32 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: UpdateProfileInformation
 }, Symbol.toStringTag, { value: "Module" }));
@@ -8670,7 +9197,7 @@ function Edit({ mustVerifyEmail, status }) {
     ] }) }) })
   ] });
 }
-const __vite_glob_0_28 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_29 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Edit
 }, Symbol.toStringTag, { value: "Module" }));
@@ -8724,7 +9251,7 @@ function Search({ results, query, seo }) {
     ] })
   ] });
 }
-const __vite_glob_0_32 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_33 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Search
 }, Symbol.toStringTag, { value: "Module" }));
@@ -8770,7 +9297,7 @@ function Index({ series }) {
     ] }) })
   ] });
 }
-const __vite_glob_0_33 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_34 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Index
 }, Symbol.toStringTag, { value: "Module" }));
@@ -9531,7 +10058,7 @@ function SeriesDetails({
     )
   ] });
 }
-const __vite_glob_0_34 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_35 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: SeriesDetails
 }, Symbol.toStringTag, { value: "Module" }));
@@ -9654,7 +10181,7 @@ function Subscription({ auth, subscription }) {
     ] }) })
   ] });
 }
-const __vite_glob_0_35 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_36 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Subscription
 }, Symbol.toStringTag, { value: "Module" }));
@@ -9760,7 +10287,7 @@ function WatchHistory({ auth, history }) {
     ] }) })
   ] });
 }
-const __vite_glob_0_36 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_37 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: WatchHistory
 }, Symbol.toStringTag, { value: "Module" }));
@@ -10149,7 +10676,7 @@ function Welcome({ auth, laravelVersion, phpVersion }) {
     ] })
   ] });
 }
-const __vite_glob_0_37 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_38 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Welcome
 }, Symbol.toStringTag, { value: "Module" }));
@@ -10170,33 +10697,34 @@ createServer(
         "./Pages/Admin/Seasons.jsx": __vite_glob_0_8,
         "./Pages/Admin/Series.jsx": __vite_glob_0_9,
         "./Pages/Admin/SeriesForm.jsx": __vite_glob_0_10,
-        "./Pages/Auth/ConfirmPassword.jsx": __vite_glob_0_11,
-        "./Pages/Auth/ForgotPassword.jsx": __vite_glob_0_12,
-        "./Pages/Auth/Login.jsx": __vite_glob_0_13,
-        "./Pages/Auth/Register.jsx": __vite_glob_0_14,
-        "./Pages/Auth/ResetPassword.jsx": __vite_glob_0_15,
-        "./Pages/Auth/TgAuth.jsx": __vite_glob_0_16,
-        "./Pages/Auth/VerifyEmail.jsx": __vite_glob_0_17,
-        "./Pages/Genre/Show.jsx": __vite_glob_0_18,
-        "./Pages/Home.jsx": __vite_glob_0_19,
-        "./Pages/MovieDetails.jsx": __vite_glob_0_20,
-        "./Pages/Movies/Index.jsx": __vite_glob_0_21,
-        "./Pages/Pages/About.jsx": __vite_glob_0_22,
-        "./Pages/Pages/Contact.jsx": __vite_glob_0_23,
-        "./Pages/Pages/FAQ.jsx": __vite_glob_0_24,
-        "./Pages/Pages/Privacy.jsx": __vite_glob_0_25,
-        "./Pages/Pages/Terms.jsx": __vite_glob_0_26,
-        "./Pages/Person/Show.jsx": __vite_glob_0_27,
-        "./Pages/Profile/Edit.jsx": __vite_glob_0_28,
-        "./Pages/Profile/Partials/DeleteUserForm.jsx": __vite_glob_0_29,
-        "./Pages/Profile/Partials/UpdatePasswordForm.jsx": __vite_glob_0_30,
-        "./Pages/Profile/Partials/UpdateProfileInformationForm.jsx": __vite_glob_0_31,
-        "./Pages/Search.jsx": __vite_glob_0_32,
-        "./Pages/Series/Index.jsx": __vite_glob_0_33,
-        "./Pages/SeriesDetails.jsx": __vite_glob_0_34,
-        "./Pages/User/Subscription.jsx": __vite_glob_0_35,
-        "./Pages/User/WatchHistory.jsx": __vite_glob_0_36,
-        "./Pages/Welcome.jsx": __vite_glob_0_37
+        "./Pages/Admin/VipKeys.jsx": __vite_glob_0_11,
+        "./Pages/Auth/ConfirmPassword.jsx": __vite_glob_0_12,
+        "./Pages/Auth/ForgotPassword.jsx": __vite_glob_0_13,
+        "./Pages/Auth/Login.jsx": __vite_glob_0_14,
+        "./Pages/Auth/Register.jsx": __vite_glob_0_15,
+        "./Pages/Auth/ResetPassword.jsx": __vite_glob_0_16,
+        "./Pages/Auth/TgAuth.jsx": __vite_glob_0_17,
+        "./Pages/Auth/VerifyEmail.jsx": __vite_glob_0_18,
+        "./Pages/Genre/Show.jsx": __vite_glob_0_19,
+        "./Pages/Home.jsx": __vite_glob_0_20,
+        "./Pages/MovieDetails.jsx": __vite_glob_0_21,
+        "./Pages/Movies/Index.jsx": __vite_glob_0_22,
+        "./Pages/Pages/About.jsx": __vite_glob_0_23,
+        "./Pages/Pages/Contact.jsx": __vite_glob_0_24,
+        "./Pages/Pages/FAQ.jsx": __vite_glob_0_25,
+        "./Pages/Pages/Privacy.jsx": __vite_glob_0_26,
+        "./Pages/Pages/Terms.jsx": __vite_glob_0_27,
+        "./Pages/Person/Show.jsx": __vite_glob_0_28,
+        "./Pages/Profile/Edit.jsx": __vite_glob_0_29,
+        "./Pages/Profile/Partials/DeleteUserForm.jsx": __vite_glob_0_30,
+        "./Pages/Profile/Partials/UpdatePasswordForm.jsx": __vite_glob_0_31,
+        "./Pages/Profile/Partials/UpdateProfileInformationForm.jsx": __vite_glob_0_32,
+        "./Pages/Search.jsx": __vite_glob_0_33,
+        "./Pages/Series/Index.jsx": __vite_glob_0_34,
+        "./Pages/SeriesDetails.jsx": __vite_glob_0_35,
+        "./Pages/User/Subscription.jsx": __vite_glob_0_36,
+        "./Pages/User/WatchHistory.jsx": __vite_glob_0_37,
+        "./Pages/Welcome.jsx": __vite_glob_0_38
       });
       return pages[`./Pages/${name}.jsx`];
     },

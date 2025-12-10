@@ -33,11 +33,16 @@ class VipSubscriptionController extends Controller
 
         $vipKey = VipKey::where('key', $request->key)->first();
 
-        if (!$vipKey->is_active) {
-            return back()->withErrors(['key' => 'This key has already been used or is inactive.']);
+        if (!$vipKey->canBeUsed()) {
+            return back()->withErrors(['key' => 'This key is invalid, expired, or fully redeemed.']);
         }
 
         $user = Auth::user();
+
+        // Prevent user from using the same key twice
+        if ($vipKey->subscriptions()->where('user_id', $user->id)->exists()) {
+            return back()->withErrors(['key' => 'You have already redeemed this VIP key.']);
+        }
 
         // Check for existing active subscription to extend
         $existingSub = VipSubscription::where('user_id', $user->id)
@@ -47,7 +52,7 @@ class VipSubscriptionController extends Controller
 
         $startDate = now();
         if ($existingSub) {
-            $startDate = $existingSub->end_date;
+            $startDate = Carbon::parse($existingSub->end_date);
         }
 
         $endDate = $startDate->copy()->addDays($vipKey->duration_days);
@@ -60,8 +65,8 @@ class VipSubscriptionController extends Controller
             'end_date' => $endDate,
         ]);
 
-        // Deactivate key
-        $vipKey->update(['is_active' => false]);
+        // Increment usage count
+        $vipKey->incrementUses();
 
         return back()->with('success', 'VIP Subscription activated successfully!');
     }

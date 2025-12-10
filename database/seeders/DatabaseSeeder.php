@@ -19,10 +19,23 @@ class DatabaseSeeder extends Seeder
 
         if (!User::where('email', 'test@example.com')->exists()) {
             User::factory()->create([
-                'name' => 'Test User',
-                'email' => 'test@example.com',
+                'name' => 'Test User2',
+                'email' => 'test2@example.com',
             ]);
         }
+        $this->call([
+            \Database\Seeders\MovieSeeder::class,
+            \Database\Seeders\SeriesSeeder::class,
+            // \Database\Seeders\GenreSeeder::class,
+            \Database\Seeders\ActorSeeder::class,
+            \Database\Seeders\WatchLinkSeeder::class,
+            \Database\Seeders\DownloadLinkSeeder::class,
+            \Database\Seeders\RatingSeeder::class,
+            \Database\Seeders\WatchHistorySeeder::class,
+            \Database\Seeders\VipKeySeeder::class,
+            \Database\Seeders\VipSubscriptionSeeder::class,
+          
+        ]);
 
        
     }

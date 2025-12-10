@@ -70,20 +70,19 @@ Route::get('/', function () {
 
 // Admin web routes (Inertia pages)
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', function () {
-        $stats = [
-            'movies' => \App\Models\Movie::count(),
-            'series' => \App\Models\Series::count(),
-            'genres' => \App\Models\Genre::count(),
-            'persons' => \App\Models\Person::count(),
-        ];
-        return Inertia::render('Admin/Dashboard', compact('stats'));
-    })->name('admin.dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/movies', [AdminMovieController::class, 'index'])->name('admin.movies');
 
     Route::post('/movies', [AdminMovieController::class, 'store'])->name('admin.movies.store');
     Route::put('/movies/{movie}', [AdminMovieController::class, 'update'])->name('admin.movies.update');
     Route::delete('/movies/{movie}', [AdminMovieController::class, 'destroy'])->name('admin.movies.destroy');
+
+    Route::resource('vip-keys', \App\Http\Controllers\Admin\VipKeyController::class)->names([
+        'index' => 'admin.vip-keys.index',
+        'store' => 'admin.vip-keys.store',
+        'update' => 'admin.vip-keys.update',
+        'destroy' => 'admin.vip-keys.destroy',
+    ]);
     Route::get('/series', [AdminSeriesController::class, 'index'])->name('admin.series');
     Route::post('/series', [AdminSeriesController::class, 'store'])->name('admin.series.store');
     Route::put('/series/{series}', [AdminSeriesController::class, 'update'])->name('admin.series.update');
