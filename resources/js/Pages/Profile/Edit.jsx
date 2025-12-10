@@ -9,6 +9,7 @@ import ThemeSwitcher from "@/Components/ThemeSwitcher";
 import LanguageSwitcher from "@/Components/LanguageSwitcher";
 import { useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Check, Crown } from "lucide-react";
 
 export default function Edit({ mustVerifyEmail, status }) {
     const { t, i18n } = useTranslation();
@@ -135,9 +136,28 @@ export default function Edit({ mustVerifyEmail, status }) {
                                     </div>
 
                                     <div className="pt-4 flex flex-wrap justify-center  gap-3">
-                                        <span className="px-3 py-1 rounded-full bg-indigo-100 dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-xs font-medium text-indigo-800 dark:text-indigo-300">
-                                            {t("Free Plan")}
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1
+        ${
+            user.is_vip
+                ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300 border border-yellow-300/50"
+                : "bg-gray-100 text-gray-800 dark:bg-gray-700/40 dark:text-gray-300 border border-gray-300/20"
+        }
+    `}
+                                        >
+                                            {user.is_vip ? (
+                                                <>
+                                                    <Crown className="w-3 h-3 text-yellow-500" />
+                                                    {t("VIP Plan")}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Check className="w-3 h-3 text-green-500" />
+                                                    {t("Free Plan")}
+                                                </>
+                                            )}
                                         </span>
+
                                         {user.email_verified_at ? (
                                             <span className="px-3 py-1 rounded-full bg-green-100 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 text-xs font-medium text-green-800 dark:text-green-400 flex items-center gap-1">
                                                 <svg

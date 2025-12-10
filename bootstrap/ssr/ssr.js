@@ -10,7 +10,7 @@ import axios$1 from "axios";
 import { debounce } from "lodash";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { Crown, CheckCircle, AlertCircle, Calendar, Key, PlayCircle, Clock, Play, XCircle } from "lucide-react";
+import { Crown, Check, CheckCircle, AlertCircle, Calendar, Key, PlayCircle, Clock, Play, XCircle } from "lucide-react";
 import createServer from "@inertiajs/react/server";
 import ReactDOMServer from "react-dom/server";
 function ApplicationLogo(props) {
@@ -2307,10 +2307,17 @@ function AdminMovies({ movies, genres, persons, auth }) {
           /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold text-gray-900 dark:text-white", children: "Movies" }),
           /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400 mt-1", children: "Manage your movie catalog, details, and media." })
         ] }),
-        /* @__PURE__ */ jsxs(PrimaryButton, { onClick: openCreateModal, className: "flex items-center gap-2", children: [
-          /* @__PURE__ */ jsx(PlusIcon, { className: "w-5 h-5" }),
-          "Add Movie"
-        ] })
+        /* @__PURE__ */ jsxs(
+          PrimaryButton,
+          {
+            onClick: openCreateModal,
+            className: "flex items-center gap-2",
+            children: [
+              /* @__PURE__ */ jsx(PlusIcon, { className: "w-5 h-5" }),
+              "Add Movie"
+            ]
+          }
+        )
       ] }),
       /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 flex flex-col sm:flex-row gap-4", children: /* @__PURE__ */ jsxs("div", { className: "relative flex-1", children: [
         /* @__PURE__ */ jsx(MagnifyingGlassIcon, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" }),
@@ -2354,8 +2361,12 @@ function AdminMovies({ movies, genres, persons, auth }) {
                   ] })
                 ] }) }),
                 /* @__PURE__ */ jsxs("td", { className: "px-6 py-4 whitespace-nowrap", children: [
-                  /* @__PURE__ */ jsx("div", { className: "text-sm text-gray-900 dark:text-gray-300", children: movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A" }),
-                  /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-500 dark:text-gray-400 mt-0.5", children: movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : "-" })
+                  /* @__PURE__ */ jsx("div", { className: "text-sm text-gray-900 dark:text-gray-300", children: movie.release_date ? new Date(
+                    movie.release_date
+                  ).getFullYear() : "N/A" }),
+                  /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-500 dark:text-gray-400 mt-0.5", children: movie.runtime ? `${Math.floor(
+                    movie.runtime / 60
+                  )}h ${movie.runtime % 60}m` : "-" })
                 ] }),
                 /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col gap-1 items-start", children: [
                   /* @__PURE__ */ jsx(
@@ -2368,14 +2379,28 @@ function AdminMovies({ movies, genres, persons, auth }) {
                   movie.is_vip_only && /* @__PURE__ */ jsx("span", { className: "px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400", children: "VIP Only" })
                 ] }) }),
                 /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400", children: [
-                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1.5", title: "Rating", children: [
-                    /* @__PURE__ */ jsx(StarIcon$1, { className: "w-4 h-4 text-amber-400" }),
-                    /* @__PURE__ */ jsx("span", { className: "font-medium text-gray-900 dark:text-white", children: movie.rating_average || "0.0" })
-                  ] }),
-                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1.5", title: "Views", children: [
-                    /* @__PURE__ */ jsx(EyeIcon, { className: "w-4 h-4 text-gray-400" }),
-                    /* @__PURE__ */ jsx("span", { children: movie.view_count?.toLocaleString() })
-                  ] })
+                  /* @__PURE__ */ jsxs(
+                    "div",
+                    {
+                      className: "flex items-center gap-1.5",
+                      title: "Rating",
+                      children: [
+                        /* @__PURE__ */ jsx(StarIcon$1, { className: "w-4 h-4 text-amber-400" }),
+                        /* @__PURE__ */ jsx("span", { className: "font-medium text-gray-900 dark:text-white", children: movie.rating_average || "0.0" })
+                      ]
+                    }
+                  ),
+                  /* @__PURE__ */ jsxs(
+                    "div",
+                    {
+                      className: "flex items-center gap-1.5",
+                      title: "Views",
+                      children: [
+                        /* @__PURE__ */ jsx(EyeIcon, { className: "w-4 h-4 text-gray-400" }),
+                        /* @__PURE__ */ jsx("span", { children: movie.view_count?.toLocaleString() })
+                      ]
+                    }
+                  )
                 ] }) }),
                 /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-end gap-2", children: [
                   /* @__PURE__ */ jsx(
@@ -2403,39 +2428,97 @@ function AdminMovies({ movies, genres, persons, auth }) {
           )) })
         ] }) }),
         /* @__PURE__ */ jsxs("div", { className: "px-6 py-4 border-t border-gray-200 dark:border-gray-700/50 flex items-center justify-between", children: [
-          /* @__PURE__ */ jsx("div", { className: "flex-1 flex justify-between sm:hidden" }),
-          /* @__PURE__ */ jsxs("div", { className: "hidden sm:flex-1 sm:flex sm:items-center sm:justify-between", children: [
-            /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs("p", { className: "text-sm text-gray-700 dark:text-gray-300", children: [
-              "Showing ",
-              /* @__PURE__ */ jsx("span", { className: "font-medium", children: movies.from }),
-              " to ",
-              /* @__PURE__ */ jsx("span", { className: "font-medium", children: movies.to }),
-              " of ",
-              /* @__PURE__ */ jsx("span", { className: "font-medium", children: movies.total }),
-              " results"
-            ] }) }),
-            /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("nav", { className: "relative z-0 inline-flex rounded-md shadow-sm -space-x-px", "aria-label": "Pagination", children: movies.links.map((link, index) => /* @__PURE__ */ jsx(
+          /* @__PURE__ */ jsxs("div", { className: "flex-1 flex justify-between sm:hidden", children: [
+            /* @__PURE__ */ jsx(
               "button",
               {
                 onClick: () => {
-                  if (link.url) {
-                    router.visit(link.url, {
+                  const prev = movies.links.find(
+                    (l) => l.label.includes("Previous")
+                  );
+                  if (prev?.url) {
+                    router.visit(prev.url, {
                       preserveState: true,
                       preserveScroll: true
                     });
                   }
                 },
-                disabled: !link.url,
-                className: `relative inline-flex items-center px-4 py-2 border text-sm font-medium
+                disabled: !movies.links.find(
+                  (l) => l.label.includes("Previous")
+                )?.url,
+                className: "relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md\n                       text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600\n                       disabled:opacity-50 disabled:cursor-not-allowed",
+                children: "Previous"
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              "button",
+              {
+                onClick: () => {
+                  const next = movies.links.find(
+                    (l) => l.label.includes("Next")
+                  );
+                  if (next?.url) {
+                    router.visit(next.url, {
+                      preserveState: true,
+                      preserveScroll: true
+                    });
+                  }
+                },
+                disabled: !movies.links.find(
+                  (l) => l.label.includes("Next")
+                )?.url,
+                className: "ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md\n                       text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600\n                       disabled:opacity-50 disabled:cursor-not-allowed",
+                children: "Next"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "hidden sm:flex-1 sm:flex sm:items-center sm:justify-between", children: [
+            /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs("p", { className: "text-sm text-gray-700 dark:text-gray-300", children: [
+              "Showing",
+              " ",
+              /* @__PURE__ */ jsx("span", { className: "font-medium", children: movies.from }),
+              " ",
+              "to",
+              " ",
+              /* @__PURE__ */ jsx("span", { className: "font-medium", children: movies.to }),
+              " ",
+              "of",
+              " ",
+              /* @__PURE__ */ jsx("span", { className: "font-medium", children: movies.total }),
+              " ",
+              "results"
+            ] }) }),
+            /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(
+              "nav",
+              {
+                className: "relative z-0 inline-flex rounded-md shadow-sm -space-x-px",
+                "aria-label": "Pagination",
+                children: movies.links.map((link, index) => /* @__PURE__ */ jsx(
+                  "button",
+                  {
+                    onClick: () => {
+                      if (link.url) {
+                        router.visit(link.url, {
+                          preserveState: true,
+                          preserveScroll: true
+                        });
+                      }
+                    },
+                    disabled: !link.url,
+                    className: `relative inline-flex items-center px-4 py-2 border text-sm font-medium
                                                 ${link.active ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 dark:bg-indigo-900/20 dark:border-indigo-500 dark:text-indigo-400" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"}
                                                 ${!link.url && "opacity-50 cursor-not-allowed"}
                                                 ${index === 0 ? "rounded-l-md" : ""}
                                                 ${index === movies.links.length - 1 ? "rounded-r-md" : ""}
                                             `,
-                dangerouslySetInnerHTML: { __html: link.label }
-              },
-              index
-            )) }) })
+                    dangerouslySetInnerHTML: {
+                      __html: link.label
+                    }
+                  },
+                  index
+                ))
+              }
+            ) })
           ] })
         ] })
       ] })
@@ -4589,7 +4672,9 @@ function AdminSeries({ series, genres, persons, auth }) {
   };
   const openEditModal = async (series2) => {
     try {
-      const response = await axios.get(route("admin.series.show", series2.id));
+      const response = await axios.get(
+        route("admin.series.show", series2.id)
+      );
       setEditingSeries(response.data);
       setIsModalOpen(true);
     } catch (error) {
@@ -4613,10 +4698,17 @@ function AdminSeries({ series, genres, persons, auth }) {
           /* @__PURE__ */ jsx("h1", { className: "text-2xl font-bold text-gray-900 dark:text-white", children: "Series" }),
           /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400 mt-1", children: "Manage TV shows, seasons, and episodes." })
         ] }),
-        /* @__PURE__ */ jsxs(PrimaryButton, { onClick: openCreateModal, className: "flex items-center gap-2", children: [
-          /* @__PURE__ */ jsx(PlusIcon, { className: "w-5 h-5" }),
-          "Add Series"
-        ] })
+        /* @__PURE__ */ jsxs(
+          PrimaryButton,
+          {
+            onClick: openCreateModal,
+            className: "flex items-center gap-2",
+            children: [
+              /* @__PURE__ */ jsx(PlusIcon, { className: "w-5 h-5" }),
+              "Add Series"
+            ]
+          }
+        )
       ] }),
       /* @__PURE__ */ jsx("div", { className: "bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 flex flex-col sm:flex-row gap-4", children: /* @__PURE__ */ jsxs("div", { className: "relative flex-1", children: [
         /* @__PURE__ */ jsx(MagnifyingGlassIcon, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" }),
@@ -4661,7 +4753,8 @@ function AdminSeries({ series, genres, persons, auth }) {
                 ] }) }),
                 /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "text-sm text-gray-900 dark:text-gray-300", children: [
                   item.seasons_count || 0,
-                  " Seasons"
+                  " ",
+                  "Seasons"
                 ] }) }),
                 /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col gap-1 items-start", children: [
                   /* @__PURE__ */ jsx(
@@ -4674,14 +4767,28 @@ function AdminSeries({ series, genres, persons, auth }) {
                   item.is_vip_only && /* @__PURE__ */ jsx("span", { className: "px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400", children: "VIP Only" })
                 ] }) }),
                 /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400", children: [
-                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1.5", title: "Rating", children: [
-                    /* @__PURE__ */ jsx(StarIcon$1, { className: "w-4 h-4 text-amber-400" }),
-                    /* @__PURE__ */ jsx("span", { className: "font-medium text-gray-900 dark:text-white", children: item.rating_average || "0.0" })
-                  ] }),
-                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1.5", title: "Views", children: [
-                    /* @__PURE__ */ jsx(EyeIcon, { className: "w-4 h-4 text-gray-400" }),
-                    /* @__PURE__ */ jsx("span", { children: item.view_count?.toLocaleString() })
-                  ] })
+                  /* @__PURE__ */ jsxs(
+                    "div",
+                    {
+                      className: "flex items-center gap-1.5",
+                      title: "Rating",
+                      children: [
+                        /* @__PURE__ */ jsx(StarIcon$1, { className: "w-4 h-4 text-amber-400" }),
+                        /* @__PURE__ */ jsx("span", { className: "font-medium text-gray-900 dark:text-white", children: item.rating_average || "0.0" })
+                      ]
+                    }
+                  ),
+                  /* @__PURE__ */ jsxs(
+                    "div",
+                    {
+                      className: "flex items-center gap-1.5",
+                      title: "Views",
+                      children: [
+                        /* @__PURE__ */ jsx(EyeIcon, { className: "w-4 h-4 text-gray-400" }),
+                        /* @__PURE__ */ jsx("span", { children: item.view_count?.toLocaleString() })
+                      ]
+                    }
+                  )
                 ] }) }),
                 /* @__PURE__ */ jsx("td", { className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-end gap-2", children: [
                   /* @__PURE__ */ jsx(
@@ -4696,7 +4803,9 @@ function AdminSeries({ series, genres, persons, auth }) {
                   auth.user.role === "admin" && /* @__PURE__ */ jsx(
                     "button",
                     {
-                      onClick: () => handleDelete(item.id),
+                      onClick: () => handleDelete(
+                        item.id
+                      ),
                       className: "p-2 text-red-600 hover:bg-red-50 rounded-lg dark:text-red-400 dark:hover:bg-red-900/20 transition-colors",
                       title: "Delete",
                       children: /* @__PURE__ */ jsx(TrashIcon, { className: "w-5 h-5" })
@@ -4709,39 +4818,97 @@ function AdminSeries({ series, genres, persons, auth }) {
           )) })
         ] }) }),
         /* @__PURE__ */ jsxs("div", { className: "px-6 py-4 border-t border-gray-200 dark:border-gray-700/50 flex items-center justify-between", children: [
-          /* @__PURE__ */ jsx("div", { className: "flex-1 flex justify-between sm:hidden" }),
-          /* @__PURE__ */ jsxs("div", { className: "hidden sm:flex-1 sm:flex sm:items-center sm:justify-between", children: [
-            /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs("p", { className: "text-sm text-gray-700 dark:text-gray-300", children: [
-              "Showing ",
-              /* @__PURE__ */ jsx("span", { className: "font-medium", children: series.from }),
-              " to ",
-              /* @__PURE__ */ jsx("span", { className: "font-medium", children: series.to }),
-              " of ",
-              /* @__PURE__ */ jsx("span", { className: "font-medium", children: series.total }),
-              " results"
-            ] }) }),
-            /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("nav", { className: "relative z-0 inline-flex rounded-md shadow-sm -space-x-px", "aria-label": "Pagination", children: series.links.map((link, index) => /* @__PURE__ */ jsx(
+          /* @__PURE__ */ jsxs("div", { className: "flex-1 flex justify-between sm:hidden", children: [
+            /* @__PURE__ */ jsx(
               "button",
               {
                 onClick: () => {
-                  if (link.url) {
-                    router.visit(link.url, {
+                  const prev = series.links.find(
+                    (l) => l.label.includes("Previous")
+                  );
+                  if (prev?.url) {
+                    router.visit(prev.url, {
                       preserveState: true,
                       preserveScroll: true
                     });
                   }
                 },
-                disabled: !link.url,
-                className: `relative inline-flex items-center px-4 py-2 border text-sm font-medium
-                                                ${link.active ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 dark:bg-indigo-900/20 dark:border-indigo-500 dark:text-indigo-400" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"}
-                                                ${!link.url && "opacity-50 cursor-not-allowed"}
-                                                ${index === 0 ? "rounded-l-md" : ""}
-                                                ${index === series.links.length - 1 ? "rounded-r-md" : ""}
-                                            `,
-                dangerouslySetInnerHTML: { __html: link.label }
-              },
-              index
-            )) }) })
+                disabled: !series.links.find(
+                  (l) => l.label.includes("Previous")
+                )?.url,
+                className: "relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md\n                       text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600\n                       disabled:opacity-50 disabled:cursor-not-allowed",
+                children: "Previous"
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              "button",
+              {
+                onClick: () => {
+                  const next = series.links.find(
+                    (l) => l.label.includes("Next")
+                  );
+                  if (next?.url) {
+                    router.visit(next.url, {
+                      preserveState: true,
+                      preserveScroll: true
+                    });
+                  }
+                },
+                disabled: !series.links.find(
+                  (l) => l.label.includes("Next")
+                )?.url,
+                className: "ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md\n                       text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600\n                       disabled:opacity-50 disabled:cursor-not-allowed",
+                children: "Next"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "hidden sm:flex-1 sm:flex sm:items-center sm:justify-between", children: [
+            /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs("p", { className: "text-sm text-gray-700 dark:text-gray-300", children: [
+              "Showing",
+              " ",
+              /* @__PURE__ */ jsx("span", { className: "font-medium", children: series.from }),
+              " ",
+              "to",
+              " ",
+              /* @__PURE__ */ jsx("span", { className: "font-medium", children: series.to }),
+              " ",
+              "of",
+              " ",
+              /* @__PURE__ */ jsx("span", { className: "font-medium", children: series.total }),
+              " ",
+              "results"
+            ] }) }),
+            /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(
+              "nav",
+              {
+                className: "relative z-0 inline-flex rounded-md shadow-sm -space-x-px",
+                "aria-label": "Pagination",
+                children: series.links.map((link, index) => /* @__PURE__ */ jsx(
+                  "button",
+                  {
+                    onClick: () => {
+                      if (link.url) {
+                        router.visit(link.url, {
+                          preserveState: true,
+                          preserveScroll: true
+                        });
+                      }
+                    },
+                    disabled: !link.url,
+                    className: `relative inline-flex items-center px-4 py-2 border text-sm font-medium
+                            ${link.active ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 dark:bg-indigo-900/20 dark:border-indigo-500 dark:text-indigo-400" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"}
+                            ${!link.url && "opacity-50 cursor-not-allowed"}
+                            ${index === 0 ? "rounded-l-md" : ""}
+                            ${index === series.links.length - 1 ? "rounded-r-md" : ""}
+                        `,
+                    dangerouslySetInnerHTML: {
+                      __html: link.label
+                    }
+                  },
+                  index
+                ))
+              }
+            ) })
           ] })
         ] })
       ] })
@@ -7808,8 +7975,7 @@ function MovieDetails({
                       rel.release_date
                     ).getFullYear() }),
                     /* @__PURE__ */ jsxs("span", { className: "text-yellow-500", children: [
-                      "★",
-                      " ",
+                      "★ ",
                       rel.rating_average
                     ] })
                   ] })
@@ -7839,7 +8005,16 @@ const Pagination$1 = ({ links }) => {
   return /* @__PURE__ */ jsx("div", { className: "flex justify-center mt-8 mb-5 gap-2", children: links.map((link, index) => /* @__PURE__ */ jsx(
     Link,
     {
-      href: link.url ? link.url : "#",
+      href: "#",
+      onClick: (e) => {
+        e.preventDefault();
+        if (link.url) {
+          router.visit(link.url, {
+            preserveState: true,
+            preserveScroll: true
+          });
+        }
+      },
       className: `px-4 py-2 text-sm font-medium rounded-md transition-colors ${link.active ? "dark:bg-white text-black" : "dark:bg-white/10 dark:text-white hover:bg-white/20"} ${!link.url ? "opacity-50 cursor-not-allowed" : ""}`,
       dangerouslySetInnerHTML: { __html: link.label },
       disabled: !link.url
@@ -9151,7 +9326,21 @@ function Edit({ mustVerifyEmail, status }) {
               ] })
             ] }),
             /* @__PURE__ */ jsxs("div", { className: "pt-4 flex flex-wrap justify-center  gap-3", children: [
-              /* @__PURE__ */ jsx("span", { className: "px-3 py-1 rounded-full bg-indigo-100 dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-xs font-medium text-indigo-800 dark:text-indigo-300", children: t("Free Plan") }),
+              /* @__PURE__ */ jsx(
+                "span",
+                {
+                  className: `px-3 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1
+        ${user.is_vip ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300 border border-yellow-300/50" : "bg-gray-100 text-gray-800 dark:bg-gray-700/40 dark:text-gray-300 border border-gray-300/20"}
+    `,
+                  children: user.is_vip ? /* @__PURE__ */ jsxs(Fragment, { children: [
+                    /* @__PURE__ */ jsx(Crown, { className: "w-3 h-3 text-yellow-500" }),
+                    t("VIP Plan")
+                  ] }) : /* @__PURE__ */ jsxs(Fragment, { children: [
+                    /* @__PURE__ */ jsx(Check, { className: "w-3 h-3 text-green-500" }),
+                    t("Free Plan")
+                  ] })
+                }
+              ),
               user.email_verified_at ? /* @__PURE__ */ jsxs("span", { className: "px-3 py-1 rounded-full bg-green-100 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 text-xs font-medium text-green-800 dark:text-green-400 flex items-center gap-1", children: [
                 /* @__PURE__ */ jsx(
                   "svg",
@@ -9259,7 +9448,16 @@ const Pagination = ({ links }) => {
   return /* @__PURE__ */ jsx("div", { className: "flex justify-center mt-10 mb-8 gap-2", children: links.map((link, index) => /* @__PURE__ */ jsx(
     Link,
     {
-      href: link.url ? link.url : "#",
+      href: "#",
+      onClick: (e) => {
+        e.preventDefault();
+        if (link.url) {
+          router.visit(link.url, {
+            preserveState: true,
+            preserveScroll: true
+          });
+        }
+      },
       className: `px-4 py-2 text-sm font-medium rounded-md transition-colors ${link.active ? "dark:bg-white text-black" : "dark:bg-white/10 dark:text-white hover:bg-white/20"} ${!link.url ? "opacity-50 cursor-not-allowed" : ""}`,
       dangerouslySetInnerHTML: { __html: link.label },
       disabled: !link.url
@@ -10035,8 +10233,7 @@ function SeriesDetails({
                   /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-xs text-gray-500", children: [
                     /* @__PURE__ */ jsx("span", { children: rel.release_year_start }),
                     /* @__PURE__ */ jsxs("span", { className: "text-yellow-500", children: [
-                      "★",
-                      " ",
+                      "★ ",
                       rel.rating_average
                     ] })
                   ] })
@@ -10064,10 +10261,12 @@ const __vite_glob_0_35 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
 }, Symbol.toStringTag, { value: "Module" }));
 function Subscription({ auth, subscription }) {
   const { data, setData, post, processing, errors, reset } = useForm({
-    key: ""
+    key: "",
+    user_id: auth.user?.id
   });
   const handleRedeem = (e) => {
     e.preventDefault();
+    console.log(data);
     post(route("subscription.redeem"), {
       onSuccess: () => reset("key")
     });
@@ -10143,7 +10342,7 @@ function Subscription({ auth, subscription }) {
                   value: data.key,
                   onChange: (e) => setData("key", e.target.value),
                   className: "flex-1 rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white focus:border-indigo-500 focus:ring-indigo-500",
-                  placeholder: "XXXX-XXXX-XXXX-XXXX"
+                  placeholder: "XXXX-XXXX"
                 }
               ),
               /* @__PURE__ */ jsx(

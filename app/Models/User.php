@@ -15,6 +15,7 @@ class User extends Authenticatable
 
     protected $keyType = 'string';
     public $incrementing = false;
+    protected $appends = ['is_vip'];
     protected $fillable = [
         'name',
         'email',
@@ -74,5 +75,9 @@ class User extends Authenticatable
     public function downloadLinks()
     {
         return $this->hasMany(DownloadLink::class);
+    }
+    public function getIsVipAttribute(): bool
+    {
+        return $this->isVIP();
     }
 }

@@ -12,7 +12,16 @@ const Pagination = ({ links }) => {
             {links.map((link, index) => (
                 <Link
                     key={index}
-                    href={link.url ? link.url : "#"}
+                    href={"#"}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        if (link.url) {
+                            router.visit(link.url, {
+                                preserveState: true,
+                                preserveScroll: true,
+                            });
+                        }
+                    }}
                     className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                         link.active
                             ? "dark:bg-white text-black"
@@ -78,7 +87,6 @@ export default function Index({ movies }) {
                         <Pagination links={movies.links} />
                     )}
                 </div>
-                
             </div>
         </AuthenticatedLayout>
     );

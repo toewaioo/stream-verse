@@ -1,4 +1,4 @@
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePage, Link } from "@inertiajs/react";
 import RatingWidget from "@/Components/Movie/RatingWidget";
 import Review from "@/Components/Movie/Review";
@@ -652,7 +652,6 @@ export default function MovieDetails({
                             </div>
                         </div>
 
-                        
                         <div className="mb-16">
                             <h3 className="text-sm font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
                                 <span className="w-2 h-[2px] bg-blue-500"></span>
@@ -728,77 +727,72 @@ export default function MovieDetails({
                         </div>
                     </div>
                     <div className="w-full mt-6 lg:w-1/2 flex-shrink-0 space-y-12">
-                            <div className="glass-card-adaptive p-6">
-                                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 text-center">
-                                    {t("Rate this Movie")}
-                                </h3>
-                                {auth.user ? (
-                                    <RatingWidget
-                                        ratingAverage={
-                                            movie.rating_average || 0
-                                        }
-                                        ratingCount={movie.rating_count || 0}
-                                        userRating={userRating}
-                                        onRate={handleRate}
-                                    />
-                                ) : (
-                                    <div className="text-center text-sm text-gray-500">
-                                        <a
-                                            href={route("login")}
-                                            className="text-blue-400 hover:underline"
-                                        >
-                                            {t("Log in")}
-                                        </a>{" "}
-                                        {t("to rate.")}
-                                    </div>
-                                )}
-                            </div>
-
-                            {relatedMovies && relatedMovies.length > 0 && (
-                                <div>
-                                    <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6 border-l-4 border-blue-500 pl-3">
-                                        {t("You May Also Like")}
-                                    </h3>
-                                    <div className="grid grid-cols-3 md:grid-cols-2 gap-4">
-                                        {relatedMovies
-                                            .slice(0, 6)
-                                            .map((rel) => (
-                                                <a
-                                                    href={route(
-                                                        "movies.show",
-                                                        rel.slug
-                                                    )}
-                                                    key={rel.id}
-                                                    className="group block"
-                                                >
-                                                    <div className="aspect-[2/3] rounded-lg overflow-hidden mb-2 relative">
-                                                        <img
-                                                            src={rel.poster_url}
-                                                            alt={rel.title}
-                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                                        />
-                                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                                                    </div>
-                                                    <h4 className="text-sm text-gray-600 dark:text-gray-300 font-medium truncate group-hover:text-blue-600 dark:group-hover:text-white transition-colors">
-                                                        {rel.title}
-                                                    </h4>
-                                                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                                                        <span>
-                                                            {new Date(
-                                                                rel.release_date
-                                                            ).getFullYear()}
-                                                        </span>
-                                                        <span className="text-yellow-500">
-                                                            ★{" "}
-                                                            {rel.rating_average}
-                                                        </span>
-                                                    </div>
-                                                </a>
-                                            ))}
-                                    </div>
+                        <div className="glass-card-adaptive p-6">
+                            <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 text-center">
+                                {t("Rate this Movie")}
+                            </h3>
+                            {auth.user ? (
+                                <RatingWidget
+                                    ratingAverage={movie.rating_average || 0}
+                                    ratingCount={movie.rating_count || 0}
+                                    userRating={userRating}
+                                    onRate={handleRate}
+                                />
+                            ) : (
+                                <div className="text-center text-sm text-gray-500">
+                                    <a
+                                        href={route("login")}
+                                        className="text-blue-400 hover:underline"
+                                    >
+                                        {t("Log in")}
+                                    </a>{" "}
+                                    {t("to rate.")}
                                 </div>
                             )}
                         </div>
+
+                        {relatedMovies && relatedMovies.length > 0 && (
+                            <div>
+                                <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-6 border-l-4 border-blue-500 pl-3">
+                                    {t("You May Also Like")}
+                                </h3>
+                                <div className="grid grid-cols-3 md:grid-cols-2 gap-4">
+                                    {relatedMovies.slice(0, 6).map((rel) => (
+                                        <a
+                                            href={route(
+                                                "movies.show",
+                                                rel.slug
+                                            )}
+                                            key={rel.id}
+                                            className="group block"
+                                        >
+                                            <div className="aspect-[2/3] rounded-lg overflow-hidden mb-2 relative">
+                                                <img
+                                                    src={rel.poster_url}
+                                                    alt={rel.title}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                />
+                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                                            </div>
+                                            <h4 className="text-sm text-gray-600 dark:text-gray-300 font-medium truncate group-hover:text-blue-600 dark:group-hover:text-white transition-colors">
+                                                {rel.title}
+                                            </h4>
+                                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                <span>
+                                                    {new Date(
+                                                        rel.release_date
+                                                    ).getFullYear()}
+                                                </span>
+                                                <span className="text-yellow-500">
+                                                    ★ {rel.rating_average}
+                                                </span>
+                                            </div>
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <Footer />

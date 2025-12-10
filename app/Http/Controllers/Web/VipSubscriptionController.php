@@ -29,6 +29,7 @@ class VipSubscriptionController extends Controller
     {
         $request->validate([
             'key' => 'required|string|exists:vip_keys,key',
+            'user_id' => 'required|string|exists:users,id'
         ]);
 
         $vipKey = VipKey::where('key', $request->key)->first();
@@ -40,7 +41,7 @@ class VipSubscriptionController extends Controller
         $user = Auth::user();
 
         // Prevent user from using the same key twice
-        if ($vipKey->subscriptions()->where('user_id', $user->id)->exists()) {
+        if ($vipKey->subscriptions()->where('user_id', $request->user_id)->exists()) {
             return back()->withErrors(['key' => 'You have already redeemed this VIP key.']);
         }
 

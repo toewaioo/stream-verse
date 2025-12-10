@@ -26,7 +26,7 @@ class VipKey extends Model
     // Relationships
     public function subscriptions()
     {
-        return $this->hasMany(VipSubscription::class);
+        return $this->hasMany(VipSubscription::class, 'key_id');
     }
 
     // Scopes

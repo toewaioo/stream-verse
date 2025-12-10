@@ -79,7 +79,10 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                             Manage your movie catalog, details, and media.
                         </p>
                     </div>
-                    <PrimaryButton onClick={openCreateModal} className="flex items-center gap-2">
+                    <PrimaryButton
+                        onClick={openCreateModal}
+                        className="flex items-center gap-2"
+                    >
                         <PlusIcon className="w-5 h-5" />
                         Add Movie
                     </PrimaryButton>
@@ -135,7 +138,9 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                                                     {movie.poster_url ? (
                                                         <img
                                                             className="h-full w-full object-cover"
-                                                            src={movie.poster_url}
+                                                            src={
+                                                                movie.poster_url
+                                                            }
                                                             alt=""
                                                         />
                                                     ) : (
@@ -157,24 +162,33 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-900 dark:text-gray-300">
                                                 {movie.release_date
-                                                    ? new Date(movie.release_date).getFullYear()
+                                                    ? new Date(
+                                                          movie.release_date
+                                                      ).getFullYear()
                                                     : "N/A"}
                                             </div>
                                             <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                                                 {movie.runtime
-                                                    ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m`
+                                                    ? `${Math.floor(
+                                                          movie.runtime / 60
+                                                      )}h ${
+                                                          movie.runtime % 60
+                                                      }m`
                                                     : "-"}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex flex-col gap-1 items-start">
                                                 <span
-                                                    className={`px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full ${movie.status === "released"
+                                                    className={`px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full ${
+                                                        movie.status ===
+                                                        "released"
                                                             ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                                                            : movie.status === "upcoming"
-                                                                ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
-                                                                : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-                                                        }`}
+                                                            : movie.status ===
+                                                              "upcoming"
+                                                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+                                                            : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                                                    }`}
                                                 >
                                                     {movie.status}
                                                 </span>
@@ -187,13 +201,20 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                                                <div className="flex items-center gap-1.5" title="Rating">
+                                                <div
+                                                    className="flex items-center gap-1.5"
+                                                    title="Rating"
+                                                >
                                                     <StarIcon className="w-4 h-4 text-amber-400" />
                                                     <span className="font-medium text-gray-900 dark:text-white">
-                                                        {movie.rating_average || "0.0"}
+                                                        {movie.rating_average ||
+                                                            "0.0"}
                                                     </span>
                                                 </div>
-                                                <div className="flex items-center gap-1.5" title="Views">
+                                                <div
+                                                    className="flex items-center gap-1.5"
+                                                    title="Views"
+                                                >
                                                     <EyeIcon className="w-4 h-4 text-gray-400" />
                                                     <span>
                                                         {movie.view_count?.toLocaleString()}
@@ -204,7 +225,9 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div className="flex items-center justify-end gap-2">
                                                 <button
-                                                    onClick={() => openEditModal(movie)}
+                                                    onClick={() =>
+                                                        openEditModal(movie)
+                                                    }
                                                     className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg dark:text-indigo-400 dark:hover:bg-indigo-900/20 transition-colors"
                                                     title="Edit"
                                                 >
@@ -212,7 +235,9 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                                                 </button>
                                                 {auth.user.role === "admin" && (
                                                     <button
-                                                        onClick={() => handleDelete(movie)}
+                                                        onClick={() =>
+                                                            handleDelete(movie)
+                                                        }
                                                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg dark:text-red-400 dark:hover:bg-red-900/20 transition-colors"
                                                         title="Delete"
                                                     >
@@ -229,17 +254,79 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
 
                     {/* Pagination */}
                     <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700/50 flex items-center justify-between">
+                        {/* Mobile Pagination (Simple) */}
                         <div className="flex-1 flex justify-between sm:hidden">
-                            {/* Mobile pagination simple view */}
+                            <button
+                                onClick={() => {
+                                    const prev = movies.links.find((l) =>
+                                        l.label.includes("Previous")
+                                    );
+                                    if (prev?.url) {
+                                        router.visit(prev.url, {
+                                            preserveState: true,
+                                            preserveScroll: true,
+                                        });
+                                    }
+                                }}
+                                disabled={
+                                    !movies.links.find((l) =>
+                                        l.label.includes("Previous")
+                                    )?.url
+                                }
+                                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md
+                       text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600
+                       disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Previous
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    const next = movies.links.find((l) =>
+                                        l.label.includes("Next")
+                                    );
+                                    if (next?.url) {
+                                        router.visit(next.url, {
+                                            preserveState: true,
+                                            preserveScroll: true,
+                                        });
+                                    }
+                                }}
+                                disabled={
+                                    !movies.links.find((l) =>
+                                        l.label.includes("Next")
+                                    )?.url
+                                }
+                                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md
+                       text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600
+                       disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Next
+                            </button>
                         </div>
                         <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                             <div>
                                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                                    Showing <span className="font-medium">{movies.from}</span> to <span className="font-medium">{movies.to}</span> of <span className="font-medium">{movies.total}</span> results
+                                    Showing{" "}
+                                    <span className="font-medium">
+                                        {movies.from}
+                                    </span>{" "}
+                                    to{" "}
+                                    <span className="font-medium">
+                                        {movies.to}
+                                    </span>{" "}
+                                    of{" "}
+                                    <span className="font-medium">
+                                        {movies.total}
+                                    </span>{" "}
+                                    results
                                 </p>
                             </div>
                             <div>
-                                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                <nav
+                                    className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                                    aria-label="Pagination"
+                                >
                                     {movies.links.map((link, index) => (
                                         <button
                                             key={index}
@@ -253,15 +340,30 @@ export default function AdminMovies({ movies, genres, persons, auth }) {
                                             }}
                                             disabled={!link.url}
                                             className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium
-                                                ${link.active
-                                                    ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 dark:bg-indigo-900/20 dark:border-indigo-500 dark:text-indigo-400"
-                                                    : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"
+                                                ${
+                                                    link.active
+                                                        ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 dark:bg-indigo-900/20 dark:border-indigo-500 dark:text-indigo-400"
+                                                        : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"
                                                 }
-                                                ${!link.url && "opacity-50 cursor-not-allowed"}
-                                                ${index === 0 ? "rounded-l-md" : ""}
-                                                ${index === movies.links.length - 1 ? "rounded-r-md" : ""}
+                                                ${
+                                                    !link.url &&
+                                                    "opacity-50 cursor-not-allowed"
+                                                }
+                                                ${
+                                                    index === 0
+                                                        ? "rounded-l-md"
+                                                        : ""
+                                                }
+                                                ${
+                                                    index ===
+                                                    movies.links.length - 1
+                                                        ? "rounded-r-md"
+                                                        : ""
+                                                }
                                             `}
-                                            dangerouslySetInnerHTML={{ __html: link.label }}
+                                            dangerouslySetInnerHTML={{
+                                                __html: link.label,
+                                            }}
                                         />
                                     ))}
                                 </nav>

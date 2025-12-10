@@ -13,10 +13,12 @@ import Navbar from "@/Components/Navbar";
 export default function Subscription({ auth, subscription }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         key: "",
+        user_id: auth.user?.id,
     });
 
     const handleRedeem = (e) => {
         e.preventDefault();
+        console.log(data);
         post(route("subscription.redeem"), {
             onSuccess: () => reset("key"),
         });
@@ -123,8 +125,9 @@ export default function Subscription({ auth, subscription }) {
                                                 setData("key", e.target.value)
                                             }
                                             className="flex-1 rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="XXXX-XXXX-XXXX-XXXX"
+                                            placeholder="XXXX-XXXX"
                                         />
+
                                         <button
                                             type="submit"
                                             disabled={processing}

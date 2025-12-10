@@ -46,7 +46,9 @@ export default function AdminSeries({ series, genres, persons, auth }) {
 
     const openEditModal = async (series) => {
         try {
-            const response = await axios.get(route('admin.series.show', series.id));
+            const response = await axios.get(
+                route("admin.series.show", series.id)
+            );
             setEditingSeries(response.data);
             setIsModalOpen(true);
         } catch (error) {
@@ -80,7 +82,10 @@ export default function AdminSeries({ series, genres, persons, auth }) {
                             Manage TV shows, seasons, and episodes.
                         </p>
                     </div>
-                    <PrimaryButton onClick={openCreateModal} className="flex items-center gap-2">
+                    <PrimaryButton
+                        onClick={openCreateModal}
+                        className="flex items-center gap-2"
+                    >
                         <PlusIcon className="w-5 h-5" />
                         Add Series
                     </PrimaryButton>
@@ -135,7 +140,9 @@ export default function AdminSeries({ series, genres, persons, auth }) {
                                                     {item.poster_url ? (
                                                         <img
                                                             className="h-full w-full object-cover"
-                                                            src={item.poster_url}
+                                                            src={
+                                                                item.poster_url
+                                                            }
                                                             alt=""
                                                         />
                                                     ) : (
@@ -156,18 +163,22 @@ export default function AdminSeries({ series, genres, persons, auth }) {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-900 dark:text-gray-300">
-                                                {item.seasons_count || 0} Seasons
+                                                {item.seasons_count || 0}{" "}
+                                                Seasons
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex flex-col gap-1 items-start">
                                                 <span
-                                                    className={`px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full ${item.status === "ongoing"
+                                                    className={`px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full ${
+                                                        item.status ===
+                                                        "ongoing"
                                                             ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                                                            : item.status === "ended"
-                                                                ? "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-                                                                : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
-                                                        }`}
+                                                            : item.status ===
+                                                              "ended"
+                                                            ? "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                                                            : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
+                                                    }`}
                                                 >
                                                     {item.status}
                                                 </span>
@@ -180,13 +191,20 @@ export default function AdminSeries({ series, genres, persons, auth }) {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                                                <div className="flex items-center gap-1.5" title="Rating">
+                                                <div
+                                                    className="flex items-center gap-1.5"
+                                                    title="Rating"
+                                                >
                                                     <StarIcon className="w-4 h-4 text-amber-400" />
                                                     <span className="font-medium text-gray-900 dark:text-white">
-                                                        {item.rating_average || "0.0"}
+                                                        {item.rating_average ||
+                                                            "0.0"}
                                                     </span>
                                                 </div>
-                                                <div className="flex items-center gap-1.5" title="Views">
+                                                <div
+                                                    className="flex items-center gap-1.5"
+                                                    title="Views"
+                                                >
                                                     <EyeIcon className="w-4 h-4 text-gray-400" />
                                                     <span>
                                                         {item.view_count?.toLocaleString()}
@@ -197,7 +215,9 @@ export default function AdminSeries({ series, genres, persons, auth }) {
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div className="flex items-center justify-end gap-2">
                                                 <button
-                                                    onClick={() => openEditModal(item)}
+                                                    onClick={() =>
+                                                        openEditModal(item)
+                                                    }
                                                     className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg dark:text-indigo-400 dark:hover:bg-indigo-900/20 transition-colors"
                                                     title="Edit"
                                                 >
@@ -205,7 +225,11 @@ export default function AdminSeries({ series, genres, persons, auth }) {
                                                 </button>
                                                 {auth.user.role === "admin" && (
                                                     <button
-                                                        onClick={() => handleDelete(item.id)}
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                item.id
+                                                            )
+                                                        }
                                                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg dark:text-red-400 dark:hover:bg-red-900/20 transition-colors"
                                                         title="Delete"
                                                     >
@@ -222,17 +246,81 @@ export default function AdminSeries({ series, genres, persons, auth }) {
 
                     {/* Pagination */}
                     <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700/50 flex items-center justify-between">
+                        {/* Mobile Pagination (Simple) */}
                         <div className="flex-1 flex justify-between sm:hidden">
-                            {/* Mobile pagination simple view */}
+                            <button
+                                onClick={() => {
+                                    const prev = series.links.find((l) =>
+                                        l.label.includes("Previous")
+                                    );
+                                    if (prev?.url) {
+                                        router.visit(prev.url, {
+                                            preserveState: true,
+                                            preserveScroll: true,
+                                        });
+                                    }
+                                }}
+                                disabled={
+                                    !series.links.find((l) =>
+                                        l.label.includes("Previous")
+                                    )?.url
+                                }
+                                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md
+                       text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600
+                       disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Previous
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    const next = series.links.find((l) =>
+                                        l.label.includes("Next")
+                                    );
+                                    if (next?.url) {
+                                        router.visit(next.url, {
+                                            preserveState: true,
+                                            preserveScroll: true,
+                                        });
+                                    }
+                                }}
+                                disabled={
+                                    !series.links.find((l) =>
+                                        l.label.includes("Next")
+                                    )?.url
+                                }
+                                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md
+                       text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600
+                       disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Next
+                            </button>
                         </div>
+
+                        {/* Desktop Pagination */}
                         <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                             <div>
                                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                                    Showing <span className="font-medium">{series.from}</span> to <span className="font-medium">{series.to}</span> of <span className="font-medium">{series.total}</span> results
+                                    Showing{" "}
+                                    <span className="font-medium">
+                                        {series.from}
+                                    </span>{" "}
+                                    to{" "}
+                                    <span className="font-medium">
+                                        {series.to}
+                                    </span>{" "}
+                                    of{" "}
+                                    <span className="font-medium">
+                                        {series.total}
+                                    </span>{" "}
+                                    results
                                 </p>
                             </div>
                             <div>
-                                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                <nav
+                                    className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                                    aria-label="Pagination"
+                                >
                                     {series.links.map((link, index) => (
                                         <button
                                             key={index}
@@ -246,15 +334,22 @@ export default function AdminSeries({ series, genres, persons, auth }) {
                                             }}
                                             disabled={!link.url}
                                             className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium
-                                                ${link.active
-                                                    ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 dark:bg-indigo-900/20 dark:border-indigo-500 dark:text-indigo-400"
-                                                    : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"
-                                                }
-                                                ${!link.url && "opacity-50 cursor-not-allowed"}
-                                                ${index === 0 ? "rounded-l-md" : ""}
-                                                ${index === series.links.length - 1 ? "rounded-r-md" : ""}
-                                            `}
-                                            dangerouslySetInnerHTML={{ __html: link.label }}
+                            ${
+                                link.active
+                                    ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 dark:bg-indigo-900/20 dark:border-indigo-500 dark:text-indigo-400"
+                                    : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"
+                            }
+                            ${!link.url && "opacity-50 cursor-not-allowed"}
+                            ${index === 0 ? "rounded-l-md" : ""}
+                            ${
+                                index === series.links.length - 1
+                                    ? "rounded-r-md"
+                                    : ""
+                            }
+                        `}
+                                            dangerouslySetInnerHTML={{
+                                                __html: link.label,
+                                            }}
                                         />
                                     ))}
                                 </nav>
